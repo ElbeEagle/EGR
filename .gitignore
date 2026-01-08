@@ -1,6 +1,7 @@
 # Do not sync docs/ and HGR/
 docs/
 HGR/
+ref/
 
 # Python
 __pycache__/
