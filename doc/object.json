@@ -1,0 +1,22 @@
+{
+    "Angle": "角",
+    "Real": "实数",
+    "Number": "数",
+    "Origin": "原点",
+    "Vector": "向量",
+    "Curve": "曲线",
+    "Triangle": "三角形",
+    "Axis": "坐标轴",
+    "Ray": "射线",
+    "LineSegment": "线段",
+    "Circle": "圆",
+    "Parabola": "抛物线",
+    "Hyperbola": "双曲线",
+    "Ellipse": "椭圆",
+    "ConicSection": "圆锥曲线",
+    "Line": "直线",
+    "Point": "点",
+    "axis": "坐标轴",
+    "xAxis": "x轴",
+    "yAxis": "y轴"
+}

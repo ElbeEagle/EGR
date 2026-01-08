@@ -1,0 +1,372 @@
+\documentclass[sigconf]{acmart}
+\usepackage{microtype}
+\sloppy
+\emergencystretch=1em
+
+\usepackage[capitalize]{cleveref}
+\usepackage{enumitem}
+
+\newcommand{\predSeq}{\mathbf{s}}
+\newcommand{\xInput}{\mathbf{x}}
+\newcommand{\Conf}{C}
+\newcommand{\PredDist}{\mathcal{P}(S;\xInput,\mathcal{M})}
+\newcommand{\accfunc}{f}
+
+\newif\ifcomments
+
+\commentstrue
+
+\ifcomments
+    \newcommand\cc[1]{\textcolor{magenta}{[Chacha: #1]}}
+    \else
+    \newcommand\han[1]{}
+    \newcommand\cc[1]{}
+    \newcommand{\chenhao}[1]{}
+\fi
+
+\AtBeginDocument{
+  \providecommand\BibTeX{{
+    Bib\TeX}}}
+
+\setcopyright{acmlicensed}
+\copyrightyear{2025}
+\acmYear{2025}
+\setcopyright{acmlicensed}\acmConference[KDD '25]{Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2}{August 3--7, 2025}{Toronto, ON, Canada}
+\acmBooktitle{Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2 (KDD '25), August 3--7, 2025, Toronto, ON, Canada}
+\acmDOI{10.1145/3711896.3736569}
+\acmISBN{979-8-4007-1454-2/2025/08}
+
+\begin{document}
+
+\title{Uncertainty Quantification and Confidence Calibration in Large
+Language Models: A Survey}
+
+\author{Xiaoou Liu}
+\authornote{Both authors contributed equally to this research.}
+\email{xiaoouli@asu.edu}
+\affiliation{
+  \institution{Arizona State University}
+  \city{Tempe}
+  \state{Arizona}
+  \country{USA}
+}
+
+\renewcommand{\shortauthors}{Liu et al.}
+
+\begin{abstract}
+
+Uncertainty quantification (UQ) enhances the reliability of Large Language Models (LLMs) by estimating confidence in outputs, enabling risk mitigation and selective prediction.
+However, traditional UQ methods struggle with LLMs due to computational constraints and decoding inconsistencies. Moreover, LLMs introduce unique uncertainty sources, such as input ambiguity, reasoning path divergence, and decoding stochasticity, that extend beyond classical aleatoric and epistemic uncertainty. To address this, we introduce a new taxonomy that categorizes UQ methods based on computational efficiency and uncertainty dimensions, including input, reasoning, parameter, and prediction uncertainty. We evaluate existing techniques, summarize existing benchmarks and metrics for UQ, assess their real-world applicability, and identify open challenges, emphasizing the need for scalable, interpretable, and robust UQ approaches to enhance LLM reliability.
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10010147.10010257</concept_id>
+       <concept_desc>Computing methodologies~Machine learning</concept_desc>
+       <concept_significance>500</concept_significance>
+       </concept>
+   <concept>
+       <concept_id>10010147.10010178.10010179</concept_id>
+       <concept_desc>Computing methodologies~Natural language processing</concept_desc>
+       <concept_significance>500</concept_significance>
+       </concept>
+ </ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Computing methodologies~Machine learning}
+\ccsdesc[500]{Computing methodologies~Natural language processing}
+
+\keywords{Uncertainty Quantification; Large Language Models}
+
+\received{11 March 2025}
+
+\received[accepted]{6 May 2025}
+
+\maketitle
+
+\section{Introduction}
+
+Large Language Models (LLMs) like GPT-4~\cite{achiam2023gpt} have achieved remarkable capabilities in text generation, reasoning, and decision-making, driving their adoption in high-stakes domains such as healthcare diagnostics~\cite{qiu2024llm,da2024segment}, legal analysis~\cite{cheong2024not,li2024political}, and transportation systems~\cite{da2024prompt,lai2023llmlight,xing2025re}. However, their reliability remains a critical concern: LLMs often produce plausible but incorrect or inconsistent outputs, with studies showing that over 30\% of answers in medical QA tasks contain factual errors~\cite{jin2021disease}. In sensitive applications, these limitations pose risks ranging from misinformation to life-threatening misdiagnoses, underscoring the urgent need for robust reliability frameworks.
+
+Uncertainty quantification (UQ) emerges as an important mechanism to enhance LLM reliability by explicitly modeling confidence in model outputs. By estimating uncertainty, users can identify low-confidence predictions for human verification, prioritize high-certainty responses, and mitigate risks like overconfidence in hallucinations~\cite{liu2024litcab}. For instance, in clinical settings, uncertainty-aware LLMs could flag uncertain diagnoses for specialist review, reducing diagnostic errors by up to 41\% \cite{sen2024erg}. This capability is particularly critical as LLMs' transition from experimental tools to production systems requiring accountability.
+
+Traditional UQ methods face significant hurdles when applied to LLMs. Bayesian approaches like Monte Carlo dropout \citep{gal2016dropout} are computationally prohibitive for trillion-parameter models and natural language generation (NLG) tasks, while ensemble methods struggle with consistency across diverse decoding strategies \cite{lu2024merge}. Furthermore, LLMs introduce unique uncertainty sources, such as input ambiguity~\cite{chen2025abg,guo2021abg-coqa}, reasoning path divergence, and decoding stochasticity that transcend classical aleatoric and epistemic categorizations \cite{hullermeier2021aleatoric}. The complexity of LLMs, characterized by sequence generation over vast parameter spaces and reliance on massive datasets, exacerbates uncertainty challenges. This complexity, coupled with the critical need for reliable outputs in high-stakes applications, positions UQ for LLMs as a compelling yet underexplored research frontier.
+
+Targeting the unique challenges of UQ in LLMs, this survey firstly introduces a novel taxonomy for LLM UQ, categorizing methods along two axes: (1) computational efficiency (e.g., single-pass vs. sampling-based techniques) and (2) uncertainty dimensions (input, reasoning, parametric, predictive). This framework addresses three gaps in prior works: First, it decouples uncertainty sources unique to LLMs from traditional ML contexts. Second, it evaluates methods through the lens of different dimensions of the responses from LLM: input uncertainty, reasoning uncertainty, parameter uncertainty, and prediction uncertainty. Each of these dimensions may involve aleatoric uncertainty, epistemic uncertainty, or a mixture of both. Third, it identifies understudied areas like reasoning uncertainty, challenges, and possible future directions.
+
+\vspace{1mm}
+\noindent\textbf{Connection to Existing Surveys}: Prior surveys~\cite{shorinwa2024survey,huang2024survey,huang2025survey} focus on hallucination detection or retrofitting classical UQ taxonomies, neglecting LLM-specific challenges like prompt-driven input uncertainty. Our work uniquely addresses the interplay between model scale, open-ended generation, and uncertainty dynamics, which are critical for modern LLMs but overlooked in earlier frameworks.
+
+The remainder of this survey is structured as follows: Section~2 characterizes LLM uncertainty dimensions and differentiates confidence from uncertainty. Section~3 evaluates UQ methods using our taxonomy. Section~4 introduces the evaluation of UQ methods for LLM, including benchmarks and metrics. Sections~5 and~6 introduce the applications of UQ in different domains with LLMs and identify open challenges and future directions.
+
+\section{Perliminaries}
+
+\subsection{Sources of Uncertainty in LLMs}
+\subsubsection{Aleatoric vs. Epistemic Uncertainty}
+For UQ on traditional machine learning tasks such as classification or regression~\cite{young2024flexible}, there are mainly two types of uncertainty~\cite{der2009aleatory,ye2024uncertainty}: aleatoric uncertainty, which models the uncertainty from noise in the dataset,  and epistemic uncertainty, which arises from the model’s lack of knowledge about the underlying data distribution.
+
+Aleatoric uncertainty in LLMs primarily stems from data sources used to train LLMs, which contain inconsistencies, biases, and contradicting information. Additionally, ambiguity in natural language also contributes to aleatoric uncertainty, as different interpretations of the same prompt can lead to multiple plausible responses.
+On the other hand, when encountering unfamiliar topics, LLMs may exhibit high epistemic uncertainty, often manifesting as hallucinations or overconfident yet incorrect statements. Epistemic uncertainty can be reduced through domain-specific fine-tuning or retrieval-augmented generation techniques that allow the model to access external knowledge sources.
+
+\subsubsection{Uncertainty with Different Dimensions}
+\label{sec:uncertainty_stage}
+
+While the uncertainty for LLMs can also be classified through aleatoric and epistemic uncertainty, these two categories alone are insufficient to fully capture the complexities of uncertainty in LLMs. In particular, LLMs exhibit uncertainty not only due to training data limitations but also due to input variability and decoding mechanisms. Therefore, in the following, we formulate four dimensions of uncertainty, each of which may involve aleatoric uncertainty, epistemic uncertainty, or a combination of both. The technical methods on how to quantify these uncertainties will be discussed later in Section~\ref{sec:uq-methods}.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Input Uncertainty}~(Aleatoric Uncertainty): Input uncertainty arises when a prompt is ambiguous or underspecified, making it impossible for an LLM to generate a single definitive response. This is inherently aleatoric, as even a ``perfect model'' cannot resolve the ambiguity.
+
+For instance, \textit{``What is the capital of this country?''} lacks sufficient context, leading to unpredictable outputs. Similarly, \textit{``Summarize this document''} may yield different responses depending on different expected details. \\
+\noindent$\bullet$~\textbf{Reasoning Uncertainty}~(Mixed Uncertainty): Reasoning uncertainty occurs when an LLM derives answers through multi-step reasoning~\cite{mondorfbeyond} or retrieval~\cite{li2024uncertaintyrag}, where the uncertainty of each step can lead to ambiguous or incorrect results. This uncertainty is aleatoric when the problem itself is ambiguous and epistemic when the model cannot offer robust reasoning.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Parameter Uncertainty}~(Epistemic Uncertainty):
+Parameter uncertainty stems from training data gaps, where the model has either never seen relevant information or has learned an incorrect representation. Unlike aleatoric uncertainty, epistemic uncertainty can be reduced by improving the model's knowledge base.
+
+Bayesian methods~\cite{gal2016dropout}, deep ensembles~\cite{lakshminarayanan2017simple}, and uncertainty-aware training~\cite{mukherjee2020uncertainty} can help quantify and mitigate this type of uncertainty.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Prediction Uncertainty}~(Mixed Uncertainty): Prediction uncertainty refers to variability in generated outputs across different sampling runs, influenced by both aleatoric and epistemic sources.
+
+For example, when asked \textit{``What are the side effects of a new experimental drug?''}, the model’s responses might vary significantly across different sampling runs, especially if no reliable data is available in its training set. A high-variance output distribution in such scenarios suggests that the model is both aware of multiple possible answers, reflecting aleatoric uncertainty, and uncertain due to incomplete knowledge, highlighting epistemic uncertainty.
+
+\subsection{Uncertainty and Confidence in LLMs}
+\input{sections/confidence}
+
+\section{UQ Methods for Different Dimensions}
+\label{sec:uq-methods}
+
+\subsection{Input Uncertainty}
+As mentioned in \cref{sec:uncertainty_stage}, input uncertainty arises from the ambiguous or incomplete input to the LLMs. While there are works in the LLMs domain that try to benchmark or deal with ambiguity~\cite{guo2021abg-coqa,zamani2020generating,deng2023learning,chen2025abg}, they did not model the uncertainties induced by ambiguity.
+
+Existing UQ methods that specifically consider input uncertainty focus on perturbing the input prompts of LLMs. For instance, \cite{hou2024decomposing} proposes an approach that generates multiple clarifications for a given prompt and ensembles the resulting generations by using mutual information to capture the disagreement among the predictions arising from different clarifications. Similarly, \cite{ling2024uncertainty} proposed ICL-Sample, which quantified the input uncertainty in the setting of in-context learning using different in-context samples. \cite{gao2024spuq} proposes SPUQ, which perturbs the input by techniques such as paraphrasing and dummy tokens to expose the model's sensitivity and capture uncertainty. Specifically, SPUQ quantified the input uncertainty by using a similarity metric such as BERTScore~\cite{zhangbertscore} to measure how consistent the responses are across different perturbations.
+In general, there are only a few papers that consider input uncertainty. Since ambiguity is common and important in natural language, more effort is needed into input uncertainty and its application.
+
+\subsection{Reasoning Uncertainty}
+Reasoning is the process of drawing conclusions based on available information. As the LLMs have demonstrated remarkable performance on tasks involving reasoning, recent research has focused on using UQ in LLM reasoning and analyzing the internal reasoning process. For example, TopologyUQ~\cite{da2025understanding} introduces a formal method to extract and structure LLM explanations into graph representations, quantifying reasoning uncertainty by employing graph-edit distances and revealing redundancy through stable topology measures. Stable-Explanation Confidence~\cite{becker2024cycles} treats each possible model and its explanation pair as a test-time classifier to construct a posterior answer distribution that reflects overall reasoning confidence. CoT-UQ~\cite{zhang2025cot} integrates chain-of-thought reasoning into a response-level UQ framework, thereby leveraging the inherent multi-step reasoning capability of LLMs to further improve uncertainty assessment. Collectively, these approaches provide a robust and interpretable framework for enhancing LLM reasoning by quantifying uncertainty at local or global levels.
+
+The quantified uncertainty could be used to guide the exploration of reasoning steps and improving the final performance in completing the tasks. In~\cite{mo2024tree}, they propose Tree of Uncertain Thoughts (TouT), which extend the Tree of Thoughts (ToT)~\cite{yao2023tree} framework by quantifying the uncertainties in intermediate reasoning steps with Monte Carlo Dropout and assigning uncertainty scores to important decision points. Similarly, ~\cite{yin2024reasoning} reduces the error accumulation in multi-step reasoning by monitoring the predicted probability of the next token at each generation step,
+dynamically retracting to more reliable states and incorporating certified reasoning clues when high uncertainty is detected.
+Their experimental results shows that integrating uncertainty enhances the precision of generated responses by integrating these local measures with global search techniques.
+
+\subsection{Parameter Uncertainty}
+
+Parameter uncertainty arises when an LLM lacks sufficient knowledge due to limitations in its training data or model parameters. It reflects the model’s uncertainty about its own predictions, which can be reduced with additional training or adaptation techniques.
+
+Traditional UQ methods like Monte Carlo Dropout and Deep Ensembles have been widely used but are computationally infeasible for large-scale LLMs due to the need for multiple forward passes or model replicas. To address this, Bayesian Low-Rank Adaptation by Backpropagation (BLoB)~\cite{wang2025blob} and Bayesian Low-Rank Adaptation (BLoRA)~\cite{yangbayesian} incorporate Bayesian modeling into LoRA adapters, allowing uncertainty estimation through parameter distributions without a full-model ensemble. However, these methods still incur significant computational costs.
+
+Finetuning-based approaches offer a more practical alternative. Techniques such as Supervised Uncertainty Estimation~\cite{liu2024uncertainty} train auxiliary models to predict the confidence of LLM outputs based on activation patterns and logit distributions. Similarly, Uncertainty-aware Instruction Tuning (UaIT)~\cite{liu2024can} modifies the fine-tuning process to explicitly train models to express uncertainty in their outputs. SAPLMA~\cite{azaria2023internal} refines probabilistic alignment techniques to dynamically adjust model uncertainty estimates, ensuring adaptability to different downstream tasks. Additionally, LoRA ensembles~\cite{balabanov2024uncertainty} provide an alternative to full-model ensembles by training multiple lightweight LoRA-adapted variants of an LLM instead of retraining the entire network.
+
+\subsection{Prediction Uncertainty}
+Most off-the-shelf UQ methods focus on prediction uncertainty since it is the most straightforward way to estimate the uncertainty. Considering the number of generations and models when estimating uncertainties, existing methods for predicting uncertainty can be categorized into the following three categories.
+
+\subsubsection{Single Round Generation}
+Most single-round generation methods utilize the logit or hidden states during generation. With only one round of generation, these methods usually methods are usually efficient in estimating uncertainties.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Perplexity} is a measure of how well a probabilistic language model predicts a sequence of text~\cite{vaswani2017attention} while \citet{mora2024uncertainty}, \citet{margatina2023active} and \citet{manakul2023selfcheckgpt} utilize the perplexity as the uncertainty. In detail, using $w_i$ as the i-th token in the generation, perplexity is given by $
+\text{Perplexity} = \exp \left( -\frac{1}{N} \sum_{i=1}^{N} \ln p(w_i) \right)$.
+A higher perplexity means the model spreads its probability more broadly over possible words, indicating that it has a higher uncertainty.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Maximum Token Log-Probability.} Apart from the perplexity, Maximum token log-probability~\cite{manakul2023selfcheckgpt} measures the sentence’s likelihood by assessing the least likely token in the sentence. A higher $\text{Maximum}(p)$ indicates higher uncertainty of the whole generation. It is calculated by $
+Max(p) =\max\limits_{i}(-\ln p(w_i))$.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Entropy} reflects how widely distributed a model’s predictions are for a given input, indicating the level of uncertainty in its outputs~\cite{kuhn2023semantic,kadavath2022language}. Entropy for the i-th token is provided by $
+\mathcal{H}_{i} = - \sum_{\tilde{w} \in \mathcal{D}} p_i(\tilde{w}) \log p_i(\tilde{w})$.
+Then it is possible to use the mean or maximum value of entropy as the final uncertainty~\cite{manakul2023selfcheckgpt}:
+$
+Avg(\mathcal{H}) = \frac{1}{N}\sum_{i=1}^N\mathcal{H}_i; Max(\mathcal{H}) = \max\limits_{i}(\mathcal{H}_i)
+$.
+
+Furthermore, Shifting Attention to Relevance (SAR)~\cite{duan2024shifting}, enhanced the performance of entropy by adjusting attention to more relevant tokens inside the sentence. In detail, SAR assigned weight for $\mathcal{H}_{i}$ and the weight $R(w_i, s, x)$ can be obtained by:
+$R(w_i, s, x) = 1 - \left| g(x \cup s, x \cup s \setminus \{w_i\}) \right|,$
+where $g$ is a function that measures the semantic similarity between two sentences, which can be estimated with NLI models~\cite{duan2024shifting}.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Response Improbability} \cite{fadeeva2024fact} uses response improbability, which computes the probability of a given sentence and subtracts the resulting value from one. In detail, response improbability is provided by $
+    MP(s) = 1- \prod_{i=1} p_i(w_i).
+$
+If the sentence is certain (i.e., the product of token probabilities is high), $MP(s)$ will be low.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{P(True)} \cite{kadavath2022language} measures the uncertainty of the claim by asking the LLM itself whether the generation is true or not. Specifically, P(True) is calculated~\footnote{The original name is P(IK), which stands for \textit{``I Know''}.}:
+$
+    \text{P(True)} = 1- p(y_1=\text{``True”}).
+$
+Note that here we are using $y_1$ as the first token instead of $w_1$ because $w_1$ represents the first token in the generation $s$ while $y_1$ represents the first token when asking LLM whether the generation $s$ is correct or not.
+P(True) requires running the LLM twice. However, it does not require multiple generations $s$. Therefore, we still classify this method as a single-round generation~\footnote{This could be considered an uncertainty estimate as the sequence to be evaluated is the prediction given the input.}.
+
+\subsubsection{Multiple rounds generation} Multiple rounds generation methods estimate uncertainty by generating multiple predictions from the LLMs and analyzing their consistency, similarity, or variability. These approaches assume that if a model is confident, its outputs should be stable across different sampling conditions.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Token-Level Entropy.} Token-level entropy quantifies uncertainty in LLMs by analyzing the probability distribution of generated tokens across multiple samples. A confident model assigns high probability to a specific token, resulting in low entropy, while uncertain predictions distribute probability across multiple tokens, leading to higher entropy.
+
+Multiple responses are generated for the same input to estimate token-level entropy, and the entropy of the token probability distribution is computed. For example, predictive entropy~\cite{kadavath2022language} can also be applied to multiple response settings and shows a better uncertainty quality based on the variability of multiple outputs. Similarly, SAR~\cite{duan2024shifting} could also be applied to multiple responses.~\cite{malinin2021uncertainty} extends with Monte Carlo-based approximations and focuses on how probability distributions evolve across tokens during autoregressive generation. There are two main approaches to get the final uncertainty: one averages entropy across multiple sampled outputs, and the other decomposes sequence-level uncertainty into token-level contributions using entropy approximation.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Conformal Prediction.} Conformal Prediction (CP)~\cite{shafer2008tutorial} is a statistical framework that provides formal coverage guarantees for uncertainty estimation in LLMs. Its distribution-free properties make it suitable for both black-box and white-box models.
+
+In the black-box setting, where model internals are inaccessible, CP estimates uncertainty using response frequency, semantic similarity, or self-consistency. One study proposes a method tailored for API-only LLMs~\cite{su2024api}, using frequency-based sampling combined with normalized entropy and semantic similarity to define nonconformity scores. Another black-box CP method introduces a self-consistency-based uncertainty measure~\cite{wang2024conu}, which clusters sampled generations and selects a representative response to construct prediction sets with correctness guarantees, making it particularly effective for open-ended NLG tasks.
+
+On the other hand, white-box CP methods use logits, internal activations, and calibration techniques for more refined uncertainty estimation. One study proposes Conformal Language Modeling~\cite{quachconformal}, which integrates CP with autoregressive text generation by dynamically calibrating a stopping rule to ensure at least one response in the generated set is statistically valid. Another work adapts CP for multiple-choice QA~\cite{kumar2023conformal}, using model confidence scores to calibrate prediction sets, ensuring coverage with minimal set size. A more advanced technique, conditional CP~\cite{cherian2025large}, dynamically adjusts coverage guarantees based on the difficulty of the input, optimizing prediction set size while maintaining reliability.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Consistency-Based Methods.} Consistency-based uncertainty estimation methods analyze the agreement between multiple generated responses from an LLM to determine uncertainty. The underlying assumption is that if the model is confident, its responses should be consistent, while high variability among responses suggests uncertainty. ~\cite{lin2023generating} measures the overlap between words through Jaccard similarity in different generations. This method evaluates the deviation from self-consistency, where a high Jaccard similarity across generations implies low uncertainty.
+
+However, word-level similarity alone is insufficient, as different responses can convey the same meaning using different phrasing. Moreover, the generated response might include long reasoning steps that require detailed analysis~\cite{golovnevaroscoe}.
+To address this problem, some methods incorporate external models to assess semantic similarity rather than relying solely on lexical overlap.
+
+\subsubsection{Multiple Rounds Generation with External Models} Semantic-based uncertainty estimation methods expand multiple generation approaches by incorporating external models, such as Natural Language Inference (NLI) or pretrained language models, to evaluate the semantic relationships among generated responses beyond surface-level similarity.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Distribution-based entropy methods} quantify uncertainty by modeling the distribution of generated responses in a semantic space.
+
+Semantic Entropy (SE)~\cite{kuhn2023semantic} refines uncertainty estimation by clustering generated responses based on semantic equivalence. This approach uses an NLI model to determine entailment relationships among responses, grouping them into meaning-preserving clusters. Instead of calculating entropy over individual responses, SE computes entropy over these clusters.
+Kernel Language Entropy (KLE)~\cite{nikitin2024kernel} takes a different approach by avoiding explicit clustering. Instead, it embeds the responses in a semantic space using a positive semidefinite kernel function. By computing von Neumann entropy over these response distributions, KLE provides an even more fine-grained measure of uncertainty that considers nuanced semantic variations.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Pairwise similarity methods} construct a pairwise semantic similarity matrix between responses and analyze its structural properties to estimate uncertainty.
+
+Methods like~\cite{lin2023generating} use NLI models to score entailment and contradiction between every pair of generated outputs, forming a weighted similarity graph. A confident model yields semantically coherent responses with strong mutual agreement (high similarity), while inconsistent or ambiguous outputs lead to greater dispersion in the matrix. To quantify this dispersion, spectral graph metrics are applied: Eccentricity (Ecc) captures variability spread, Eigenvalue-based (Eig) measures assess global structure, and Degree (Deg) evaluates local consistency.
+Recent works further extend this by modeling the response similarity graph as directed~\cite{da2024llm} or multi-dimensional~\cite{chen2025uncertainty}, allowing for richer representation of semantic asymmetry or latent factors in uncertainty.
+
+\section{Evaluation of Uncertainty in LLMs}\label{sec:eval}
+
+\subsection{Benchmark Datasets}
+
+Datasets used in previous studies can be organized into several categories based on their focus.  An overall summary of the categorization of datasets and benchmarks for UQ is shown in \cref{tab:dataset}.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Reading comprehension} benchmarks include CoQA~\cite{reddy2019coqa} for conversational question answering tasks, RACE~\cite{lai2017race} for general reading comprehension, TriviaQA~\cite{joshi2017triviaqa} for fact-based questions, CosmosQA~\cite{huang2019cosmos} for contextual understanding, SQuAD~\cite{rajpurkar2016squad} for question answering on passages, and HotpotQA~\cite{yang2018hotpotqa} for multi-hop reasoning.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Reasoning and math} benchmarks include HotpotQA~\cite{yang2018hotpotqa} and StrategyQA~\cite{ Geva2021DidAU}, which test multi-hop reasoning, GSM8K~\cite{cobbe2021gsm8k} for solving math problems, and CalibratedMath~\cite{lin2022teaching}, designed to evaluate confidence expression in arithmetic. These benchmarks are helpful to evaluate the reasoning uncertainty.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Factuality} evaluation draws on datasets such as TruthfulQA~\cite{lin2021truthfulqa} for addressing common misconceptions, FEVER~\cite{thorne2018fever} for claim verification, HaluEval~\cite{li2023halueval} for detecting hallucinations, and an annotated FActScore~\cite{min2023factscore} dataset for evaluating the factuality of long-form text generated by LLMs.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{General knowledge} benchmarks can be adapted for UQ to test the models' general knowledge, such as MMLU~\cite{hendrycks2020measuring} for a wide range of subjects, GPQA~\cite{rein2024gpqa} for multiple-choice questions in physical sciences, and HellaSwag~\cite{zellers2019hellaswag} for common-sense reasoning through sentence completion.
+These benchmarks can be adapted for UQ because the tasks can be reduced to a classification problem, determining whether the model is confident or uncertain. The structured nature of these benchmarks allows for clear evaluation of the model’s confidence in its predictions.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Consistency and ambiguity} are two additional kind of benchmarks for UQ. Consistency benchmarks such as ParaRel~\cite{elazar2021measuring} tests semantic consistency across 328 paraphrases for 38 relations, and datasets like AmbigQA and AmbigInst, which feature inherent ambiguities~\cite{min2020ambigqa, hou2024decomposing,chen2025abg}.
+Ambiguity datasets are useful in UQ evaluation because they introduce aleatoric uncertainty by highlighting cases where multiple plausible interpretations exist, helping to assess how well models distinguish between data-driven randomness and model-based uncertainty. These datasets enable a more precise decomposition of uncertainty into aleatoric and epistemic components, improving model reliability and interpretability.
+
+\begin{table}[t]
+\centering
+\resizebox{!}{0.2\columnwidth}{
+\begin{tabular}{p{3.3cm}p{5.6cm}}
+\toprule
+\textbf{Category} & \textbf{Benchmarks} \\
+\midrule
+Reading Comprehension & TriviaQA~\cite{joshi2017triviaqa}, CoQA~\cite{reddy2019coqa}, RACE~\cite{lai2017race}, CosmosQA~\cite{huang2019cosmos}, SQuAD~\cite{rajpurkar2016squad}, HotpotQA~\cite{yang2018hotpotqa} \\
+\hline
+Reasoning \& Math & StrategyQA~\cite{Geva2021DidAU}, HotpotQA~\cite{yang2018hotpotqa}, GSM8K~\cite{cobbe2021gsm8k}, CalibratedMath~\cite{lin2022teaching} \\
+\hline
+Factuality & TruthfulQA~\cite{lin2021truthfulqa}, FEVER~\cite{thorne2018fever}, HaluEval~\cite{li2023halueval},
+
+FActScore~\cite{min2023factscore} \\
+\hline
+General Knowledge & MMLU~\cite{hendrycks2020measuring}, GPQA~\cite{rein2024gpqa}, HellaSwag~\cite{zellers2019hellaswag} \\
+\hline
+Consistency \& Ambiguity & ParaRel~\cite{elazar2021measuring}, AmbigQA~\cite{min2020ambigqa}, AmbigInst~\cite{hou2024decomposing},
+Abg-SciQA~\cite{chen2025abg}
+\\
+
+\bottomrule
+\end{tabular}}
+\caption{\small Categorization of benchmarking datasets for UQ.}
+\label{tab:dataset}
+\vspace{-10mm}
+\end{table}
+
+Recently, there have been efforts to develop UQ benchmarks for dedicated sources of uncertainty or specific methods.
+For example, MAQA~\cite{yang-etal-2025-maqa} is a dataset specifically designed to evaluate epistemic uncertainty in language models; LM-Polygraph~\cite{fadeeva2023lm} was later adopted as a comprehensive uncertainty benchmark~\cite{vashurin2024benchmarking}.
+\cite{ye2025benchmarking} developed a benchmark for conformal prediction methods.
+These contributions represent specialized datasets explicitly designed to assess UQ capabilities in LLMs, rather than adapting existing general-purpose benchmarks.
+
+\subsection{Evaluation Metrics}
+\label{sec:metrics}
+
+UQ is often evaluated from binary classification tasks, with the rationale being that high uncertainty should correspond to low expected accuracy.
+This is typically modeled by assigning a binary label to each response with a correctness function and using the uncertainty estimates to predict the label.
+
+\texttt{AUROC} (Area Under the Receiver Operating Characteristic curve), which measures how effectively the uncertainty score separates correct from incorrect responses, is often used.
+With values ranging from 0 to 1, higher \texttt{AUROC}s indicate better performance.
+
+Responses with confidence above the threshold are classified as predicted positives, while those below are treated as predicted negatives.
+Many prior studies use \texttt{AUROC} to evaluate how well the uncertainty score discriminates correct from incorrect predictions~\cite{chen2023quantifying, kuhn2023semantic,xiong2024can,liu2024uncertainty,liu2025mcqa}.
+
+Similarly, \texttt{AUPRC} (Area Under the Precision-Recall Curve) and \texttt{AUARC} (Area Under the Accuracy-Rejection Curve)~\cite{nadeem2009accuracy} also offer further insights into UQ. \texttt{AUPRC} measures how well the uncertainty score separates correct from incorrect responses~\cite{ling2024uncertainty}, while \texttt{AUARC} assesses how effectively the uncertainty measure aids in selecting accurate responses by determining which uncertain questions to reject~\cite{lin2024contextualized}.
+
+In the context of NLG where the correctness label is hard to obtain, researchers also compute heuristic-based fuzzy matching metrics such as \texttt{BLEU}~\cite{papineni2002bleu} and \texttt{ROUGE}~\cite{kuhn2023semantic} between the generated text and the reference output(s) to gauge the quality.
+
+However, these metrics often fail to capture semantic fidelity or factual correctness. Consequently, many researchers are increasingly turning to \texttt{LLM-as-a-judge} evaluations, wherein a large language model (e.g., GPT-4) is prompted to assess text quality or correctness.
+This approach can capture nuanced aspects like coherence, style, and factuality, but also introduces risks of bias and inconsistency.
+Human annotation, however, is expensive and is often limited to a small scale~\cite{zhang2024luq,kuhn2023semantic}.
+
+Apart from the binary classification framework, there are also multiple evaluation methods designed for the specific treatment of uncertainty, sometimes qualitative.
+For example, focusing on decomposing aleatoric and epistemic uncertainty, \cite{hou2024decomposing} evaluates only the aleatoric part by using AmbigQA~\cite{min2020ambigqa}, as high ambiguity questions should incur higher aleatoric uncertainty (whereas math questions, for examples, might have lower).
+The evaluation in \cite{giulianelli2023comes}, on the other hand, is a comparison between the variability of human production (generation) with that of the LM.
+With an emphasis on UQ for longer generations, \cite{zhang2024luq} compares the uncertainty estimate against FActScore~\cite{min2023factscore}, as the ``correctness'' of a long paragraph could be ill-defined or ambiguous.
+
+\section{UQ Applications in LLMs}
+LLMs are increasingly applied in diverse domains, offering flexibility and reasoning capabilities. However, UQ is crucial for ensuring their reliability, particularly in high-stakes applications. This section will introduce the applications that integrate the UQ of LLMs from some example domains.
+Many other fields like energy management, operations research, etc., employ LLMs and would require such discussions on the need for UQ as well.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Robotics.} LLM-based robotic planning suffers from ambiguity and hallucinations, motivating the need for UQ in the planning loop. For example, closed-loop planners~\cite{zheng2024evaluating} employ an uncertainty-based failure detector to continuously assess and adjust plans in real-time, while non-parametric UQ methods~\cite{tsai2024efficient} use an efficient querying strategy to improve reliability. ~\cite{mullen2024lap} integrates action feasibility checks to align the LLM’s confidence with real-world constraints, improving success rates from approximately 70\% to 80\%. Similarly,~\cite{ong2024simple} dynamically adjusts thresholds for alternative paths in adaptive skill selection, achieving higher success rates.
+~\cite{liang2024introspective} develops an introspective planning framework with
+LLMs self-assess their uncertainty to enhance safety and human-robot collaboration.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Transportation.}
+Preliminary research explores how LLMs can enhance transportation systems~\cite{da2024open,yao2025comal,da2023uncertainty}. For example, LLM inference has been used to bridge the sim-to-real gap in traffic signal control~\cite{da2023uncertainty,da2024prompt} and smooth mixed-autonomy traffic~\cite{yao2025comal}. However, both cases reveal the potential risk posed by hallucination. A few works have investigated the uncertainty measure while using the LLMs~\cite{de2023llm}, which tries to link the use of VLMs with deep probabilistic programming for UQ while conducting multimodal traffic accident forecasting tasks.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Healthcare.}
+In healthcare, LLMs and VLMs can be good references for diagnosis, but uncertainty is a critical dimension that should be considered together with the generation of more reliable treatment plans~\cite{savage2024large}. In~\cite{chen2024uncertainty}, it quantifies uncertainty in a white-box setting, and reveals that an effective reduction of model uncertainty can be achieved by using the proposed multi-tasking and ensemble methods in EHRs. However, as~\cite{wu2024uncertainty} benchmarks popular uncertain quantification methods with different model sizes on medical question-answering datasets, the challenge of UQ for medical applications is still severe.
+
+\vspace{1mm}
+
+\section{Challenges and Future Directions}
+While significant strides have been made in integrating uncertainty quantification into LLMs, several unaddressed challenges persist. This section will explore these unresolved issues, ranging from efficiency-performance trade-offs to cross-modal uncertainty, and outline promising avenues for future research, aiming to advance the reliability of LLMs in high-stakes applications.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Efficiency-Performance Trade-offs}. Multi-sample uncertainty methods incur prohibitive costs for trillion-parameter LLMs (\$12k per million queries~\cite{li2024llm}), yet yield marginal reliability gains ($\leq 0.02$ AUROC improvement~\cite{xiong2024efficient}). Hybrid approaches combining low-cost proxies (attention variance~\cite{heo2018uncertainty}, hidden state clustering~\cite{nikitin2024kernel}) could resolve this by achieving 90\% of maximal performance at 10\% computational cost. For example, precomputing uncertainty ``hotspots" during inference could trigger targeted multi-sampling only for high-risk outputs like medical diagnoses.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Interpretability Deficits}. Users struggle to distinguish whether uncertainty stems from ambiguous inputs, knowledge gaps, or decoding stochasticity. Modular architectures that decouple uncertainty estimation layers~\cite{huang2025latent,sensoy2018evidential} or employ causal tracing of transformer attention pathways \cite{wang2024grokking} could clarify uncertainty origins. For instance, perturbing model weights \cite{gal2016dropout} might reveal parametric uncertainty in low-resource languages, while input modules flag underspecified terms for clarification.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{Cross-Modality Uncertainty}. Integrating vision, text, and sensor data introduces misaligned confidence estimates between modalities: LVLMs exhibit $2.4\times$ higher uncertainty in visual vs. textual components~\cite{zhang2024unveiling}, causing 63\% of errors in multi-modal QA~\cite{zhang2024vl}. Dynamic contrastive decoding and uncertainty-aware fusion protocols show promise\cite{huo2024self,suo2025octopus}, but require domain-specific adaptations (e.g., aligning radiology images with reports \cite{li2023unify,zhao2023radiology}). Future work must develop unified uncertainty embeddings to harmonize modality confidence scales and adversarial training against cross-modal backdoor attacks \cite{zhang2024badcm,liang2024revisiting}.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{System-level Uncertainty in Agents and Reasoning.}
+As LLMs are increasingly deployed as autonomous agents or reasoning engines, the propagation and accumulation of uncertainty across steps becomes critical. Errors in early steps can lead to cascading failures, especially when the model expresses misplaced confidence. However, most existing UQ methods operate at one round of outputs from LLM, lacking mechanisms to capture uncertainty over multi-step reasoning chains or multi-action plans. As studies suggest that LLMs often fail to revise earlier decisions when presented with contradictory information~\cite{creswellselection}, there is a need for temporally-aware uncertainty tracking. Enhancing LLMs with structured memory or model-based planning, or leveraging graph-based representations to trace and revise uncertain steps~\cite{madaan2023self,yao2023tree}, could possibly provide more reliable behavior.
+
+\vspace{1mm}
+\noindent$\bullet$~\textbf{UQ Evaluation.}
+Evaluating the quality of UQ remains a fundamental challenge.
+While the binary classification metrics introduced in Section~\ref{sec:metrics} are widely used, they are not always suitable: many tasks, especially in NLG, cannot be easily reduced to binary correctness.
+Even for structured tasks like question answering, determining whether a free-form generation is correct can be nontrivial due to semantic variability and ambiguity.
+This issue becomes even more pronounced in open-ended tasks.
+
+Moreover, LLM-as-a-judge evaluation approaches are themselves subject to systematic biases~\cite{panickssery2024llm,lin2021truthfulqa,zheng2023large}.
+
+In addition, common evaluation metrics such as \texttt{AUROC} and \texttt{AUARC} often fail to capture what might be considered ``meaningful" uncertainty. These metrics typically assess a model’s ability to distinguish between correct and incorrect outputs, but do not differentiate between confidently wrong responses and those accompanied by an appropriate level of uncertainty.
+
+\section{Conclusion}
+
+In this survey, we offer a comprehensive overview of uncertainty quantification (UQ) in Large Language Models (LLMs). We first introduce the fundamental concepts relevant to both UQ and LLMs, highlighting the importance of reliability in high-stakes applications. Following this, we propose a detailed taxonomy for characterizing uncertainty dimensions in LLMs, including input, reasoning, parameter, and prediction uncertainty. We systematically introduce existing UQ methods using our novel taxonomy, reviewing their effectiveness across different uncertainty types. Ultimately, we identify and discuss some of the persistent challenges in UQ for LLMs, providing insightful directions for future research. The primary goal of this survey is to promote the integration of UQ techniques into LLM development, motivating both machine learning researchers and practitioners to participate in this rapidly advancing area.
+
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{main}
+
+\end{document}
+\endinput

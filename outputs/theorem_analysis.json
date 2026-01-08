@@ -1,0 +1,37 @@
+{
+  "total_samples": 7757,
+  "samples_with_process": 5357,
+  "theorem_patterns": {
+    "substitution_solve": 2054,
+    "focus": 2009,
+    "standard_equation": 1252,
+    "hyperbola_definition": 1075,
+    "parabola_definition": 886,
+    "asymptote": 831,
+    "perpendicular": 721,
+    "slope": 599,
+    "eccentricity_formula": 532,
+    "ellipse_definition": 487,
+    "midpoint": 431,
+    "tangent": 228,
+    "distance_formula": 92,
+    "param_relation_abc": 78,
+    "focal_radius": 71
+  },
+  "query_types": {
+    "eccentricity": 1233,
+    "other": 2052,
+    "distance": 1534,
+    "length": 291,
+    "equation": 1499,
+    "coordinate": 411,
+    "area": 305,
+    "range": 432
+  },
+  "curve_types": {
+    "Ellipse": 2452,
+    "Hyperbola": 2891,
+    "Circle": 771,
+    "Parabola": 2554
+  }
+}

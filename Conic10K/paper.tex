@@ -1,0 +1,594 @@
+
+\pdfoutput=1
+
+\documentclass[11pt]{article}
+
+\usepackage{EMNLP2023}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+
+\usepackage{fontawesome}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{inconsolata}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{todonotes}
+\usepackage{bbding}
+\usepackage{amstext}
+\usepackage{tikz-dependency}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{tablefootnote}
+
+\newcommand{\dsname}{\textbf{\textsc{Conic10K}}}
+
+\title{\dsname: A Challenging Math Problem Understanding and \\ Reasoning Dataset}
+
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+\setlength\titlebox{7cm}
+
+\author{
+    Haoyi Wu
+}
+
+\begin{document}
+\maketitle
+
+
+\blfootnote{$^\Diamond$ Equal Contribution.}
+\blfootnote{$^\clubsuit$ Corresponding Authors.}
+\blfootnote{$^\dag$ Work completed while the author was at ShanghaiTech University.}
+
+
+\begin{abstract}
+Mathematical understanding and reasoning are crucial tasks for assessing the capabilities of artificial intelligence (AI). However, existing benchmarks either require just a few steps of reasoning, or only contain a small amount of data in one specific topic, making it hard to analyse AI's behaviour with reference to different problems within a specific topic in detail. In this work, we propose \dsname, a challenging math problem dataset on conic sections in Chinese senior high school education. Our dataset contains various problems with different reasoning depths, while only the knowledge from conic sections is required. Since the dataset only involves a narrow range of knowledge, it is easy to separately analyse the knowledge a model possesses and the reasoning ability it has. For each problem, we provide a high-quality formal representation, the reasoning steps, and the final solution. Experiments show that existing large language models, including GPT-4, exhibit weak performance on complex reasoning. We hope that our findings could inspire more advanced techniques for precise natural language understanding and reasoning. Our dataset and codes are available at \url{https://github.com/whyNLP/Conic10K}.
+\end{abstract}
+
+\section{Introduction}
+Mathematical understanding and reasoning ability is an important component of human intelligence. Such an ability is the foundation of data analysis, financial applications and scientific research. Though there have been lots of studies \cite{deeplearnforsymbolicmath,cot}, mathematical reasoning are far from being solved by existing methods \cite{lu2022survey}, even with symbolic reasoners \cite{hopkins-etal-2019-semeval} and large language models (LLMs) \cite{lightman2023let}. To evaluate and analyse the mathematical ability, various datasets and benchmarks have been proposed in recent years \cite{ape210k, MathDataset, mishra-etal-2022-numglue, mishra-etal-2022-lila}. However, these datasets or benchmarks often suffer from the following problems: (1) The problems can be solved with only a few reasoning steps, so language models may rely on shallow heuristics to achieve high performance \cite{patel-etal-2021-nlp}; (2) The dataset covers a wide range of topics and hence there is only a small amount of data for each topic, which makes it hard to distinguish whether the model fails because of a lack of background information, or due to weak reasoning ability.
+
+To address the above issues, we propose \dsname, an open-ended math problem dataset on conic sections in Chinese senior high school education. This dataset contains 10,861 carefully annotated problems, each one has a formal representation, the corresponding text spans, the answer, and natural language rationales. Figure \ref{fig:example} shows an example problem in our dataset. To evaluate the mathematical understanding and reasoning ability, we perform two different tasks on existing LLMs: semantic parsing and mathematical question answering (mathQA). Semantic parsing assesses a language model's ability to understand mathematics. The model is required to translate the math problem in natural language into its formal meaning representations. MathQA jointly evaluates the language model's ability of mathematical understanding and reasoning. The model needs to generate the answers to questions. Since the topic of \dsname~ is restricted to conic sections, the knowledge required to solve different problems is the same, while the only difference is the difficulty in reasoning. Therefore, if the model is able to solve simple problems but not hard ones, we are assured that the failure lies in the lack of ability in mathematical reasoning. 
+
+\begin{figure*}[tb]
+  \centering
+  \includegraphics[page=1,width=0.97\linewidth,trim=35 60 35 60,clip]{figures/Example.pdf}
+  \caption{Example problem from the \dsname~dataset.}
+  \label{fig:example}
+\end{figure*}
+
+Our experiments show that current models obtain good performance in semantic parsing. However, in mathQA, these models are far from being satisfactory. When performing zero-shot chain of thought (CoT) \cite{cot} prompting, the best model \textbf{GPT-4} \cite{gpt4} can only achieve $15.5\%$ accuracy using human evaluation. When finetuning is further applied, the best model \textbf{ChatGLM-6b} \cite{du-etal-2022-glm} still obtains a poor accuracy of $22.5\%$ under human evaluation. When we translate the problems into English and apply zero-shot CoT to reason in English, the accuracy of \textbf{GPT-4} is $26.0\%$, which is still far below the performance of human experts at $57.5\%$ with a 3-minute time limit for each problem. This shows that the poor performance is not due to the language being used but to a deficiency in reasoning ability. Therefore, we believe the mathematical reasoning ability of language models is still limited despite their huge success in natural language understanding. % This shows that the poor performance is not due to language but due to a lack of reasoning ability. Therefore, improvement in reasoning method is required to achieve a good performance on mathematical reasoning in \dsname.
+
+We conclude our contributions as follows: 1) We propose \dsname, a challenging math problem dataset on conic sections in Chinese senior high school education, with high-quality annotations of formal representations; 2) We perform experiments to inspect the mathematical understanding and reasoning ability of LLMs separately; 3) We give detailed analysis on the model behaviour and conduct comprehensive case studies. We hope that our work could help the community to better analyse LLMs in mathematical understanding and reasoning and inspire more advanced techniques to enhance the mathematical reasoning ability of LLMs.
+
+
+\section{Related Work}
+
+% \subsection{Math Problem Datasets}
+There has been a wide range of datasets on math problems in the literature. MATHQA \cite{amini-etal-2019-mathqa} and GSM8K \cite{gsm8k} are math word problem datasets. They focus on open-domain understanding, where the objective is to extract a single equation based on the information about quantities in the problem, rather than mathematical reasoning. Similarly, Math23K \cite{wang-etal-2017-deep} and Ape210K \cite{ape210k} are popular datasets about Chinese math word problems with open-domain scenarios and simple reasoning steps. Geometry3K \cite{lu-etal-2021-inter} is a geometry problem-solving dataset that provides formal representations, but the dataset size is small and the problems do not require complex reasoning. AQuA \cite{ling-etal-2017-program}, NumGLUE \cite{mishra-etal-2022-numglue} and Lila \cite{mishra-etal-2022-lila} are large-scale datasets of various math problems. They have been used as benchmarks in solving math word problems and mathematical reasoning tasks, but we find that these datasets require only a few reasoning steps. MATH \cite{MathDataset} is the one with the longest reasoning steps among these datasets. It has been used as a standard benchmark in recent work of LLMs \cite{lewkowycz2022solving, lightman2023let}. However, while it covers a wide range of problems, it contains limited data in each specific topic, making it hard to analyse the model behavior in detail with reference to one topic. It also does not provide any formal representations. Our proposed \dsname~contains problems of long reasoning steps using closed-domain knowledge and has high-quality annotations with formal representations. A detailed comparison between the aforementioned datasets and \dsname~is shown in Table \ref{tab:data-cmp}.
+
+% \subsection{Evaluating LLMs on Math Datasets}
+
+\begin{table*}[t]
+\centering
+\scalebox{0.75}{
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Dataset} & \textbf{Size} & \textbf{Language} & \textbf{Formal Rep.} & \textbf{Rationale} & \textbf{Reasoning Steps} \\ \midrule
+{\bf AQuA }\cite{ling-etal-2017-program} & 100,000 & English & \XSolidBrush & Natural Language & 2.15 \\
+{\bf Math23K} \cite{wang-etal-2017-deep} & 23,162 & Chinese & \XSolidBrush & Equation & 1.59 \\
+{\bf MATHQA }\cite{amini-etal-2019-mathqa} & 37,297 & English & \XSolidBrush & Program & 2.99 \\
+{\bf Ape210K} \cite{ape210k} & 210,488 & Chinese & \XSolidBrush & Equation & 2.02 \\
+{\bf GSM8K} \cite{gsm8k} & 8,792 & English & \XSolidBrush & Natural Language & 2.25 \\
+{\bf Geometry3K} \cite{lu-etal-2021-inter} & 3,002 & English & \Checkmark & \XSolidBrush & 2.57 \\
+{\bf MATH} \cite{MathDataset} & 12,500 & English & \XSolidBrush & Natural Language & 4.65 \\
+{\bf NumGLUE} \cite{mishra-etal-2022-numglue} & 101,835 & English & \XSolidBrush & \XSolidBrush & 1.67 \\
+{\bf Lila} \cite{mishra-etal-2022-lila} & 134,000 & English & \XSolidBrush & Program & 1.70 \\
+\midrule
+\bf Conic10K (Ours) & 10,861 & Chinese & \Checkmark & Natural Language & 4.23 \\ \bottomrule
+\end{tabular}}
+\caption{Comparison of our \dsname~dataset with existing datasets. \dsname~is the largest dataset that has formal representation annotated. It is also the dataset that has the second longest average number of reasoning steps in all languages and has the longest average number of reasoning steps in Chinese.}\label{tab:data-cmp}
+\end{table*}
+
+\section{Dataset}
+\subsection{Formal Representation}\label{sec-fr}
+
+We design a formal representation that avoids ambiguity and is close to natural language. Specifically, our representation is built upon Assertional Logic \cite{zhou2017first}. Assertional Logic (AL) is a powerful knowledge representation that is more expressive than first-order logic while easier to read and write for humans. In this work, we use a variant of AL with three components: declarations, facts and queries. Declarations define individuals with their types (e.g. \verb|G:Ellipse|). Facts are assertions that describe the conditions in the problem (e.g. \verb|Focus(G)={F1, F2}|). Queries are the terms that represent the goal of the problem (e.g. \verb|Range(Eccentricity(G))|). See more details in Appendix~\ref{sec:apx-formal-rep}. 
+
+\subsection{Dataset Format}
+
+An example is presented in Figure~\ref{fig:example}. For each question, we give 1) the question text in natural language with math formulas in \LaTeX, 2) the rationale in natural language, 3) the answer to the question, 4) the formal representation and 5) the text span corresponding to each sentence in the formal representation. 
+
+\subsection{Dataset Construction}
+
+\subsubsection{Data Collection}
+To construct the dataset, we first collect approximately 20,000 open-ended problems about conic sections from two websites that focus on Chinese high school education in image format. Each problem image contains the problem text, rationale, and answer. Then, we use mathpix\footnote{https://mathpix.com/} to convert these images into text. Since our dataset is focused on conic sections, we filter out problems that involve knowledge from other topics such as sequences and solid geometry. After that, we remove duplicated problem using fuzzy matching. After the above process is finished, the size of the dataset is reduced from around 20,000 to approximately 14,000. 
+
+\subsubsection{Annotation}
+
+To ensure the correctness of the data and avoid ambiguities, we apply strict quality control during the annotation process\footnote{See Appendix~\ref{sec:apx-anno-qua} for more details.}. The complete process is as follows:
+\paragraph{Initiation}
+We first build a small dataset with hundreds of samples, write the annotation guidelines and design a rule-based AI assistant for annotation. The rule-based AI assistant is able to recognize \LaTeX~math expressions and complete simple formal representations, which greatly accelerates the annotation process and reduces annotation errors.
+\paragraph{Verification}
+We select the annotators from a group of candidates by their performance on the small dataset. These annotators are provided with annotation guidelines along with hundreds of samples. Annotators with the best performance will take part in the rest of the annotation process.
+\paragraph{Annotation}
+We ask the annotators to further filter out problems about other topics, write the formal representation, select the corresponding text spans and fix the incorrectly recognized problem texts and answers. Each problem is annotated by two annotators, and then validated by another validator with an automated tool for comparison. We also randomly check 3\% of the annotations. This process takes 4 months in total.
+\paragraph{Finalization}
+After the annotation is finished, we train a language model\footnote{We finetune the \textbf{OPUS-mt-zh-en} \cite{tiedemann-thottingal-2020-opus}. It is a machine translation model that translates Chinese into English.} through 5-fold cross-validation, manually check the inconsistency between model predictions and the annotated formal representations, and fix the errors in annotations. This helps us correct another 2\% of the data. Then we randomly split the dataset into train, validation, and test sets with the ratio 7.5:1:2. The train set size is 7,758, the validation set size is 1,035, and the test set size is 2,068. We proceed to the evaluation of LLMs with this split.
+
+% \begin{figure}
+%     \centering
+%     \includegraphics[page=2,width=0.9\linewidth,trim=200 20 200 20,clip]{figures/Figures.pdf}
+%     \caption{The construction process of \dsname.}
+%     \label{fig:annotation-process}
+% \end{figure}
+\begin{figure}[]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/reasoning_steps.pdf}
+    \caption{Distribution of reasoning steps in $50$ sampled problems from \dsname. All numbers are rounded to their nearest integers.}
+    \label{fig:reasoning-steps}
+\end{figure}
+
+\subsection{Dataset Statistics}
+Table \ref{tab:stat} presents the basic statistics about \dsname. The problems in our dataset tend to be long and complex. Besides these metrics, we also estimate the number of reasoning steps by the minimum number of rules required to get enough information to obtain an answer. Since the process of applying rules is subjective, we ask two graduate students to individually annotate the rules used to solve the problems. We uniformly sampled $30$ problems from each of the datasets listed in Table \ref{tab:data-cmp} and ask the two students to annotate the reasoning steps. Results show that \dsname~is the dataset with the second largest number of reasoning steps. The distribution of reasoning steps in \dsname~is depicted in Figure \ref{fig:reasoning-steps}. We show additional dataset statistics in Appendix \ref{sec:additional-stat}.
+
+
+To facilitate model analysis, we divide the answers into $6$ categories as described in Table \ref{tab:ans_type}. Figure \ref{fig:ans_type} shows the distribution on these categories.
+\begin{figure}[]
+    \centering
+    \includegraphics[width=\linewidth,trim=0 0 0 25,clip]{figures/ans_type.pdf}
+    \caption{Distribution of the 7,758 training examples on answer categories.}
+    \label{fig:ans_type}
+\end{figure}
+
+\begin{table}[tb]
+\centering
+\scalebox{0.8}{
+\begin{tabular}{lr}
+\toprule
+Num. problems & 10,861 \\
+Num. operators & 94 \\
+Num. concepts & 20 \\
+\midrule
+Avg. \LaTeX~expressions in a problem & 5.76 \\
+Avg. tokens in a problem & 83.43 \\
+Avg. sentences in a problem & 3.41 \\
+Avg. sentences in formal rep. of a problem & 10.55 \\
+Avg. operators in formal rep. of a problem& 15.70 \\
+Avg. individuals in a formal rep. of a problem& 4.51 \\
+\bottomrule
+\end{tabular}}
+\caption{Statistics about \dsname. Problems are tokenized using bert-base-chinese tokenizer\footnote{https://huggingface.co/bert-base-chinese} in Avg. tokens in a problem.}
+\label{tab:stat}
+\end{table}
+
+\begin{table}[tb]
+\centering
+\scalebox{0.7}{
+\begin{tabular}{ccp{4cm}}
+\toprule
+\textbf{Category} & \textbf{Examples} & \textbf{Description} \\ \midrule
+Simple Number & $2, -1$ & Numerical values composed of a single number \\
+Complex Number & $1/3, \sqrt5-1$ &  Numerical values composed of multiple numbers \\
+Equation & $x^2+y^2/4=1$ & Equations \\
+Coordinate & $(0,1), (-\sqrt{2},0)$ & Coordinates of points \\
+Interval \& Set & $[-1, 1], \{0,1\}$ & Intervals and sets\\
+Text & `ellipse' & Texts \\ \bottomrule
+\end{tabular}}
+\caption{Answer categories with examples and description.}\label{tab:ans_type}
+\end{table}
+
+\begin{table*}[tb]
+\centering
+\scalebox{0.8}{
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Model} & \textbf{Sizes} & \textbf{Architecture} & \textbf{Base Model} & \textbf{Chinese-Oriented} & \textbf{IT \& RLHF} \\ \midrule
+{\bf mT5} \cite{xue-etal-2021-mt5} & 300M-13B & Encoder-decoder & - & \XSolidBrush  & \XSolidBrush \\
+{\bf mT0} \cite{mt0-bloomz} & 300M-13B & Encoder-decoder & {\bf mT5} & \XSolidBrush & \Checkmark \\
+{\bf LLaMA} \cite{llama} & 7B-65B & Decoder-only & - & \XSolidBrush & \XSolidBrush \\
+{\bf Vicuna} \cite{vicuna2023} & 7B, 13B & Decoder-only & {\bf LLaMA} & \XSolidBrush  & \Checkmark \\
+{\bf Ziya} \cite{yang-etal-2022-zero} & 13B & Decoder-only & {\bf LLaMA} & \Checkmark & \Checkmark \\
+{\bf Bloom} \cite{bloom} & 560M-176B & Decoder-only & - & \XSolidBrush & \XSolidBrush \\
+{\bf Bloomz} \cite{mt0-bloomz} & 560M-176B & Decoder-only & {\bf Bloom} & \XSolidBrush & \Checkmark \\
+{\bf ChatGLM} \cite{du-etal-2022-glm} & 6B & Prefix Decoder & - & \Checkmark & \Checkmark \\ 
+{\bf Falcon} \cite{falcon} & 7B, 40B & Decoder-only & - & \XSolidBrush & \XSolidBrush \\ 
+{\bf Falcon-inst} \cite{falcon}& 7B, 40B & Decoder-only & {\bf Falcon} & \XSolidBrush & \Checkmark \\ 
+{\bf GPT-3.5-turbo}\tablefootnote{https://chat.openai.com/, we use \textbf{GPT-3.5-turbo-0314} version.} & ? & Decoder-only & - & \XSolidBrush & \Checkmark \\ 
+{\bf GPT-4}\tablefootnote{we use \textbf{GPT-4-0314} version.} \cite{gpt4} & ? & Decoder-only & - & \XSolidBrush & \Checkmark \\ 
+
+\bottomrule
+\end{tabular}}
+\caption{Models used in our experiments. Chinese oriented refers to whether methods, such as increasing the portion of Chinese data and designing a tokenizer for Chinese, are used to improve performance in Chinese tasks. \textbf{IT} stands for instruction tuning and \textbf{RLHF} stands for reinforcement learning with human feedback.}\label{tab:model-list}
+\end{table*}
+
+\section{Experiments}
+This section describes our experiments to evaluate the mathematical understanding and reasoning abilities of various models.
+
+\subsection{Tasks}
+Based on data provided by \dsname, we introduce two tasks: \textbf{semantic parsing} and \textbf{mathQA}. Semantic parsing requires a model to translate math problems in natural language into formal representations, while mathQA needs a model to give correct solutions to math problems. The semantic parsing task aims solely at assessing the model's ability to understand mathematics, and the mathQA task jointly evaluates the model's ability of mathematical understanding and reasoning.
+
+\subsection{Models}
+We evaluated the performance of several popular pretrained models on the above two tasks. The models used for evaluation are as listed in Table \ref{tab:model-list}.
+
+
+\subsection{Evaluation Details}
+Due to limited computation resources, we conducted full finetuning on models with size of less than 4B. For models around 7B, we performed parameter efficient finetuning using LoRA \cite{lora} and 8-bit quantization \cite{8bit}. We also apply zero-shot CoT inference without finetuning for models with sizes between 7B and 13B. The models evaluated in zero-shot CoT setting all have undergone instruction tuning or RLHF in their respective pretraining process. When finetuning, we use instruction tuning \cite{t0} to train the models. The instructions are architecture-specific and task-specific, as depicted in Table \ref{tab:instruction-list}. 
+
+When finetuning language models, we use the following hyperparameter settings. We use AdamW as the optimizer. The learning rate is selected from $\{8e-5, 2e-5\}$, with a linear learning rate decay. For models using LoRA, we set target modules to $q,k,v$ for {\bf Falcon-7b} and to $q,v$ for other models. The LoRA rank is set to $16$ for models with size around 7B. To ensure a similar number of trainable parameters, we set the LoRA rank to $24$ for {\bf Bloomz-3b} and $32$ for {\bf Bloomz-1b7}. We use greedy decoding in all generations.
+
+\begin{table}[tb]
+\centering
+\scalebox{0.77}{
+\begin{tabular}{ccp{5cm}}
+\toprule
+\textbf{Architecture} & \textbf{Task} & \textbf{Instruction} \\ \midrule
+Encoder-decoder & SP & Please translate the following problem into expressions: ``\textit{problem}'' \\
+Encoder-decoder & MQA & Please give an answer to the following problem: ``\textit{problem}'' \\
+Decoder-only & SP & The translation into expressions of ``\textit{problem}'' is \\
+Decoder-only & MQA & The answer to ``\textit{problem}'' is \\ \bottomrule
+\end{tabular}}
+\caption{Instructions used in finetuning. \textit{problem} is replaced by the problem text when training.}\label{tab:instruction-list}
+\end{table}
+
+In zero-shot CoT inference for mathQA, we use the same prompt as GAOKAO-Benchmark \cite{gaokao} to instruct the models to give an answer together with a rationale. In MathQA, we also experiment with in-context learning \cite{min-etal-2022-metaicl}, which adds in-context demonstrations of the task in the prompt, and self-consistency \cite{self-consistency}, which conducts majority voting on the sampled results on {\bf GPT-3.5-turbo}. In semantic parsing, however, the formal representation is unknown to the above models. Since it requires more than 3,000 tokens to explain the syntax and semantics of each component in the formal language, which is out of the context length limit of most models listed above, we do not evaluate the performance of zero-shot CoT in semantic parsing.
+
+In addition to the methods mentioned above, we also evaluate the following two methods in mathQA as a reference: \textbf{(1) Guessing `2'}: Predicting the most frequent answer in the train set, which is `2'. \textbf{(2) Human Experts}: We randomly select 20 problems from the test set and ask two graduate students to answer. Each problem has a 3-minute time limit. We report the average accuracy of these two students.
+
+\subsection{Metrics}
+\subsubsection{Semantic Parsing}
+For semantic parsing, we evaluate the model predictions by micro-F1, macro-F1 and accuracy. The accuracy is the proportion of the problems that have a one-to-one match between all sentences in the prediction and the ground truth. Micro-F1 (mi-F1) and macro-F1 (ma-F1) are defined as follows:
+\begin{align}
+    \text{mi-F1}&=2\cdot \frac{pr}{p+r}, \\
+    \text{ma-F1}&=\frac{\sum_{i=1}^n \text{F1}_{i}}{n}
+\end{align}
+where $n$ is the total number of problems, $p = \rm \frac{\text{\# of all matched sentences}}{\text{\# of all predicted sentences}}$ is the overall precision, $r = \rm \frac{\text{\# of all matched sentences}}{\text{\# of all gold sentences}}$ is the overall recall, $\text{F1}_i$ is the F1 score of problem $i$. 
+
+To compute the metric, we need to find the number of matched sentences between the prediction and ground truth. Since the formal representation is insensitive to individual naming, we enumerate all possible individual name mappings between prediction and ground truth and select the mapping that achieves the maximum number of matched sentences. We optimize the evaluation script by only considering individuals with the same type so that the evaluation time on the validation set and test set is acceptable.
+
+\begin{table}[t]
+\centering
+\scalebox{0.74}{
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{lccccc} \toprule
+\multirow{2}{*}{\bf Model} & \bf Trainable & \multirow{2}{*}{\bf mi-F1} & \multirow{2}{*}{\bf ma-F1} & \multirow{2}{*}{\bf Acc.} & \bf \# Syntax \\
+ & \bf Param.     &  & &  & \bf  Err.  \\ \midrule
+\multicolumn{4}{l}{\emph{Finetuning PLM}} \\
+% \bf OPUS-zh-en & 78M & 93.5 & 92.9 & 61.8 & 18 \\
+\bf mT5-base & 580M & 93.1 & 93.7 & 66.3 & 19 \\ 
+\bf mT0-base & 580M & 95.8 & 96.2 & 77.2 & 10 \\ 
+\bf mT5-large & 1.2B & 95.8 & 96.2 & 77.6 & 12\\ 
+\bf mT0-large & 1.2B & 96.7 & 96.9 & 80.7 & \underline{6} \\ 
+\bf mT5-xl & 3.7B & 96.9 & 97.2 & 82.6 & 9\\ 
+\bf mT0-xl & 3.7B &  \underline{\bf 97.4} &  \underline{\bf 97.5} & \underline{\bf 84.6} & 8 \\ \midrule 
+\multicolumn{4}{l}{\emph{Finetuning LLM using LoRA}} \\
+\bf Bloomz-1b7 & 7M & 90.0 & 90.7 & 62.7 & 13\\ 
+\bf Bloomz-3b & 7M & 91.5 & 92.2 & 67.6 & 6 \\ 
+\bf Bloomz-7b1 & 8M & 94.3 & 94.7 & 71.3 & 4 \\ 
+\bf Falcon-7b  & 12M & 89.5 & 89.6 & 58.0 & 10 \\
+\bf LLaMA-7b   & 8M & 94.0 & 94.8 &  71.1 & 5 \\
+\bf ChatGLM-6b & 8M & 95.1 & 95.8 & 74.7 & 7 \\
+\bf Vicuna-7b  & 8M & \underline{96.2} & \underline{96.6} & \underline{76.9} & \bf 3\\
+\midrule
+\end{tabular}}
+\caption{Results on semantic parsing in \dsname. The fully finetuned \textbf{mT0-xl} achieve the highest accuracy, while the LoRA finetuned \textbf{Vicuna-7b} achieves the lowest syntax error rate.}
+\label{tab:sp-res}
+\end{table}
+
+\subsubsection{MathQA}
+In mathQA, since it is nontrivial to automatically determine whether two answers are the same (e.g., $1/\sqrt{2}$ vs. $\sqrt{2}/2$, $x-y=0$ vs. $x=y$, and $3x+4y=5$ vs. $\frac{3}{5}x+\frac{4}{5}y-1=0$), we rely on human evaluation to determine the correctness of model answers.
+
+\section{Results and Discussions}
+In this section, we introduce and explain the results of the experiments. The main results of semantic parsing and mathQA are shown in Table \ref{tab:sp-res} and Table \ref{tab:qa-res} respectively.
+
+
+\subsection{Semantic Parsing}
+Language models show good ability of understanding on math problems after proper training. The best model {\bf mT5-xl} can successfully translate 84.6\% of the problems into formal representations. For the problems it fails to accurately translate, the predictions only differ from the ground truth in minor details. The F1 score and accuracy from \textbf{Bloomz} family and \textbf{Falcon-7b} are much lower than other models. The performance of finetuned instruction tuned models is consistently better than that of finetuned base models. 
+
+\paragraph{Models pretrained on code show strong ability in learning syntax.} Models except for the \textbf{mT5} family have been pretrained on code. The syntax error rates of these models are on average lower than that of the \textbf{mT5} family, even though their F1 score and accuracy may be lower than the \textbf{mT5} family. Since the formal representation resembles programming languages in syntax, pretraining on code may be able to help model to learn the syntax of formal representations more easily.
+
+\paragraph{Increasing model size effectively improves model's performance in semantic parsing.} From the results of the model families {\bf mT5, mT0} and {\bf Bloomz}, we find that increasing the model size from the smallest to largest in our experiment can significantly improve the accuracy by at least 7.4\%.
+
+
+\subsection{MathQA}
+Language models generally show poor performance on mathQA in \dsname. Under the zero-shot CoT setting, most models achieve an accuracy close to 0. Even after finetuning, the accuracy of the best model is still significantly lower than that of human experts by 35.0\%. 
+
+\begin{table*}[tb]
+\centering
+\renewcommand{\arraystretch}{1}
+\scalebox{0.8}{
+\begin{tabular}{lcccccccc} \toprule
+\multirow{2}{*}{\bf Model} & \bf Trainable & \multicolumn{6}{c}{\bf Accuracy of Answer Category} \\ \cline{3-9}
+\rule{0pt}{2.5ex}  & \bf Param. & \bf Simple Num.  & \bf Complex Num. & \bf Expression & \bf Coordinate & \bf Interval \& Set & \bf Text & \bf All \\ \midrule 
+\multicolumn{4}{l}{\emph{Finetuning PLM}} \\
+\bf mT5-base & 580M & 5.1 & 11.5 & 8.4 &\underline{5.0} & 1.6 & 0.0 & 7.2 \\
+\bf mT0-base & 580M & 22.8 & 13.6 & 7.3 & 2.5 & 4.9 & 0.0 & 13.0 \\
+\bf mT5-large & 1.3B & 21.0 & 14.8 & 8.1 & 3.7 & 4.9 & 0.0 & 13.0 \\
+\bf mT0-large & 1.3B & 16.7 & 17.0 & 12.5 & 3.7 &\underline{6.6} & 0.0 & 13.8 \\
+\bf mT5-xl & 3.7B &\underline{19.9} &\underline{17.6} &\underline{11.0} &\underline{5.0} & \underline{6.6} & 0.0 & \underline{14.8} \\
+\bf mT0-xl & 3.7B & 18.1 & 13.6 & 10.3 & 2.5 &\underline{6.6} & 0.0 & 12.5 \\ \midrule
+\multicolumn{4}{l}{\emph{Finetuning LLM using LoRA}}      \\
+\bf Bloomz-1b7  & 7M & 23.2 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 6.3 \\
+\bf Bloomz-3b  & 7M & 26.1 & 7.6 & 8.1 & 3.7 & 1.6 & 0.0 & 12.0 \\
+\bf Falcon-7b & 16M & 31.5 & 4.8 & 8.4 & \underline{15.0} & 8.2 & 0.0 & 14.0 \\
+\bf Bloomz-7b1  & 8M & 27.9 & 11.8 & 12.5 & 6.2 & 3.3 & 0.0 & 15.4 \\
+\bf LLaMA-7b  & 8M & 34.1 & 9.1 & 9.9 & 8.7 & 4.9 & 0.0 & 15.8 \\
+\bf Vicuna-7b & 8M & 37.7 & 9.4 & 12.8 & 10.0 & 8.2 & 0.0 & 17.9 \\
+\bf ChatGLM-6b & 8M & \bf \underline{39.3} &\bf \underline{23.1} & \underline{13.1} & 10.6 & \bf \underline{6.5} & 0.0 &\bf \underline{22.5} \\ \midrule
+\multicolumn{4}{l}{\emph{Zero-shot CoT}}\\
+\bf Bloomz-7b1 & - & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\  
+\bf Falcon-7b-inst & - & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\
+\bf Vicuna-7b & - & 1.5 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.4 \\
+\bf Vicuna-13b & - & 3.1 & 0.4 & 0.0 & 0.0 & 0.0 & 0.0 & 0.9 \\
+\bf Ziya-13b & - &2.8 & 0.9 & 0.7 & 0.0 & 0.0 & 0.0 & 1.1 \\
+\bf ChatGLM-6b & - & 4.0 & 0.7 & 0.2 & 1.3 & 0.0 & \bf \underline{14.3} & 1.5 \\
+\bf GPT-3.5-turbo & - & 8.5 & 4.6 & 4.0 & 12.3 & 0.6 & \bf \underline{14.3} & 6.2 \\
+\bf GPT-4 & - & \underline{17.8} & \underline{11.8} & \underline{\bf 20.4} & \underline{\bf 21.4} & \underline{5.3} & 0.0 &\underline{15.5} \\\midrule
+\multicolumn{4}{l}{\emph{References}} \\
+\bf Guessing `2' & - & 18.1 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 4.5 \\
+\bf Human Expert & -  & 62.5 &56.3&50.0&50.0 & 66.7& - & 57.5 \\ 
+\bottomrule
+\end{tabular}}
+\caption{Results on mathQA in \dsname. \textbf{ChatGLM-6B} achieves the best overall accuracy after finetuning using LoRA among all the models. In fully finetuning setting, \textbf{mT0-xl} shows strongest performance. In the zero-shot CoT setting, \textbf{GPT-4} has the highest overall accuracy. However, the performances of the above models are significantly lower than human expert's performance. \textbf{GPT-4} is evaluated on 200 randomly sampled problems. \textbf{Human Expert} is evaluated on 50 randomly sampled problems. The \textbf{Text} accuracy of \textbf{Human Expert} is empty because the sampled problems do not contain answers of category \textbf{Text}.}
+\label{tab:qa-res}
+\end{table*}
+
+\paragraph{Simple problems under finetuning setting may not be simple under zero-shot CoT setting.} Most models finetuned on \dsname~have the best performance in \textbf{Simple Numbers} among the answer categories. However, when it comes to zero-shot CoT setting, \textbf{GPT-4} and \textbf{GPT-3.5-turbo} obtain best accuracy in \textbf{Coordinate}. One possible reason is that after sufficient training on \dsname, the model can develop a shallow understanding of the task \cite{patel-etal-2021-nlp}, including the frequent answers of a specific kind of questions. Since \textbf{Simple Numbers} are simpler in form and have fewer potential answers compared to \textbf{Coordinates}, being familiar with the answer distribution can effectively increase the probability to hit the correct answer. However, in zero-shot CoT setting, the model is unaware of these distributions, so it has no advantage in difficult problems that have simple answers.
+% For example, `2' is the most frequent answer, so guessing `2' is more likely to hit the correct answer. 
+
+\paragraph{The accuracy is close to 0 in zero-shot CoT.} Under the zero-shot CoT setting, \textbf{Bloomz-7b1} and \textbf{Falcon-7b-inst} show extremely poor performances with 0 accuracy in all problems. These models tend to generate repetitive patterns, and in most cases fail to give an answer. Other models except for \textbf{GPT-4} generate text that looks like a valid rationale, but the majority of reasoning steps are incorrect. They often produce hallucinations in premises and rules, and derive wrong results. In Table \ref{tab:tricks}, even with in-context demonstrations or majority voting, the performances are still low. We showcase some failing cases in Table \ref{tab:failcase}. 
+
+\paragraph{The scaling law is less clear compared to semantic parsing.}
+Though we observe that increasing the model size continuously and effectively improves model performance in semantic parsing, such a phenomenon disappears in mathQA tasks. In \textbf{mT5} and \textbf{mT0} series, large models do not necessarily outperform small models. Similar observations have been made in MATH \cite{MathDataset} where the authors find that accuracy on math problems increases only modestly with model size.
+
+\paragraph{Chinese-oriented language models have better performance in mathQA in \dsname.} In the zero-shot CoT setting, the two Chinese-oriented models, \textbf{Ziya-13b} and \textbf{ChatGLM-6b}, achieve the best performance below \textbf{GPT-3.5-turbo}. In the finetuning using LoRA setting, \textbf{ChatGLM-6b} achieve an accuracy of $22.5\%$ and outperform other models by a large margin.
+
+\paragraph{Translating problems into English does not make the performance of \textbf{GPT-4} on par with human experts in mathQA.} We translate the problems into English and evaluate \textbf{GPT-4} in zero-shot CoT setting to determine whether the poor performance is due to language or long reasoning steps. The results in Table \ref{tab:lang-res} show the performance is significantly improved from $15.5\%$ to $26.0\%$ by translating the problems into English. However, this accuracy is still low compared to $57.5\%$ from human experts. Therefore, the primary challenge of mathQA in \dsname~still lies in how to do mathematical reasoning correctly.
+
+\begin{table}[t]
+\centering
+\scalebox{0.85}{
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{lc} \toprule
+\bf Language & \bf Overall Accuracy \\ \midrule
+\bf GPT-3.5-turbo + CoT & 6.2 \\
+\bf GPT-3.5-turbo + CoT + ICL & 5.9  \\
+\bf GPT-3.5-turbo + CoT + SC & 6.8 \\
+\midrule
+\end{tabular}}
+\caption{Results on mathQA in \dsname~using \textbf{GPT-3.5-turbo} with in-context-learning (ICL) or self-consistency (SC)}
+\label{tab:lang-res}
+\end{table}
+
+\begin{table}[t]
+\centering
+\scalebox{0.9}{
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{lc} \toprule
+\bf Language & \bf Overall Accuracy \\ \midrule
+Chinese & 15.5 \\
+English & 26.0  \\
+\midrule
+\end{tabular}}
+\caption{Results on Chinese problems and problems translated to English in mathQA in \dsname~using \textbf{GPT-4} with zero-shot CoT. Both are evaluated on the same 200 sampled problems.}
+\label{tab:tricks}
+\end{table}
+
+\subsection{Case Study}\label{sec:case}
+We inspect and analyse both success and failure cases in the experiment, which leads us to some interesting findings.
+% All questions and generated answers are into English to provide a clearer demonstration. 
+
+\paragraph{LLMs have limited ability in understanding long \LaTeX~expressions.} 
+$9.7\%$ of the incorrect predictions from \textbf{mT0-xl} are due to errors in translating simple but long \LaTeX~expressions. Common failures include missing terms, flipped signs and incorrect copies. For example, the \LaTeX~expression in the problem is \verb|x^2+y^2+2\sqrt{2}x-4\sqrt{2}y+10-r^2=0|, but the translated sentence becomes \verb|-4*sqrt(2)*y| \verb|+2*sqrt(2)*x+x^2+y^2+2=-r^2|. In this example, we observe both a flipped sign and an incorrect constant. We do not observe similar errors in relatively short \LaTeX~expressions.
+
+\paragraph{Models can hardly find shortcuts in reasoning in mathQA.} 
+We observe that models usually employ naive approaches to solve problems and fail to find shortcut solutions, which leads to more complicated computation and longer reasoning steps. The additional reasoning steps and computation make the models more likely to make mistakes during reasoning. Some examples of naive solutions from \textbf{GPT-4} and the corresponding shortcut solutions are listed in Table \ref{tab:shortcut} and \ref{tab:shortcut-2}. 
+
+\paragraph{GPT-4 and GPT-3.5-turbo probably lack knowledge about certain concepts.} 
+When asked problems about focal distance, \textbf{GPT-4} and \textbf{GPT-3.5-turbo} keep giving incorrect answers and often give a value that is half of the ground truth. Based on these observations, we suspect that these two models lack knowledge about focal distance. We ask \textbf{GPT-4} and \textbf{GPT-3.5-turbo} to explain what focal distance is in both Chinese and English, and they keep defining it as the distance between the center of an ellipse or hyperbola and one of its foci instead of the correct definition, the distance between the two foci. A probable reason is that `focal distance' is not a commonly used term within the English corpus, making the models unlikely to obtain correct knowledge about it.
+
+
+\section{Conclusion}
+We present \dsname, a math problem understanding and reasoning benchmark. It provides problems that require complex reasoning, while only involving knowledge about conic sections in Chinese senior high school education. We test popular LLMs on both semantic parsing and math question answering, inspecting model performance and behaviours. Results show that existing LLMs, including \textbf{GPT-4}, have poor performance in mathematical reasoning, while most models could achieve good performance in mathematical understanding (but not perfect yet). We analyse the model predictions in detail and find LLMs tend to hallucinate in reasoning, often fail to find the shortcuts solution, and may lack the knowledge to solve problems. We hope our dataset, \dsname, can help to discover the weaknesses of LLMs in mathematical understanding and reasoning and inspire more advanced techniques to enhance the mathematical reasoning ability of LLMs.
+
+\section*{Limitations}
+\dsname\ is a dataset with high-quality formal representation annotations, but there are still some limitations:
+\begin{itemize}
+    \item We design the formal representation to be accurate, unambiguous and close to natural language, but such representation is not commonly used and does not fit any existing symbolic reasoners. The conclusion may not apply to other formal representations such as propositional logic and first-order logic, or rationales like executable programs.
+    \item In conic sections, the commonly used mathematical reasoning strategies could be limited. For example, our problems may require solving simultaneous equations systems, but not likely mathematical inductions. Therefore, our dataset cannot evaluate some reasoning strategies such as mathematical induction.
+\end{itemize}
+
+\section*{Ethics Statement}
+\dsname\ is a dataset that requires massive data sources and heavy annotation. We claim that our work is free of ethical risks from the following perspectives:
+\paragraph{Data Source}
+The problems in \dsname~are collected from two websites that do not limit the usage of data for education and research purpose. We strictly follow the term of use and manually check all the data to avoid inappropriate information in the annotation stage.
+\paragraph{Annotation}
+We hire a group of 14 annotators for formal representation annotation and sign a contract to prescribe the rights from both sides. We clearly state the purpose of our study and the future data use. These annotators are well-paid for their work. The authors take responsibility to maintain the annotation website, provide necessary documents, answer questions from the annotators and clean up the data.
+% \paragraph{Dataset} TODO: Intended use and license
+
+
+% Entries for the entire Anthology, followed by custom entries
+\bibliography{anthology,custom}
+\bibliographystyle{acl_natbib}
+
+\appendix
+
+\section{Formal Representation}
+\label{sec:apx-formal-rep}
+
+\subsection{The Assertional Logic}
+Assertional Logic (AL) \cite{zhou2017first} is a formal representation where all kinds of knowledge are formalized by equality assertions. It builds upon the equality properties and the set theory. AL representations are human-friendly and it has been proved that the expressiveness of AL is stronger than first-order logic (or $k$th-order logic for any $k \ge 1$).
+
+Here, we briefly introduce the syntax of AL. Given a specific domain, the syntactic structure of AL is composed of three components: individuals, concepts and operators. Individuals represent objects in the domain, concepts represent groups of objects and operators represent relationships and connections among individuals and concepts. Operators are similar to functions and predicates in first-order logic (FOL), but they could accept high-order constructs (concept, concept of concepts), which leads to the strong expressiveness of AL.
+
+An assertion is of the form $a=b$, where $a, b$ are two terms (individuals, either atomic or compound). The knowledge base of AL is just a set of assertions.
+
+\subsection{Our Representation}
+We apply AL as our formal representation because of its strong readability. Our principle is that the formal representation should 1) avoid ambiguity. The formal representation should resolve the ambiguity in natural language and with the information inside the annotations, it should be possible to work out the solution by hand; 2) close to natural language. It should be able to represent the problem without rephrasing it; 3) simple and clear. Designing a representation with thousands of operators is definitely expressive and powerful, but it sacrifices the strength of logic and fails to extract common knowledge underneath.
+
+Therefore, we apply only 94 operators and 20 concepts (see Table \ref{tab:stat}) to represent all the problems in the dataset. To better accommodate the natural language, we also designed 3 pseudo operators: \verb|OneOf|, \verb|WhenMin|, \verb|WhenMax|. These operators do not fit the semantics of AL, but greatly simplify the representation and are closer to natural language. Also, it is trivial to convert these operators to terms in AL.
+
+There also has been evidence showing that rephrasing significantly impacts learning \cite{kwiatkowski-etal-2013-scaling}. To avoid rephrasing, we write detailed documents for the annotators, ask them to raise questions when they are not confident and frequently check the data during annotation.
+
+We design our representation in three components: declarations, facts and queries.
+
+\paragraph{Declarations}
+The declarations define individuals with their types. It has the format of \verb|var: type|, where \verb|var| is an individual and \verb|type| is a concept. These sentences are a special representation of the assertion \verb|Is(var, type) = True|. For simplicity, we allow defining multiple individuals in one sentence, with commas separating different individuals.
+
+\paragraph{Facts}
+The facts are assertions that describe the conditions in the problem. For clarity, we allow the use of syntactic sugar, which includes $<, \leq, >, \geq, +, -, \times, \div, a^b$. That is, a sentence could be an inequality such as \verb|a > b|, which indicates an assertion \verb|(a > b) = True|.
+
+\paragraph{Queries}
+The queries are the terms that represent the target of the problem. They ought to be an assertion with the left-hand-side(LHS) the query term and the right-hand-side(RHS) an unknown individual in AL, but we use the simplest format during the annotation.
+
+\subsection{Annotation Quality Control}
+\label{sec:apx-anno-qua}
+Our previous study shows that the annotation of formal language is extremely hard for humans. It is difficult for an experienced annotator to reach an accuracy above 50\%. As a result, we employ multiple measures to control the dataset quality, including:
+\begin{enumerate}
+    \item We provide a rule-based AI assistant to complete most of the annotations with high precision.
+    \item We only hire annotators with the highest performance on the small dataset we built in advance.
+    \item During the annotation, we ask the annotators to raise questions whenever they are not confident about how to annotate. We provide detailed documents and dedicated help to ensure the correctness of the annotation.
+    \item In addition to formal representations, we ask the annotators to annotate the text spans. We find it helps to increase the annotation accuracy.
+    \item Each problem will be annotated by two annotators individually, then passed to another validator. We design a web UI which could automatically compare two annotations and extract the difference. The validator will determine which one is correct, or a third annotation is required.
+    \item Every time the annotators finish 1000 annotations, we randomly sample 10 problems for additional checks. After all the annotations were finished, we randomly sample 200 problems for additional checks. In the additional check, we independently annotated the sampled problems, and then compare them with the existing annotation. We ask the annotators to do a thorough check if the accuracy is below 80\%\footnote{In the final check, about 99\% of the 200 sampled formal representation annotations (without considering text spans) pass the check.}.
+    \item We provide competitive payments ($>150k$ CNY in total, $\approx 20k$ USD) to the annotators. We allow adequate time for the annotation process.
+    \item After the annotation is finished, we finetune a zh-en translation model for further validation. We split the whole dataset into five random splits of the same size. Then, we pick four of them to finetune the model and collect predictions for the last split. We manually check all the problems whose prediction does not match the annotation. We repeat this process five times and obtain the final dataset.
+\end{enumerate}
+
+\section{Additional Dataset Statistics}
+\label{sec:additional-stat}
+We show the frequency of keywords in Figure \ref{fig:wordcloud}, and the distribution of question length in Figure \ref{fig:question_length}. In question length, we count all latex commands such as \verb|\frac, \leftarrow| as one token.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/wordclould.png}
+    \caption{Word cloud of the keywords in \dsname}
+    \label{fig:wordcloud}
+\end{figure}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/question_length.png}
+    \caption{Distribution of Question Length}
+    \label{fig:question_length}
+\end{figure}
+
+
+\section{Additional Results}
+We showcase some interesting outputs from models. Models including \textbf{Bloomz-7b} and \textbf{ChatGLM-6b} often generate redundant text and hallucinate when reasoning. We provide some samples in Table \ref{tab:failcase}. \textbf{GPT-4} shows a strong ability to perform reasoning in natural language, but its solution often fails to find the shortcuts designed in the problems. Such a solution often requires complicated calculations. Due to its limited ability in arithmetic calculation, the final answer from \textbf{GPT-4} is likely to be incorrect. We provide some samples in Table \ref{tab:shortcut} and \ref{tab:shortcut-2}.
+\begin{table*}[h!]
+\centering
+\scalebox{1}{
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{p{5cm}p{10cm}} \toprule
+\bf Problem & \bf Rationale \& Solution \\ \midrule
+Given that $M$ is a point on the parabola $x^{2}=4y$, $F$ is its focus, and point $A(1,5)$, what is the minimum value of $|MF|+|MA|$? & \textbf{Redundant solution by Bloomz-7b:} $|M F|+|M A|=|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|+|M F|+|M A|...$\\ \\
+If the eccentricity of an ellipse is $\frac{1}{2}$ and one of its foci coincides with the focus of the parabola $y^{2}=8x$, then what is the standard equation of the ellipse? & \textbf{Hallucination in reasoning by ChatGLM-6b:} According to the problem, we know that the eccentricity of the ellipse is $\frac{1}{2}$, and one of its foci coincides with the focus of the parabola $y^{2}=8x$.
+
+First, let's find the coordinates of the focus of the parabola $y^{2}=8x$. According to the definition of a parabola, the x-coordinate of the focus is $\frac{p}{2}$, where $p$ is the focal length. Since the standard equation of the parabola is {\color{red} $y^{2}=4px$}, we can determine that $p=2$. Therefore, the x-coordinate of the focus is $\frac{2}{2}=1$...\\
+
+\midrule
+\end{tabular}}
+\caption{Translated failing cases. The red text is the reasoning step where hallucination takes place.}
+\label{tab:failcase}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\scalebox{1}{
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{p{5cm}p{10cm}} \toprule
+\bf Problem & \bf Rationale \& Solution \\ \midrule
+Given a point P on the parabola with equation $y^{2}=4x$, let's denote the distance from point P to the y-axis as $d$. For a given point $A(4,5)$, what is the minimum value of $|PA|+d$? & \textbf{Naive solution by GPT-4:} First, we can write the equation of the parabola as $y^2=4x$. Let's assume the coordinates of point P as $(x_0, y_0)$, so we have $y_0^2=4x_0$. The distance from point P to the y-axis is denoted as d, which is equal to $d=x_0$. We need to find the minimum value of $|PA|+d$, which is equivalent to finding the minimum value of $|PA|+x_0$. Using the distance formula between two points, we have $|PA|= \sqrt{(x_0-4)^2+(y_0-5)^2}$. Substituting $y_0^2=4x_0$, {\color{red} we get $|PA|= \sqrt{(x_0-4)^2+(4x_0-5)^2}$}. Now we need to find the minimum value of $ \sqrt{(x_0-4)^2+(4x_0-5)^2}+x_0$. To simplify the calculation, we can first find the minimum value of $(x_0-4)^2+(4x_0-5)^2+x_0^2$. Expanding $(x_0-4)^2+(4x_0-5)^2+x_0^2$, we get $17x_0^2-40x_0+41$. We can find the extreme points by taking the derivative. Differentiating $17x_0^2-40x_0+41$, we get $34x_0-40$. Setting the derivative equal to 0, we find $x_0=\frac{20}{17}$. Substituting $x_0=\frac{20}{17}$ into $17x_0^2-40x_0+41$, we get the minimum value as $\frac{144}{17}$. Therefore, the minimum value of $|PA|+d$ is $\boxed{\sqrt{\frac{144}{17}}}$\\ \\
+& \textbf{Reference shortcut solution:} Since the distance between a point on a parabola and its focus is the same as the distance between the point and directrix of the parabola, $|PA|+d$ can be rewritten into $|PA| + d_1 - d_2=|PA|+|FP|-d_2$, where $d_1$ is the distance between $P$ and the directrix, $d_2$ the distance between the directrix and the y-axis, $F$ is the focues. By the definition of parabola, $d_2=1$, $F=(1,0)$. Since $|PA|+|FP|-d_2\ge |AP|-d_2 = \sqrt{(4-1)^2+(5-0)^2}-1=\sqrt{34}-1$. Therefore, the minimum value of $|PA|+d$ is $\boxed{\sqrt{34}-1}$.\\
+\midrule
+\end{tabular}}
+\caption{Translated example of solutions from \textbf{GPT-4} and shortcut solutions. The red text is the reasoning step where the solution goes wrong.}
+\label{tab:shortcut}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\scalebox{0.75}{
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{p{5cm}p{14cm}} \toprule
+\bf Problem & \bf Rationale \& Solution \\ \midrule
+The equation of the line that passes through the point $M(3, -1)$ and bisects the chord of the hyperbola $\frac{x^{2}}{4}-y^{2}=1$ is? & \textbf{Naive solution by GPT-4:} First, we need to find two symmetric points on the hyperbola. Let these points be $A(x_1, y_1)$ and $B(x_2, y_2)$, which are symmetric with respect to the point $M(3, -1)$. According to the properties of symmetric points, we have:
+
+$$x_1 + x_2 = 2 \cdot 3 = 6$$
+$$y_1 + y_2 = 2 \cdot (-1) = -2$$
+
+Since points $A$ and $B$ lie on the hyperbola, they satisfy the equation of the hyperbola:
+
+$$\frac{x_1^2}{4} - y_1^2 = 1$$
+$$\frac{x_2^2}{4} - y_2^2 = 1$$
+
+Substituting $y_1 = -2 - y_2$ into the first equation, we get:
+
+$$\frac{x_1^2}{4} - (-2 - y_2)^2 = 1$$
+
+Substituting $x_1 = 6 - x_2$ into the above equation, we get:
+
+$$\frac{(6 - x_2)^2}{4} - (-2 - y_2)^2 = 1$$
+
+This is a system of linear equations in terms of $x_2$ and $y_2$. By solving for $x_2$ and $y_2$, we can obtain the coordinates of points $A$ and $B$.
+
+{\color{red} Solving, we find $x_2 = \frac{6 \pm \sqrt{2}}{2}$ and $y_2 = \mp \sqrt{2} - 1$.} Therefore, $A\left(\frac{6 + \sqrt{2}}{2}, -\sqrt{2} - 1\right)$ and $B\left(\frac{6 - \sqrt{2}}{2}, \sqrt{2} - 1\right)$.
+
+Next, we need to find the equation of the line passing through points $A$ and $B$. Let the equation of the line be $y = kx + b$. Substituting the coordinates of points $A$ and $B$ into the equation, we obtain two equations:
+
+$$-\sqrt{2} - 1 = k \cdot \frac{6 + \sqrt{2}}{2} + b$$
+$$\sqrt{2} - 1 = k \cdot \frac{6 - \sqrt{2}}{2} + b$$
+
+By subtracting the two equations to eliminate $b$, we get:
+
+$$-2\sqrt{2} = k \cdot \sqrt{2}$$
+
+Solving for $k$, we find $k = -2$. Substituting this value into the first equation, we get $b = 5$.
+
+Therefore, the equation of the line passing through point $M(3, -1)$ and bisecting the chord of the hyperbola is $\boxed{y = -2x + 5}$.\\ 
+\\
+& \textbf{Reference shortcut solution:} Let the points intersected with the chord be $A(x_1, y_1)$ and $B(x_2, y_2)$. Then, they satisfy the equation of the hyperbola:
+
+$$\frac{x_1^2}{4} - y_1^2 = 1$$
+$$\frac{x_2^2}{4} - y_2^2 = 1$$
+
+Subtract the two equations:
+
+$$\frac{x_1^2-x_2^2}{4} - (y_1^2-y_2^2) = 0$$
+$$\frac{(x_1-x_2)(x_1+x_2)}{4} - (y_1-y_2)(y_1+y_2) = 0$$
+
+Since $M(3, -1)$ is the midpoint of the chord, $x_1+x_2=6, y_1+y_2=-2$. Substitute this into the above equation:
+$$\frac{6(x_1-x_2)}{4} + 2(y_1-y_2) = 0$$
+
+Then, we have the slope of the chord: 
+$$k = \frac{x_1-x2}{y_1-y_2} = \frac{3}{4}$$
+
+Since $M(3, -1)$ is on the chord, $\boxed{3x+4y-5=0}$ is the line equation.\\
+\midrule
+\end{tabular}}
+\caption{Translated example of solutions from \textbf{GPT-4} and shortcut solutions. The red text is the reasoning step where the solution goes wrong.}
+\label{tab:shortcut-2}
+\end{table*}
+
+\end{document}
