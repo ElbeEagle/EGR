@@ -1,4 +1,4 @@
-# Do not sync docs/ and HGR/
+# Do not sync theses directories
 docs/
 HGR/
 ref/
