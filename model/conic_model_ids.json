@@ -1,0 +1,105 @@
+{
+    "Ellipse_Definition": 0,
+    "Hyperbola_Definition": 1,
+    "Parabola_Definition": 2,
+    
+    "Ellipse_Equation_Standard_X": 3,
+    "Ellipse_Equation_Standard_Y": 4,
+    "Hyperbola_Equation_Standard_X": 5,
+    "Hyperbola_Equation_Standard_Y": 6,
+    "Parabola_Equation_Standard_Right": 7,
+    "Parabola_Equation_Standard_Left": 8,
+    "Parabola_Equation_Standard_Up": 9,
+    "Parabola_Equation_Standard_Down": 10,
+    
+    "Ellipse_Parameter_Relation": 11,
+    "Hyperbola_Parameter_Relation": 12,
+    "Eccentricity_Formula": 13,
+    "Ellipse_Eccentricity_Range": 14,
+    "Hyperbola_Eccentricity_Range": 15,
+    
+    "Ellipse_Focal_Radius": 16,
+    "Parabola_Focal_Radius": 17,
+    "Ellipse_Latus_Rectum": 18,
+    "Hyperbola_Latus_Rectum": 19,
+    "Parabola_Latus_Rectum": 20,
+    
+    "Hyperbola_Asymptote": 21,
+    "Hyperbola_Focus_To_Asymptote_Distance": 22,
+    "Hyperbola_Common_Asymptote_System": 23,
+    "Hyperbola_Equal_Axis": 24,
+    
+    "Ellipse_Second_Definition": 25,
+    "Hyperbola_Second_Definition": 26,
+    "Ellipse_Directrix": 27,
+    "Hyperbola_Directrix": 28,
+    "Parabola_Directrix": 29,
+    
+    "Ellipse_Focal_Triangle_Area": 30,
+    "Hyperbola_Focal_Triangle_Area": 31,
+    "Ellipse_Focal_Triangle_Perimeter": 32,
+    
+    "Parabola_Focal_Chord_Length": 33,
+    "Parabola_Focal_Chord_Product_X": 34,
+    "Parabola_Focal_Chord_Product_Y": 35,
+    "Parabola_Focal_Chord_Formula_Angle": 36,
+    
+    "Ellipse_Parametric_Equation": 37,
+    "Ellipse_Tangent_Line": 38,
+    "Parabola_Tangent_Line": 39,
+    "Ellipse_Midpoint_Chord_Slope": 40,
+    
+    "Vieta_Theorem": 41,
+    "Vieta_Theorem_Sum": 42,
+    "Vieta_Theorem_Product": 43,
+    
+    "Point_Difference_Method": 44,
+    "Point_Difference_Method_Ellipse": 45,
+    "Point_Difference_Method_Hyperbola": 46,
+    
+    "Cosine_Law": 47,
+    "Sine_Law": 48,
+    "Pythagorean_Theorem": 49,
+    
+    "Chord_Length_Formula": 50,
+    "Chord_Length_Formula_With_K": 51,
+    
+    "Point_To_Line_Distance": 52,
+    "Two_Points_Distance": 53,
+    "Midpoint_Formula": 54,
+    "Slope_Formula": 55,
+    
+    "Triangle_Area_Formula": 56,
+    "Triangle_Area_With_Sin": 57,
+    "Triangle_Area_Coordinate": 58,
+    
+    "Vector_Dot_Product_Algebraic": 59,
+    "Vector_Dot_Product_Geometric": 60,
+    "Vector_Perpendicular_Condition": 61,
+    "Vector_Collinear_Condition": 62,
+    
+    "Basic_Inequality": 63,
+    "Basic_Inequality_Equal_Condition": 64,
+    
+    "Discriminant_Delta": 65,
+    "Discriminant_Tangent_Condition": 66,
+    "Discriminant_Intersect_Condition": 67,
+    
+    "Triangle_Midline_Theorem": 68,
+    "Trapezoid_Midline_Theorem": 69,
+    
+    "Incircle_Radius_Formula": 70,
+    "Equal_Area_Method": 71,
+    
+    "Line_Point_Slope_Form": 72,
+    "Line_Two_Point_Form": 73,
+    "Line_Intercept_Form": 74,
+    
+    "Circle_Standard_Equation": 75,
+    "Circle_Tangent_Condition": 76,
+    
+    "Homogenization_Eccentricity": 77,
+    "Substitution_x_equals_my_plus_n": 78,
+    "Quadratic_Function_Maximum": 79
+}
+
