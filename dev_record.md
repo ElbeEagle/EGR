@@ -79,3 +79,19 @@ eg:
 
 
 ---
+
+## 2026.01.11晚上
+
+验证定理序列提取是否准确：
+
+将相关文件 "conic_model_ids.json" "train_with_models.json" "train.json" 经由 "sample_problems.py" 抽样得到 "sampled_problems.md"。
+
+再交由LLM分析得到"verification_report.md"。
+
+> 存储定位："scripts/process_to_model/sample_problems.py"
+
+> 存储定位："data/sampled_problems.md" "data/verification_report.md"
+
+发现有~80%正确率，部分术语如各个双曲线、平行垂直有一点混淆，有时会漏抓取一点步骤。
+
+---
