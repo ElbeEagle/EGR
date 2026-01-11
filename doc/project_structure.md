@@ -2,11 +2,19 @@
 
 ```
 EGR/
-├── Conic10K/                    # 数据集
+├── Conic10K/                    # 未处理的原始数据集
 │   └── conic10k/
 │       ├── train.json
 │       ├── dev.json
 │       └── test.json
+│
+├── data/                    # 本项目处理的数据
+│   ├── train.json           # 原始训练集
+│   ├── train_process.txt    # 提取出的训练集中的process项
+│   ├── train_with_models.json    # 集成"model sequence"的train数据集
+│   └── data_process/
+│       ├── process_models_part_x.json    # 模型序列的划分
+│       └── train_process_part_x.txt    # process项的划分
 │
 ├── src/                         # 源代码
 │   ├── state_abstractor.py     # 模块1

@@ -50,7 +50,7 @@
 工作1：将 train_process.txt 拆分为10份 (par1~part10)
 > 存储定位："data/data_process/train_process_part_1.txt"，共10个文件。
 
-工作2:调用LLM仔细分析每一个process的推理过程，将它们转换为模型序列。
+工作2：调用LLM仔细分析每一个process的推理过程，将它们转换为模型序列。
 > 存储定位："data/data_process/process_models_part_1.json"，共10个文件。
 
 eg:
@@ -65,5 +65,17 @@ eg:
 **下一步**：
 * 将10个转换后的 模型序列组合 文件，进行合并，并与原数据集进行整合。
 * 同时还需检验 转换后的 模型序列组合 文件，是否正确。（待考虑）
+
+---
+
+## 2026.01.11下午
+
+工作1: 修正 "process_models_part_1.json" 部分的潜在问题。
+
+工作2: 将10个 "process_models_part_x" 合并到 "train.json" 中，形成 "train_with_models.json"。
+> 存储定位："data/train_with_models.json"，共10个文件。
+
+
+
 
 ---
