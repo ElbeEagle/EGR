@@ -1,0 +1,694 @@
+{
+  "total_analyzed": 5357,
+  "flagged_count": 680,
+  "warning_summary": {
+    "Possible Missing Tangent/Discriminant Model": 193,
+    "Missing Hyperbola Model": 152,
+    "Missing Ellipse Model": 86,
+    "Possible Missing Eccentricity Model": 179,
+    "Missing Asymptote Model": 97,
+    "Missing Parabola Model": 77
+  },
+  "suspicious_examples": [
+    {
+      "index": 201,
+      "id": 202,
+      "text": "与双曲线$\\frac{x^{2}}{5}-\\frac{y^{2}}{4}=-1$有相同焦点，且离心率为$\\frac{3}{5}$的椭圆方程为?...",
+      "warnings": [
+        "Missing Ellipse Model",
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Parabola_Equation_Standard_Right",
+        "Parabola_Definition",
+        "Parabola_Directrix"
+      ]
+    },
+    {
+      "index": 1540,
+      "id": 1541,
+      "text": "已知双曲线的离心率为$\\sqrt{2}$，且与椭圆$\\frac{x^{2}}{8}+\\frac{y^{2}}{4}=1$有相同的焦点，则该双曲线的标准方程为?...",
+      "warnings": [
+        "Missing Ellipse Model",
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 3754,
+      "id": 3755,
+      "text": "已知圆雉曲线$x^{2}+a y^{2}=1$的一个焦点坐标为$F(\\frac{2}{\\sqrt{|a|}}, 0)$，则该圆雉曲线的离心率为?...",
+      "warnings": [
+        "Missing Ellipse Model",
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Parabola_Equation_Standard_Up",
+        "Parabola_Directrix"
+      ]
+    },
+    {
+      "index": 4190,
+      "id": 4191,
+      "text": "若双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的焦点$F(1,0)$到渐近线的距离为$\\frac{\\sqrt{5}}{5}$，则双曲...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 4211,
+      "id": 4212,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左、右焦点分别为$F_{1}$、$F_{2}$，若双曲线的渐近线上存在点...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Circle_Standard_Equation",
+        "Two_Points_Distance"
+      ]
+    },
+    {
+      "index": 4449,
+      "id": 4450,
+      "text": "若双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的渐近线互相垂直，则该双曲线的离心率为?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Tangent_Line",
+        "Vector_Collinear_Condition",
+        "Basic_Inequality"
+      ]
+    },
+    {
+      "index": 4582,
+      "id": 4583,
+      "text": "过双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的一个焦点作一条渐近线的垂线，垂足恰好落在曲线$\\frac{x^{2}}{b^{2}...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Equation_Standard_Y"
+      ]
+    },
+    {
+      "index": 4829,
+      "id": 4830,
+      "text": "已知双曲线$C$过点$(1, \\sqrt{5})$，且渐近线方程为$y=\\pm 2 x$，则$C$的离心率为?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Parabola_Equation_Standard_Right",
+        "Parabola_Definition",
+        "Parabola_Directrix",
+        "Two_Points_Distance"
+      ]
+    },
+    {
+      "index": 5007,
+      "id": 5008,
+      "text": "设双曲线的两条渐近线互相垂直，则此双曲线的离心率为?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 5173,
+      "id": 5174,
+      "text": "过抛物线$C$: $y^{2}=2 p x(p>0)$的焦点$F$的直线$l$，交抛物线$C$的准线于点$A$，与抛物线$C$的一个交点为$B$，且$\\overrightarrow{A B}=k \\o...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Parabola_Equation_Standard_Right",
+        "Parabola_Definition",
+        "Parabola_Directrix",
+        "Triangle_Midline_Theorem"
+      ]
+    },
+    {
+      "index": 6816,
+      "id": 6817,
+      "text": "已知抛物线$y^{2}=4 x$与双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的一条渐近线的交点为$M$、$F$为抛物线的焦点，若...",
+      "warnings": [
+        "Missing Parabola Model",
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Hyperbola_Parameter_Relation"
+      ]
+    },
+    {
+      "index": 140,
+      "id": 141,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$上一点$P$到两渐近线的距离分别为$d_{1}$, $d_{2}$，若$d_{1} ...",
+      "warnings": [
+        "Possible Missing Eccentricity Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Point_Difference_Method",
+        "Basic_Inequality"
+      ]
+    },
+    {
+      "index": 194,
+      "id": 195,
+      "text": "已知双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{2}=1$一条渐近线上的一点$P$到双曲线中心的距离为$3$，则点$P$到$y$轴的距离为?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Parabola_Equation_Standard_Right",
+        "Parabola_Equation_Standard_Up",
+        "Parabola_Definition",
+        "Parabola_Directrix"
+      ]
+    },
+    {
+      "index": 196,
+      "id": 197,
+      "text": "抛物线$C$: $y^{2}=2 p x  (p>0)$的准线与$x$轴的交点为$M$，过点$M$作$C$的两条切线，切点分别为$P$、$Q$，则$\\angle P M Q$=?...",
+      "warnings": [
+        "Missing Parabola Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Hyperbola_Definition",
+        "Eccentricity_Formula"
+      ]
+    },
+    {
+      "index": 326,
+      "id": 327,
+      "text": "已知$F_{1}$、$F_{2}$是双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左右焦点，过点$F_{2}$作双曲线的一条渐近线的...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Definition",
+        "Ellipse_Focal_Triangle_Perimeter",
+        "Eccentricity_Formula"
+      ]
+    },
+    {
+      "index": 377,
+      "id": 378,
+      "text": "已知双曲线的顶点为椭圆$x^{2}+\\frac{y^{2}}{2}=1$长轴的端点，且双曲线的离心率与椭圆的离心率的乘积等于$1$，则双曲线的方程是?...",
+      "warnings": [
+        "Missing Ellipse Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_Y",
+        "Hyperbola_Asymptote"
+      ]
+    },
+    {
+      "index": 474,
+      "id": 475,
+      "text": "双曲线的渐近线方程是$3 x \\pm 2 y=0$，焦点在$y$轴上，则该双曲线的离心率等于?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Eccentricity_Formula"
+      ]
+    },
+    {
+      "index": 638,
+      "id": 639,
+      "text": "已知点$P$为双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的右支上一点，$F_{1}$、$F_{2}$为双曲线的左、右焦点，使 $(...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Definition",
+        "Ellipse_Focal_Triangle_Perimeter",
+        "Vector_Collinear_Condition"
+      ]
+    },
+    {
+      "index": 663,
+      "id": 664,
+      "text": "过双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左焦点$F(-c, 0)(c>0)$，作圆$x^{2}+y^{2}=\\frac{a^...",
+      "warnings": [
+        "Possible Missing Eccentricity Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Hyperbola_Asymptote"
+      ]
+    },
+    {
+      "index": 682,
+      "id": 683,
+      "text": "已知椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的左、右焦点分别为$F_{1}(-c, 0)$, $F_{2}(c, 0)$, 若椭圆上存在...",
+      "warnings": [
+        "Missing Ellipse Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Hyperbola_Definition",
+        "Triangle_Midline_Theorem"
+      ]
+    },
+    {
+      "index": 754,
+      "id": 755,
+      "text": "已知点$P$为双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$右支上的一点，点$F_{1}$、$F_{2}$分别为双曲线的左、右焦点，双...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Definition",
+        "Ellipse_Focal_Triangle_Perimeter",
+        "Ellipse_Eccentricity_Range"
+      ]
+    },
+    {
+      "index": 768,
+      "id": 769,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的渐近线与圆$(x-2)^{2}+y^{2}=1$相切，则该双曲线的离心率为?...",
+      "warnings": [
+        "Possible Missing Eccentricity Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Hyperbola_Asymptote",
+        "Point_To_Line_Distance"
+      ]
+    },
+    {
+      "index": 816,
+      "id": 817,
+      "text": "已知$F_{1}$、$F_{2}$分别为双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左、右焦点，以$F_{2}$为圆心，...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Ellipse_Definition",
+        "Cosine_Law"
+      ]
+    },
+    {
+      "index": 1016,
+      "id": 1017,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{16}-\\frac{y^{2}}{9}=1$，则以$C$的右焦点为圆心，且与双曲线$C$的渐近线相切的圆的方程是?...",
+      "warnings": [
+        "Missing Asymptote Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Hyperbola_Parameter_Relation",
+        "Circle_Standard_Equation"
+      ]
+    },
+    {
+      "index": 1025,
+      "id": 1026,
+      "text": "已知双曲线$x^{2}-\\frac{y^{2}}{3}=1$的左、右焦点分别为$F_{1}$、$F_{2}$，离心率为$e$，若双曲线上一点$P$使$\\angle P F_{2} F_{1}=60^{...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Ellipse_Definition",
+        "Cosine_Law",
+        "Parabola_Focal_Radius",
+        "Vector_Dot_Product_Algebraic",
+        "Vector_Dot_Product_Geometric"
+      ]
+    },
+    {
+      "index": 1050,
+      "id": 1051,
+      "text": "已知点$M$在抛物线$C$: $y^{2}=4 x$上运动，圆$C$过点$(5,0)$ ,$(2, \\sqrt{3})$ ,$(3,-2)$，过点$M$引直线$l_{1}$ , $l_{2}$与圆$C...",
+      "warnings": [
+        "Missing Parabola Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Circle_Standard_Equation",
+        "Triangle_Area_Formula",
+        "Two_Points_Distance"
+      ]
+    },
+    {
+      "index": 1219,
+      "id": 1220,
+      "text": "已知抛物线$C$: $y^{2}=2 p x(p>0)$直线$l$过抛物线$C$的焦点与抛物线交于$A$、$B$两点，以$A B$为直径的圆与抛物线的准线的公共点是$M(-2,-2)$，则直线$l$的...",
+      "warnings": [
+        "Missing Parabola Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Equation_Standard_Y",
+        "Ellipse_Definition",
+        "Hyperbola_Definition",
+        "Midpoint_Formula",
+        "Vector_Dot_Product_Algebraic",
+        "Quadratic_Function_Maximum",
+        "Basic_Inequality"
+      ]
+    },
+    {
+      "index": 1280,
+      "id": 1281,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左右焦点分别是$F_{1}$、$F_{2}$、$M$是$C$渐近线上一点...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_Y",
+        "Ellipse_Definition",
+        "Cosine_Law",
+        "Vector_Dot_Product_Algebraic",
+        "Eccentricity_Formula"
+      ]
+    },
+    {
+      "index": 1297,
+      "id": 1298,
+      "text": "若双曲线$x^{2}+k y^{2}=1$的离心率是$2$，则实数$k$的值是?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 1305,
+      "id": 1306,
+      "text": "若$F_{1}$、$F_{2}$是椭圆$C$的两个焦点，$P$为$C$上一点，且$\\angle F_{1} P F_{2}=60^{\\circ}$ ,$|P F_{1}|=3|P F_{2}|$，则$...",
+      "warnings": [
+        "Missing Ellipse Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Hyperbola_Asymptote",
+        "Line_Point_Slope_Form",
+        "Substitution_x_equals_my_plus_n",
+        "Hyperbola_Parameter_Relation"
+      ]
+    },
+    {
+      "index": 1496,
+      "id": 1497,
+      "text": "双曲线$C$:$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a, b>0)$的左、右焦点为$F_{1}$ , $F_{2}$，直线$y=\\sqrt{3} b$与...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 1497,
+      "id": 1498,
+      "text": "在$\\triangle P M F$中，点$P$是抛物线$C$: $x^{2}=4 y$上除顶点外的任意一点，$F$为抛物线$C$的焦点，$M(0,-1)$，实数$k$满足$\\sin \\angle P...",
+      "warnings": [
+        "Missing Parabola Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 1516,
+      "id": 1517,
+      "text": "已知点$M(-3,0)$, $N(3,0)$, $B(1,0)$，圆$C$与直线$M N$切于点$B$，过$M$、$N$与圆$C$相切的两直线相交于点$P$，则$P$点的轨迹方程为?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Parameter_Relation"
+      ]
+    },
+    {
+      "index": 1541,
+      "id": 1542,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左、右焦点分别为$F_{1}$、$F_{2}$，点$A$在双曲线$C$上...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 1700,
+      "id": 1701,
+      "text": "直线$l$: $y=k(x+\\sqrt{2})$与曲线$C$: $x^{2}-y^{2}=1(x<0)$交于$P$、$Q$两点，则直线$l$的倾斜角的取值范围是?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Parabola_Equation_Standard_Right",
+        "Parabola_Definition",
+        "Parabola_Directrix",
+        "Vector_Collinear_Condition"
+      ]
+    },
+    {
+      "index": 1725,
+      "id": 1726,
+      "text": "已知点$P$是双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$右支上一点,$F_{1}$、$F_{2}$分别是双曲线的左右焦点,$I$为...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Incircle_Radius_Formula"
+      ]
+    },
+    {
+      "index": 1842,
+      "id": 1843,
+      "text": "抛物线$x^{2}=4(y-m)$与圆$x^{2}+y^{2}=1$相交于第一象限的$P$点，且在$P$点处两曲线的切线互相垂直，则$m$=?...",
+      "warnings": [
+        "Missing Parabola Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 1938,
+      "id": 1939,
+      "text": "若中心在原点、焦点在坐标轴上的双曲线的一条渐近线方程为$x+3 y=0$，则此双曲线的离心率为?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Eccentricity_Formula"
+      ]
+    },
+    {
+      "index": 2209,
+      "id": 2210,
+      "text": "双曲线的一条渐近线方程是$y=\\sqrt{3} x$ ,焦点是$(-4,0)(4,0)$,则双曲线方程为?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 2332,
+      "id": 2333,
+      "text": "已知椭圆$C$: $\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的左右焦点分别为$F_{1}$、$F_{2}$，点$P$在椭圆$C$上，线段$P ...",
+      "warnings": [
+        "Possible Missing Eccentricity Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Definition",
+        "Ellipse_Parameter_Relation",
+        "Pythagorean_Theorem",
+        "Vector_Perpendicular_Condition",
+        "Triangle_Midline_Theorem",
+        "Basic_Inequality"
+      ]
+    },
+    {
+      "index": 2575,
+      "id": 2576,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的右焦点为$F$，以$O F$（$O$为坐标原点）为直径的圆与双曲线的两...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Pythagorean_Theorem",
+        "Cosine_Law",
+        "Triangle_Area_Formula",
+        "Homogenization_Eccentricity"
+      ]
+    },
+    {
+      "index": 2597,
+      "id": 2598,
+      "text": "若双曲线$\\frac{y^{2}}{16}-\\frac{x^{2}}{m}=1$的离心率$e=2$，则$m$=?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Parameter_Relation"
+      ]
+    },
+    {
+      "index": 2695,
+      "id": 2696,
+      "text": "双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1$的离心率为$e_{1}$，双曲线$\\frac{x^{2}}{b^{2}}-\\frac{y^{2}}{a^{2...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": [
+        "Basic_Inequality"
+      ]
+    },
+    {
+      "index": 2823,
+      "id": 2824,
+      "text": "共焦点的椭圆与双曲线的离心率分别为$e_{1}$ , $e_{2}$，若椭圆的短轴长为双曲线的虚轴长的$2$倍，则$\\frac{1}{e_{1}}+\\frac{2}{e_{2}}$的最大值为?...",
+      "warnings": [
+        "Missing Ellipse Model",
+        "Missing Hyperbola Model"
+      ],
+      "models": [
+        "Basic_Inequality",
+        "Homogenization_Eccentricity"
+      ]
+    },
+    {
+      "index": 2868,
+      "id": 2869,
+      "text": "双曲线$4 x^{2}-5 y^{2}=-20$的离心率是?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Eccentricity Model"
+      ],
+      "models": []
+    },
+    {
+      "index": 3225,
+      "id": 3226,
+      "text": "已知点$F(-c, 0)(c>0)$是双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左焦点，过$F$且平行于双曲线渐近线的直线与圆$...",
+      "warnings": [
+        "Missing Parabola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Hyperbola_Equation_Standard_X",
+        "Circle_Standard_Equation",
+        "Vector_Perpendicular_Condition",
+        "Homogenization_Eccentricity"
+      ]
+    },
+    {
+      "index": 3379,
+      "id": 3380,
+      "text": "请写出渐近线方程为$y=\\pm \\sqrt{3} x$的一个双曲线方程?...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Asymptote Model"
+      ],
+      "models": [
+        "Eccentricity_Formula"
+      ]
+    },
+    {
+      "index": 3391,
+      "id": 3392,
+      "text": "过双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的右焦点$F$作圆$x^{2}+y^{2}=a^{2}$的切线$FM$(切点为$M$)...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Possible Missing Tangent/Discriminant Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Circle_Standard_Equation",
+        "Vector_Dot_Product_Algebraic",
+        "Homogenization_Eccentricity"
+      ]
+    },
+    {
+      "index": 3524,
+      "id": 3525,
+      "text": "已知椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的左、右焦点分别为$F_{1}$、$F_{2}$，抛物线$y^{2}=2 b x$的焦点为$...",
+      "warnings": [
+        "Missing Ellipse Model",
+        "Missing Parabola Model"
+      ],
+      "models": [
+        "Eccentricity_Formula"
+      ]
+    },
+    {
+      "index": 3542,
+      "id": 3543,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左、右焦点分别为$F_{1}$、$F_{2}$，设过$F_{2}$的直线...",
+      "warnings": [
+        "Missing Hyperbola Model",
+        "Missing Parabola Model"
+      ],
+      "models": [
+        "Ellipse_Equation_Standard_X",
+        "Ellipse_Definition",
+        "Triangle_Midline_Theorem",
+        "Vector_Collinear_Condition",
+        "Cosine_Law",
+        "Eccentricity_Formula"
+      ]
+    }
+  ]
+}
