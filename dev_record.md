@@ -78,8 +78,6 @@ eg:
 
 
 
----
-
 ## 2026.01.11晚上
 
 验证定理序列提取是否准确：
@@ -101,11 +99,30 @@ eg:
 通过关键字检索（圆锥曲线名称，关键信息），发现有680个样本有明显错误（双曲线认错、序列为空）
 
 > 存储定位："scripts/process_to_model/analyze_alignment.py"
-> 存储定位："data/analysis_report.md" "data/analysis_results.json"
+> 存储定位："data/verify_doc/analysis_report.md" "data/verify_doc/analysis_results.json"
 
-此外抽样了500个样本由LLM进行细致分析，由些小问题
+此外抽样了500个样本由LLM进行细致分析，有些小问题
 
-> 存储定位："data/sampled_problems.md"
-> 存储定位："data/detailed_sequence_analysis.md"
+> 存储定位："data/verify_doc/sampled_problems.md"
+> 存储定位："data/verify_doc/detailed_sequence_analysis.md"
+
+
+## 2026.01.12晚上
+
+工作1:将680个有明显错误的样本，提取出"text"和"process"，形成一个json文件，让LLM来重新分析process对应的models，避免之前的错误。
+> 存储定位："data/data_process/train_process_error.json"
+
+工作2:让LLM来重新分析process对应的models，针对之前出现的问题，这次特别注意了：
+* 切线/判别式模型：正确添加了模型 76（圆切线条件）、65-67（判别式相关）
+* 离心率模型：确保包含模型 13（离心率公式）和 77（齐次化求离心率）
+* 曲线类型识别：准确区分双曲线（模型5、6、12、21等）、椭圆（模型3、4、11等）、抛物线（模型7-10、2等）
+> 存储定位："data/data_process/process_models_error.json"
+
+
+**下一步**：
+* 再次检验这680个样本还是否有明显的错误（双曲线认错、序列为空），仍然可以仅通过关键字检索（圆锥曲线名称，关键信息）进行检验。
+* 同时可能还需要再调用llm，抽样分析一下对这680个样本重新生成的models，是否会存在模型过度（冗余）的情况。
 
 ---
+
+
