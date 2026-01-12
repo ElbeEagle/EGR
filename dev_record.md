@@ -95,3 +95,17 @@ eg:
 发现有~80%正确率，部分术语如各个双曲线、平行垂直有一点混淆，有时会漏抓取一点步骤。
 
 ---
+
+## 2026.01.12晚上
+
+通过关键字检索（圆锥曲线名称，关键信息），发现有680个样本有明显错误（双曲线认错、序列为空）
+
+> 存储定位："scripts/process_to_model/analyze_alignment.py"
+> 存储定位："data/analysis_report.md" "data/analysis_results.json"
+
+此外抽样了500个样本由LLM进行细致分析，由些小问题
+
+> 存储定位："data/sampled_problems.md"
+> 存储定位："data/detailed_sequence_analysis.md"
+
+---
