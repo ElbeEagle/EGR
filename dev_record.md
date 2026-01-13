@@ -125,4 +125,11 @@ eg:
 
 ---
 
+## 2026.01.13下午
 
+工作1:将这680个样本替换回"train_with_models"，生成新的json文件。
+> 存储定位："data/train_with_models_v2.json"
+
+工作2:
+
+---
