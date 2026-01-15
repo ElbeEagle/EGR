@@ -1,488 +1,464 @@
 """
-定理库 - Conic10K 数学定理的形式化表示
+定理库 - 定义每个模型的输入输出和状态转换规则
 
-基于数据分析结果，实现15个基础定理，覆盖60%以上的推理步骤
+关键设计：
+1. 每个模型定义为状态转换函数
+2. 输入：当前状态 + 模型参数
+3. 输出：新状态（增量）
 """
 
+from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Any, Callable
-from enum import Enum
-
-
-class TheoremPriority(Enum):
-    """定理优先级"""
-    BASIC = "basic"           # 基础定理：最常用，优先级最高
-    INTERMEDIATE = "intermediate"  # 中级定理
-    ADVANCED = "advanced"     # 高级定理
-
-
-class CurveType(Enum):
-    """曲线类型"""
-    ELLIPSE = "Ellipse"
-    HYPERBOLA = "Hyperbola"
-    PARABOLA = "Parabola"
-    CIRCLE = "Circle"
-    ANY = "Any"  # 适用于所有曲线
+from src.state_abstractor import SymbolicState, AbstractState
+import re
+import json
 
 
 @dataclass
-class TheoremPrecondition:
-    """定理前置条件"""
-    curve_types: List[CurveType]  # 适用的曲线类型
-    required_info: List[str]       # 需要的信息（如 'equation', 'a', 'b'）
-    optional_info: List[str] = None  # 可选信息
-    constraints: List[str] = None   # 额外约束（如 'a>0', 'e<1'）
+class TheoremModel:
+    """
+    定理模型定义
     
-    def __post_init__(self):
-        if self.optional_info is None:
-            self.optional_info = []
-        if self.constraints is None:
-            self.constraints = []
-
-
-@dataclass
-class TheoremOutput:
-    """定理输出"""
-    output_type: str  # 输出类型：'parameter', 'equation', 'coordinate', 'value'
-    produces: List[str]  # 产生的信息
-
-
-@dataclass
-class Theorem:
-    """定理的完整定义"""
-    theorem_id: str
+    每个模型包含：
+    - 前置条件：应用该模型需要满足的条件
+    - 输出：应用模型后会新增什么信息
+    - 状态转换函数：如何更新状态
+    """
+    id: int
     name: str
     description: str
-    formula: str  # 数学公式（LaTeX格式）
-    precondition: TheoremPrecondition
-    output: TheoremOutput
-    priority: TheoremPriority
+    category: str
     
-    # 函数引用
-    check_applicable: Callable  # 检查是否可应用的函数
-    apply: Callable  # 应用定理的函数
+    # 前置条件（需要哪些信息才能应用该模型）
+    preconditions: List[str]
     
-    # 统计信息
-    usage_count: int = 0  # 使用次数（用于统计）
-    success_rate: float = 0.0  # 成功率
+    # 输出信息（应用该模型后会得到什么新信息）
+    outputs: List[str]
+    
+    # 状态转换函数
+    transform_func: callable
+    
+    def can_apply(self, symbolic_state: SymbolicState) -> bool:
+        """
+        检查是否可以应用该模型
+        
+        Args:
+            symbolic_state: 当前符号状态
+        
+        Returns:
+            bool: 是否满足前置条件
+        """
+        # 这里应该检查symbolic_state是否包含所有preconditions
+        # 简化实现：总是返回True（实际应该根据preconditions检查）
+        return True
+    
+    def apply(self, symbolic_state: SymbolicState) -> SymbolicState:
+        """
+        应用模型，返回新的符号状态
+        
+        Args:
+            symbolic_state: 当前符号状态
+        
+        Returns:
+            新的符号状态（包含模型输出的信息）
+        """
+        # 深拷贝当前状态
+        new_state = symbolic_state.copy()
+        
+        # 调用转换函数，更新状态
+        self.transform_func(new_state)
+        
+        return new_state
 
 
 class TheoremLibrary:
     """
-    定理库
-    
-    管理所有定理，提供查询和应用接口
+    定理库：包含所有80个模型的定义
     """
     
     def __init__(self):
-        self.theorems: Dict[str, Theorem] = {}
-        self._initialize_basic_theorems()
+        self.models: Dict[int, TheoremModel] = {}
+        self._build_library()
     
-    def _initialize_basic_theorems(self):
-        """初始化15个基础定理"""
+    def _build_library(self):
+        """构建定理库"""
         
-        # ===== T1: 椭圆参数关系 =====
-        self.register_theorem(Theorem(
-            theorem_id="T1_ellipse_abc",
-            name="椭圆参数关系",
-            description="椭圆中 a, b, c 的关系：a² = b² + c²",
-            formula="a^2 = b^2 + c^2",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.ELLIPSE],
-                required_info=['any_two_of:a,b,c'],  # 需要a,b,c中的任意两个
-            ),
-            output=TheoremOutput(
-                output_type='parameter',
-                produces=['missing_parameter']  # 产生缺失的参数
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_ellipse_abc,
-            apply=self._apply_ellipse_abc
-        ))
+        # ===== 模型0: 椭圆定义 =====
+        self.models[0] = TheoremModel(
+            id=0,
+            name="Ellipse_Definition",
+            description="椭圆定义: |PF₁| + |PF₂| = 2a",
+            category="曲线定义",
+            preconditions=[
+                "有椭圆",
+                "有两个焦点F₁和F₂",
+                "有椭圆上的点P"
+            ],
+            outputs=[
+                "Distance(P, F1) + Distance(P, F2) = 2*a"
+            ],
+            transform_func=self._transform_ellipse_definition
+        )
         
-        # ===== T2: 双曲线参数关系 =====
-        self.register_theorem(Theorem(
-            theorem_id="T2_hyperbola_abc",
-            name="双曲线参数关系",
-            description="双曲线中 a, b, c 的关系：c² = a² + b²",
-            formula="c^2 = a^2 + b^2",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.HYPERBOLA],
-                required_info=['any_two_of:a,b,c'],
-            ),
-            output=TheoremOutput(
-                output_type='parameter',
-                produces=['missing_parameter']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_hyperbola_abc,
-            apply=self._apply_hyperbola_abc
-        ))
+        # ===== 模型1: 双曲线定义 =====
+        self.models[1] = TheoremModel(
+            id=1,
+            name="Hyperbola_Definition",
+            description="双曲线定义: ||PF₁| - |PF₂|| = 2a",
+            category="曲线定义",
+            preconditions=[
+                "有双曲线",
+                "有两个焦点F₁和F₂",
+                "有双曲线上的点P"
+            ],
+            outputs=[
+                "Abs(Distance(P, F1) - Distance(P, F2)) = 2*a"
+            ],
+            transform_func=self._transform_hyperbola_definition
+        )
         
-        # ===== T3: 抛物线参数关系 =====
-        self.register_theorem(Theorem(
-            theorem_id="T3_parabola_p",
-            name="抛物线参数与焦点",
-            description="抛物线 y²=2px 的焦点为 (p/2, 0)",
-            formula="y^2 = 2px \\Rightarrow Focus(p/2, 0)",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.PARABOLA],
-                required_info=['equation'],
-            ),
-            output=TheoremOutput(
-                output_type='coordinate',
-                produces=['focus_coordinate']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_parabola_p,
-            apply=self._apply_parabola_p
-        ))
+        # ===== 模型5: 双曲线标准方程（焦点在x轴）=====
+        self.models[5] = TheoremModel(
+            id=5,
+            name="Hyperbola_Equation_Standard_X",
+            description="双曲线标准方程: x²/a² - y²/b² = 1",
+            category="标准方程",
+            preconditions=[
+                "有双曲线",
+                "有标准方程 x²/a² - y²/b² = 1"
+            ],
+            outputs=[
+                "参数a和b的值",
+                "焦点在x轴"
+            ],
+            transform_func=self._transform_hyperbola_standard_x
+        )
         
-        # ===== T4: 离心率公式 =====
-        self.register_theorem(Theorem(
-            theorem_id="T4_eccentricity",
-            name="离心率公式",
-            description="离心率 e = c/a",
-            formula="e = \\frac{c}{a}",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.ELLIPSE, CurveType.HYPERBOLA],
-                required_info=['c', 'a'],
-            ),
-            output=TheoremOutput(
-                output_type='value',
-                produces=['eccentricity']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_eccentricity,
-            apply=self._apply_eccentricity
-        ))
+        # ===== 模型11: 椭圆参数关系 =====
+        self.models[11] = TheoremModel(
+            id=11,
+            name="Ellipse_Parameter_Relation",
+            description="椭圆参数关系: a² = b² + c²",
+            category="参数关系",
+            preconditions=[
+                "有椭圆",
+                "已知a, b, c中的任意两个"
+            ],
+            outputs=[
+                "第三个参数的值"
+            ],
+            transform_func=self._transform_ellipse_parameter_relation
+        )
         
-        # ===== T5: 从标准方程提取参数 =====
-        self.register_theorem(Theorem(
-            theorem_id="T5_extract_params",
-            name="标准方程参数提取",
-            description="从椭圆/双曲线标准方程提取 a, b 参数",
-            formula="\\frac{x^2}{a^2} \\pm \\frac{y^2}{b^2} = 1 \\Rightarrow a, b",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.ELLIPSE, CurveType.HYPERBOLA],
-                required_info=['equation'],
-            ),
-            output=TheoremOutput(
-                output_type='parameter',
-                produces=['a', 'b']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_extract_params,
-            apply=self._apply_extract_params
-        ))
+        # ===== 模型12: 双曲线参数关系 =====
+        self.models[12] = TheoremModel(
+            id=12,
+            name="Hyperbola_Parameter_Relation",
+            description="双曲线参数关系: c² = a² + b²",
+            category="参数关系",
+            preconditions=[
+                "有双曲线",
+                "已知a, b, c中的任意两个"
+            ],
+            outputs=[
+                "第三个参数的值"
+            ],
+            transform_func=self._transform_hyperbola_parameter_relation
+        )
         
-        # ===== T6: 双曲线渐近线 =====
-        self.register_theorem(Theorem(
-            theorem_id="T6_asymptote",
-            name="双曲线渐近线方程",
-            description="双曲线渐近线方程：y = ±(b/a)x",
-            formula="y = \\pm\\frac{b}{a}x",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.HYPERBOLA],
-                required_info=['a', 'b'],
-            ),
-            output=TheoremOutput(
-                output_type='equation',
-                produces=['asymptote_equation']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_asymptote,
-            apply=self._apply_asymptote
-        ))
+        # ===== 模型13: 离心率公式 =====
+        self.models[13] = TheoremModel(
+            id=13,
+            name="Eccentricity_Formula",
+            description="离心率公式: e = c/a",
+            category="参数关系",
+            preconditions=[
+                "已知c和a"
+            ],
+            outputs=[
+                "离心率e的值"
+            ],
+            transform_func=self._transform_eccentricity_formula
+        )
         
-        # ===== T7: 焦点坐标 =====
-        self.register_theorem(Theorem(
-            theorem_id="T7_focus_coordinate",
-            name="焦点坐标公式",
-            description="椭圆/双曲线的焦点坐标：(±c, 0) 或 (0, ±c)",
-            formula="Focus = (\\pm c, 0) \\text{ or } (0, \\pm c)",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.ELLIPSE, CurveType.HYPERBOLA],
-                required_info=['c'],
-            ),
-            output=TheoremOutput(
-                output_type='coordinate',
-                produces=['focus_coordinates']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_focus_coordinate,
-            apply=self._apply_focus_coordinate
-        ))
+        # ===== 模型21: 双曲线渐近线 =====
+        self.models[21] = TheoremModel(
+            id=21,
+            name="Hyperbola_Asymptote",
+            description="双曲线渐近线: y = ±(b/a)x",
+            category="渐近线",
+            preconditions=[
+                "有双曲线",
+                "已知a和b"
+            ],
+            outputs=[
+                "渐近线方程: y = ±(b/a)x"
+            ],
+            transform_func=self._transform_hyperbola_asymptote
+        )
         
-        # ===== T8: 双曲线定义 =====
-        self.register_theorem(Theorem(
-            theorem_id="T8_hyperbola_definition",
-            name="双曲线定义",
-            description="双曲线定义：||PF₁| - |PF₂|| = 2a",
-            formula="||PF_1| - |PF_2|| = 2a",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.HYPERBOLA],
-                required_info=['point_on_curve', 'foci'],
-            ),
-            output=TheoremOutput(
-                output_type='value',
-                produces=['distance_relation']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_hyperbola_def,
-            apply=self._apply_hyperbola_def
-        ))
+        # ===== 模型22: 焦点到渐近线距离 =====
+        self.models[22] = TheoremModel(
+            id=22,
+            name="Hyperbola_Focus_To_Asymptote_Distance",
+            description="焦点到渐近线距离 = b",
+            category="渐近线",
+            preconditions=[
+                "有双曲线",
+                "有焦点",
+                "有渐近线"
+            ],
+            outputs=[
+                "Distance(Focus, Asymptote) = b"
+            ],
+            transform_func=self._transform_hyperbola_focus_to_asymptote
+        )
         
-        # ===== T9: 椭圆定义 =====
-        self.register_theorem(Theorem(
-            theorem_id="T9_ellipse_definition",
-            name="椭圆定义",
-            description="椭圆定义：|PF₁| + |PF₂| = 2a",
-            formula="|PF_1| + |PF_2| = 2a",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.ELLIPSE],
-                required_info=['point_on_curve', 'foci'],
-            ),
-            output=TheoremOutput(
-                output_type='value',
-                produces=['distance_sum']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_ellipse_def,
-            apply=self._apply_ellipse_def
-        ))
+        # ... 继续添加其他模型 ...
         
-        # ===== T10: 抛物线定义 =====
-        self.register_theorem(Theorem(
-            theorem_id="T10_parabola_definition",
-            name="抛物线定义",
-            description="抛物线定义：点到焦点距离 = 点到准线距离",
-            formula="|PF| = d(P, directrix)",
-            precondition=TheoremPrecondition(
-                curve_types=[CurveType.PARABOLA],
-                required_info=['point_on_curve', 'focus'],
-            ),
-            output=TheoremOutput(
-                output_type='value',
-                produces=['distance_equality']
-            ),
-            priority=TheoremPriority.BASIC,
-            check_applicable=self._check_parabola_def,
-            apply=self._apply_parabola_def
-        ))
-        
-        # ===== T11-T15: 其他基础定理（占位，稍后实现）=====
-        # T11: 距离公式
-        # T12: 中点公式
-        # T13: 斜率公式
-        # T14: 垂直关系
-        # T15: 代入求解
-        
-    def register_theorem(self, theorem: Theorem):
-        """注册一个定理到库中"""
-        self.theorems[theorem.theorem_id] = theorem
+        # 简化起见，我们先实现前面几个关键模型
+        # 完整的80个模型会在后续补充
     
-    def get_theorem(self, theorem_id: str) -> Optional[Theorem]:
-        """根据ID获取定理"""
-        return self.theorems.get(theorem_id)
+    # ========== 状态转换函数 ==========
     
-    def get_applicable_theorems(self, state: Dict[str, Any]) -> List[Theorem]:
+    def _transform_ellipse_definition(self, state: SymbolicState):
+        """应用椭圆定义"""
+        # 添加新的几何关系
+        state.geometric_relations.append(
+            "Distance(P, F1) + Distance(P, F2) = 2*a"
+        )
+    
+    def _transform_hyperbola_definition(self, state: SymbolicState):
+        """应用双曲线定义"""
+        state.geometric_relations.append(
+            "Abs(Distance(P, F1) - Distance(P, F2)) = 2*a"
+        )
+    
+    def _transform_hyperbola_standard_x(self, state: SymbolicState):
         """
-        获取所有适用于当前状态的定理
+        应用双曲线标准方程（焦点在x轴）
+        
+        输入：Expression(G) = (x^2/A - y^2/B = 1)
+        输出：a² = A, b² = B
+        
+        例如：x²/4 - y²/m² = 1
+        → a² = 4, b² = m²
+        → a = 2, b = m
+        """
+        # 从方程中提取参数
+        for eq in state.equations:
+            if 'x^2' in eq and '- y^2' in eq:
+                # 解析形如 x^2/4 - y^2/m^2 = 1 的方程
+                # 提取分母
+                match = re.search(r'x\^2/([^\s\-]+).*y\^2/([^\s=]+)', eq)
+                if match:
+                    a_squared_str = match.group(1)
+                    b_squared_str = match.group(2)
+                    
+                    # 添加参数信息
+                    state.parameters['a^2'] = a_squared_str
+                    state.parameters['b^2'] = b_squared_str
+                    
+                    # 如果是具体数值，计算出a和b
+                    try:
+                        a_squared = float(eval(a_squared_str))
+                        state.parameters['a'] = f"sqrt({a_squared})"
+                    except:
+                        pass
+                    
+                    # 添加新的fact
+                    state.geometric_relations.append(
+                        f"a^2 = {a_squared_str}"
+                    )
+                    state.geometric_relations.append(
+                        f"b^2 = {b_squared_str}"
+                    )
+                    
+                    break
+    
+    def _transform_ellipse_parameter_relation(self, state: SymbolicState):
+        """
+        应用椭圆参数关系: a² = b² + c²
+        
+        如果已知a, b中的两个，可以求第三个
+        """
+        params = state.parameters
+        
+        # 情况1: 已知a和b，求c
+        if 'a' in params and 'b' in params:
+            a_val = params['a']
+            b_val = params['b']
+            params['c'] = f"sqrt({a_val}^2 - {b_val}^2)"
+            state.geometric_relations.append(
+                f"c = sqrt({a_val}^2 - {b_val}^2)"
+            )
+        
+        # 情况2: 已知a和c，求b
+        elif 'a' in params and 'c' in params:
+            a_val = params['a']
+            c_val = params['c']
+            params['b'] = f"sqrt({a_val}^2 - {c_val}^2)"
+            state.geometric_relations.append(
+                f"b = sqrt({a_val}^2 - {c_val}^2)"
+            )
+        
+        # 情况3: 已知b和c，求a
+        elif 'b' in params and 'c' in params:
+            b_val = params['b']
+            c_val = params['c']
+            params['a'] = f"sqrt({b_val}^2 + {c_val}^2)"
+            state.geometric_relations.append(
+                f"a = sqrt({b_val}^2 + {c_val}^2)"
+            )
+    
+    def _transform_hyperbola_parameter_relation(self, state: SymbolicState):
+        """
+        应用双曲线参数关系: c² = a² + b²
+        
+        注意：与椭圆不同！
+        """
+        params = state.parameters
+        
+        # 情况1: 已知a和b，求c
+        if 'a' in params and 'b' in params:
+            a_val = params['a']
+            b_val = params['b']
+            params['c'] = f"sqrt({a_val}^2 + {b_val}^2)"
+            state.geometric_relations.append(
+                f"c = sqrt({a_val}^2 + {b_val}^2)"
+            )
+        
+        # 情况2: 已知a和c，求b
+        elif 'a' in params and 'c' in params:
+            a_val = params['a']
+            c_val = params['c']
+            params['b'] = f"sqrt({c_val}^2 - {a_val}^2)"
+            state.geometric_relations.append(
+                f"b = sqrt({c_val}^2 - {a_val}^2)"
+            )
+        
+        # 情况3: 已知b和c，求a
+        elif 'b' in params and 'c' in params:
+            b_val = params['b']
+            c_val = params['c']
+            params['a'] = f"sqrt({c_val}^2 - {b_val}^2)"
+            state.geometric_relations.append(
+                f"a = sqrt({c_val}^2 - {b_val}^2)"
+            )
+    
+    def _transform_eccentricity_formula(self, state: SymbolicState):
+        """应用离心率公式: e = c/a"""
+        params = state.parameters
+        
+        if 'c' in params and 'a' in params:
+            c_val = params['c']
+            a_val = params['a']
+            params['e'] = f"{c_val}/{a_val}"
+            state.geometric_relations.append(
+                f"e = {c_val}/{a_val}"
+            )
+    
+    def _transform_hyperbola_asymptote(self, state: SymbolicState):
+        """应用双曲线渐近线公式: y = ±(b/a)x"""
+        params = state.parameters
+        
+        if 'a' in params and 'b' in params:
+            a_val = params['a']
+            b_val = params['b']
+            
+            # 添加渐近线方程
+            asymptote_eq = f"y = pm*({b_val}/{a_val})*x"
+            state.equations.append(
+                f"Expression(Asymptote(G)) = ({asymptote_eq})"
+            )
+            state.geometric_relations.append(
+                f"渐近线方程: y = ±({b_val}/{a_val})x"
+            )
+    
+    def _transform_hyperbola_focus_to_asymptote(self, state: SymbolicState):
+        """应用焦点到渐近线距离公式: d = b"""
+        # 如果已知焦点到渐近线的距离，可以得到b
+        # 或者，如果已知b，可以验证距离
+        
+        state.geometric_relations.append(
+            "Distance(Focus, Asymptote) = b"
+        )
+    
+    def get_model(self, model_id: int) -> Optional[TheoremModel]:
+        """获取指定ID的模型"""
+        return self.models.get(model_id)
+    
+    def apply_model_sequence(
+        self, 
+        initial_state: SymbolicState, 
+        model_ids: List[int]
+    ) -> List[SymbolicState]:
+        """
+        应用一系列模型，返回每一步的状态
         
         Args:
-            state: 当前问题状态
-            
+            initial_state: 初始状态
+            model_ids: 模型ID列表
+        
         Returns:
-            可应用的定理列表
+            状态列表 [S0, S1, S2, ..., Sn]
         """
-        applicable = []
-        for theorem in self.theorems.values():
-            if theorem.check_applicable(state):
-                applicable.append(theorem)
-        return applicable
-    
-    def get_theorems_by_priority(self, priority: TheoremPriority) -> List[Theorem]:
-        """根据优先级获取定理"""
-        return [t for t in self.theorems.values() if t.priority == priority]
-    
-    # ========== 定理检查函数（前置条件）==========
-    
-    def _check_ellipse_abc(self, state: Dict) -> bool:
-        """检查椭圆参数关系定理是否适用"""
-        if state.get('curve_type') != 'Ellipse':
-            return False
+        states = [initial_state]
+        current_state = initial_state
         
-        params = state.get('known_params', {})
-        known = [p for p in ['a', 'b', 'c'] if p in params]
-        return len(known) >= 2
-    
-    def _check_hyperbola_abc(self, state: Dict) -> bool:
-        """检查双曲线参数关系定理是否适用"""
-        if state.get('curve_type') != 'Hyperbola':
-            return False
+        for model_id in model_ids:
+            model = self.get_model(model_id)
+            if model is None:
+                print(f"Warning: Model {model_id} not found")
+                continue
+            
+            # 应用模型
+            new_state = model.apply(current_state)
+            states.append(new_state)
+            current_state = new_state
         
-        params = state.get('known_params', {})
-        known = [p for p in ['a', 'b', 'c'] if p in params]
-        return len(known) >= 2
-    
-    def _check_parabola_p(self, state: Dict) -> bool:
-        """检查抛物线参数定理是否适用"""
-        return (state.get('curve_type') == 'Parabola' and 
-                state.get('has_equation', False))
-    
-    def _check_eccentricity(self, state: Dict) -> bool:
-        """检查离心率公式是否适用"""
-        curve_type = state.get('curve_type')
-        if curve_type not in ['Ellipse', 'Hyperbola']:
-            return False
-        
-        params = state.get('known_params', {})
-        return 'a' in params and 'c' in params
-    
-    def _check_extract_params(self, state: Dict) -> bool:
-        """检查参数提取定理是否适用"""
-        curve_type = state.get('curve_type')
-        return (curve_type in ['Ellipse', 'Hyperbola'] and 
-                state.get('has_equation', False))
-    
-    def _check_asymptote(self, state: Dict) -> bool:
-        """检查渐近线定理是否适用"""
-        if state.get('curve_type') != 'Hyperbola':
-            return False
-        
-        params = state.get('known_params', {})
-        return 'a' in params and 'b' in params
-    
-    def _check_focus_coordinate(self, state: Dict) -> bool:
-        """检查焦点坐标定理是否适用"""
-        curve_type = state.get('curve_type')
-        if curve_type not in ['Ellipse', 'Hyperbola']:
-            return False
-        
-        params = state.get('known_params', {})
-        return 'c' in params
-    
-    def _check_hyperbola_def(self, state: Dict) -> bool:
-        """检查双曲线定义是否适用"""
-        return (state.get('curve_type') == 'Hyperbola' and 
-                state.get('has_point_on_curve', False) and
-                state.get('has_foci', False))
-    
-    def _check_ellipse_def(self, state: Dict) -> bool:
-        """检查椭圆定义是否适用"""
-        return (state.get('curve_type') == 'Ellipse' and 
-                state.get('has_point_on_curve', False) and
-                state.get('has_foci', False))
-    
-    def _check_parabola_def(self, state: Dict) -> bool:
-        """检查抛物线定义是否适用"""
-        return (state.get('curve_type') == 'Parabola' and 
-                state.get('has_point_on_curve', False) and
-                state.get('has_focus', False))
-    
-    # ========== 定理应用函数 ==========
-    
-    def _apply_ellipse_abc(self, state: Dict) -> Dict:
-        """应用椭圆参数关系定理"""
-        params = state.get('known_params', {})
-        new_state = state.copy()
-        
-        # a² = b² + c²
-        if 'a' not in params and 'b' in params and 'c' in params:
-            new_state['known_params']['a'] = (params['b']**2 + params['c']**2)**0.5
-        elif 'b' not in params and 'a' in params and 'c' in params:
-            new_state['known_params']['b'] = (params['a']**2 - params['c']**2)**0.5
-        elif 'c' not in params and 'a' in params and 'b' in params:
-            new_state['known_params']['c'] = (params['a']**2 - params['b']**2)**0.5
-        
-        return new_state
-    
-    def _apply_hyperbola_abc(self, state: Dict) -> Dict:
-        """应用双曲线参数关系定理"""
-        params = state.get('known_params', {})
-        new_state = state.copy()
-        
-        # c² = a² + b²
-        if 'c' not in params and 'a' in params and 'b' in params:
-            new_state['known_params']['c'] = (params['a']**2 + params['b']**2)**0.5
-        elif 'a' not in params and 'c' in params and 'b' in params:
-            new_state['known_params']['a'] = (params['c']**2 - params['b']**2)**0.5
-        elif 'b' not in params and 'c' in params and 'a' in params:
-            new_state['known_params']['b'] = (params['c']**2 - params['a']**2)**0.5
-        
-        return new_state
-    
-    def _apply_parabola_p(self, state: Dict) -> Dict:
-        """应用抛物线参数定理"""
-        # 简化实现：从方程提取p值
-        # 实际需要解析equation字段
-        new_state = state.copy()
-        # TODO: 实现方程解析
-        return new_state
-    
-    def _apply_eccentricity(self, state: Dict) -> Dict:
-        """应用离心率公式"""
-        params = state.get('known_params', {})
-        new_state = state.copy()
-        
-        # e = c/a
-        if 'eccentricity' not in params:
-            new_state['known_params']['eccentricity'] = params['c'] / params['a']
-        
-        return new_state
-    
-    def _apply_extract_params(self, state: Dict) -> Dict:
-        """从标准方程提取参数"""
-        # TODO: 实现方程解析
-        new_state = state.copy()
-        return new_state
-    
-    def _apply_asymptote(self, state: Dict) -> Dict:
-        """应用渐近线定理"""
-        params = state.get('known_params', {})
-        new_state = state.copy()
-        
-        # y = ±(b/a)x
-        slope = params['b'] / params['a']
-        new_state['asymptote_slope'] = slope
-        
-        return new_state
-    
-    def _apply_focus_coordinate(self, state: Dict) -> Dict:
-        """应用焦点坐标定理"""
-        params = state.get('known_params', {})
-        new_state = state.copy()
-        
-        c = params['c']
-        # 简化：假设焦点在x轴
-        new_state['focus_coordinates'] = [(c, 0), (-c, 0)]
-        
-        return new_state
-    
-    def _apply_hyperbola_def(self, state: Dict) -> Dict:
-        """应用双曲线定义"""
-        # TODO: 实现具体逻辑
-        return state.copy()
-    
-    def _apply_ellipse_def(self, state: Dict) -> Dict:
-        """应用椭圆定义"""
-        # TODO: 实现具体逻辑
-        return state.copy()
-    
-    def _apply_parabola_def(self, state: Dict) -> Dict:
-        """应用抛物线定义"""
-        # TODO: 实现具体逻辑
-        return state.copy()
+        return states
 
 
-# 全局单例
-_theorem_library = None
+# ========== 使用示例 ==========
 
-def get_theorem_library() -> TheoremLibrary:
-    """获取定理库单例"""
-    global _theorem_library
-    if _theorem_library is None:
-        _theorem_library = TheoremLibrary()
-    return _theorem_library
+def test_theorem_library():
+    """测试定理库"""
+    from src.state_abstractor import StateAbstractor
+    
+    library = TheoremLibrary()
+    abstractor = StateAbstractor()
+    
+    # 示例：id=2的题目
+    fact_expressions = (
+        "G: Hyperbola;m: Number;m>0;"
+        "Expression(G) = (x^2/4 - y^2/m^2 = 1);"
+        "Expression(OneOf(Asymptote(G))) = (5*x - 2*y = 0)"
+    )
+    query_expressions = "m"
+    model_ids = [5, 21]  # 应用模型5和21
+    
+    # 解析初始状态
+    _, initial_state = abstractor.abstract_from_facts(fact_expressions, query_expressions)
+    
+    print("=" * 60)
+    print("测试：模型序列应用")
+    print("=" * 60)
+    print(f"初始状态S0:")
+    print(f"  实体: {initial_state.entities}")
+    print(f"  方程: {initial_state.equations}")
+    print(f"  参数: {initial_state.parameters}")
+    print()
+    
+    # 应用模型序列
+    states = library.apply_model_sequence(initial_state, model_ids)
+    
+    for i, state in enumerate(states[1:], 1):
+        print(f"状态S{i} (应用模型{model_ids[i-1]}后):")
+        print(f"  参数: {state.parameters}")
+        print(f"  新增关系: {state.geometric_relations[-2:]}")  # 显示最新的2个关系
+        print()
 
+
+if __name__ == "__main__":
+    test_theorem_library()
