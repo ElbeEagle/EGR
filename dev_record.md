@@ -133,3 +133,13 @@ eg:
 工作2:初步分析问题状态state的建模方案
 
 ---
+
+## 2026.01.15上午
+
+工作1:拟定了"定模型库构建"和"题目状态构建"的方案。
+> 存储定位："doc/module0_model_library.md", "doc/module1_state_construct.md"
+
+工作2:梳理了"项目整体流程框架"，及"思路+创新点"
+> 存储定位："doc/project_workflow.md", "doc/创新点+论文思路.md"
+
+---
