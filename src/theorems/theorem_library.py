@@ -30,10 +30,22 @@ class TheoremLibrary:
         注意：逐步添加80个模型
         """
         # 已实现的模型
+        from .models.model_003 import EllipseEquationStandardX
         from .models.model_005 import HyperbolaEquationStandardX
+        from .models.model_007 import ParabolaEquationStandardRight
+        from .models.model_009 import ParabolaEquationStandardUp
+        from .models.model_011 import EllipseParameterRelation
+        from .models.model_012 import HyperbolaParameterRelation
+        from .models.model_013 import EccentricityFormula
         from .models.model_021 import HyperbolaAsymptote
         
+        self.register_model(EllipseEquationStandardX())
         self.register_model(HyperbolaEquationStandardX())
+        self.register_model(ParabolaEquationStandardRight())
+        self.register_model(ParabolaEquationStandardUp())
+        self.register_model(EllipseParameterRelation())
+        self.register_model(HyperbolaParameterRelation())
+        self.register_model(EccentricityFormula())
         self.register_model(HyperbolaAsymptote())
     
     def register_model(self, model: TheoremModel):
