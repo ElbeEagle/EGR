@@ -102,6 +102,7 @@ class HyperbolaEquationStandardX(TheoremModel):
         
         匹配模式：
         - x^2/A - y^2/B = 1
+        - x^2/A - y^2 = 1 (y²分母为1)
         - x^2/a^2 - y^2/b^2 = 1
         - -y^2/B + x^2/A = 1
         """
@@ -113,9 +114,19 @@ class HyperbolaEquationStandardX(TheoremModel):
         if re.search(pattern1, eq):
             return True
         
-        # 模式2: -y^2/B + x^2/A = 1
-        pattern2 = r'-y\^2/([^\s\+]+).*?\+.*?x\^2/([^\s=\)]+).*?=.*?1'
+        # 模式2: x^2/A - y^2 = 1 (y²没有明确分母)
+        pattern2 = r'x\^2/([^\s\-\+]+).*?-.*?y\^2\s*=\s*1'
         if re.search(pattern2, eq):
+            return True
+        
+        # 模式3: -y^2/B + x^2/A = 1
+        pattern3 = r'-y\^2/([^\s\+]+).*?\+.*?x\^2/([^\s=\)]+).*?=.*?1'
+        if re.search(pattern3, eq):
+            return True
+        
+        # 模式4: -y^2 + x^2/A = 1 (y²没有明确分母)
+        pattern4 = r'-y\^2\s*\+\s*x\^2/([^\s=\)]+).*?=.*?1'
+        if re.search(pattern4, eq):
             return True
         
         return False
@@ -137,13 +148,29 @@ class HyperbolaEquationStandardX(TheoremModel):
             b_squared = match1.group(2)
             return self._clean_parameter(a_squared), self._clean_parameter(b_squared)
         
-        # 模式2: -y^2/B + x^2/A = 1
-        pattern2 = r'-y\^2/([^\s\+\)]+).*?\+.*?x\^2/([^\s=\)]+)'
+        # 模式2: x^2/A - y^2 = 1 (y²分母为1)
+        pattern2 = r'x\^2/([^\s\-\+\)]+).*?-.*?y\^2\s*='
         match2 = re.search(pattern2, eq)
         if match2:
-            b_squared = match2.group(1)
-            a_squared = match2.group(2)
+            a_squared = match2.group(1)
+            b_squared = '1'  # y²的分母默认为1
+            return self._clean_parameter(a_squared), b_squared
+        
+        # 模式3: -y^2/B + x^2/A = 1
+        pattern3 = r'-y\^2/([^\s\+\)]+).*?\+.*?x\^2/([^\s=\)]+)'
+        match3 = re.search(pattern3, eq)
+        if match3:
+            b_squared = match3.group(1)
+            a_squared = match3.group(2)
             return self._clean_parameter(a_squared), self._clean_parameter(b_squared)
+        
+        # 模式4: -y^2 + x^2/A = 1 (y²分母为1)
+        pattern4 = r'-y\^2\s*\+\s*x\^2/([^\s=\)]+)'
+        match4 = re.search(pattern4, eq)
+        if match4:
+            a_squared = match4.group(1)
+            b_squared = '1'
+            return self._clean_parameter(a_squared), b_squared
         
         return None, None
     

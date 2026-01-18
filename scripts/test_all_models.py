@@ -116,12 +116,14 @@ def main():
         data = json.load(f)
     print(f"✓ 加载完成，共 {len(data)} 个样本")
     
-    # 创建构造器和定理库
-    constructor = StateConstructor()
+    # 创建定理库
     library = TheoremLibrary()
     
     print(f"\n定理库状态: {library}")
     print(f"已注册模型: {library.get_available_models()}")
+    
+    # 🆕 创建构造器（传入定理库用于自动参数提取）
+    constructor = StateConstructor(theorem_library=library)
     
     print_separator("开始测试样本")
     

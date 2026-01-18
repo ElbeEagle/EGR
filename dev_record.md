@@ -186,3 +186,17 @@ eg:
 
 ---
 
+2026.01.18上午
+
+工作1: 状态构造器增强，自动参数提取，自动应用标准方程模型 (3-10)。
+> 存储定位："src/state/state_constructor.py" (_extract_equation_parameters)
+
+工作2: 实现方程标准化（EquationNormalizer）
+   - 支持 `y = x²/4` → `x² = 4y`
+   - 支持 `x²/3 - y² = 1` → `x²/3 - y²/1 = 1`
+   - 支持 `4x² + 9y² = 36` → `x²/9 + y²/4 = 1`
+> 存储定位："src/state/equation_normalizer.py"
+
+---
+
+

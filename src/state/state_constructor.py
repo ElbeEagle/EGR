@@ -5,9 +5,13 @@ StateConstructor - 状态构造器
 """
 
 import re
-from typing import Tuple, Optional
+from typing import Tuple, Optional, TYPE_CHECKING
 from .symbolic_state import SymbolicState
 from .abstract_state import AbstractState, CurveType, QueryType
+from .equation_normalizer import EquationNormalizer
+
+if TYPE_CHECKING:
+    from ..theorems.theorem_library import TheoremLibrary
 
 
 class StateConstructor:
@@ -18,11 +22,18 @@ class StateConstructor:
     1. 从 fact_expressions 构建初始状态
     2. 从 SymbolicState 提取 AbstractState
     3. 估计完整度得分
+    4. 🆕 自动提取方程参数（标准方程模型）
     """
     
-    def __init__(self):
-        """初始化构造器"""
-        pass
+    def __init__(self, theorem_library: Optional['TheoremLibrary'] = None):
+        """
+        初始化构造器
+        
+        Args:
+            theorem_library: 定理库（用于自动参数提取）
+        """
+        self.theorem_library = theorem_library
+        self.equation_normalizer = EquationNormalizer()
     
     def construct_from_facts(
         self,
@@ -41,10 +52,17 @@ class StateConstructor:
         Returns:
             Tuple[AbstractState, SymbolicState]: (抽象状态, 符号状态)
         """
-        # 步骤1: 解析 fact_expressions
-        symbolic_state = self._parse_fact_expressions(fact_expressions)
+        # 🆕 步骤0: 方程标准化
+        normalized_facts = self.equation_normalizer.normalize_fact_expressions(fact_expressions)
         
-        # 步骤2: 提取抽象特征
+        # 步骤1: 解析 fact_expressions
+        symbolic_state = self._parse_fact_expressions(normalized_facts)
+        
+        # 🆕 步骤2: 自动提取方程参数
+        if self.theorem_library:
+            self._extract_equation_parameters(symbolic_state)
+        
+        # 步骤3: 提取抽象特征
         abstract_state = self._construct_abstract_features(
             symbolic_state,
             query_expressions,
@@ -140,6 +158,52 @@ class StateConstructor:
                 state.constraints.append(fact)
         
         return state
+    
+    def _extract_equation_parameters(self, symbolic_state: SymbolicState) -> None:
+        """
+        🆕 从方程中自动提取参数
+        
+        自动应用标准方程模型 (3-10)：
+        - Model 3: 椭圆标准方程(焦点在x轴)
+        - Model 4: 椭圆标准方程(焦点在y轴)
+        - Model 5: 双曲线标准方程(焦点在x轴)
+        - Model 6: 双曲线标准方程(焦点在y轴)
+        - Model 7: 抛物线标准方程(开口向右)
+        - Model 8: 抛物线标准方程(开口向左)
+        - Model 9: 抛物线标准方程(开口向上)
+        - Model 10: 抛物线标准方程(开口向下)
+        
+        这些模型会在初始化时自动执行，提取基本参数。
+        
+        Args:
+            symbolic_state: 符号状态（会被直接修改）
+        """
+        if not self.theorem_library:
+            return
+        
+        # 标准方程模型ID列表
+        standard_equation_models = [3, 4, 5, 6, 7, 8, 9, 10]
+        
+        # 尝试应用每个标准方程模型
+        for model_id in standard_equation_models:
+            model = self.theorem_library.models.get(model_id)
+            
+            # 跳过未实现的模型
+            if not model:
+                continue
+            
+            # 检查前置条件
+            if not model.can_apply(symbolic_state):
+                continue
+            
+            # 应用模型
+            try:
+                model.apply(symbolic_state)
+                # 只应用第一个匹配的模型，避免冲突
+                break
+            except Exception as e:
+                # 如果应用失败，继续尝试下一个模型
+                continue
     
     def _construct_abstract_features(
         self,

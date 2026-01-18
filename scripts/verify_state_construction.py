@@ -13,6 +13,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from src.state import StateConstructor
+from src.theorems import TheoremLibrary
 
 
 def load_data(data_path: str):
@@ -116,8 +117,9 @@ def main():
     data = load_data(str(data_path))
     print(f"✓ 加载完成，共 {len(data)} 个样本")
     
-    # 创建构造器
-    constructor = StateConstructor()
+    # 🆕 创建定理库和构造器（传入定理库用于自动参数提取）
+    library = TheoremLibrary()
+    constructor = StateConstructor(theorem_library=library)
     
     # 验证前5个有模型序列的样本
     print_separator("开始验证样本")
