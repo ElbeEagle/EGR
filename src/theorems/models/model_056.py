@@ -35,29 +35,38 @@ class TriangleAreaFormula(TheoremModel):
     
     def can_apply(self, state) -> bool:
         """
-        检查是否可应用
+        检查是否可应用（放宽条件）
         
         条件:
-        1. 存在三角形
-        2. 需要计算面积
+        1. 存在三角形相关信息
+        2. 或需要计算面积
+        3. 或有多个点（可能形成三角形）
         """
-        # 检查是否有三角形
+        # 检查是否有三角形或面积相关
         for rel in state.geometric_relations:
-            if 'Triangle' in rel or '三角形' in rel:
-                return True
-            if 'Area' in rel or '面积' in rel:
+            if any(kw in rel for kw in ['Triangle', '三角形', 'Area', '面积', 'Perimeter', '周长']):
                 return True
         
         # 检查是否有焦点三角形（椭圆或双曲线）
         has_focal_points = any(
-            'F1' in state.coordinates or 'F2' in state.coordinates
+            'F1' in state.coordinates or 'F2' in state.coordinates or
+            'F_1' in state.coordinates or 'F_2' in state.coordinates
             for _ in [1]
         )
         
         if has_focal_points:
             for entity_type in state.entities.values():
-                if entity_type.lower() in ['ellipse', 'hyperbola']:
+                if entity_type.lower() in ['ellipse', 'hyperbola', 'parabola']:
                     return True
+        
+        # 如果有至少3个点，可能需要计算三角形面积
+        if len(state.coordinates) >= 3:
+            return True
+        
+        # 如果有焦点相关的几何关系
+        for rel in state.geometric_relations:
+            if 'Focus' in rel or '焦点' in rel:
+                return True
         
         return False
     

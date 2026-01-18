@@ -38,11 +38,11 @@ class HyperbolaEqualAxis(TheoremModel):
     
     def can_apply(self, state) -> bool:
         """
-        检查是否可应用
+        检查是否可应用（放宽条件）
         
         条件:
         1. 存在 Hyperbola 实体
-        2. 满足等轴双曲线的特征
+        2. 满足等轴双曲线的特征（放宽判断）
         """
         # 条件1: 检查是否有双曲线实体
         has_hyperbola = any(
@@ -52,18 +52,16 @@ class HyperbolaEqualAxis(TheoremModel):
         if not has_hyperbola:
             return False
         
-        # 条件2: 检查是否满足等轴双曲线特征
+        # 条件2: 检查是否满足等轴双曲线特征（放宽）
         
-        # 特征1: 渐近线为 y = ±x
+        # 特征1: 渐近线为 y = ±x（放宽匹配）
         for rel in state.geometric_relations:
-            if 'y = ±x' in rel or 'y = pm*x' in rel or 'y = ±(1)*x' in rel:
-                return True
-            if '渐近线' in rel and ('y = x' in rel or 'y = -x' in rel):
-                # 检查是否同时有 y=x 和 y=-x
-                has_pos = 'y = x' in rel or 'y = +x' in rel
-                has_neg = 'y = -x' in rel
-                if has_pos and has_neg:
+            rel_lower = rel.lower()
+            if any(pattern in rel_lower for pattern in ['y=±x', 'y=±1*x', 'y=x', 'asymptote']):
+                if 'x' in rel and 'y' in rel:
                     return True
+            if '渐近线' in rel or 'Asymptote' in rel:
+                return True
         
         # 特征2: 离心率为 √2
         e_val = state.parameters.get('e')

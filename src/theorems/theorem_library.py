@@ -44,6 +44,7 @@ class TheoremLibrary:
         from .models.model_011 import EllipseParameterRelation
         from .models.model_012 import HyperbolaParameterRelation
         from .models.model_013 import EccentricityFormula
+        from .models.model_014 import EllipseEccentricityRange
         from .models.model_016 import EllipseFocalRadius
         from .models.model_017 import ParabolaFocalRadius
         from .models.model_019 import HyperbolaLatusRectum
@@ -51,15 +52,24 @@ class TheoremLibrary:
         from .models.model_022 import HyperbolaFocusToAsymptoteDistance
         from .models.model_024 import HyperbolaEqualAxis
         from .models.model_029 import ParabolaDirectrix
+        from .models.model_032 import EllipseFocalTrianglePerimeter
         from .models.model_041 import VietaTheorem
         from .models.model_042 import VietaTheoremSum
         from .models.model_043 import VietaTheoremProduct
+        from .models.model_046 import PointDifferenceMethodHyperbola
         from .models.model_047 import CosineLaw
         from .models.model_053 import TwoPointsDistance
+        from .models.model_054 import MidpointFormula
         from .models.model_056 import TriangleAreaFormula
+        from .models.model_057 import TriangleAreaWithSin
+        from .models.model_061 import VectorPerpendicularCondition
         from .models.model_062 import VectorCollinearCondition
         from .models.model_063 import BasicInequality
+        from .models.model_065 import DiscriminantDelta
+        from .models.model_070 import IncircleRadiusFormula
         from .models.model_075 import CircleStandardEquation
+        from .models.model_078 import SubstitutionXEqualsMYPlusN
+        from .models.model_079 import QuadraticFunctionMaximum
         
         # 注册模型
         self.register_model(EllipseDefinition())
@@ -76,6 +86,7 @@ class TheoremLibrary:
         self.register_model(EllipseParameterRelation())
         self.register_model(HyperbolaParameterRelation())
         self.register_model(EccentricityFormula())
+        self.register_model(EllipseEccentricityRange())
         self.register_model(EllipseFocalRadius())
         self.register_model(ParabolaFocalRadius())
         self.register_model(HyperbolaLatusRectum())
@@ -83,15 +94,24 @@ class TheoremLibrary:
         self.register_model(HyperbolaFocusToAsymptoteDistance())
         self.register_model(HyperbolaEqualAxis())
         self.register_model(ParabolaDirectrix())
+        self.register_model(EllipseFocalTrianglePerimeter())
         self.register_model(VietaTheorem())
         self.register_model(VietaTheoremSum())
         self.register_model(VietaTheoremProduct())
+        self.register_model(PointDifferenceMethodHyperbola())
         self.register_model(CosineLaw())
         self.register_model(TwoPointsDistance())
+        self.register_model(MidpointFormula())
         self.register_model(TriangleAreaFormula())
+        self.register_model(TriangleAreaWithSin())
+        self.register_model(VectorPerpendicularCondition())
         self.register_model(VectorCollinearCondition())
         self.register_model(BasicInequality())
+        self.register_model(DiscriminantDelta())
+        self.register_model(IncircleRadiusFormula())
         self.register_model(CircleStandardEquation())
+        self.register_model(SubstitutionXEqualsMYPlusN())
+        self.register_model(QuadraticFunctionMaximum())
     
     def register_model(self, model: TheoremModel):
         """

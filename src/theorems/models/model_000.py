@@ -33,35 +33,18 @@ class EllipseDefinition(TheoremModel):
     
     def can_apply(self, state) -> bool:
         """
-        检查是否可应用
+        检查是否可应用（放宽条件）
         
         条件:
-        1. 存在 Ellipse 实体
-        2. 有焦点或参数a相关信息
+        1. 存在 Ellipse 实体（就可以应用定义）
         """
-        # 条件1: 检查是否有椭圆实体
+        # 只要有椭圆实体，就可以应用定义
         has_ellipse = any(
             entity_type.lower() == 'ellipse'
             for entity_type in state.entities.values()
         )
-        if not has_ellipse:
-            return False
         
-        # 条件2: 检查是否有焦点或参数a
-        # 如果有a参数或焦点信息，可以应用定义
-        if 'a' in state.parameters or 'a^2' in state.parameters:
-            return True
-        
-        # 或者从几何关系中查找焦点
-        for rel in state.geometric_relations:
-            if 'Focus' in rel or 'F1' in rel or 'F2' in rel or '焦点' in rel:
-                return True
-        
-        # 或者从坐标中查找焦点
-        if 'Focus' in state.coordinates or 'F1' in state.coordinates or 'F2' in state.coordinates:
-            return True
-        
-        return False
+        return has_ellipse
     
     def apply(self, state) -> None:
         """

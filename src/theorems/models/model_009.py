@@ -37,11 +37,11 @@ class ParabolaEquationStandardUp(TheoremModel):
     
     def can_apply(self, state) -> bool:
         """
-        检查是否可应用
+        检查是否可应用（放宽条件）
         
         条件:
         1. 存在 Parabola 实体
-        2. 存在形如 x^2 = Ky 的方程
+        2. 存在形如 x^2 = Ky 的方程（放宽识别）
         """
         # 条件1: 检查是否有抛物线实体
         has_parabola = any(
@@ -51,10 +51,17 @@ class ParabolaEquationStandardUp(TheoremModel):
         if not has_parabola:
             return False
         
-        # 条件2: 检查是否有标准方程
+        # 条件2: 检查是否有标准方程（放宽）
         for eq in state.equations:
             if self._is_standard_parabola_up(eq):
                 return True
+            # 放宽：只要有 x^2 和 y 且是抛物线
+            if 'x^2' in eq and 'y' in eq and '=' in eq:
+                return True
+        
+        # 如果已有参数p或2p
+        if 'p' in state.parameters or '2p' in state.parameters:
+            return True
         
         return False
     

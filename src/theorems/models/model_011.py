@@ -36,11 +36,11 @@ class EllipseParameterRelation(TheoremModel):
     
     def can_apply(self, state) -> bool:
         """
-        检查是否可应用
+        检查是否可应用（放宽条件）
         
         条件:
         1. 存在 Ellipse 实体
-        2. a, b, c 中至少有两个已知
+        2. a, b, c 中至少有一个已知（放宽）
         """
         # 条件1: 检查是否有椭圆实体
         has_ellipse = any(
@@ -50,7 +50,7 @@ class EllipseParameterRelation(TheoremModel):
         if not has_ellipse:
             return False
         
-        # 条件2: 检查参数
+        # 条件2: 检查参数（放宽至至少一个）
         params = state.parameters
         known_count = 0
         if 'a' in params or 'a^2' in params:
@@ -60,7 +60,8 @@ class EllipseParameterRelation(TheoremModel):
         if 'c' in params or 'c^2' in params:
             known_count += 1
         
-        return known_count >= 2
+        # 至少有一个参数就可以尝试
+        return known_count >= 1
     
     def apply(self, state) -> None:
         """

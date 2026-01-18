@@ -35,29 +35,41 @@ class BasicInequality(TheoremModel):
     
     def can_apply(self, state) -> bool:
         """
-        检查是否可应用
+        检查是否可应用（放宽条件）
         
         条件:
         1. 需要求最值
         2. 有不等式相关信息
+        3. 或存在距离、和、积等可能需要不等式的场景
         """
         # 检查最值关键词
         for rel in state.geometric_relations:
-            if any(keyword in rel for keyword in [
+            if any(keyword in rel.lower() for keyword in [
                 '最大', '最小', 'maximum', 'minimum', 'max', 'min',
-                '最值', 'extremum', '最大值', '最小值'
+                '最值', 'extremum', '最大值', '最小值', 'range', '范围'
             ]):
                 return True
         
         # 检查不等式关键词
         for rel in state.geometric_relations:
             if any(keyword in rel for keyword in [
-                '不等式', 'inequality', '≥', '≤', '>=', '<='
+                '不等式', 'inequality', '≥', '≤', '>=', '<=', '>', '<'
             ]):
                 return True
         
-        # 检查query中是否有最值需求
-        # （这里简化处理，实际可能需要更复杂的判断）
+        # 检查是否有距离（可能需要不等式估计）
+        for rel in state.geometric_relations:
+            if 'Distance' in rel:
+                return True
+        
+        # 检查是否有和、积相关参数
+        if any('+' in str(v) or '*' in str(v) for v in state.parameters.values()):
+            return True
+        
+        # 只要有参数，就可能需要不等式（放宽）
+        if len(state.parameters) >= 2:
+            return True
+        
         return False
     
     def apply(self, state) -> None:

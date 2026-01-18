@@ -36,12 +36,12 @@ class EllipseEquationStandardX(TheoremModel):
     
     def can_apply(self, state) -> bool:
         """
-        检查是否可应用
+        检查是否可应用（放宽条件）
         
         条件:
         1. 存在 Ellipse 实体
         2. 存在形如 x^2/A + y^2/B = 1 的方程
-        3. A > B (焦点在x轴)
+        3. A > B (焦点在x轴) - 放宽判断
         """
         # 条件1: 检查是否有椭圆实体
         has_ellipse = any(
@@ -51,9 +51,17 @@ class EllipseEquationStandardX(TheoremModel):
         if not has_ellipse:
             return False
         
-        # 条件2和3: 检查是否有标准方程且A>B
+        # 条件2: 检查是否有标准方程（放宽A>B判断）
         for eq in state.equations:
             if self._is_standard_ellipse_x(eq):
+                return True
+        
+        # 如果已经有参数a^2, b^2但未标记焦点方向
+        if 'a^2' in state.parameters and 'b^2' in state.parameters:
+            # 检查焦点方向提示
+            has_x_focus = any('焦点在x轴' in rel or 'focus on x' in rel.lower() 
+                             for rel in state.geometric_relations)
+            if has_x_focus:
                 return True
         
         return False

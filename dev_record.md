@@ -174,6 +174,7 @@ eg:
 ---
 
 ## 2026.01.17下午
+> 开发日志："dev_logs/stage2_models_batch6_report.md"
 
 工作1: 到目前总共实现了30个模型: [0-13, 16, 17, 19, 21, 22, 24, 29, 41-43, 47, 53, 56, 62, 63, 75];
 > 存储定位："src/theorems/models/model_xxx.py"
@@ -187,6 +188,7 @@ eg:
 ---
 
 2026.01.18上午
+> 开发日志："dev_logs/stage2.1_optimization_report.md"
 
 工作1: 状态构造器增强，自动参数提取，自动应用标准方程模型 (3-10)。
 > 存储定位："src/state/state_constructor.py" (_extract_equation_parameters)
@@ -196,6 +198,18 @@ eg:
    - 支持 `x²/3 - y² = 1` → `x²/3 - y²/1 = 1`
    - 支持 `4x² + 9y² = 36` → `x²/9 + y²/4 = 1`
 > 存储定位："src/state/equation_normalizer.py"
+
+
+2026.01.18下午
+> 开发日志："dev_logs/stage2.2_expansion_optimization.md"
+
+工作1: 实现了10个高频模型: [54, 32, 57, 78, 14, 61, 46, 65, 79, 70]。到目前总共实现了40个模型。
+
+
+工作2: 优化一些模型的前置条件，适应不同题目的形式，提高匹配成功率 (Model 13, 62, 63, 32, 24; Model 0, 3, 11, 9, 56, 61)
+
+**下一步**：
+* Module 3 - 训练数据构造器 / 神经网络训练
 
 ---
 
