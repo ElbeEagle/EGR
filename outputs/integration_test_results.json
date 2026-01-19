@@ -1,0 +1,1498 @@
+{
+  "total_samples": 63,
+  "sample_classification": {
+    "fully_success": 24,
+    "partial_success": 28,
+    "failed": 11,
+    "fully_success_rate": 38.095238095238095,
+    "partial_success_rate": 44.44444444444444,
+    "failed_rate": 17.46031746031746
+  },
+  "step_statistics": {
+    "total_steps": 211,
+    "success_steps": 135,
+    "skipped_steps": 11,
+    "failed_steps": 65,
+    "success_rate": 63.98104265402843,
+    "skipped_rate": 5.213270142180095,
+    "failed_rate": 30.80568720379147
+  },
+  "quality_metrics": {
+    "completeness_monotonic_rate": 100.0,
+    "avg_completeness_gain": 0.2285714285714285,
+    "avg_param_gain": 2.2857142857142856
+  },
+  "sample_results": [
+    {
+      "sample_id": 0,
+      "status": "fully_success",
+      "model_sequence": [
+        5,
+        21
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.3,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.49999999999999994,
+        "initial_param_count": 0,
+        "final_param_count": 4,
+        "param_gain": 4
+      }
+    },
+    {
+      "sample_id": 1,
+      "status": "fully_success",
+      "model_sequence": [
+        5,
+        22,
+        19,
+        24,
+        13
+      ],
+      "analysis": {
+        "total_steps": 5,
+        "success_steps": 5,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.5999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 7,
+        "param_gain": 7
+      }
+    },
+    {
+      "sample_id": 2,
+      "status": "fully_success",
+      "model_sequence": [
+        9,
+        2,
+        29,
+        17
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 3,
+      "status": "failed",
+      "model_sequence": [
+        12
+      ],
+      "analysis": {
+        "total_steps": 1,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.3,
+        "final_completeness": 0.3,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 4,
+      "status": "fully_success",
+      "model_sequence": [
+        3,
+        11,
+        13
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 5,
+      "status": "fully_success",
+      "model_sequence": [
+        3,
+        11,
+        5,
+        12
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 5,
+        "param_gain": 5
+      }
+    },
+    {
+      "sample_id": 6,
+      "status": "partial_success",
+      "model_sequence": [
+        7,
+        75,
+        53,
+        63,
+        62
+      ],
+      "analysis": {
+        "total_steps": 5,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.8,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 7,
+      "status": "partial_success",
+      "model_sequence": [
+        1,
+        70,
+        56,
+        13
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.5,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 8,
+      "status": "partial_success",
+      "model_sequence": [
+        19,
+        47,
+        12,
+        13
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 3,
+        "success_rate": 0.25,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 9,
+      "status": "partial_success",
+      "model_sequence": [
+        9,
+        29,
+        21,
+        13
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 3,
+        "success_rate": 0.25,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 10,
+      "status": "partial_success",
+      "model_sequence": [
+        8,
+        53
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.5,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 11,
+      "status": "failed",
+      "model_sequence": [
+        17
+      ],
+      "analysis": {
+        "total_steps": 1,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 12,
+      "status": "failed",
+      "model_sequence": [
+        7,
+        17,
+        29
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 3,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.1,
+        "final_completeness": 0.1,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 13,
+      "status": "partial_success",
+      "model_sequence": [
+        5,
+        44,
+        54
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 1,
+        "skipped_steps": 1,
+        "failed_steps": 1,
+        "success_rate": 0.3333333333333333,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 14,
+      "status": "fully_success",
+      "model_sequence": [
+        7,
+        2,
+        29,
+        17
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 15,
+      "status": "partial_success",
+      "model_sequence": [
+        1,
+        49,
+        57,
+        13
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 1,
+        "skipped_steps": 1,
+        "failed_steps": 2,
+        "success_rate": 0.25,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 16,
+      "status": "partial_success",
+      "model_sequence": [
+        0,
+        11,
+        47,
+        57,
+        56
+      ],
+      "analysis": {
+        "total_steps": 5,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.6,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 17,
+      "status": "fully_success",
+      "model_sequence": [
+        7,
+        29
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.3,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.3,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 18,
+      "status": "fully_success",
+      "model_sequence": [
+        7,
+        78,
+        42,
+        43,
+        62,
+        56
+      ],
+      "analysis": {
+        "total_steps": 6,
+        "success_steps": 6,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 19,
+      "status": "partial_success",
+      "model_sequence": [
+        5,
+        1,
+        19,
+        63,
+        64,
+        32
+      ],
+      "analysis": {
+        "total_steps": 6,
+        "success_steps": 4,
+        "skipped_steps": 1,
+        "failed_steps": 1,
+        "success_rate": 0.6666666666666666,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 5,
+        "param_gain": 5
+      }
+    },
+    {
+      "sample_id": 20,
+      "status": "fully_success",
+      "model_sequence": [
+        3,
+        62,
+        14
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 4,
+        "param_gain": 4
+      }
+    },
+    {
+      "sample_id": 21,
+      "status": "partial_success",
+      "model_sequence": [
+        5,
+        21,
+        54,
+        55,
+        61,
+        13
+      ],
+      "analysis": {
+        "total_steps": 6,
+        "success_steps": 3,
+        "skipped_steps": 1,
+        "failed_steps": 2,
+        "success_rate": 0.5,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.5999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 22,
+      "status": "fully_success",
+      "model_sequence": [
+        3,
+        42,
+        43,
+        56
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 4,
+        "param_gain": 4
+      }
+    },
+    {
+      "sample_id": 23,
+      "status": "failed",
+      "model_sequence": [
+        0,
+        14
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.1,
+        "final_completeness": 0.1,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 24,
+      "status": "failed",
+      "model_sequence": [
+        9
+      ],
+      "analysis": {
+        "total_steps": 1,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.1,
+        "final_completeness": 0.1,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 25,
+      "status": "fully_success",
+      "model_sequence": [
+        7,
+        2,
+        29,
+        53
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.6,
+        "final_completeness": 0.9,
+        "completeness_gain": 0.30000000000000004,
+        "initial_param_count": 0,
+        "final_param_count": 3,
+        "param_gain": 3
+      }
+    },
+    {
+      "sample_id": 26,
+      "status": "partial_success",
+      "model_sequence": [
+        5,
+        21,
+        46,
+        62,
+        13
+      ],
+      "analysis": {
+        "total_steps": 5,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.8,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.5999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 27,
+      "status": "failed",
+      "model_sequence": [
+        11
+      ],
+      "analysis": {
+        "total_steps": 1,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.1,
+        "final_completeness": 0.1,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 28,
+      "status": "fully_success",
+      "model_sequence": [
+        5,
+        65,
+        79
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 7,
+        "param_gain": 7
+      }
+    },
+    {
+      "sample_id": 29,
+      "status": "partial_success",
+      "model_sequence": [
+        7,
+        2,
+        29,
+        68
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 3,
+        "skipped_steps": 1,
+        "failed_steps": 0,
+        "success_rate": 0.75,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 30,
+      "status": "failed",
+      "model_sequence": [
+        1,
+        0,
+        12
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 3,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.0,
+        "final_completeness": 0.0,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 31,
+      "status": "partial_success",
+      "model_sequence": [
+        75,
+        7,
+        29,
+        76
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 3,
+        "skipped_steps": 1,
+        "failed_steps": 0,
+        "success_rate": 0.75,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 32,
+      "status": "failed",
+      "model_sequence": [
+        5,
+        13,
+        3
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 3,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 33,
+      "status": "partial_success",
+      "model_sequence": [
+        3,
+        11,
+        47,
+        13
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 3,
+        "success_rate": 0.25,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.1,
+        "final_completeness": 0.1,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 34,
+      "status": "partial_success",
+      "model_sequence": [
+        32,
+        56
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.5,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 35,
+      "status": "partial_success",
+      "model_sequence": [
+        5,
+        21,
+        61,
+        24,
+        13
+      ],
+      "analysis": {
+        "total_steps": 5,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.8,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.5999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 36,
+      "status": "fully_success",
+      "model_sequence": [
+        7,
+        78,
+        42,
+        43,
+        54
+      ],
+      "analysis": {
+        "total_steps": 5,
+        "success_steps": 5,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 37,
+      "status": "partial_success",
+      "model_sequence": [
+        7,
+        19
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.5,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.6,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 38,
+      "status": "fully_success",
+      "model_sequence": [
+        7,
+        29,
+        75
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 39,
+      "status": "failed",
+      "model_sequence": [
+        6,
+        21
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 40,
+      "status": "failed",
+      "model_sequence": [
+        9,
+        29
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.1,
+        "final_completeness": 0.1,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 41,
+      "status": "fully_success",
+      "model_sequence": [
+        5,
+        21
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.3,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.7,
+        "initial_param_count": 0,
+        "final_param_count": 4,
+        "param_gain": 4
+      }
+    },
+    {
+      "sample_id": 42,
+      "status": "fully_success",
+      "model_sequence": [
+        3,
+        62,
+        63
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.5999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 4,
+        "param_gain": 4
+      }
+    },
+    {
+      "sample_id": 43,
+      "status": "partial_success",
+      "model_sequence": [
+        5,
+        46,
+        65,
+        79
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.5,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7000000000000001,
+        "completeness_gain": 0.30000000000000004,
+        "initial_param_count": 0,
+        "final_param_count": 3,
+        "param_gain": 3
+      }
+    },
+    {
+      "sample_id": 44,
+      "status": "partial_success",
+      "model_sequence": [
+        0,
+        13
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.5,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 45,
+      "status": "partial_success",
+      "model_sequence": [
+        7,
+        3,
+        13
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.3333333333333333,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 46,
+      "status": "partial_success",
+      "model_sequence": [
+        3,
+        1,
+        0,
+        13,
+        32
+      ],
+      "analysis": {
+        "total_steps": 5,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 3,
+        "success_rate": 0.4,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.1,
+        "final_completeness": 0.1,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 47,
+      "status": "partial_success",
+      "model_sequence": [
+        3,
+        0,
+        16,
+        13
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 1,
+        "success_rate": 0.75,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.5999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 48,
+      "status": "partial_success",
+      "model_sequence": [
+        5,
+        30,
+        56
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 1,
+        "skipped_steps": 1,
+        "failed_steps": 1,
+        "success_rate": 0.3333333333333333,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 49,
+      "status": "fully_success",
+      "model_sequence": [
+        3,
+        13
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 50,
+      "status": "fully_success",
+      "model_sequence": [
+        5,
+        1,
+        62,
+        13
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.5999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 51,
+      "status": "partial_success",
+      "model_sequence": [
+        3,
+        44,
+        54
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 1,
+        "skipped_steps": 1,
+        "failed_steps": 1,
+        "success_rate": 0.3333333333333333,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 52,
+      "status": "partial_success",
+      "model_sequence": [
+        3,
+        75,
+        13
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.3333333333333333,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7000000000000001,
+        "completeness_gain": 0.30000000000000004,
+        "initial_param_count": 0,
+        "final_param_count": 3,
+        "param_gain": 3
+      }
+    },
+    {
+      "sample_id": 53,
+      "status": "fully_success",
+      "model_sequence": [
+        3,
+        0,
+        13
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 54,
+      "status": "fully_success",
+      "model_sequence": [
+        5,
+        22,
+        13
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.9999999999999999,
+        "completeness_gain": 0.5999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 6,
+        "param_gain": 6
+      }
+    },
+    {
+      "sample_id": 55,
+      "status": "fully_success",
+      "model_sequence": [
+        7,
+        2,
+        29,
+        53
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 4,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.6,
+        "final_completeness": 0.9,
+        "completeness_gain": 0.30000000000000004,
+        "initial_param_count": 0,
+        "final_param_count": 3,
+        "param_gain": 3
+      }
+    },
+    {
+      "sample_id": 56,
+      "status": "failed",
+      "model_sequence": [
+        3,
+        13
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 0,
+        "skipped_steps": 0,
+        "failed_steps": 2,
+        "success_rate": 0.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 57,
+      "status": "partial_success",
+      "model_sequence": [
+        7,
+        78,
+        42,
+        51
+      ],
+      "analysis": {
+        "total_steps": 4,
+        "success_steps": 3,
+        "skipped_steps": 1,
+        "failed_steps": 0,
+        "success_rate": 0.75,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.6,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 58,
+      "status": "partial_success",
+      "model_sequence": [
+        5,
+        13,
+        1,
+        75,
+        53,
+        63
+      ],
+      "analysis": {
+        "total_steps": 6,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 4,
+        "success_rate": 0.3333333333333333,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    },
+    {
+      "sample_id": 59,
+      "status": "fully_success",
+      "model_sequence": [
+        5
+      ],
+      "analysis": {
+        "total_steps": 1,
+        "success_steps": 1,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.3,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.49999999999999994,
+        "initial_param_count": 0,
+        "final_param_count": 4,
+        "param_gain": 4
+      }
+    },
+    {
+      "sample_id": 60,
+      "status": "fully_success",
+      "model_sequence": [
+        5,
+        1
+      ],
+      "analysis": {
+        "total_steps": 2,
+        "success_steps": 2,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.3999999999999999,
+        "initial_param_count": 0,
+        "final_param_count": 4,
+        "param_gain": 4
+      }
+    },
+    {
+      "sample_id": 61,
+      "status": "fully_success",
+      "model_sequence": [
+        7,
+        62,
+        54
+      ],
+      "analysis": {
+        "total_steps": 3,
+        "success_steps": 3,
+        "skipped_steps": 0,
+        "failed_steps": 0,
+        "success_rate": 1.0,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.6,
+        "final_completeness": 0.7999999999999999,
+        "completeness_gain": 0.19999999999999996,
+        "initial_param_count": 0,
+        "final_param_count": 2,
+        "param_gain": 2
+      }
+    },
+    {
+      "sample_id": 62,
+      "status": "partial_success",
+      "model_sequence": [
+        3,
+        46,
+        72,
+        62,
+        30
+      ],
+      "analysis": {
+        "total_steps": 5,
+        "success_steps": 1,
+        "skipped_steps": 2,
+        "failed_steps": 2,
+        "success_rate": 0.2,
+        "completeness_monotonic": true,
+        "initial_completeness": 0.4,
+        "final_completeness": 0.4,
+        "completeness_gain": 0.0,
+        "initial_param_count": 0,
+        "final_param_count": 0,
+        "param_gain": 0
+      }
+    }
+  ]
+}
