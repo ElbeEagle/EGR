@@ -2,6 +2,7 @@
 docs/
 HGR/
 ref/
+tex/
 
 # Python
 __pycache__/

@@ -228,3 +228,25 @@ eg:
 
 ---
 
+2026.01.20
+> 开发日志："dev_logs/module3_training_completion.md"
+
+工作1: 核心功能实现 - 最大熵模型选择器（P(model|state) 分类器）
+> 存储定位："src/selector/model_selector.py", "src/selector/trainer.py"
+
+工作2: 构建了分类器的训练和测试的框架
+> 存储定位："scripts/selector/train.py", "scripts/selector/test.py"
+
+相关说明文档：
+> "src/selector/README.md", "src/selector/USAGE.md"
+
+**下一步**：
+* 训练分类器并测试
+* 准备Module 4 - 推理引擎
+
+
+---
+
+
+
+
