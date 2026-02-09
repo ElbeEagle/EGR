@@ -1,0 +1,326 @@
+{
+  "total_predictions": 18,
+  "top1_hits": 9,
+  "top3_hits": 15,
+  "top5_hits": 16,
+  "predictions_detail": [
+    {
+      "sample_id": 0,
+      "problem": "",
+      "predictions": [
+        {
+          "step": 1,
+          "actual_model": 5,
+          "predicted_model": 5,
+          "top5": [
+            5,
+            21,
+            65,
+            1,
+            7
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.1616439819335938
+        },
+        {
+          "step": 2,
+          "actual_model": 21,
+          "predicted_model": 21,
+          "top5": [
+            21,
+            65,
+            5,
+            13,
+            24
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.49168860912323
+        }
+      ]
+    },
+    {
+      "sample_id": 1,
+      "problem": "",
+      "predictions": [
+        {
+          "step": 1,
+          "actual_model": 5,
+          "predicted_model": 5,
+          "top5": [
+            5,
+            22,
+            24,
+            12,
+            11
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 0.3513606786727905
+        },
+        {
+          "step": 2,
+          "actual_model": 22,
+          "predicted_model": 22,
+          "top5": [
+            22,
+            24,
+            13,
+            5,
+            21
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.5092804431915283
+        },
+        {
+          "step": 3,
+          "actual_model": 19,
+          "predicted_model": 22,
+          "top5": [
+            22,
+            13,
+            24,
+            5,
+            21
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": false,
+          "is_top5_hit": false,
+          "entropy": 1.4708044528961182
+        },
+        {
+          "step": 4,
+          "actual_model": 24,
+          "predicted_model": 13,
+          "top5": [
+            13,
+            22,
+            24,
+            21,
+            11
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.374758005142212
+        },
+        {
+          "step": 5,
+          "actual_model": 13,
+          "predicted_model": 13,
+          "top5": [
+            13,
+            22,
+            24,
+            21,
+            11
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.1733263731002808
+        }
+      ]
+    },
+    {
+      "sample_id": 2,
+      "problem": "",
+      "predictions": [
+        {
+          "step": 1,
+          "actual_model": 9,
+          "predicted_model": 7,
+          "top5": [
+            7,
+            53,
+            75,
+            2,
+            62
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": false,
+          "is_top5_hit": false,
+          "entropy": 0.12948814034461975
+        },
+        {
+          "step": 2,
+          "actual_model": 2,
+          "predicted_model": 2,
+          "top5": [
+            2,
+            78,
+            29,
+            42,
+            17
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 2.196155071258545
+        },
+        {
+          "step": 3,
+          "actual_model": 29,
+          "predicted_model": 29,
+          "top5": [
+            29,
+            2,
+            17,
+            78,
+            42
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.3636105060577393
+        },
+        {
+          "step": 4,
+          "actual_model": 17,
+          "predicted_model": 29,
+          "top5": [
+            29,
+            17,
+            2,
+            42,
+            78
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.357926607131958
+        }
+      ]
+    },
+    {
+      "sample_id": 4,
+      "problem": "",
+      "predictions": [
+        {
+          "step": 1,
+          "actual_model": 3,
+          "predicted_model": 3,
+          "top5": [
+            3,
+            0,
+            75,
+            56,
+            11
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.5802345275878906
+        },
+        {
+          "step": 2,
+          "actual_model": 11,
+          "predicted_model": 13,
+          "top5": [
+            13,
+            11,
+            0,
+            56,
+            14
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.9978715181350708
+        },
+        {
+          "step": 3,
+          "actual_model": 13,
+          "predicted_model": 13,
+          "top5": [
+            13,
+            11,
+            0,
+            56,
+            14
+          ],
+          "is_top1_hit": true,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.6839847564697266
+        }
+      ]
+    },
+    {
+      "sample_id": 5,
+      "problem": "",
+      "predictions": [
+        {
+          "step": 1,
+          "actual_model": 3,
+          "predicted_model": 5,
+          "top5": [
+            5,
+            3,
+            1,
+            0,
+            11
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 1.7048978805541992
+        },
+        {
+          "step": 2,
+          "actual_model": 11,
+          "predicted_model": 1,
+          "top5": [
+            1,
+            5,
+            11,
+            12,
+            13
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 2.4973976612091064
+        },
+        {
+          "step": 3,
+          "actual_model": 5,
+          "predicted_model": 11,
+          "top5": [
+            11,
+            13,
+            1,
+            12,
+            5
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": false,
+          "is_top5_hit": true,
+          "entropy": 2.5572457313537598
+        },
+        {
+          "step": 4,
+          "actual_model": 12,
+          "predicted_model": 13,
+          "top5": [
+            13,
+            11,
+            12,
+            1,
+            5
+          ],
+          "is_top1_hit": false,
+          "is_top3_hit": true,
+          "is_top5_hit": true,
+          "entropy": 2.469400405883789
+        }
+      ]
+    }
+  ]
+}
