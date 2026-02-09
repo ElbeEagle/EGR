@@ -11,7 +11,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.3,
+            "has_focus_info": false,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.3,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 21,
+          "model_name": "Hyperbola_Asymptote",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 4,
@@ -51,53 +98,6 @@
             0.4,
             0.8,
             0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 21,
-          "model_name": "Hyperbola_Asymptote",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "value",
-            "param_count": 4,
-            "completeness_score": 0.8,
-            "has_focus_info": false,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            0.8,
-            0.2
           ]
         }
       ]
@@ -111,7 +111,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 22,
+          "model_name": "Hyperbola_Focus_To_Asymptote_Distance",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -154,11 +201,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 22,
-          "model_name": "Hyperbola_Focus_To_Asymptote_Distance",
+          "step": 3,
+          "model_id": 19,
+          "model_name": "Hyperbola_Latus_Rectum",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -201,11 +248,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 19,
-          "model_name": "Hyperbola_Latus_Rectum",
+          "step": 4,
+          "model_id": 24,
+          "model_name": "Hyperbola_Equal_Axis",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 5,
@@ -248,11 +295,11 @@
           ]
         },
         {
-          "step": 4,
-          "model_id": 24,
-          "model_name": "Hyperbola_Equal_Axis",
+          "step": 5,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 7,
@@ -292,53 +339,6 @@
             0.7,
             1.0,
             0.4
-          ]
-        },
-        {
-          "step": 5,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 7,
-            "completeness_score": 1.0,
-            "has_focus_info": true,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 5
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.7,
-            1.0,
-            0.5
           ]
         }
       ]
@@ -352,7 +352,54 @@
           "model_id": 9,
           "model_name": "Parabola_Equation_Standard_Up",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "distance",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 2,
+          "model_name": "Parabola_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -395,11 +442,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 2,
-          "model_name": "Parabola_Definition",
+          "step": 3,
+          "model_id": 29,
+          "model_name": "Parabola_Directrix",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -442,11 +489,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 29,
-          "model_name": "Parabola_Directrix",
+          "step": 4,
+          "model_id": 17,
+          "model_name": "Parabola_Focal_Radius",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -486,53 +533,6 @@
             0.2,
             0.6,
             0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 17,
-          "model_name": "Parabola_Focal_Radius",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "distance",
-            "param_count": 2,
-            "completeness_score": 0.6,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.2,
-            0.6,
-            0.4
           ]
         }
       ]
@@ -546,7 +546,54 @@
           "model_id": 3,
           "model_name": "Ellipse_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 11,
+          "model_name": "Ellipse_Parameter_Relation",
+          "status": "success",
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "value",
             "param_count": 4,
@@ -589,11 +636,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 11,
-          "model_name": "Ellipse_Parameter_Relation",
+          "step": 3,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "value",
             "param_count": 5,
@@ -633,53 +680,6 @@
             0.5,
             0.8,
             0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "value",
-            "param_count": 6,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.6,
-            0.8,
-            0.3
           ]
         }
       ]
@@ -693,7 +693,54 @@
           "model_id": 3,
           "model_name": "Ellipse_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 11,
+          "model_name": "Ellipse_Parameter_Relation",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 4,
@@ -736,11 +783,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 11,
-          "model_name": "Ellipse_Parameter_Relation",
+          "step": 3,
+          "model_id": 5,
+          "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 5,
@@ -783,11 +830,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 5,
-          "model_name": "Hyperbola_Equation_Standard_X",
+          "step": 4,
+          "model_id": 12,
+          "model_name": "Hyperbola_Parameter_Relation",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 5,
@@ -827,53 +874,6 @@
             0.5,
             0.8,
             0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 12,
-          "model_name": "Hyperbola_Parameter_Relation",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "value",
-            "param_count": 5,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.5,
-            0.8,
-            0.4
           ]
         }
       ]
@@ -887,7 +887,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 75,
+          "model_name": "Circle_Standard_Equation",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
             "param_count": 2,
@@ -930,11 +977,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 75,
-          "model_name": "Circle_Standard_Equation",
+          "step": 4,
+          "model_id": 63,
+          "model_name": "Basic_Inequality",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
             "param_count": 2,
@@ -943,7 +990,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": true,
             "has_vertex_info": false,
-            "reasoning_depth": 2
+            "reasoning_depth": 3
           },
           "state_vector": [
             0.0,
@@ -973,15 +1020,15 @@
             0.0,
             0.2,
             0.6,
-            0.2
+            0.3
           ]
         },
         {
-          "step": 4,
-          "model_id": 63,
-          "model_name": "Basic_Inequality",
+          "step": 5,
+          "model_id": 62,
+          "model_name": "Vector_Collinear_Condition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
             "param_count": 2,
@@ -1021,53 +1068,6 @@
             0.2,
             0.6,
             0.4
-          ]
-        },
-        {
-          "step": 5,
-          "model_id": 62,
-          "model_name": "Vector_Collinear_Condition",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "value",
-            "param_count": 2,
-            "completeness_score": 0.6,
-            "has_focus_info": false,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 5
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.6,
-            0.5
           ]
         }
       ]
@@ -1081,7 +1081,7 @@
           "model_id": 1,
           "model_name": "Hyperbola_Definition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 0,
@@ -1090,7 +1090,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 1
+            "reasoning_depth": 0
           },
           "state_vector": [
             0.0,
@@ -1120,7 +1120,7 @@
             0.0,
             0.0,
             0.4,
-            0.1
+            0.0
           ]
         },
         {
@@ -1128,7 +1128,7 @@
           "model_id": 56,
           "model_name": "Triangle_Area_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 0,
@@ -1137,7 +1137,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 3
+            "reasoning_depth": 2
           },
           "state_vector": [
             0.0,
@@ -1167,7 +1167,7 @@
             0.0,
             0.0,
             0.4,
-            0.3
+            0.2
           ]
         }
       ]
@@ -1181,7 +1181,7 @@
           "model_id": 47,
           "model_name": "Cosine_Law",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 0,
@@ -1190,7 +1190,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 2
+            "reasoning_depth": 1
           },
           "state_vector": [
             0.0,
@@ -1220,7 +1220,7 @@
             1.0,
             0.0,
             0.4,
-            0.2
+            0.1
           ]
         }
       ]
@@ -1234,7 +1234,7 @@
           "model_id": 9,
           "model_name": "Parabola_Equation_Standard_Up",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 0,
@@ -1243,7 +1243,7 @@
             "has_asymptote_info": true,
             "has_directrix_info": true,
             "has_vertex_info": false,
-            "reasoning_depth": 1
+            "reasoning_depth": 0
           },
           "state_vector": [
             0.0,
@@ -1273,7 +1273,7 @@
             0.0,
             0.0,
             0.4,
-            0.1
+            0.0
           ]
         }
       ]
@@ -1287,7 +1287,7 @@
           "model_id": 53,
           "model_name": "Two_Points_Distance",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
             "param_count": 0,
@@ -1296,7 +1296,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 2
+            "reasoning_depth": 1
           },
           "state_vector": [
             0.0,
@@ -1326,7 +1326,7 @@
             0.0,
             0.0,
             0.4,
-            0.2
+            0.1
           ]
         }
       ]
@@ -1340,7 +1340,7 @@
           "model_id": 54,
           "model_name": "Midpoint_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "equation",
             "param_count": 0,
@@ -1349,7 +1349,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 3
+            "reasoning_depth": 2
           },
           "state_vector": [
             0.0,
@@ -1379,7 +1379,7 @@
             0.0,
             0.0,
             0.4,
-            0.3
+            0.2
           ]
         }
       ]
@@ -1393,7 +1393,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "distance",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 2,
+          "model_name": "Parabola_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -1436,11 +1483,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 2,
-          "model_name": "Parabola_Definition",
+          "step": 3,
+          "model_id": 29,
+          "model_name": "Parabola_Directrix",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -1483,11 +1530,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 29,
-          "model_name": "Parabola_Directrix",
+          "step": 4,
+          "model_id": 17,
+          "model_name": "Parabola_Focal_Radius",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -1527,53 +1574,6 @@
             0.2,
             0.6,
             0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 17,
-          "model_name": "Parabola_Focal_Radius",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "distance",
-            "param_count": 2,
-            "completeness_score": 0.6,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.2,
-            0.6,
-            0.4
           ]
         }
       ]
@@ -1587,7 +1587,7 @@
           "model_id": 1,
           "model_name": "Hyperbola_Definition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 0,
@@ -1596,7 +1596,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 1
+            "reasoning_depth": 0
           },
           "state_vector": [
             0.0,
@@ -1626,7 +1626,7 @@
             0.0,
             0.0,
             0.4,
-            0.1
+            0.0
           ]
         }
       ]
@@ -1640,7 +1640,7 @@
           "model_id": 0,
           "model_name": "Ellipse_Definition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "angle",
             "param_count": 0,
@@ -1649,7 +1649,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 1
+            "reasoning_depth": 0
           },
           "state_vector": [
             1.0,
@@ -1679,7 +1679,7 @@
             0.0,
             0.0,
             0.4,
-            0.1
+            0.0
           ]
         },
         {
@@ -1687,7 +1687,7 @@
           "model_id": 47,
           "model_name": "Cosine_Law",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "angle",
             "param_count": 0,
@@ -1696,7 +1696,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 3
+            "reasoning_depth": 2
           },
           "state_vector": [
             1.0,
@@ -1726,7 +1726,7 @@
             0.0,
             0.0,
             0.4,
-            0.3
+            0.2
           ]
         },
         {
@@ -1734,7 +1734,7 @@
           "model_id": 56,
           "model_name": "Triangle_Area_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "angle",
             "param_count": 0,
@@ -1743,7 +1743,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 5
+            "reasoning_depth": 4
           },
           "state_vector": [
             1.0,
@@ -1773,7 +1773,7 @@
             0.0,
             0.0,
             0.4,
-            0.5
+            0.4
           ]
         }
       ]
@@ -1787,7 +1787,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "distance",
+            "param_count": 0,
+            "completeness_score": 0.3,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.3,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 29,
+          "model_name": "Parabola_Directrix",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -1827,53 +1874,6 @@
             0.2,
             0.6,
             0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 29,
-          "model_name": "Parabola_Directrix",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "distance",
-            "param_count": 2,
-            "completeness_score": 0.6,
-            "has_focus_info": false,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.6,
-            0.2
           ]
         }
       ]
@@ -1887,7 +1887,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "angle",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 78,
+          "model_name": "Substitution_x_equals_my_plus_n",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "angle",
             "param_count": 2,
@@ -1930,11 +1977,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 78,
-          "model_name": "Substitution_x_equals_my_plus_n",
+          "step": 3,
+          "model_id": 42,
+          "model_name": "Vieta_Theorem_Sum",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "angle",
             "param_count": 2,
@@ -1977,11 +2024,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 42,
-          "model_name": "Vieta_Theorem_Sum",
+          "step": 4,
+          "model_id": 43,
+          "model_name": "Vieta_Theorem_Product",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "angle",
             "param_count": 2,
@@ -2024,11 +2071,11 @@
           ]
         },
         {
-          "step": 4,
-          "model_id": 43,
-          "model_name": "Vieta_Theorem_Product",
+          "step": 5,
+          "model_id": 62,
+          "model_name": "Vector_Collinear_Condition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "angle",
             "param_count": 2,
@@ -2071,11 +2118,11 @@
           ]
         },
         {
-          "step": 5,
-          "model_id": 62,
-          "model_name": "Vector_Collinear_Condition",
+          "step": 6,
+          "model_id": 56,
+          "model_name": "Triangle_Area_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "angle",
             "param_count": 2,
@@ -2115,53 +2162,6 @@
             0.2,
             0.6,
             0.5
-          ]
-        },
-        {
-          "step": 6,
-          "model_id": 56,
-          "model_name": "Triangle_Area_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "angle",
-            "param_count": 2,
-            "completeness_score": 0.6,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 6
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.6,
-            0.6
           ]
         }
       ]
@@ -2175,7 +2175,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "angle",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 1,
+          "model_name": "Hyperbola_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "angle",
             "param_count": 4,
@@ -2218,11 +2265,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 1,
-          "model_name": "Hyperbola_Definition",
+          "step": 3,
+          "model_id": 19,
+          "model_name": "Hyperbola_Latus_Rectum",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "angle",
             "param_count": 4,
@@ -2265,11 +2312,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 19,
-          "model_name": "Hyperbola_Latus_Rectum",
+          "step": 4,
+          "model_id": 63,
+          "model_name": "Basic_Inequality",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "angle",
             "param_count": 5,
@@ -2309,53 +2356,6 @@
             0.5,
             0.8,
             0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 63,
-          "model_name": "Basic_Inequality",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "angle",
-            "param_count": 5,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.5,
-            0.8,
-            0.4
           ]
         }
       ]
@@ -2369,7 +2369,54 @@
           "model_id": 3,
           "model_name": "Ellipse_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "range",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 62,
+          "model_name": "Vector_Collinear_Condition",
+          "status": "success",
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "range",
             "param_count": 4,
@@ -2412,11 +2459,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 62,
-          "model_name": "Vector_Collinear_Condition",
+          "step": 3,
+          "model_id": 14,
+          "model_name": "Ellipse_Eccentricity_Range",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "range",
             "param_count": 4,
@@ -2456,53 +2503,6 @@
             0.4,
             0.8,
             0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 14,
-          "model_name": "Ellipse_Eccentricity_Range",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "range",
-            "param_count": 4,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            0.8,
-            0.3
           ]
         }
       ]
@@ -2516,7 +2516,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 21,
+          "model_name": "Hyperbola_Asymptote",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -2556,53 +2603,6 @@
             0.4,
             1.0,
             0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 21,
-          "model_name": "Hyperbola_Asymptote",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 4,
-            "completeness_score": 1.0,
-            "has_focus_info": false,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            1.0,
-            0.2
           ]
         },
         {
@@ -2610,448 +2610,7 @@
           "model_id": 13,
           "model_name": "Eccentricity_Formula",
           "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 6,
-            "completeness_score": 1.0,
-            "has_focus_info": false,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 6
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.6,
-            1.0,
-            0.6
-          ]
-        }
-      ]
-    },
-    {
-      "sample_id": 22,
-      "problem": "",
-      "transitions": [
-        {
-          "step": 1,
-          "model_id": 3,
-          "model_name": "Ellipse_Equation_Standard_X",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "angle",
-            "param_count": 4,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 1
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            0.8,
-            0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 42,
-          "model_name": "Vieta_Theorem_Sum",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "angle",
-            "param_count": 4,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            0.8,
-            0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 43,
-          "model_name": "Vieta_Theorem_Product",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "angle",
-            "param_count": 4,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            0.8,
-            0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 56,
-          "model_name": "Triangle_Area_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "angle",
-            "param_count": 4,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            0.8,
-            0.4
-          ]
-        }
-      ]
-    },
-    {
-      "sample_id": 25,
-      "problem": "",
-      "transitions": [
-        {
-          "step": 1,
-          "model_id": 7,
-          "model_name": "Parabola_Equation_Standard_Right",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "coordinate",
-            "param_count": 2,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 1
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.8,
-            0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 2,
-          "model_name": "Parabola_Definition",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "coordinate",
-            "param_count": 2,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.2,
-            0.8,
-            0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 29,
-          "model_name": "Parabola_Directrix",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "coordinate",
-            "param_count": 2,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.2,
-            0.8,
-            0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 53,
-          "model_name": "Two_Points_Distance",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "coordinate",
-            "param_count": 3,
-            "completeness_score": 0.9,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.3,
-            0.9,
-            0.4
-          ]
-        }
-      ]
-    },
-    {
-      "sample_id": 26,
-      "problem": "",
-      "transitions": [
-        {
-          "step": 1,
-          "model_id": 5,
-          "model_name": "Hyperbola_Equation_Standard_X",
-          "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -3059,148 +2618,7 @@
             "has_focus_info": false,
             "has_asymptote_info": true,
             "has_directrix_info": false,
-            "has_vertex_info": true,
-            "reasoning_depth": 1
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.4,
-            1.0,
-            0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 21,
-          "model_name": "Hyperbola_Asymptote",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 4,
-            "completeness_score": 1.0,
-            "has_focus_info": false,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": true,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.4,
-            1.0,
-            0.2
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 62,
-          "model_name": "Vector_Collinear_Condition",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 4,
-            "completeness_score": 1.0,
-            "has_focus_info": false,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": true,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.4,
-            1.0,
-            0.4
-          ]
-        },
-        {
-          "step": 5,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 6,
-            "completeness_score": 1.0,
-            "has_focus_info": false,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": true,
+            "has_vertex_info": false,
             "reasoning_depth": 5
           },
           "state_vector": [
@@ -3221,17 +2639,599 @@
             0.0,
             1.0,
             0.0,
-            1.0,
-            1.0,
+            0.0,
+            0.0,
             1.0,
             0.0,
             0.0,
             0.0,
             0.0,
-            1.0,
-            0.6,
+            0.0,
+            0.4,
             1.0,
             0.5
+          ]
+        }
+      ]
+    },
+    {
+      "sample_id": 22,
+      "problem": "",
+      "transitions": [
+        {
+          "step": 1,
+          "model_id": 3,
+          "model_name": "Ellipse_Equation_Standard_X",
+          "status": "success",
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "angle",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 42,
+          "model_name": "Vieta_Theorem_Sum",
+          "status": "success",
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "angle",
+            "param_count": 4,
+            "completeness_score": 0.8,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 1
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.8,
+            0.1
+          ]
+        },
+        {
+          "step": 3,
+          "model_id": 43,
+          "model_name": "Vieta_Theorem_Product",
+          "status": "success",
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "angle",
+            "param_count": 4,
+            "completeness_score": 0.8,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 2
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.8,
+            0.2
+          ]
+        },
+        {
+          "step": 4,
+          "model_id": 56,
+          "model_name": "Triangle_Area_Formula",
+          "status": "success",
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "angle",
+            "param_count": 4,
+            "completeness_score": 0.8,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 3
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.8,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "sample_id": 25,
+      "problem": "",
+      "transitions": [
+        {
+          "step": 1,
+          "model_id": 7,
+          "model_name": "Parabola_Equation_Standard_Right",
+          "status": "success",
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "coordinate",
+            "param_count": 0,
+            "completeness_score": 0.6,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.6,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 2,
+          "model_name": "Parabola_Definition",
+          "status": "success",
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "coordinate",
+            "param_count": 2,
+            "completeness_score": 0.8,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": true,
+            "has_vertex_info": false,
+            "reasoning_depth": 1
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.2,
+            0.8,
+            0.1
+          ]
+        },
+        {
+          "step": 3,
+          "model_id": 29,
+          "model_name": "Parabola_Directrix",
+          "status": "success",
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "coordinate",
+            "param_count": 2,
+            "completeness_score": 0.8,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": true,
+            "has_vertex_info": false,
+            "reasoning_depth": 2
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.2,
+            0.8,
+            0.2
+          ]
+        },
+        {
+          "step": 4,
+          "model_id": 53,
+          "model_name": "Two_Points_Distance",
+          "status": "success",
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "coordinate",
+            "param_count": 2,
+            "completeness_score": 0.8,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": true,
+            "has_vertex_info": false,
+            "reasoning_depth": 3
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.2,
+            0.8,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "sample_id": 26,
+      "problem": "",
+      "transitions": [
+        {
+          "step": 1,
+          "model_id": 5,
+          "model_name": "Hyperbola_Equation_Standard_X",
+          "status": "success",
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": true,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 21,
+          "model_name": "Hyperbola_Asymptote",
+          "status": "success",
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 4,
+            "completeness_score": 1.0,
+            "has_focus_info": false,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": true,
+            "reasoning_depth": 1
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.4,
+            1.0,
+            0.1
+          ]
+        },
+        {
+          "step": 4,
+          "model_id": 62,
+          "model_name": "Vector_Collinear_Condition",
+          "status": "success",
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 4,
+            "completeness_score": 1.0,
+            "has_focus_info": false,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": true,
+            "reasoning_depth": 3
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.4,
+            1.0,
+            0.3
+          ]
+        },
+        {
+          "step": 5,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
+          "status": "success",
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 4,
+            "completeness_score": 1.0,
+            "has_focus_info": false,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": true,
+            "reasoning_depth": 4
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.4,
+            1.0,
+            0.4
           ]
         }
       ]
@@ -3245,7 +3245,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "range",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 65,
+          "model_name": "Discriminant_Delta",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "range",
             "param_count": 4,
@@ -3288,11 +3335,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 65,
-          "model_name": "Discriminant_Delta",
+          "step": 3,
+          "model_id": 79,
+          "model_name": "Quadratic_Function_Maximum",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "range",
             "param_count": 5,
@@ -3333,53 +3380,6 @@
             0.8,
             0.2
           ]
-        },
-        {
-          "step": 3,
-          "model_id": 79,
-          "model_name": "Quadratic_Function_Maximum",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "range",
-            "param_count": 7,
-            "completeness_score": 0.8,
-            "has_focus_info": false,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": true,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.7,
-            0.8,
-            0.3
-          ]
         }
       ]
     },
@@ -3392,7 +3392,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 2,
+          "model_name": "Parabola_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
             "param_count": 2,
@@ -3435,11 +3482,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 2,
-          "model_name": "Parabola_Definition",
+          "step": 3,
+          "model_id": 29,
+          "model_name": "Parabola_Directrix",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
             "param_count": 2,
@@ -3480,22 +3527,28 @@
             0.6,
             0.2
           ]
-        },
+        }
+      ]
+    },
+    {
+      "sample_id": 31,
+      "problem": "",
+      "transitions": [
         {
-          "step": 3,
-          "model_id": 29,
-          "model_name": "Parabola_Directrix",
+          "step": 1,
+          "model_id": 75,
+          "model_name": "Circle_Standard_Equation",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
-            "param_count": 2,
-            "completeness_score": 0.6,
-            "has_focus_info": true,
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
             "has_asymptote_info": false,
             "has_directrix_info": true,
             "has_vertex_info": false,
-            "reasoning_depth": 3
+            "reasoning_depth": 0
           },
           "state_vector": [
             0.0,
@@ -3514,32 +3567,26 @@
             0.0,
             0.0,
             1.0,
-            1.0,
             0.0,
-            1.0,
             0.0,
-            1.0,
+            0.0,
             0.0,
             1.0,
+            1.0,
             0.0,
             0.0,
-            0.2,
-            0.6,
-            0.3
+            0.0,
+            0.0,
+            0.4,
+            0.0
           ]
-        }
-      ]
-    },
-    {
-      "sample_id": 31,
-      "problem": "",
-      "transitions": [
+        },
         {
-          "step": 1,
-          "model_id": 75,
-          "model_name": "Circle_Standard_Equation",
+          "step": 2,
+          "model_id": 7,
+          "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
             "param_count": 0,
@@ -3582,11 +3629,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 7,
-          "model_name": "Parabola_Equation_Standard_Right",
+          "step": 3,
+          "model_id": 29,
+          "model_name": "Parabola_Directrix",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
             "param_count": 2,
@@ -3627,53 +3674,6 @@
             0.6,
             0.2
           ]
-        },
-        {
-          "step": 3,
-          "model_id": 29,
-          "model_name": "Parabola_Directrix",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "value",
-            "param_count": 2,
-            "completeness_score": 0.6,
-            "has_focus_info": false,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.6,
-            0.3
-          ]
         }
       ]
     },
@@ -3686,7 +3686,7 @@
           "model_id": 47,
           "model_name": "Cosine_Law",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "value",
             "param_count": 0,
@@ -3695,7 +3695,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": true,
-            "reasoning_depth": 3
+            "reasoning_depth": 2
           },
           "state_vector": [
             1.0,
@@ -3725,7 +3725,7 @@
             0.0,
             0.0,
             0.1,
-            0.3
+            0.2
           ]
         }
       ]
@@ -3739,7 +3739,7 @@
           "model_id": 56,
           "model_name": "Triangle_Area_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "value",
             "param_count": 0,
@@ -3748,7 +3748,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 2
+            "reasoning_depth": 1
           },
           "state_vector": [
             1.0,
@@ -3778,7 +3778,7 @@
             1.0,
             0.0,
             0.4,
-            0.2
+            0.1
           ]
         }
       ]
@@ -3792,7 +3792,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 21,
+          "model_name": "Hyperbola_Asymptote",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -3835,11 +3882,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 21,
-          "model_name": "Hyperbola_Asymptote",
+          "step": 4,
+          "model_id": 24,
+          "model_name": "Hyperbola_Equal_Axis",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -3848,7 +3895,7 @@
             "has_asymptote_info": true,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 2
+            "reasoning_depth": 3
           },
           "state_vector": [
             0.0,
@@ -3878,15 +3925,15 @@
             0.0,
             0.4,
             1.0,
-            0.2
+            0.3
           ]
         },
         {
-          "step": 4,
-          "model_id": 24,
-          "model_name": "Hyperbola_Equal_Axis",
+          "step": 5,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 6,
@@ -3926,53 +3973,6 @@
             0.6,
             1.0,
             0.4
-          ]
-        },
-        {
-          "step": 5,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 6,
-            "completeness_score": 1.0,
-            "has_focus_info": true,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 5
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.6,
-            1.0,
-            0.5
           ]
         }
       ]
@@ -3986,7 +3986,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "equation",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 78,
+          "model_name": "Substitution_x_equals_my_plus_n",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "equation",
             "param_count": 2,
@@ -4029,11 +4076,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 78,
-          "model_name": "Substitution_x_equals_my_plus_n",
+          "step": 3,
+          "model_id": 42,
+          "model_name": "Vieta_Theorem_Sum",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "equation",
             "param_count": 2,
@@ -4076,11 +4123,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 42,
-          "model_name": "Vieta_Theorem_Sum",
+          "step": 4,
+          "model_id": 43,
+          "model_name": "Vieta_Theorem_Product",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "equation",
             "param_count": 2,
@@ -4123,11 +4170,11 @@
           ]
         },
         {
-          "step": 4,
-          "model_id": 43,
-          "model_name": "Vieta_Theorem_Product",
+          "step": 5,
+          "model_id": 54,
+          "model_name": "Midpoint_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "equation",
             "param_count": 2,
@@ -4168,53 +4215,6 @@
             0.8,
             0.4
           ]
-        },
-        {
-          "step": 5,
-          "model_id": 54,
-          "model_name": "Midpoint_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "equation",
-            "param_count": 2,
-            "completeness_score": 0.8,
-            "has_focus_info": false,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 5
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.8,
-            0.5
-          ]
         }
       ]
     },
@@ -4227,16 +4227,16 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "coordinate",
-            "param_count": 2,
-            "completeness_score": 0.8,
+            "param_count": 0,
+            "completeness_score": 0.6,
             "has_focus_info": false,
             "has_asymptote_info": false,
-            "has_directrix_info": true,
+            "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 1
+            "reasoning_depth": 0
           },
           "state_vector": [
             0.0,
@@ -4259,14 +4259,14 @@
             0.0,
             1.0,
             0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             1.0,
             0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.2,
-            0.8,
-            0.1
+            0.6,
+            0.0
           ]
         }
       ]
@@ -4280,7 +4280,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "equation",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 29,
+          "model_name": "Parabola_Directrix",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "equation",
             "param_count": 2,
@@ -4323,11 +4370,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 29,
-          "model_name": "Parabola_Directrix",
+          "step": 3,
+          "model_id": 75,
+          "model_name": "Circle_Standard_Equation",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "equation",
             "param_count": 2,
@@ -4367,53 +4414,6 @@
             0.2,
             0.8,
             0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 75,
-          "model_name": "Circle_Standard_Equation",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "equation",
-            "param_count": 2,
-            "completeness_score": 0.8,
-            "has_focus_info": false,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.8,
-            0.3
           ]
         }
       ]
@@ -4427,7 +4427,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "equation",
+            "param_count": 0,
+            "completeness_score": 0.3,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.3,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 21,
+          "model_name": "Hyperbola_Asymptote",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "equation",
             "param_count": 4,
@@ -4467,53 +4514,6 @@
             0.4,
             1.0,
             0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 21,
-          "model_name": "Hyperbola_Asymptote",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "equation",
-            "param_count": 4,
-            "completeness_score": 1.0,
-            "has_focus_info": false,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            1.0,
-            0.2
           ]
         }
       ]
@@ -4527,7 +4527,54 @@
           "model_id": 3,
           "model_name": "Ellipse_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "equation",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": true,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 62,
+          "model_name": "Vector_Collinear_Condition",
+          "status": "success",
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "equation",
             "param_count": 4,
@@ -4570,11 +4617,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 62,
-          "model_name": "Vector_Collinear_Condition",
+          "step": 3,
+          "model_id": 63,
+          "model_name": "Basic_Inequality",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "equation",
             "param_count": 4,
@@ -4615,53 +4662,6 @@
             1.0,
             0.2
           ]
-        },
-        {
-          "step": 3,
-          "model_id": 63,
-          "model_name": "Basic_Inequality",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "equation",
-            "param_count": 4,
-            "completeness_score": 1.0,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": true,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            1.0,
-            0.3
-          ]
         }
       ]
     },
@@ -4674,7 +4674,54 @@
           "model_id": 65,
           "model_name": "Discriminant_Delta",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 2
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.2
+          ]
+        },
+        {
+          "step": 4,
+          "model_id": 79,
+          "model_name": "Quadratic_Function_Maximum",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 1,
@@ -4715,53 +4762,6 @@
             0.5,
             0.3
           ]
-        },
-        {
-          "step": 4,
-          "model_id": 79,
-          "model_name": "Quadratic_Function_Maximum",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "value",
-            "param_count": 3,
-            "completeness_score": 0.7,
-            "has_focus_info": false,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": true,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.3,
-            0.7,
-            0.4
-          ]
         }
       ]
     },
@@ -4774,7 +4774,7 @@
           "model_id": 0,
           "model_name": "Ellipse_Definition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "value",
             "param_count": 0,
@@ -4783,7 +4783,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 1
+            "reasoning_depth": 0
           },
           "state_vector": [
             1.0,
@@ -4813,7 +4813,7 @@
             0.0,
             0.0,
             0.4,
-            0.1
+            0.0
           ]
         }
       ]
@@ -4827,16 +4827,16 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "value",
-            "param_count": 2,
-            "completeness_score": 0.6,
+            "param_count": 0,
+            "completeness_score": 0.4,
             "has_focus_info": true,
             "has_asymptote_info": false,
-            "has_directrix_info": true,
+            "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 1
+            "reasoning_depth": 0
           },
           "state_vector": [
             0.0,
@@ -4859,14 +4859,14 @@
             0.0,
             0.0,
             0.0,
-            1.0,
             0.0,
             0.0,
             0.0,
             0.0,
-            0.2,
-            0.6,
-            0.1
+            0.0,
+            0.0,
+            0.4,
+            0.0
           ]
         }
       ]
@@ -4880,7 +4880,54 @@
           "model_id": 1,
           "model_name": "Hyperbola_Definition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.1,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 1
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.1,
+            0.1
+          ]
+        },
+        {
+          "step": 3,
+          "model_id": 0,
+          "model_name": "Ellipse_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 0,
@@ -4920,53 +4967,6 @@
             0.0,
             0.1,
             0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 0,
-          "model_name": "Ellipse_Definition",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "value",
-            "param_count": 0,
-            "completeness_score": 0.1,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.1,
-            0.3
           ]
         }
       ]
@@ -4980,7 +4980,54 @@
           "model_id": 3,
           "model_name": "Ellipse_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "eccentricity",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": false,
+            "has_asymptote_info": false,
+            "has_directrix_info": true,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 0,
+          "model_name": "Ellipse_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -5023,11 +5070,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 0,
-          "model_name": "Ellipse_Definition",
+          "step": 4,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -5036,7 +5083,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": true,
             "has_vertex_info": false,
-            "reasoning_depth": 2
+            "reasoning_depth": 3
           },
           "state_vector": [
             1.0,
@@ -5066,54 +5113,7 @@
             0.0,
             0.4,
             1.0,
-            0.2
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "eccentricity",
-            "param_count": 6,
-            "completeness_score": 1.0,
-            "has_focus_info": false,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.6,
-            1.0,
-            0.4
+            0.3
           ]
         }
       ]
@@ -5127,7 +5127,7 @@
           "model_id": 56,
           "model_name": "Triangle_Area_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "value",
             "param_count": 0,
@@ -5136,7 +5136,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 3
+            "reasoning_depth": 2
           },
           "state_vector": [
             1.0,
@@ -5166,7 +5166,7 @@
             0.0,
             0.0,
             0.4,
-            0.3
+            0.2
           ]
         }
       ]
@@ -5180,7 +5180,54 @@
           "model_id": 3,
           "model_name": "Ellipse_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
+          "status": "success",
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "value",
             "param_count": 4,
@@ -5220,53 +5267,6 @@
             0.4,
             0.8,
             0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "value",
-            "param_count": 6,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.6,
-            0.8,
-            0.2
           ]
         }
       ]
@@ -5280,7 +5280,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": true,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 1,
+          "model_name": "Hyperbola_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -5323,11 +5370,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 1,
-          "model_name": "Hyperbola_Definition",
+          "step": 3,
+          "model_id": 62,
+          "model_name": "Vector_Collinear_Condition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -5370,11 +5417,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 62,
-          "model_name": "Vector_Collinear_Condition",
+          "step": 4,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -5414,53 +5461,6 @@
             0.4,
             1.0,
             0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 6,
-            "completeness_score": 1.0,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": true,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.6,
-            1.0,
-            0.4
           ]
         }
       ]
@@ -5474,7 +5474,7 @@
           "model_id": 54,
           "model_name": "Midpoint_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "equation",
             "param_count": 0,
@@ -5483,7 +5483,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 3
+            "reasoning_depth": 2
           },
           "state_vector": [
             1.0,
@@ -5513,7 +5513,7 @@
             0.0,
             0.0,
             0.4,
-            0.3
+            0.2
           ]
         }
       ]
@@ -5527,16 +5527,16 @@
           "model_id": 75,
           "model_name": "Circle_Standard_Equation",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "value",
-            "param_count": 3,
-            "completeness_score": 0.7,
+            "param_count": 0,
+            "completeness_score": 0.4,
             "has_focus_info": true,
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 2
+            "reasoning_depth": 1
           },
           "state_vector": [
             1.0,
@@ -5564,9 +5564,9 @@
             0.0,
             0.0,
             0.0,
-            0.3,
-            0.7,
-            0.2
+            0.0,
+            0.4,
+            0.1
           ]
         }
       ]
@@ -5580,7 +5580,54 @@
           "model_id": 3,
           "model_name": "Ellipse_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "ellipse",
+            "query_type": "length",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": true,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 0,
+          "model_name": "Ellipse_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "length",
             "param_count": 4,
@@ -5623,11 +5670,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 0,
-          "model_name": "Ellipse_Definition",
+          "step": 3,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "length",
             "param_count": 4,
@@ -5667,53 +5714,6 @@
             0.4,
             0.8,
             0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "ellipse",
-            "query_type": "length",
-            "param_count": 6,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": true,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.6,
-            0.8,
-            0.3
           ]
         }
       ]
@@ -5727,7 +5727,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "eccentricity",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": true,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 22,
+          "model_name": "Hyperbola_Focus_To_Asymptote_Distance",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -5770,11 +5817,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 22,
-          "model_name": "Hyperbola_Focus_To_Asymptote_Distance",
+          "step": 3,
+          "model_id": 13,
+          "model_name": "Eccentricity_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "eccentricity",
             "param_count": 4,
@@ -5814,53 +5861,6 @@
             0.4,
             1.0,
             0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 13,
-          "model_name": "Eccentricity_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "eccentricity",
-            "param_count": 6,
-            "completeness_score": 1.0,
-            "has_focus_info": true,
-            "has_asymptote_info": true,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.6,
-            1.0,
-            0.3
           ]
         }
       ]
@@ -5874,7 +5874,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "coordinate",
+            "param_count": 0,
+            "completeness_score": 0.6,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.6,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 2,
+          "model_name": "Parabola_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "coordinate",
             "param_count": 2,
@@ -5917,11 +5964,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 2,
-          "model_name": "Parabola_Definition",
+          "step": 3,
+          "model_id": 29,
+          "model_name": "Parabola_Directrix",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "coordinate",
             "param_count": 2,
@@ -5964,11 +6011,11 @@
           ]
         },
         {
-          "step": 3,
-          "model_id": 29,
-          "model_name": "Parabola_Directrix",
+          "step": 4,
+          "model_id": 53,
+          "model_name": "Two_Points_Distance",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "coordinate",
             "param_count": 2,
@@ -6008,53 +6055,6 @@
             0.2,
             0.8,
             0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 53,
-          "model_name": "Two_Points_Distance",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "coordinate",
-            "param_count": 3,
-            "completeness_score": 0.9,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.3,
-            0.9,
-            0.4
           ]
         }
       ]
@@ -6068,7 +6068,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "distance",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 78,
+          "model_name": "Substitution_x_equals_my_plus_n",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -6111,11 +6158,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 78,
-          "model_name": "Substitution_x_equals_my_plus_n",
+          "step": 3,
+          "model_id": 42,
+          "model_name": "Vieta_Theorem_Sum",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "distance",
             "param_count": 2,
@@ -6155,53 +6202,6 @@
             0.2,
             0.6,
             0.2
-          ]
-        },
-        {
-          "step": 3,
-          "model_id": 42,
-          "model_name": "Vieta_Theorem_Sum",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "distance",
-            "param_count": 2,
-            "completeness_score": 0.6,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.6,
-            0.3
           ]
         }
       ]
@@ -6215,7 +6215,54 @@
           "model_id": 1,
           "model_name": "Hyperbola_Definition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 2
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.2
+          ]
+        },
+        {
+          "step": 4,
+          "model_id": 75,
+          "model_name": "Circle_Standard_Equation",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 0,
@@ -6255,53 +6302,6 @@
             0.0,
             0.4,
             0.3
-          ]
-        },
-        {
-          "step": 4,
-          "model_id": 75,
-          "model_name": "Circle_Standard_Equation",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "value",
-            "param_count": 0,
-            "completeness_score": 0.4,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 4
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            0.4
           ]
         }
       ]
@@ -6315,16 +6315,16 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "length",
-            "param_count": 4,
-            "completeness_score": 0.8,
+            "param_count": 0,
+            "completeness_score": 0.3,
             "has_focus_info": false,
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": false,
-            "reasoning_depth": 1
+            "reasoning_depth": 0
           },
           "state_vector": [
             0.0,
@@ -6352,9 +6352,9 @@
             0.0,
             0.0,
             0.0,
-            0.4,
-            0.8,
-            0.1
+            0.0,
+            0.3,
+            0.0
           ]
         }
       ]
@@ -6368,7 +6368,54 @@
           "model_id": 5,
           "model_name": "Hyperbola_Equation_Standard_X",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "hyperbola",
+            "query_type": "value",
+            "param_count": 0,
+            "completeness_score": 0.4,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.4,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 1,
+          "model_name": "Hyperbola_Definition",
+          "status": "success",
+          "state_before": {
             "curve_type": "hyperbola",
             "query_type": "value",
             "param_count": 4,
@@ -6408,53 +6455,6 @@
             0.4,
             0.8,
             0.1
-          ]
-        },
-        {
-          "step": 2,
-          "model_id": 1,
-          "model_name": "Hyperbola_Definition",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "hyperbola",
-            "query_type": "value",
-            "param_count": 4,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": false,
-            "has_vertex_info": false,
-            "reasoning_depth": 2
-          },
-          "state_vector": [
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.4,
-            0.8,
-            0.2
           ]
         }
       ]
@@ -6468,7 +6468,54 @@
           "model_id": 7,
           "model_name": "Parabola_Equation_Standard_Right",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
+            "curve_type": "parabola",
+            "query_type": "coordinate",
+            "param_count": 0,
+            "completeness_score": 0.6,
+            "has_focus_info": true,
+            "has_asymptote_info": false,
+            "has_directrix_info": false,
+            "has_vertex_info": false,
+            "reasoning_depth": 0
+          },
+          "state_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.6,
+            0.0
+          ]
+        },
+        {
+          "step": 2,
+          "model_id": 62,
+          "model_name": "Vector_Collinear_Condition",
+          "status": "success",
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "coordinate",
             "param_count": 2,
@@ -6511,11 +6558,11 @@
           ]
         },
         {
-          "step": 2,
-          "model_id": 62,
-          "model_name": "Vector_Collinear_Condition",
+          "step": 3,
+          "model_id": 54,
+          "model_name": "Midpoint_Formula",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "parabola",
             "query_type": "coordinate",
             "param_count": 2,
@@ -6556,53 +6603,6 @@
             0.8,
             0.2
           ]
-        },
-        {
-          "step": 3,
-          "model_id": 54,
-          "model_name": "Midpoint_Formula",
-          "status": "success",
-          "abstract_state": {
-            "curve_type": "parabola",
-            "query_type": "coordinate",
-            "param_count": 2,
-            "completeness_score": 0.8,
-            "has_focus_info": true,
-            "has_asymptote_info": false,
-            "has_directrix_info": true,
-            "has_vertex_info": false,
-            "reasoning_depth": 3
-          },
-          "state_vector": [
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.2,
-            0.8,
-            0.3
-          ]
         }
       ]
     },
@@ -6615,7 +6615,7 @@
           "model_id": 62,
           "model_name": "Vector_Collinear_Condition",
           "status": "success",
-          "abstract_state": {
+          "state_before": {
             "curve_type": "ellipse",
             "query_type": "equation",
             "param_count": 0,
@@ -6624,7 +6624,7 @@
             "has_asymptote_info": false,
             "has_directrix_info": false,
             "has_vertex_info": true,
-            "reasoning_depth": 4
+            "reasoning_depth": 3
           },
           "state_vector": [
             1.0,
@@ -6654,7 +6654,7 @@
             0.0,
             0.0,
             0.4,
-            0.4
+            0.3
           ]
         }
       ]

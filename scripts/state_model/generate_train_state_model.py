@@ -6,6 +6,15 @@
 2. 提取成功的状态转换作为训练样本
 3. 保存为Module 3可直接使用的训练数据格式
 
+【关键修复 2026-01-20】因果倒置问题：
+- 错误做法：(state_after_applying_model, model_just_applied) ❌
+- 正确做法：(state_before_applying_model, model_to_apply) ✅
+
+训练样本格式：
+- state_vector: 应用模型前的状态（28维向量）
+- model_id: 即将应用的模型ID（0-79）
+即：用当前状态预测下一步应该选择哪个模型
+
 输入: data/train_with_models_1_100.json
 输出: data/train_state_model.json
 """
@@ -97,43 +106,59 @@ class TrainingDataGenerator:
                 model_ids=sample['models']
             )
             
-            # 提取成功的转换
+            # 【关键修复】提取训练样本：(state_before_applying_model, model_to_apply)
+            # 修复因果倒置问题：必须用"应用前状态"预测"要应用的模型"
             sample_data = {
                 'sample_id': i,
                 'problem': sample.get('problem', ''),
                 'transitions': []
             }
             
+            # 构建step到transition的映射
+            step_to_trans = {trans.step: trans for trans in transitions}
+            
+            # 遍历所有转换，提取训练样本
             for trans in transitions:
-                # 只保存成功的转换，且跳过初始状态
-                if trans.status == 'success' and trans.step > 0:
-                    # 提取状态向量
-                    state_vector = trans.abstract_state.to_vector()
-                    
-                    transition_data = {
-                        'step': trans.step,
-                        'model_id': trans.model_id,
-                        'model_name': trans.model_name,
-                        'status': trans.status,
-                        'abstract_state': {
-                            'curve_type': trans.abstract_state.curve_type.value,
-                            'query_type': trans.abstract_state.query_type.value,
-                            'param_count': len(trans.abstract_state.has_parameters),
-                            'completeness_score': round(trans.abstract_state.completeness_score, 3),
-                            'has_focus_info': trans.abstract_state.has_focus_info,
-                            'has_asymptote_info': trans.abstract_state.has_asymptote_info,
-                            'has_directrix_info': trans.abstract_state.has_directrix_info,
-                            'has_vertex_info': trans.abstract_state.has_vertex_info,
-                            'reasoning_depth': trans.abstract_state.reasoning_depth
-                        },
-                        'state_vector': [round(x, 4) for x in state_vector]
-                    }
-                    
-                    sample_data['transitions'].append(transition_data)
-                    total_success_transitions += 1
-                    
-                    # 统计模型使用次数
-                    model_usage_count[trans.model_id] = model_usage_count.get(trans.model_id, 0) + 1
+                # 只处理成功的转换，且必须有model_id（step>0）
+                if trans.status != 'success' or trans.step == 0:
+                    continue
+                
+                # 获取"应用模型前的状态" = 上一步的状态
+                prev_step = trans.step - 1
+                if prev_step not in step_to_trans:
+                    continue  # 如果上一步不存在，跳过
+                
+                state_before = step_to_trans[prev_step].abstract_state
+                
+                # 提取状态向量（应用前的状态）
+                state_vector = state_before.to_vector()
+                
+                # 训练样本：(state_before, model_to_apply)
+                transition_data = {
+                    'step': trans.step,
+                    'model_id': trans.model_id,
+                    'model_name': trans.model_name,
+                    'status': trans.status,
+                    # 注意：这是应用模型前的状态（用于训练）
+                    'state_before': {
+                        'curve_type': state_before.curve_type.value,
+                        'query_type': state_before.query_type.value,
+                        'param_count': len(state_before.has_parameters),
+                        'completeness_score': round(state_before.completeness_score, 3),
+                        'has_focus_info': state_before.has_focus_info,
+                        'has_asymptote_info': state_before.has_asymptote_info,
+                        'has_directrix_info': state_before.has_directrix_info,
+                        'has_vertex_info': state_before.has_vertex_info,
+                        'reasoning_depth': state_before.reasoning_depth
+                    },
+                    'state_vector': [round(x, 4) for x in state_vector]
+                }
+                
+                sample_data['transitions'].append(transition_data)
+                total_success_transitions += 1
+                
+                # 统计模型使用次数
+                model_usage_count[trans.model_id] = model_usage_count.get(trans.model_id, 0) + 1
             
             # 只保存有成功转换的样本
             if sample_data['transitions']:
@@ -243,7 +268,7 @@ class TrainingDataGenerator:
         all_completeness = []
         for sample in training_data['sample_results']:
             for trans in sample['transitions']:
-                all_completeness.append(trans['abstract_state']['completeness_score'])
+                all_completeness.append(trans['state_before']['completeness_score'])
         
         valid_completeness = all(0 <= c <= 1 for c in all_completeness)
         checks.append(('完整度范围有效[0,1]', valid_completeness))

@@ -83,10 +83,10 @@ requirements.txt             # Python依赖文件
 pip install torch numpy
 
 # 2. 测试功能（推荐）
-python scripts/selector/test.py
+python scripts/selector/test_selector.py
 
 # 3. 完整训练
-python scripts/selector/train.py
+python scripts/selector/train_selector.py
 ```
 
 ### Python API
@@ -159,7 +159,7 @@ Layer 3: 置信度加权                ⏳ Module 4
 1. **运行完整训练**:
    ```bash
    pip install torch numpy
-   python scripts/selector/train.py
+   python scripts/selector/train_selector.py
    ```
 
 2. **查看结果**:
@@ -180,8 +180,8 @@ Layer 3: 置信度加权                ⏳ Module 4
 | 类型 | 文件路径 | 说明 |
 |------|---------|------|
 | **核心代码** | `src/selector/*.py` | 4个Python文件 |
-| **训练脚本** | `scripts/selector/train.py` | 完整训练 |
-| **测试脚本** | `scripts/selector/test.py` | 功能测试 |
+| **训练脚本** | `scripts/selector/train_selector.py` | 完整训练 |
+| **测试脚本** | `scripts/selector/test_selector.py` | 功能测试 |
 | **训练数据** | `data/train_state_model.json` | 135个样本 |
 | **模型权重** | `checkpoints/model_selector.pth` | 训练后生成 |
 | **详细文档** | `src/selector/README.md` | 400行文档 |

@@ -3,7 +3,7 @@
 训练模型选择器的主脚本
 
 使用方法:
-    python scripts/selector/train.py
+    python scripts/selector/train_selector.py
 """
 
 import sys

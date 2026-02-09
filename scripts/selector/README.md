@@ -2,12 +2,12 @@
 
 ## 脚本说明
 
-### train.py - 训练脚本
+### train_selector.py - 训练脚本
 完整训练MaxEntropyClassifier模型选择器
 
 **用法**:
 ```bash
-python scripts/selector/train.py
+python scripts/selector/train_selector.py
 ```
 
 **功能**:
@@ -21,12 +21,12 @@ python scripts/selector/train.py
 
 ---
 
-### test.py - 功能测试脚本
+### test_selector.py - 功能测试脚本
 测试模型选择器的所有功能
 
 **用法**:
 ```bash
-python scripts/selector/test.py
+python scripts/selector/test_selector.py
 ```
 
 **测试内容**:
@@ -46,10 +46,10 @@ python scripts/selector/test.py
 pip install torch numpy
 
 # 2. 测试功能（推荐）
-python scripts/selector/test.py
+python scripts/selector/test_selector.py
 
 # 3. 完整训练
-python scripts/selector/train.py
+python scripts/selector/train_selector.py
 ```
 
 ---

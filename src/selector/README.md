@@ -32,7 +32,7 @@ pip install torch numpy
 ### 2. 测试功能
 
 ```bash
-python scripts/selector/test.py
+python scripts/selector/test_selector.py
 ```
 
 这会运行：
@@ -44,7 +44,7 @@ python scripts/selector/test.py
 ### 3. 完整训练
 
 ```bash
-python scripts/selector/train.py
+python scripts/selector/train_selector.py
 ```
 
 训练配置：
@@ -269,7 +269,7 @@ python -m src.selector.train
 ### 集成测试
 
 ```bash
-python scripts/selector/test.py
+python scripts/selector/test_selector.py
 ```
 
 ## 🔮 后续优化
@@ -310,8 +310,8 @@ python scripts/selector/test.py
 
 ### 脚本
 
-- `scripts/selector/train.py`: 完整训练脚本
-- `scripts/selector/test.py`: 功能测试脚本
+- `scripts/selector/train_selector.py`: 完整训练脚本
+- `scripts/selector/test_selector.py`: 功能测试脚本
 
 ### 输出
 

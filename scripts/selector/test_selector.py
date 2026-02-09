@@ -147,7 +147,7 @@ def main():
         print("✅ 所有测试通过!")
         print("=" * 70)
         print("\n准备进行完整训练，请运行:")
-        print("  python scripts/selector/train.py")
+        print("  python scripts/selector/train_selector.py")
         print("=" * 70)
         
     except Exception as e:

@@ -12,7 +12,7 @@ pip install torch numpy
 ### 2. 运行测试（推荐先运行）
 
 ```bash
-python scripts/selector/test.py
+python scripts/selector/test_selector.py
 ```
 
 这会测试：
@@ -24,7 +24,7 @@ python scripts/selector/test.py
 ### 3. 完整训练
 
 ```bash
-python scripts/selector/train.py
+python scripts/selector/train_selector.py
 ```
 
 训练配置：
@@ -329,7 +329,7 @@ class ReasoningEngine:
 **A**: 
 1. 标注更多Conic10K样本的模型序列
 2. 更新 `data/train_state_model.json`
-3. 重新运行 `python scripts/selector/train.py`
+3. 重新运行 `python scripts/selector/train_selector.py`
 
 ### Q3: 模型文件多大？
 

@@ -609,7 +609,7 @@ Epoch 150: Train Loss: 1.65, Val Acc: 26%  (过拟合)
 
 1. **运行训练**（用户操作）
    - 安装依赖: `pip install torch numpy`
-   - 运行训练: `python scripts/selector/train.py`
+   - 运行训练: `python scripts/selector/train_selector.py`
    - 预计用时: 1-2分钟（CPU）
 
 2. **性能验证**
@@ -633,7 +633,7 @@ Epoch 150: Train Loss: 1.65, Val Acc: 26%  (过拟合)
    - ✅ 模型保存/加载
 
 3. **脚本与文档**
-   - ✅ `scripts/selector/train.py`: 完整训练脚本
+   - ✅ `scripts/selector/train_selector.py`: 完整训练脚本
    - ✅ `scripts/selector/test.py`: 功能测试脚本
    - ✅ `src/selector/README.md`: 详细文档（400行）
    - ✅ `src/selector/USAGE.md`: 使用指南（250行）

@@ -40,6 +40,12 @@ def load_training_data(data_path: str = 'data/train_state_model.json') -> Tuple[
     """
     从 train_state_model.json 加载训练数据
     
+    【重要】训练样本格式：
+    - state_vector: 应用模型前的状态（28维）
+    - model_id: 即将应用的模型ID（0-79）
+    
+    即：用当前状态预测下一步应该选择哪个模型
+    
     Args:
         data_path: 数据文件路径
     

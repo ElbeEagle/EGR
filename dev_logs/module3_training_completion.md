@@ -204,12 +204,12 @@ pip install torch numpy
 
 #### 2. 测试功能
 ```bash
-python scripts/selector/test.py
+python scripts/selector/test_selector.py
 ```
 
 #### 3. 完整训练
 ```bash
-python scripts/selector/train.py
+python scripts/selector/train_selector.py
 ```
 
 ### 使用示例
@@ -319,8 +319,8 @@ print(f"预测熵 H(Y|X): {entropy:.4f}")
 
 | 文件 | 行数 | 说明 |
 |------|------|------|
-| `scripts/selector/train.py` | 50 | 完整训练脚本 |
-| `scripts/selector/test.py` | 150 | 功能测试脚本 |
+| `scripts/selector/train_selector.py` | 50 | 完整训练脚本 |
+| `scripts/selector/test_selector.py` | 150 | 功能测试脚本 |
 
 ### 文档文件
 
@@ -453,10 +453,10 @@ Module 3成功实现了基于最大熵原理的定理选择神经网络，为EGR
 
 ```bash
 # 测试功能
-python scripts/selector/test.py
+python scripts/selector/test_selector.py
 
 # 完整训练
-python scripts/selector/train.py
+python scripts/selector/train_selector.py
 
 # 自定义训练
 python -c "

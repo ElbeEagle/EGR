@@ -1,8 +1,8 @@
 # EGR API Reference
 
-**版本**: v1.0  
-**最后更新**: 2026-01-18  
-**状态**: 40/80 模型已实现 (50%)
+**版本**: v1.1  
+**最后更新**: 2026-01-20  
+**状态**: 40/80 模型已实现 (50%) | Module 3 完成 ✅
 
 ---
 
@@ -297,6 +297,201 @@ print(f"几何关系: {symbolic.geometric_relations}")
 
 ---
 
+## 模型选择器模块 (Module 3)
+
+### MaxEntropyClassifier
+神经网络模型选择器 - P(model | state) 分类器
+
+#### 初始化
+```python
+from src.selector import MaxEntropyClassifier
+
+model = MaxEntropyClassifier(
+    input_dim=28,      # 状态向量维度
+    output_dim=80,     # 模型数量
+    hidden_dims=(64, 128, 64),
+    dropout_rate=0.1
+)
+```
+
+#### predict()
+推理接口 - 预测最优模型并计算不确定性
+```python
+import torch
+
+state_vector = torch.randn(28)  # 28维状态向量
+probs, best_model, entropy = model.predict(state_vector)
+
+# 返回值:
+# - probs: [80] 模型概率分布
+# - best_model: 最优模型ID (int)
+# - entropy: H(Y|X) 预测熵 (float)
+```
+
+**参数**: `state_vector` (Tensor) - [batch, 28] 或 [28] 状态向量  
+**返回**: `Tuple[Tensor, int/Tensor, float]` - (概率分布, 最优模型ID, 预测熵)
+
+#### get_top_k()
+获取Top-K候选模型
+```python
+top_k_probs, top_k_ids = model.get_top_k(state_vector, k=5)
+
+# Top-5候选模型
+for i, (prob, model_id) in enumerate(zip(top_k_probs, top_k_ids)):
+    print(f"Rank {i+1}: Model {model_id.item()} (prob={prob.item():.3f})")
+```
+
+**参数**:
+- `state_vector` (Tensor) - [batch, 28] 或 [28] 状态向量
+- `k` (int) - 返回前k个候选
+
+**返回**: `Tuple[Tensor, Tensor]` - (Top-K概率, Top-K模型ID)
+
+---
+
+### train_model()
+训练模型选择器
+```python
+from src.selector import train_model
+
+model, history = train_model(
+    data_path='data/train_state_model.json',
+    num_epochs=100,
+    batch_size=16,
+    learning_rate=0.001,
+    use_class_weights=False,
+    patience=20,
+    save_path='checkpoints/model_selector.pth',
+    device=None  # 自动检测 CPU/MPS/CUDA
+)
+```
+
+**参数**:
+- `data_path` (str) - 训练数据路径
+- `num_epochs` (int) - 训练轮数，默认100
+- `batch_size` (int) - 批大小，默认16
+- `learning_rate` (float) - 学习率，默认0.001
+- `use_class_weights` (bool) - 是否使用类别权重
+- `patience` (int) - Early stopping耐心值
+- `save_path` (str) - 模型保存路径
+- `device` (str) - 训练设备，None为自动检测
+
+**返回**: `Tuple[MaxEntropyClassifier, Dict]` - (训练好的模型, 训练历史)
+
+**训练历史**:
+```python
+{
+    'train_loss': [...],
+    'train_acc': [...],
+    'val_loss': [...],
+    'val_acc': [...],       # Top-1准确率
+    'val_top3_acc': [...],  # Top-3准确率
+    'val_top5_acc': [...]   # Top-5准确率
+}
+```
+
+---
+
+### load_training_data()
+加载训练数据
+```python
+from src.selector import load_training_data
+
+X, y = load_training_data('data/train_state_model.json')
+
+# X: List[List[float]] - 状态向量列表 (每个28维)
+# y: List[int] - 模型ID列表 (0-79)
+
+print(f"训练样本数: {len(X)}")
+print(f"特征维度: {len(X[0])}")
+```
+
+**参数**: `data_path` (str) - 数据文件路径  
+**返回**: `Tuple[List[List[float]], List[int]]` - (状态向量, 模型ID)
+
+---
+
+### prepare_dataloaders()
+准备训练和验证DataLoader
+```python
+from src.selector import prepare_dataloaders
+
+train_loader, val_loader = prepare_dataloaders(
+    state_vectors=X,
+    model_ids=y,
+    train_ratio=0.8,
+    batch_size=16,
+    shuffle=True,
+    seed=42
+)
+```
+
+**参数**:
+- `state_vectors` (List[List[float]]) - 状态向量列表
+- `model_ids` (List[int]) - 模型ID列表
+- `train_ratio` (float) - 训练集比例，默认0.8
+- `batch_size` (int) - 批大小，默认16
+- `shuffle` (bool) - 是否打乱数据
+- `seed` (int) - 随机种子
+
+**返回**: `Tuple[DataLoader, DataLoader]` - (训练集, 验证集)
+
+---
+
+### 使用示例：完整训练流程
+
+```python
+from src.selector import train_model, MaxEntropyClassifier
+import torch
+
+# 1. 训练模型
+print("开始训练...")
+model, history = train_model(
+    data_path='data/train_state_model.json',
+    num_epochs=100,
+    save_path='checkpoints/model_selector.pth'
+)
+
+print(f"最佳Top-1准确率: {max(history['val_acc']):.3f}")
+print(f"最佳Top-3准确率: {max(history['val_top3_acc']):.3f}")
+
+# 2. 加载模型推理
+model = MaxEntropyClassifier()
+checkpoint = torch.load('checkpoints/model_selector.pth')
+model.load_state_dict(checkpoint['model_state_dict'])
+model.eval()
+
+# 3. 推理
+from src.state import StateConstructor, TheoremLibrary
+
+library = TheoremLibrary()
+constructor = StateConstructor(theorem_library=library)
+
+abstract, symbolic = constructor.construct_from_facts(
+    fact_expressions="G: Hyperbola;Expression(G) = (x^2/3 - y^2 = 1)",
+    query_expressions="Length(ImageinaryAxis(G))",
+    reasoning_depth=0
+)
+
+# 获取状态向量
+state_vector = torch.tensor(abstract.to_vector(), dtype=torch.float32)
+
+# 预测
+probs, best_model, entropy = model.predict(state_vector)
+
+print(f"推荐模型: {best_model}")
+print(f"预测概率: {probs[best_model]:.4f}")
+print(f"预测熵 H(Y|X): {entropy:.4f}")
+
+# 应用模型
+recommended = library.get_model(best_model)
+if recommended and recommended.can_apply(symbolic):
+    recommended.apply(symbolic)
+    print(f"✓ 成功应用模型 {best_model}: {recommended.chinese_name}")
+```
+
+---
+
 ## 常见问题
 
 ### Q: 如何知道哪些模型已实现？
@@ -316,6 +511,34 @@ success = (after > before)
 ### Q: 状态构造器是否自动提取参数？
 是的，传入 `theorem_library` 参数时会自动应用标准方程模型（3-10）提取基本参数。
 
+### Q: 如何使用模型选择器？
+```python
+from src.selector import MaxEntropyClassifier
+import torch
+
+# 加载模型
+model = MaxEntropyClassifier()
+checkpoint = torch.load('checkpoints/model_selector.pth')
+model.load_state_dict(checkpoint['model_state_dict'])
+
+# 获取状态向量（28维）
+state_vector = torch.tensor(abstract_state.to_vector(), dtype=torch.float32)
+
+# 推理
+probs, best_model, entropy = model.predict(state_vector)
+```
+
+### Q: 如何训练模型选择器？
+运行训练脚本：
+```bash
+python scripts/selector/train_selector.py
+```
+或使用API：
+```python
+from src.selector import train_model
+model, history = train_model()
+```
+
 ---
 
 ## 术语表
@@ -330,6 +553,22 @@ success = (after > before)
 
 ---
 
-**文档版本**: v1.0  
+**文档版本**: v1.1  
 **维护**: EGR Team  
-**最后更新**: 2026-01-18
+**最后更新**: 2026-01-20
+
+---
+
+## 更新日志
+
+### v1.1 (2026-01-20)
+- ✅ 新增 Module 3 模型选择器API
+- ✅ MaxEntropyClassifier接口
+- ✅ train_model, load_training_data等训练接口
+- ✅ 完整使用示例
+
+### v1.0 (2026-01-18)
+- 初始版本
+- 状态管理模块API
+- 定理库模块API
+- 40个模型索引
