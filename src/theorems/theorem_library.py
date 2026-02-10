@@ -71,6 +71,20 @@ class TheoremLibrary:
         from .models.model_078 import SubstitutionXEqualsMYPlusN
         from .models.model_079 import QuadraticFunctionMaximum
         
+        # 新增模型 (阶段2)
+        from .models.model_033 import ParabolaFocalChordLength
+        from .models.model_044 import PointDifferenceMethod
+        from .models.model_049 import PythagoreanTheorem
+        from .models.model_051 import ChordLengthFormulaWithK
+        from .models.model_052 import PointToLineDistance
+        from .models.model_055 import SlopeFormula
+        from .models.model_059 import VectorDotProductAlgebraic
+        from .models.model_066 import DiscriminantTangentCondition
+        from .models.model_068 import TriangleMidlineTheorem
+        from .models.model_072 import LinePointSlopeForm
+        from .models.model_076 import CircleTangentCondition
+        from .models.model_077 import HomogenizationEccentricity
+        
         # 注册模型
         self.register_model(EllipseDefinition())
         self.register_model(HyperbolaDefinition())
@@ -112,6 +126,20 @@ class TheoremLibrary:
         self.register_model(CircleStandardEquation())
         self.register_model(SubstitutionXEqualsMYPlusN())
         self.register_model(QuadraticFunctionMaximum())
+        
+        # 新增模型
+        self.register_model(ParabolaFocalChordLength())
+        self.register_model(PointDifferenceMethod())
+        self.register_model(PythagoreanTheorem())
+        self.register_model(ChordLengthFormulaWithK())
+        self.register_model(PointToLineDistance())
+        self.register_model(SlopeFormula())
+        self.register_model(VectorDotProductAlgebraic())
+        self.register_model(DiscriminantTangentCondition())
+        self.register_model(TriangleMidlineTheorem())
+        self.register_model(LinePointSlopeForm())
+        self.register_model(CircleTangentCondition())
+        self.register_model(HomogenizationEccentricity())
     
     def register_model(self, model: TheoremModel):
         """

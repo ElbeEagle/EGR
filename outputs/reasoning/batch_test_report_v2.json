@@ -1,0 +1,539 @@
+{
+  "summary": {
+    "total_samples": 200,
+    "success_count": 147,
+    "success_rate": 0.735,
+    "answer_correct": 5,
+    "accuracy": 0.025,
+    "answer_accuracy_of_success": 0.034013605442176874,
+    "avg_steps": 8.170068027210885,
+    "elapsed_seconds": 0.2
+  },
+  "failure_reasons": {
+    "max_steps": 42,
+    "no_model": 11
+  },
+  "curve_type_stats": {
+    "Hyperbola": {
+      "total": 72,
+      "success_rate": 0.7916666666666666,
+      "accuracy": 0.027777777777777776
+    },
+    "Ellipse": {
+      "total": 58,
+      "success_rate": 0.6896551724137931,
+      "accuracy": 0.017241379310344827
+    },
+    "Parabola": {
+      "total": 56,
+      "success_rate": 0.8214285714285714,
+      "accuracy": 0.03571428571428571
+    },
+    "Other": {
+      "total": 9,
+      "success_rate": 0.3333333333333333,
+      "accuracy": 0.0
+    },
+    "Circle": {
+      "total": 5,
+      "success_rate": 0.2,
+      "accuracy": 0.0
+    }
+  },
+  "query_type_stats": {
+    "Equation": {
+      "total": 43,
+      "success_rate": 0.5581395348837209,
+      "accuracy": 0.0
+    },
+    "Range": {
+      "total": 16,
+      "success_rate": 0.875,
+      "accuracy": 0.0
+    },
+    "Eccentricity": {
+      "total": 40,
+      "success_rate": 0.775,
+      "accuracy": 0.025
+    },
+    "Length": {
+      "total": 6,
+      "success_rate": 0.6666666666666666,
+      "accuracy": 0.3333333333333333
+    },
+    "Value": {
+      "total": 71,
+      "success_rate": 0.9014084507042254,
+      "accuracy": 0.028169014084507043
+    },
+    "Coordinate": {
+      "total": 11,
+      "success_rate": 0.09090909090909091,
+      "accuracy": 0.0
+    },
+    "Distance": {
+      "total": 7,
+      "success_rate": 0.8571428571428571,
+      "accuracy": 0.0
+    },
+    "Area": {
+      "total": 6,
+      "success_rate": 0.5,
+      "accuracy": 0.0
+    }
+  },
+  "failure_details": [
+    {
+      "id": 208,
+      "facts": "C: Hyperbola;b: Number;O: Origin;P: Point;F: Point;b>0;Expression(C) = (x^2 - y^2/b^2 = 1);RightFocu",
+      "query": "Eccentricity(C)",
+      "expected": "sqrt(5)",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition"
+      ]
+    },
+    {
+      "id": 6184,
+      "facts": "G: Parabola;Expression(G) = (y = x^2);A: Point;B: Point;IsChordOf(LineSegmentOf(A, B), G);Distance(M",
+      "query": "Max(Length(LineSegmentOf(A, B)))",
+      "expected": "5/2",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition"
+      ]
+    },
+    {
+      "id": 1158,
+      "facts": "G: Curve;b: Number;H: Point;b>0;Expression(G) = (x^2/4 + y^2/b^2 = 1);Coordinate(H) = (x1, y1);x1:Nu",
+      "query": "Max(x1^2+2*y1)",
+      "expected": "{(b^2/4+4)&(0,4],(2*b)&(b>4)}",
+      "reason": "Step 2: No applicable model (consecutive failures)",
+      "steps": 0,
+      "models_tried": []
+    },
+    {
+      "id": 6142,
+      "facts": "M: Point;N: Point;B: Point;Coordinate(M) = (-3, 0);Coordinate(N) = (3, 0);Coordinate(B) = (1, 0);C: ",
+      "query": "LocusEquation(P)",
+      "expected": "(x^2-y^2/8=1)&(x>1)",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Midpoint_Formula",
+        "Midpoint_Formula",
+        "Midpoint_Formula",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition"
+      ]
+    },
+    {
+      "id": 4551,
+      "facts": "G: Parabola;P: Point;Expression(G) = (y^2 = x);PointOnCurve(P, G);Distance(P, Focus(G)) = 2",
+      "query": "Coordinate(P)",
+      "expected": "(7/4, pm*sqrt(7)/2)",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance",
+        "Two_Points_Distance"
+      ]
+    },
+    {
+      "id": 4925,
+      "facts": "E: Ellipse;l: Line;Expression(l) = (2*x - y + 2 = 0);F1: Point;F1 = LeftFocus(E);B: Point;B = OneOf(",
+      "query": "Eccentricity(E)",
+      "expected": "sqrt(5)/5",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition"
+      ]
+    },
+    {
+      "id": 1816,
+      "facts": "G: Ellipse;Expression(G) = (x^2/4 + y^2/3 = 1);F: Point;RightFocus(G) = F;A: Point;PointOnCurve(A, G",
+      "query": "Coordinate(A)",
+      "expected": "(1,3/2)",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Triangle_Area_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula",
+        "Eccentricity_Formula"
+      ]
+    },
+    {
+      "id": 5972,
+      "facts": "Gamma: Ellipse;A: Point;B: Point;C: Point;F1: Point;F2: Point;MajorAxis(Gamma) = LineSegmentOf(A, B)",
+      "query": "Distance(F1, F2)",
+      "expected": "4*sqrt(6)/3",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law",
+        "Cosine_Law"
+      ]
+    },
+    {
+      "id": 1830,
+      "facts": "G: Hyperbola;O: Origin;Center(G) = O;PointOnCurve(Focus(G),axis) = True;Eccentricity(G) = sqrt(2);H:",
+      "query": "Expression(G)",
+      "expected": "x^2/6-y^2/6=1",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition"
+      ]
+    },
+    {
+      "id": 4915,
+      "facts": "G: Ellipse;H: Line;A: Point;B: Point;F2: Point;F1: Point;e:Number;Length(MinorAxis(G))=sqrt(5);Eccen",
+      "query": "Perimeter(TriangleOf(A, B, F2))",
+      "expected": "6",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula"
+      ]
+    },
+    {
+      "id": 7246,
+      "facts": "H: Ellipse;Expression(H) = (x^2 + 4*y^2 = 16);G: Hyperbola;Focus(G) = Focus(H);Expression(OneOf(Asym",
+      "query": "Eccentricity(H);Expression(G)",
+      "expected": "sqrt(3)/2\nx^2/9-y^2/3=1",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition"
+      ]
+    },
+    {
+      "id": 2204,
+      "facts": "G: Ellipse;alpha: Number;alpha>=0;alpha<2*pi;Expression(G) = (x^2*Sin(alpha) - y^2*Cos(alpha) = 1);P",
+      "query": "Range(alpha)",
+      "expected": "(pi/2, 3*pi/4)",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition",
+        "Ellipse_Definition"
+      ]
+    },
+    {
+      "id": 6727,
+      "facts": "G: Parabola;M: Point;O: Origin;F: Point;Vertex(G) = O;Focus(G)=F;PointOnCurve(M, G)",
+      "query": "Max(LineSegmentOf(M, O)/LineSegmentOf(M, F))",
+      "expected": "2*sqrt(3)/3",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Triangle_Area_Formula",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition"
+      ]
+    },
+    {
+      "id": 6085,
+      "facts": "G: Hyperbola;Expression(Asymptote(G)) = (y = pm*(2/3)*x);FocalLength(G)=2*sqrt(26)",
+      "query": "Expression(G)",
+      "expected": "{x^2/18 - y^/8 = 1, y^2/8 - x^2/18 = 1}",
+      "reason": "Step 2: No applicable model (consecutive failures)",
+      "steps": 0,
+      "models_tried": []
+    },
+    {
+      "id": 1036,
+      "facts": "M: Circle;P: Point;O: Origin;T: Point;L:Line;Expression(M)=((x - 3)^2 + (y - 4)^2 = 4);PointOnCurve(",
+      "query": "LocusEquation(P)",
+      "expected": "6*x-8*y-21=0",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition"
+      ]
+    },
+    {
+      "id": 3159,
+      "facts": "G: Circle;Expression(G) = (y^2 + (x - 1)^2 = 25);P: Point;Coordinate(P) = (2, -1);A: Point;B: Point;",
+      "query": "Expression(LineOf(A, B))",
+      "expected": "x-y-3=0",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Midpoint_Formula",
+        "Midpoint_Formula",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition"
+      ]
+    },
+    {
+      "id": 2449,
+      "facts": "l: Line;C: Parabola;p: Number;A: Point;F: Point;M: Point;B: Point;N: Point;p>0;Expression(C) = (y^2 ",
+      "query": "Area(TriangleOf(M, F, N))",
+      "expected": "2",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Vieta_Theorem_Sum",
+        "Vieta_Theorem_Sum",
+        "Vieta_Theorem_Sum",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product",
+        "Vieta_Theorem_Product"
+      ]
+    },
+    {
+      "id": 5876,
+      "facts": "G: Hyperbola;m: Number;n: Number;H: Circle;F1: Point;F2: Point;A: Point;P: Point;B: Point;Expression",
+      "query": "Expression(Asymptote(G))",
+      "expected": "y = pm*(2*sqrt(3)/3)*x",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition",
+        "Vector_Collinear_Condition"
+      ]
+    },
+    {
+      "id": 578,
+      "facts": "x:Number;y:Number;2*x + y - 2 <= 0;-2*x + y^2 <= 0;z=x+y;z:Number",
+      "query": "Min(z)",
+      "expected": "-12",
+      "reason": "Step 2: No applicable model (consecutive failures)",
+      "steps": 0,
+      "models_tried": []
+    },
+    {
+      "id": 1892,
+      "facts": "G: Hyperbola;Expression(Asymptote(G)) = (sqrt(2)*x + pm*y = 0);PointOnCurve(Focus(G), xAxis)",
+      "query": "Eccentricity(G)",
+      "expected": "sqrt(3)",
+      "reason": "Reached max steps (15)",
+      "steps": 15,
+      "models_tried": [
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition",
+        "Hyperbola_Definition"
+      ]
+    }
+  ]
+}

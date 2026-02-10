@@ -2,8 +2,10 @@
 模型选择器 (Model Selector)
 
 结合神经网络和规则系统选择下一个要应用的模型。
+支持三种策略：neural_top1, neural_topk, three_layer_entropy
 """
 
+import copy
 import torch
 from typing import Optional, List, Tuple, Dict
 from src.selector.model_selector import MaxEntropyClassifier
@@ -26,7 +28,9 @@ class ModelSelector:
         neural_network: MaxEntropyClassifier,
         theorem_library: TheoremLibrary,
         strategy: str = 'neural_top1',
-        device: str = 'cpu'
+        device: str = 'cpu',
+        state_constructor=None,
+        lambda_weights: Tuple[float, float, float] = (0.6, 0.3, 0.1)
     ):
         """
         初始化模型选择器
@@ -34,13 +38,23 @@ class ModelSelector:
         Args:
             neural_network: 训练好的MaxEntropyClassifier
             theorem_library: 定理库
-            strategy: 选择策略 ('neural_top1', 'neural_topk')
+            strategy: 选择策略 ('neural_top1', 'neural_topk', 'three_layer_entropy')
             device: 计算设备
+            state_constructor: 状态构造器（三层熵策略需要）
+            lambda_weights: 三层熵的权重 (λ₁_P_Y_X, λ₂_InfoGain, λ₃_H_Y_X)
         """
         self.neural_network = neural_network
         self.theorem_library = theorem_library
         self.strategy = strategy
         self.device = device
+        self.state_constructor = state_constructor
+        self.lambda_weights = lambda_weights
+        
+        # 熵估计器（三层熵策略）
+        self.entropy_estimator = None
+        if strategy == 'three_layer_entropy':
+            from src.reasoning.entropy_estimator import EntropyEstimator
+            self.entropy_estimator = EntropyEstimator(mode='heuristic')
         
         # 确保神经网络在正确的设备上并处于eval模式
         self.neural_network.to(device)
@@ -73,6 +87,8 @@ class ModelSelector:
             return self._neural_top1_strategy(symbolic_state, abstract_state, excluded_models)
         elif self.strategy == 'neural_topk':
             return self._neural_topk_strategy(symbolic_state, abstract_state, top_k, excluded_models)
+        elif self.strategy == 'three_layer_entropy':
+            return self._three_layer_entropy_strategy(symbolic_state, abstract_state, top_k, excluded_models)
         else:
             raise ValueError(f"Unknown strategy: {self.strategy}")
     
@@ -229,6 +245,118 @@ class ModelSelector:
             selection_info['predicted_confidence'] = float(probs[selected_model.model_id])
         
         return selected_model, selection_info
+    
+    def _three_layer_entropy_strategy(
+        self,
+        symbolic_state: SymbolicState,
+        abstract_state: AbstractState,
+        k: int = 10,
+        excluded_models: set = None
+    ) -> Tuple[Optional[TheoremModel], Dict]:
+        """
+        策略3: 三层熵架构
+        
+        综合评分 = λ₁·P(Y|X) + λ₂·InfoGain - λ₃·H(Y|X)
+        
+        Layer 1: P(Y|X) — 神经网络模型选择概率
+        Layer 2: InfoGain = H(S_current) - H(S_next) — 信息增益
+        Layer 3: H(Y|X) — 预测不确定性惩罚
+        """
+        if excluded_models is None:
+            excluded_models = set()
+        
+        if self.entropy_estimator is None:
+            from src.reasoning.entropy_estimator import EntropyEstimator
+            self.entropy_estimator = EntropyEstimator(mode='heuristic')
+        
+        λ1, λ2, λ3 = self.lambda_weights
+        
+        # 1. 神经网络预测
+        state_vector = torch.tensor(
+            abstract_state.to_vector(),
+            dtype=torch.float32,
+            device=self.device
+        )
+        
+        with torch.no_grad():
+            probs, _, entropy = self.neural_network.predict(state_vector)
+            top_k_probs, top_k_ids = self.neural_network.get_top_k(state_vector, k=k)
+        
+        h_y_x = float(entropy)  # Layer 3: 预测熵
+        h_current = self.entropy_estimator.estimate(abstract_state)  # 当前状态熵
+        
+        # 2. 对每个候选模型计算综合评分
+        candidates = []
+        
+        for model_id in top_k_ids.tolist():
+            if model_id in excluded_models:
+                continue
+            
+            model = self.theorem_library.get_model(model_id)
+            if model is None:
+                continue
+            
+            try:
+                can_apply = model.can_apply(symbolic_state)
+            except Exception:
+                can_apply = False
+            
+            if not can_apply:
+                continue
+            
+            # Layer 1: P(Y|X)
+            p_y_x = float(probs[model_id])
+            
+            # Layer 2: InfoGain（模拟应用，估计新状态熵）
+            info_gain = 0.0
+            if self.state_constructor:
+                try:
+                    sim_state = copy.deepcopy(symbolic_state)
+                    apply_result = model.apply(sim_state)
+                    if apply_result is None or apply_result:
+                        sim_abstract = self.state_constructor.update_abstract_state(
+                            sim_state, abstract_state
+                        )
+                        h_next = self.entropy_estimator.estimate(sim_abstract)
+                        info_gain = h_current - h_next
+                except Exception:
+                    info_gain = 0.0
+            
+            # 综合评分
+            score = λ1 * p_y_x + λ2 * info_gain - λ3 * h_y_x
+            
+            candidates.append({
+                'model_id': model_id,
+                'model': model,
+                'score': score,
+                'p_y_x': p_y_x,
+                'info_gain': info_gain,
+                'h_y_x': h_y_x,
+            })
+        
+        # 3. 选择最高分
+        if not candidates:
+            return None, {
+                'strategy': 'three_layer_entropy',
+                'h_current': h_current,
+                'h_y_x': h_y_x,
+                'excluded_count': len(excluded_models),
+            }
+        
+        best = max(candidates, key=lambda c: c['score'])
+        
+        selection_info = {
+            'strategy': 'three_layer_entropy',
+            'predicted_confidence': best['p_y_x'],
+            'prediction_entropy': best['h_y_x'],
+            'info_gain': best['info_gain'],
+            'score': best['score'],
+            'h_current': h_current,
+            'candidates_evaluated': len(candidates),
+            'lambda_weights': list(self.lambda_weights),
+        }
+        
+        return best['model'], selection_info
     
     def get_top_k_candidates(
         self,
