@@ -54,32 +54,37 @@ class HyperbolaLatusRectum(TheoremModel):
         
         return True
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，计算通径
         """
-        a_val = state.parameters['a']
-        b_val = state.parameters['b']
-        
-        # 计算通径 = 2b²/a
         try:
-            a_num = float(a_val)
-            b_num = float(b_val)
-            
-            latus_rectum = 2 * b_num ** 2 / a_num
-            
-            if latus_rectum == int(latus_rectum):
-                state.parameters['latus_rectum'] = str(int(latus_rectum))
-            else:
-                state.parameters['latus_rectum'] = str(latus_rectum)
-            
-            state.geometric_relations.append(f"通径 = 2*{b_val}²/{a_val} = {latus_rectum}")
-            
-        except:
-            # 符号形式
-            latus_expr = f"2*{b_val}^2/{a_val}"
-            state.parameters['latus_rectum'] = latus_expr
-            state.geometric_relations.append(f"通径 = {latus_expr}")
+            a_val = state.parameters['a']
+            b_val = state.parameters['b']
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 计算通径 = 2b²/a
+            try:
+                a_num = float(a_val)
+                b_num = float(b_val)
+            
+                latus_rectum = 2 * b_num ** 2 / a_num
+            
+                if latus_rectum == int(latus_rectum):
+                    state.parameters['latus_rectum'] = str(int(latus_rectum))
+                else:
+                    state.parameters['latus_rectum'] = str(latus_rectum)
+            
+                state.geometric_relations.append(f"通径 = 2*{b_val}²/{a_val} = {latus_rectum}")
+            
+            except:
+                # 符号形式
+                latus_expr = f"2*{b_val}^2/{a_val}"
+                state.parameters['latus_rectum'] = latus_expr
+                state.geometric_relations.append(f"通径 = {latus_expr}")
+        
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

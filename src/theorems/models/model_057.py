@@ -60,20 +60,25 @@ class TriangleAreaWithSin(TheoremModel):
         
         return has_geometric_info
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，计算面积
         """
-        # 查找角度和边长信息
-        # 如果存在焦点三角形，可能需要使用正弦面积公式
+        try:
+            # 查找角度和边长信息
+            # 如果存在焦点三角形，可能需要使用正弦面积公式
         
-        # 简化处理：添加面积公式关系
-        for rel in state.geometric_relations:
-            # 如果提到角度和距离
-            if 'Angle' in rel or 'Sin' in rel:
-                # 添加面积关系
-                state.geometric_relations.append("Area = (1/2) * side1 * side2 * sin(angle)")
-                break
+            # 简化处理：添加面积公式关系
+            for rel in state.geometric_relations:
+                # 如果提到角度和距离
+                if 'Angle' in rel or 'Sin' in rel:
+                    # 添加面积关系
+                    state.geometric_relations.append("Area = (1/2) * side1 * side2 * sin(angle)")
+                    break
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

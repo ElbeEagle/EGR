@@ -46,36 +46,41 @@ class EllipseDefinition(TheoremModel):
         
         return has_ellipse
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加椭圆定义关系
         """
-        # 获取参数a（如果有）
-        a_val = state.parameters.get('a')
-        if not a_val and 'a^2' in state.parameters:
-            try:
-                a_sq = float(state.parameters['a^2'])
-                a_val = str(a_sq ** 0.5)
-            except:
-                a_val = f"sqrt({state.parameters['a^2']})"
+        try:
+            # 获取参数a（如果有）
+            a_val = state.parameters.get('a')
+            if not a_val and 'a^2' in state.parameters:
+                try:
+                    a_sq = float(state.parameters['a^2'])
+                    a_val = str(a_sq ** 0.5)
+                except:
+                    a_val = f"sqrt({state.parameters['a^2']})"
         
-        # 添加定义关系
-        if a_val:
-            relation = f"椭圆定义: |PF₁| + |PF₂| = 2*{a_val}"
-        else:
-            relation = "椭圆定义: |PF₁| + |PF₂| = 2a"
+            # 添加定义关系
+            if a_val:
+                relation = f"椭圆定义: |PF₁| + |PF₂| = 2*{a_val}"
+            else:
+                relation = "椭圆定义: |PF₁| + |PF₂| = 2a"
         
-        # 避免重复添加
-        if relation not in state.geometric_relations:
-            state.geometric_relations.append(relation)
+            # 避免重复添加
+            if relation not in state.geometric_relations:
+                state.geometric_relations.append(relation)
         
-        # 如果有具体的焦点坐标，添加更具体的关系
-        if 'F1' in state.coordinates and 'F2' in state.coordinates:
-            f1_coord = state.coordinates['F1']
-            f2_coord = state.coordinates['F2']
-            state.geometric_relations.append(
-                f"对于椭圆上任意点P: Distance(P, F1{f1_coord}) + Distance(P, F2{f2_coord}) = 2*{a_val if a_val else 'a'}"
-            )
+            # 如果有具体的焦点坐标，添加更具体的关系
+            if 'F1' in state.coordinates and 'F2' in state.coordinates:
+                f1_coord = state.coordinates['F1']
+                f2_coord = state.coordinates['F2']
+                state.geometric_relations.append(
+                    f"对于椭圆上任意点P: Distance(P, F1{f1_coord}) + Distance(P, F2{f2_coord}) = 2*{a_val if a_val else 'a'}"
+                )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

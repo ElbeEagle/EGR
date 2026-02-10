@@ -79,30 +79,35 @@ class EllipseFocalTrianglePerimeter(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，计算周长
         """
-        a = state.parameters.get('a')
-        c = state.parameters.get('c')
-        
-        # 计算周长: |PF1| + |PF2| + |F1F2| = 2a + 2c
-        # 因为 |PF1| + |PF2| = 2a (椭圆定义)
-        # |F1F2| = 2c (焦距)
-        perimeter = f"2*{a} + 2*{c}"
-        
-        # 尝试简化
         try:
-            a_val = float(a) if isinstance(a, (int, float)) or str(a).replace('.', '').isdigit() else None
-            c_val = float(c) if isinstance(c, (int, float)) or str(c).replace('.', '').isdigit() else None
-            if a_val and c_val:
-                perimeter = str(2*a_val + 2*c_val)
-        except:
-            pass
+            a = state.parameters.get('a')
+            c = state.parameters.get('c')
         
-        # 添加到参数和关系中
-        state.parameters['focal_triangle_perimeter'] = perimeter
-        state.geometric_relations.append(f"FocalTrianglePerimeter = {perimeter}")
+            # 计算周长: |PF1| + |PF2| + |F1F2| = 2a + 2c
+            # 因为 |PF1| + |PF2| = 2a (椭圆定义)
+            # |F1F2| = 2c (焦距)
+            perimeter = f"2*{a} + 2*{c}"
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 尝试简化
+            try:
+                a_val = float(a) if isinstance(a, (int, float)) or str(a).replace('.', '').isdigit() else None
+                c_val = float(c) if isinstance(c, (int, float)) or str(c).replace('.', '').isdigit() else None
+                if a_val and c_val:
+                    perimeter = str(2*a_val + 2*c_val)
+            except:
+                pass
+        
+            # 添加到参数和关系中
+            state.parameters['focal_triangle_perimeter'] = perimeter
+            state.geometric_relations.append(f"FocalTrianglePerimeter = {perimeter}")
+        
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

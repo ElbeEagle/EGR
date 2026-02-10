@@ -278,4 +278,80 @@ dev_logs/
 
 ---
 
+2026.02.10
+> 开发日志："dev_logs/module4_stage1_fixes.md"
+
+工作1: 修复推理引擎3个关键问题
+- ✅ 问题1: 初始完整度过高 → 提高阈值0.99 + 最小步数min_steps=1 + 基于applied_count判断
+- ✅ 问题2: 解答提取未实现 → 实现QueryParser + AnswerExtractor（支持8种查询类型）
+- ✅ 问题3: 模型apply失败 → 统一返回bool + 批量修复全部40个模型 + 排除已应用模型
+> 新增文件："src/reasoning/query_parser.py", "src/reasoning/answer_extractor.py"
+
+工作2: 修复推理引擎额外发现的问题
+- ✅ 模型重复选择（死循环） → ModelSelector自动排除已应用模型
+- ✅ completeness判断缺失LENGTH等类型 → 补全8种query_type的相关信息判断
+- ✅ StateConstructor缺少update_abstract_state方法 → 新增便利方法
+> 修改文件："src/reasoning/model_selector.py", "src/state/state_constructor.py"
+
+工作3: 批量修复40个模型文件
+- ✅ 全部40个模型的apply方法返回bool + try-except异常处理
+> 工具脚本："scripts/utils/safe_fix_models.py"
+
+测试结果：3/3 (100%)
+- 双曲线渐近线 ✓ 答案: (y = pm*(1/sqrt(3))*x)
+- 椭圆离心率 ✓ 答案: sqrt(2^2 - 1^2)/2
+- 椭圆长轴长 ✓ 答案: 4
+
+**下一步**：
+* Module 4 阶段2：回溯机制、Conic10K批量测试、性能评估
+* 在更多样本上验证成功率（目标40-60%）
+
+---
+
+2026.02.10（续）
+> 开发日志："dev_logs/module4_stage2_batch_test.md"
+
+工作1: 实现回溯机制
+- ✅ apply失败时自动重试（最多3次/步），排除失败模型后选下一个候选
+- ✅ 连续2步无法推进时提前终止
+> 修改文件："src/reasoning/reasoning_engine.py"
+
+工作2: 实现答案比较器
+- ✅ 数值化eval（支持sqrt、分数、pm等），误差<1e-4视为正确
+> 新增文件："src/reasoning/answer_comparator.py"
+
+工作3: 批量测试 (200样本)
+> 新增文件："scripts/reasoning/batch_test.py"
+> 输出报告："outputs/reasoning/batch_test_report.json"
+
+工作4: 尽力提取答案策略
+- ✅ 即使completeness未达标，只要应用了模型就尝试提取答案
+- ✅ 增强_evaluate_expression支持复合表达式（如 sqrt(2^2 - 1^2)）
+- ✅ 改进completeness计算对LENGTH等查询类型的支持
+
+**批量测试结果 (200样本)**:
+```
+推理成功率: 73.5% (147/200)
+答案正确率: 2.5% (5/200)
+平均推理步数: 8.2
+速度: 965题/秒
+
+按曲线类型:
+  Ellipse:   69.0% 成功
+  Hyperbola: 79.2% 成功
+  Parabola:  82.1% 成功
+
+答案错误分析 (142个成功但答案错):
+  symbolic:          92 (参数含变量字母，无法数值化)
+  numeric_mismatch:  35 (数值可算但推理路径错误)
+  not_found:         15 (提取器无法定位答案)
+```
+
+**下一步**：
+* 答案正确率提升：改进答案提取+符号计算
+* 更多模型实现（当前40/80）→ 提升覆盖率
+* 阶段3：三层熵架构
+
+---
+
 

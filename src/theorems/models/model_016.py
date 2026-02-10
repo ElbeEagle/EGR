@@ -78,55 +78,60 @@ class EllipseFocalRadius(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加椭圆焦半径公式
         """
-        # 获取参数
-        a_val = state.parameters.get('a')
-        e_val = state.parameters.get('e')
+        try:
+            # 获取参数
+            a_val = state.parameters.get('a')
+            e_val = state.parameters.get('e')
         
-        # 如果没有e，从c和a计算
-        if not e_val and 'c' in state.parameters and a_val:
-            try:
-                c_num = float(state.parameters['c'])
-                a_num = float(a_val)
-                e_val = str(c_num / a_num)
-            except:
-                e_val = f"{state.parameters['c']}/{a_val}"
+            # 如果没有e，从c和a计算
+            if not e_val and 'c' in state.parameters and a_val:
+                try:
+                    c_num = float(state.parameters['c'])
+                    a_num = float(a_val)
+                    e_val = str(c_num / a_num)
+                except:
+                    e_val = f"{state.parameters['c']}/{a_val}"
         
-        # 判断焦点位置
-        focal_on_x = self._is_focal_on_x_axis(state)
+            # 判断焦点位置
+            focal_on_x = self._is_focal_on_x_axis(state)
         
-        if focal_on_x:
-            # 焦点在x轴
-            if a_val and e_val:
-                state.geometric_relations.append(
-                    f"椭圆焦半径公式: |PF₁| = {a_val} + {e_val}·x₀, |PF₂| = {a_val} - {e_val}·x₀"
-                )
+            if focal_on_x:
+                # 焦点在x轴
+                if a_val and e_val:
+                    state.geometric_relations.append(
+                        f"椭圆焦半径公式: |PF₁| = {a_val} + {e_val}·x₀, |PF₂| = {a_val} - {e_val}·x₀"
+                    )
+                else:
+                    state.geometric_relations.append(
+                        "椭圆焦半径公式: |PF₁| = a + e·x₀, |PF₂| = a - e·x₀"
+                    )
             else:
-                state.geometric_relations.append(
-                    "椭圆焦半径公式: |PF₁| = a + e·x₀, |PF₂| = a - e·x₀"
-                )
-        else:
-            # 焦点在y轴
-            if a_val and e_val:
-                state.geometric_relations.append(
-                    f"椭圆焦半径公式: |PF₁| = {a_val} + {e_val}·y₀, |PF₂| = {a_val} - {e_val}·y₀"
-                )
-            else:
-                state.geometric_relations.append(
-                    "椭圆焦半径公式: |PF₁| = a + e·y₀, |PF₂| = a - e·y₀"
-                )
+                # 焦点在y轴
+                if a_val and e_val:
+                    state.geometric_relations.append(
+                        f"椭圆焦半径公式: |PF₁| = {a_val} + {e_val}·y₀, |PF₂| = {a_val} - {e_val}·y₀"
+                    )
+                else:
+                    state.geometric_relations.append(
+                        "椭圆焦半径公式: |PF₁| = a + e·y₀, |PF₂| = a - e·y₀"
+                    )
         
-        # 添加通用说明
-        state.geometric_relations.append(
-            "其中P(x₀, y₀)或P(x₀, y₀)为椭圆上的点"
-        )
+            # 添加通用说明
+            state.geometric_relations.append(
+                "其中P(x₀, y₀)或P(x₀, y₀)为椭圆上的点"
+            )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _is_focal_on_x_axis(self, state) -> bool:
         """
         判断焦点是否在x轴上

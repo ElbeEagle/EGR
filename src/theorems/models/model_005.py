@@ -59,43 +59,48 @@ class HyperbolaEquationStandardX(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，提取参数
         """
-        # 查找标准方程
-        for eq in state.equations:
-            if not self._is_standard_hyperbola_x(eq):
-                continue
+        try:
+            # 查找标准方程
+            for eq in state.equations:
+                if not self._is_standard_hyperbola_x(eq):
+                    continue
             
-            # 提取参数
-            a_squared, b_squared = self._extract_parameters(eq)
+                # 提取参数
+                a_squared, b_squared = self._extract_parameters(eq)
             
-            if a_squared is None or b_squared is None:
-                continue
+                if a_squared is None or b_squared is None:
+                    continue
             
-            # 添加参数
-            state.parameters['a^2'] = a_squared
-            state.parameters['b^2'] = b_squared
+                # 添加参数
+                state.parameters['a^2'] = a_squared
+                state.parameters['b^2'] = b_squared
             
-            # 尝试计算 a 和 b
-            a_val = self._simplify_sqrt(a_squared)
-            b_val = self._simplify_sqrt(b_squared)
+                # 尝试计算 a 和 b
+                a_val = self._simplify_sqrt(a_squared)
+                b_val = self._simplify_sqrt(b_squared)
             
-            state.parameters['a'] = a_val
-            state.parameters['b'] = b_val
+                state.parameters['a'] = a_val
+                state.parameters['b'] = b_val
             
-            # 添加几何关系
-            state.geometric_relations.append(f"a^2 = {a_squared}")
-            state.geometric_relations.append(f"b^2 = {b_squared}")
-            state.geometric_relations.append("焦点在x轴")
+                # 添加几何关系
+                state.geometric_relations.append(f"a^2 = {a_squared}")
+                state.geometric_relations.append(f"b^2 = {b_squared}")
+                state.geometric_relations.append("焦点在x轴")
             
-            # 记录已应用的模型
-            state.applied_models.append(self.model_id)
+                # 记录已应用的模型
+                state.applied_models.append(self.model_id)
             
-            # 只处理第一个匹配的方程
-            break
+                # 只处理第一个匹配的方程
+                break
     
+            return True
+
+        except Exception:
+            return False
     def _is_standard_hyperbola_x(self, equation: str) -> bool:
         """
         判断是否为标准双曲线方程（x项为正）

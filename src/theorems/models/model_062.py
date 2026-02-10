@@ -75,26 +75,31 @@ class VectorCollinearCondition(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加向量共线条件
         """
-        # 添加向量共线条件公式
-        formulas = [
-            "向量共线条件:",
-            "  方法1: a⃗ = λb⃗ (λ为实数)",
-            "  方法2: x₁y₂ - x₂y₁ = 0 (坐标表示)",
-            "  方法3: x₁/x₂ = y₁/y₂ (比例关系)",
-        ]
+        try:
+            # 添加向量共线条件公式
+            formulas = [
+                "向量共线条件:",
+                "  方法1: a⃗ = λb⃗ (λ为实数)",
+                "  方法2: x₁y₂ - x₂y₁ = 0 (坐标表示)",
+                "  方法3: x₁/x₂ = y₁/y₂ (比例关系)",
+            ]
         
-        for formula in formulas:
-            if formula not in state.geometric_relations:
-                state.geometric_relations.append(formula)
+            for formula in formulas:
+                if formula not in state.geometric_relations:
+                    state.geometric_relations.append(formula)
         
-        # 添加三点共线的特殊情况
-        state.geometric_relations.append(
-            "三点共线: A, B, C共线 ⟺ AB⃗与AC⃗共线"
-        )
+            # 添加三点共线的特殊情况
+            state.geometric_relations.append(
+                "三点共线: A, B, C共线 ⟺ AB⃗与AC⃗共线"
+            )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

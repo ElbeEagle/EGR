@@ -55,20 +55,25 @@ class IncircleRadiusFormula(TheoremModel):
         
         return has_triangle and has_incircle
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，建立内切圆半径关系
         """
-        # 添加内切圆半径公式
-        state.geometric_relations.append("IncircleRadius: r = S/s")
-        state.geometric_relations.append("SemiPerimeter: s = (a + b + c)/2")
-        state.geometric_relations.append("IncircleFormula: r = (a + b + c)/2 - (a or b or c)")
+        try:
+            # 添加内切圆半径公式
+            state.geometric_relations.append("IncircleRadius: r = S/s")
+            state.geometric_relations.append("SemiPerimeter: s = (a + b + c)/2")
+            state.geometric_relations.append("IncircleFormula: r = (a + b + c)/2 - (a or b or c)")
         
-        # 如果是直角三角形
-        state.geometric_relations.append("RightTriangle: r = (a + b - c)/2")
+            # 如果是直角三角形
+            state.geometric_relations.append("RightTriangle: r = (a + b - c)/2")
         
-        # 添加参数
-        state.parameters['incircle_radius'] = "S/s"
+            # 添加参数
+            state.parameters['incircle_radius'] = "S/s"
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

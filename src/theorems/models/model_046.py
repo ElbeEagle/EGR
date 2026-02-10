@@ -65,20 +65,25 @@ class PointDifferenceMethodHyperbola(TheoremModel):
         
         return has_params
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，建立斜率关系
         """
-        # 获取参数
-        a_squared = state.parameters.get('a^2', f"{state.parameters.get('a', 'a')}^2")
-        b_squared = state.parameters.get('b^2', f"{state.parameters.get('b', 'b')}^2")
+        try:
+            # 获取参数
+            a_squared = state.parameters.get('a^2', f"{state.parameters.get('a', 'a')}^2")
+            b_squared = state.parameters.get('b^2', f"{state.parameters.get('b', 'b')}^2")
         
-        # 点差法斜率公式
-        slope_formula = f"k = {b_squared} * x0 / ({a_squared} * y0)"
+            # 点差法斜率公式
+            slope_formula = f"k = {b_squared} * x0 / ({a_squared} * y0)"
         
-        # 添加到几何关系
-        state.geometric_relations.append(f"ChordSlopeFormula(Hyperbola): {slope_formula}")
-        state.geometric_relations.append("PointDifferenceMethod: k·k_OM = b²/a²")
+            # 添加到几何关系
+            state.geometric_relations.append(f"ChordSlopeFormula(Hyperbola): {slope_formula}")
+            state.geometric_relations.append("PointDifferenceMethod: k·k_OM = b²/a²")
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

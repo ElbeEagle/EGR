@@ -54,21 +54,26 @@ class SubstitutionXEqualsMYPlusN(TheoremModel):
         
         return has_line or has_line_info
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，进行代换
         """
-        # 查找直线方程
-        for eq in state.equations:
-            # 如果是直线方程，尝试转换为 x = my + n 形式
-            if 'y' in eq and 'x' in eq:
-                # 简化处理：记录代换关系
-                state.geometric_relations.append("Substitution: x = m*y + n")
-                break
+        try:
+            # 查找直线方程
+            for eq in state.equations:
+                # 如果是直线方程，尝试转换为 x = my + n 形式
+                if 'y' in eq and 'x' in eq:
+                    # 简化处理：记录代换关系
+                    state.geometric_relations.append("Substitution: x = m*y + n")
+                    break
         
-        # 如果存在斜率和点的信息
-        if 'slope' in state.parameters or 'k' in state.parameters:
-            state.geometric_relations.append("Line in form: x = m*y + n")
+            # 如果存在斜率和点的信息
+            if 'slope' in state.parameters or 'k' in state.parameters:
+                state.geometric_relations.append("Line in form: x = m*y + n")
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

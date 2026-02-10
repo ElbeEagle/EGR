@@ -96,6 +96,70 @@ class StateConstructor:
             reasoning_depth
         )
     
+    def update_abstract_state(
+        self,
+        symbolic_state: SymbolicState,
+        old_abstract_state: AbstractState
+    ) -> AbstractState:
+        """
+        更新抽象状态（推理引擎用的便利方法）
+        
+        从修改后的 SymbolicState 重新构建 AbstractState，
+        自动递增推理深度。
+        
+        Args:
+            symbolic_state: 更新后的符号状态
+            old_abstract_state: 旧的抽象状态（用于获取query和depth）
+        
+        Returns:
+            AbstractState: 新的抽象状态
+        """
+        # 从旧状态获取query信息（通过重新分类query_type反推）
+        # 直接用旧的abstract_state来获取深度
+        new_depth = old_abstract_state.reasoning_depth + 1
+        
+        # 我们需要query_expressions，但旧的abstract_state没有存储
+        # 所以用一个通用的query来构建（query_type已经被计算好了）
+        # 这里直接重新构建抽象特征
+        new_abstract = AbstractState()
+        
+        # 复制曲线类型
+        new_abstract.curve_type = self._extract_curve_type(symbolic_state)
+        
+        # 保留旧的query_type
+        new_abstract.query_type = old_abstract_state.query_type
+        
+        # 更新信息特征
+        new_abstract.has_equation = len(symbolic_state.equations) > 0
+        new_abstract.has_parameters = set(symbolic_state.parameters.keys())
+        new_abstract.has_focus_info = self._check_has_focus(symbolic_state)
+        new_abstract.has_vertex_info = self._check_has_vertex(symbolic_state)
+        new_abstract.has_point_on_curve = self._check_has_point_on_curve(symbolic_state)
+        new_abstract.has_asymptote_info = self._check_has_asymptote(symbolic_state)
+        new_abstract.has_directrix_info = self._check_has_directrix(symbolic_state)
+        new_abstract.has_tangent_info = self._check_has_tangent(symbolic_state)
+        new_abstract.has_distance_constraint = self._check_has_distance(symbolic_state)
+        new_abstract.has_angle_constraint = self._check_has_angle(symbolic_state)
+        new_abstract.has_perpendicular = self._check_has_perpendicular(symbolic_state)
+        
+        # 更新完整度（启发式估计）
+        score = 0.0
+        if len(symbolic_state.equations) > 0:
+            score += 0.3
+        param_count = len(symbolic_state.parameters)
+        score += min(param_count * 0.1, 0.4)
+        if len(symbolic_state.geometric_relations) > 0:
+            score += 0.1
+        # 根据query_type判断是否有相关信息
+        if self._has_query_related_info(symbolic_state, new_abstract.query_type):
+            score += 0.2
+        new_abstract.completeness_score = min(score, 1.0)
+        
+        # 更新深度
+        new_abstract.reasoning_depth = new_depth
+        
+        return new_abstract
+    
     def _parse_fact_expressions(self, fact_expressions: str) -> SymbolicState:
         """
         解析 fact_expressions 字符串
@@ -430,7 +494,8 @@ class StateConstructor:
         if query_type == QueryType.ECCENTRICITY:
             # 求离心率：需要 c 和 a，或 a 和 b
             return ('c' in params and 'a' in params) or \
-                   ('a' in params and 'b' in params)
+                   ('a' in params and 'b' in params) or \
+                   'e' in params
         
         elif query_type == QueryType.EQUATION:
             # 求方程：需要足够的参数
@@ -441,5 +506,29 @@ class StateConstructor:
             return len(state.coordinates) > 0 or \
                    any('Coordinate' in rel for rel in state.geometric_relations)
         
-        # 其他查询类型暂时返回False
+        elif query_type == QueryType.LENGTH:
+            # 求长度（长轴长、虚轴长等）：需要a或b
+            return 'a' in params or 'b' in params
+        
+        elif query_type == QueryType.DISTANCE:
+            # 求距离：需要坐标信息或c
+            return len(state.coordinates) >= 1 or 'c' in params
+        
+        elif query_type == QueryType.AREA:
+            # 求面积：需要多个参数
+            return len(state.parameters) >= 2
+        
+        elif query_type == QueryType.VALUE:
+            # 求值：查看是否有未知量的值
+            return len(state.parameters) >= 1
+        
+        elif query_type == QueryType.ANGLE:
+            # 求角度：需要角度关系
+            return any('Angle' in rel for rel in state.geometric_relations) or \
+                   any('angle' in rel for rel in state.geometric_relations)
+        
+        elif query_type == QueryType.RANGE:
+            # 求范围：需要参数和约束
+            return len(state.parameters) >= 1 and len(state.constraints) >= 1
+        
         return False

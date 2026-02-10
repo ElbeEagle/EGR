@@ -58,22 +58,27 @@ class QuadraticFunctionMaximum(TheoremModel):
         # 条件3: 查询中涉及最值
         return has_quadratic or has_extremum
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，求最值
         """
-        # 添加二次函数最值公式
-        state.geometric_relations.append("QuadraticFunction: f(x) = ax² + bx + c")
-        state.geometric_relations.append("Vertex: x = -b/(2a)")
-        state.geometric_relations.append("Extremum: f(-b/2a) = (4ac - b²)/(4a)")
+        try:
+            # 添加二次函数最值公式
+            state.geometric_relations.append("QuadraticFunction: f(x) = ax² + bx + c")
+            state.geometric_relations.append("Vertex: x = -b/(2a)")
+            state.geometric_relations.append("Extremum: f(-b/2a) = (4ac - b²)/(4a)")
         
-        # 添加最值判断条件
-        state.geometric_relations.append("If a > 0: Minimum at x = -b/(2a)")
-        state.geometric_relations.append("If a < 0: Maximum at x = -b/(2a)")
+            # 添加最值判断条件
+            state.geometric_relations.append("If a > 0: Minimum at x = -b/(2a)")
+            state.geometric_relations.append("If a < 0: Maximum at x = -b/(2a)")
         
-        # 添加参数
-        state.parameters['vertex_x'] = "-b/(2*a)"
-        state.parameters['extremum_value'] = "(4*a*c - b^2)/(4*a)"
+            # 添加参数
+            state.parameters['vertex_x'] = "-b/(2*a)"
+            state.parameters['extremum_value'] = "(4*a*c - b^2)/(4*a)"
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

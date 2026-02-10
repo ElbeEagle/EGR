@@ -58,29 +58,34 @@ class CosineLaw(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加余弦定理
         """
-        # 添加通用余弦定理公式
-        relation = "余弦定理: c² = a² + b² - 2ab·cosC"
+        try:
+            # 添加通用余弦定理公式
+            relation = "余弦定理: c² = a² + b² - 2ab·cosC"
         
-        if relation not in state.geometric_relations:
-            state.geometric_relations.append(relation)
+            if relation not in state.geometric_relations:
+                state.geometric_relations.append(relation)
         
-        # 对于焦点三角形，添加更具体的形式
-        has_focal_triangle = any(
-            'F1' in rel or 'F2' in rel or '焦点' in rel
-            for rel in state.geometric_relations
-        )
-        
-        if has_focal_triangle:
-            state.geometric_relations.append(
-                "焦点三角形: |PF₁|² + |PF₂|² - 2|PF₁||PF₂|·cosθ = |F₁F₂|²"
-            )
-            state.geometric_relations.append(
-                "其中: |F₁F₂| = 2c, θ = ∠F₁PF₂"
+            # 对于焦点三角形，添加更具体的形式
+            has_focal_triangle = any(
+                'F1' in rel or 'F2' in rel or '焦点' in rel
+                for rel in state.geometric_relations
             )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            if has_focal_triangle:
+                state.geometric_relations.append(
+                    "焦点三角形: |PF₁|² + |PF₂|² - 2|PF₁||PF₂|·cosθ = |F₁F₂|²"
+                )
+                state.geometric_relations.append(
+                    "其中: |F₁F₂| = 2c, θ = ∠F₁PF₂"
+                )
+        
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

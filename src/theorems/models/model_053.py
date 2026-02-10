@@ -52,39 +52,44 @@ class TwoPointsDistance(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加两点距离公式
         """
-        # 添加通用公式
-        relation = "两点距离公式: d = √[(x₂-x₁)² + (y₂-y₁)²]"
+        try:
+            # 添加通用公式
+            relation = "两点距离公式: d = √[(x₂-x₁)² + (y₂-y₁)²]"
         
-        if relation not in state.geometric_relations:
-            state.geometric_relations.append(relation)
+            if relation not in state.geometric_relations:
+                state.geometric_relations.append(relation)
         
-        # 如果有具体的点坐标，计算距离
-        coord_list = list(state.coordinates.items())
+            # 如果有具体的点坐标，计算距离
+            coord_list = list(state.coordinates.items())
         
-        if len(coord_list) >= 2:
-            # 计算主要点对的距离
-            for i in range(len(coord_list)):
-                for j in range(i + 1, min(i + 3, len(coord_list))):  # 限制计算量
-                    point1_name, point1_coord = coord_list[i]
-                    point2_name, point2_coord = coord_list[j]
+            if len(coord_list) >= 2:
+                # 计算主要点对的距离
+                for i in range(len(coord_list)):
+                    for j in range(i + 1, min(i + 3, len(coord_list))):  # 限制计算量
+                        point1_name, point1_coord = coord_list[i]
+                        point2_name, point2_coord = coord_list[j]
                     
-                    # 尝试计算距离
-                    distance = self._calculate_distance(point1_coord, point2_coord)
+                        # 尝试计算距离
+                        distance = self._calculate_distance(point1_coord, point2_coord)
                     
-                    if distance is not None:
-                        distance_key = f"dist_{point1_name}_{point2_name}"
-                        state.parameters[distance_key] = str(distance)
-                        state.geometric_relations.append(
-                            f"|{point1_name}{point2_name}| = {distance}"
-                        )
+                        if distance is not None:
+                            distance_key = f"dist_{point1_name}_{point2_name}"
+                            state.parameters[distance_key] = str(distance)
+                            state.geometric_relations.append(
+                                f"|{point1_name}{point2_name}| = {distance}"
+                            )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _calculate_distance(self, coord1, coord2):
         """
         计算两点间距离

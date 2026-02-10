@@ -62,83 +62,90 @@ class HyperbolaParameterRelation(TheoremModel):
         
         return known_count >= 2
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，计算缺失的参数
+        
+        Returns:
+            bool: 应用是否成功
         """
-        params = state.parameters
-        
-        # 获取已知参数
-        a_val = params.get('a')
-        b_val = params.get('b')
-        c_val = params.get('c')
-        
-        # 情况1: 已知a和b，求c
-        # c^2 = a^2 + b^2
-        if a_val and b_val and not c_val:
-            c_expr = f"sqrt({a_val}^2 + {b_val}^2)"
+        try:
+            params = state.parameters
             
-            # 尝试数值计算
-            try:
-                a_num = self._eval_expr(a_val)
-                b_num = self._eval_expr(b_val)
-                c_num_sq = a_num**2 + b_num**2
-                c_num = c_num_sq ** 0.5
-                if c_num == int(c_num):
-                    params['c'] = str(int(c_num))
-                else:
-                    params['c'] = f"sqrt({int(c_num_sq)})"
-            except:
-                params['c'] = c_expr
+            # 获取已知参数
+            a_val = params.get('a')
+            b_val = params.get('b')
+            c_val = params.get('c')
             
-            state.geometric_relations.append(f"c^2 = {a_val}^2 + {b_val}^2")
-        
-        # 情况2: 已知a和c，求b
-        # b^2 = c^2 - a^2
-        elif a_val and c_val and not b_val:
-            b_expr = f"sqrt({c_val}^2 - {a_val}^2)"
-            
-            try:
-                a_num = self._eval_expr(a_val)
-                c_num = self._eval_expr(c_val)
-                b_num_sq = c_num**2 - a_num**2
-                if b_num_sq >= 0:
-                    b_num = b_num_sq ** 0.5
-                    if b_num == int(b_num):
-                        params['b'] = str(int(b_num))
+            # 情况1: 已知a和b，求c
+            # c^2 = a^2 + b^2
+            if a_val and b_val and not c_val:
+                c_expr = f"sqrt({a_val}^2 + {b_val}^2)"
+                
+                try:
+                    a_num = self._eval_expr(a_val)
+                    b_num = self._eval_expr(b_val)
+                    c_num_sq = a_num**2 + b_num**2
+                    c_num = c_num_sq ** 0.5
+                    if c_num == int(c_num):
+                        params['c'] = str(int(c_num))
                     else:
-                        params['b'] = f"sqrt({int(b_num_sq)})"
-                else:
+                        params['c'] = f"sqrt({int(c_num_sq)})"
+                except Exception:
+                    params['c'] = c_expr
+                
+                state.geometric_relations.append(f"c^2 = {a_val}^2 + {b_val}^2")
+            
+            # 情况2: 已知a和c，求b
+            # b^2 = c^2 - a^2
+            elif a_val and c_val and not b_val:
+                b_expr = f"sqrt({c_val}^2 - {a_val}^2)"
+                
+                try:
+                    a_num = self._eval_expr(a_val)
+                    c_num = self._eval_expr(c_val)
+                    b_num_sq = c_num**2 - a_num**2
+                    if b_num_sq >= 0:
+                        b_num = b_num_sq ** 0.5
+                        if b_num == int(b_num):
+                            params['b'] = str(int(b_num))
+                        else:
+                            params['b'] = f"sqrt({int(b_num_sq)})"
+                    else:
+                        params['b'] = b_expr
+                except Exception:
                     params['b'] = b_expr
-            except:
-                params['b'] = b_expr
+                
+                state.geometric_relations.append(f"b^2 = {c_val}^2 - {a_val}^2")
             
-            state.geometric_relations.append(f"b^2 = {c_val}^2 - {a_val}^2")
-        
-        # 情况3: 已知b和c，求a
-        # a^2 = c^2 - b^2
-        elif b_val and c_val and not a_val:
-            a_expr = f"sqrt({c_val}^2 - {b_val}^2)"
-            
-            try:
-                b_num = self._eval_expr(b_val)
-                c_num = self._eval_expr(c_val)
-                a_num_sq = c_num**2 - b_num**2
-                if a_num_sq >= 0:
-                    a_num = a_num_sq ** 0.5
-                    if a_num == int(a_num):
-                        params['a'] = str(int(a_num))
+            # 情况3: 已知b和c，求a
+            # a^2 = c^2 - b^2
+            elif b_val and c_val and not a_val:
+                a_expr = f"sqrt({c_val}^2 - {b_val}^2)"
+                
+                try:
+                    b_num = self._eval_expr(b_val)
+                    c_num = self._eval_expr(c_val)
+                    a_num_sq = c_num**2 - b_num**2
+                    if a_num_sq >= 0:
+                        a_num = a_num_sq ** 0.5
+                        if a_num == int(a_num):
+                            params['a'] = str(int(a_num))
+                        else:
+                            params['a'] = f"sqrt({int(a_num_sq)})"
                     else:
-                        params['a'] = f"sqrt({int(a_num_sq)})"
-                else:
+                        params['a'] = a_expr
+                except Exception:
                     params['a'] = a_expr
-            except:
-                params['a'] = a_expr
+                
+                state.geometric_relations.append(f"a^2 = {c_val}^2 - {b_val}^2")
             
-            state.geometric_relations.append(f"a^2 = {c_val}^2 - {b_val}^2")
-        
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+            
+        except Exception:
+            return False
     
     def _eval_expr(self, expr: str) -> float:
         """

@@ -70,42 +70,47 @@ class TriangleAreaFormula(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加三角形面积公式
         """
-        # 添加基本面积公式
-        formulas = [
-            "三角形面积公式:",
-            "  S = (1/2) × 底 × 高",
-            "  S = (1/2) × a × b × sinC",
-        ]
+        try:
+            # 添加基本面积公式
+            formulas = [
+                "三角形面积公式:",
+                "  S = (1/2) × 底 × 高",
+                "  S = (1/2) × a × b × sinC",
+            ]
         
-        for formula in formulas:
-            if formula not in state.geometric_relations:
-                state.geometric_relations.append(formula)
+            for formula in formulas:
+                if formula not in state.geometric_relations:
+                    state.geometric_relations.append(formula)
         
-        # 对于焦点三角形，添加特殊公式
-        has_ellipse = any(
-            entity_type.lower() == 'ellipse'
-            for entity_type in state.entities.values()
-        )
-        has_hyperbola = any(
-            entity_type.lower() == 'hyperbola'
-            for entity_type in state.entities.values()
-        )
-        
-        if has_ellipse and 'b' in state.parameters:
-            b_val = state.parameters['b']
-            state.geometric_relations.append(
-                f"椭圆焦点三角形面积: S = {b_val}² × tan(θ/2), θ = ∠F₁PF₂"
+            # 对于焦点三角形，添加特殊公式
+            has_ellipse = any(
+                entity_type.lower() == 'ellipse'
+                for entity_type in state.entities.values()
+            )
+            has_hyperbola = any(
+                entity_type.lower() == 'hyperbola'
+                for entity_type in state.entities.values()
             )
         
-        if has_hyperbola and 'b' in state.parameters:
-            b_val = state.parameters['b']
-            state.geometric_relations.append(
-                f"双曲线焦点三角形面积: S = {b_val}² × cot(θ/2), θ = ∠F₁PF₂"
-            )
+            if has_ellipse and 'b' in state.parameters:
+                b_val = state.parameters['b']
+                state.geometric_relations.append(
+                    f"椭圆焦点三角形面积: S = {b_val}² × tan(θ/2), θ = ∠F₁PF₂"
+                )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            if has_hyperbola and 'b' in state.parameters:
+                b_val = state.parameters['b']
+                state.geometric_relations.append(
+                    f"双曲线焦点三角形面积: S = {b_val}² × cot(θ/2), θ = ∠F₁PF₂"
+                )
+        
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

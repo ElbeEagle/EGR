@@ -59,23 +59,28 @@ class ParabolaDefinition(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加抛物线定义关系
         """
-        # 添加定义关系（通用形式）
-        relation = "抛物线定义: |PF| = d(P, directrix)"
+        try:
+            # 添加定义关系（通用形式）
+            relation = "抛物线定义: |PF| = d(P, directrix)"
         
-        # 避免重复添加
-        if relation not in state.geometric_relations:
-            state.geometric_relations.append(relation)
+            # 避免重复添加
+            if relation not in state.geometric_relations:
+                state.geometric_relations.append(relation)
         
-        # 如果有具体的焦点坐标，添加更具体的关系
-        if 'Focus' in state.coordinates:
-            focus_coord = state.coordinates['Focus']
-            state.geometric_relations.append(
-                f"对于抛物线上任意点P: Distance(P, Focus{focus_coord}) = Distance(P, Directrix)"
-            )
+            # 如果有具体的焦点坐标，添加更具体的关系
+            if 'Focus' in state.coordinates:
+                focus_coord = state.coordinates['Focus']
+                state.geometric_relations.append(
+                    f"对于抛物线上任意点P: Distance(P, Focus{focus_coord}) = Distance(P, Directrix)"
+                )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

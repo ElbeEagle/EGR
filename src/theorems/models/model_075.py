@@ -63,42 +63,47 @@ class CircleStandardEquation(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，提取圆的参数
         """
-        for eq in state.equations:
-            if 'x^2' in eq and 'y^2' in eq:
-                # 尝试提取圆心和半径
-                result = self._extract_circle_params(eq)
+        try:
+            for eq in state.equations:
+                if 'x^2' in eq and 'y^2' in eq:
+                    # 尝试提取圆心和半径
+                    result = self._extract_circle_params(eq)
                 
-                if result:
-                    h, k, r = result
+                    if result:
+                        h, k, r = result
                     
-                    # 添加参数
-                    state.parameters['circle_center_x'] = str(h)
-                    state.parameters['circle_center_y'] = str(k)
-                    state.parameters['circle_radius'] = str(r)
+                        # 添加参数
+                        state.parameters['circle_center_x'] = str(h)
+                        state.parameters['circle_center_y'] = str(k)
+                        state.parameters['circle_radius'] = str(r)
                     
-                    # 添加坐标
-                    state.coordinates['CircleCenter'] = (str(h), str(k))
+                        # 添加坐标
+                        state.coordinates['CircleCenter'] = (str(h), str(k))
                     
-                    # 添加几何关系
-                    state.geometric_relations.append(
-                        f"圆: 圆心 ({h}, {k}), 半径 r = {r}"
-                    )
+                        # 添加几何关系
+                        state.geometric_relations.append(
+                            f"圆: 圆心 ({h}, {k}), 半径 r = {r}"
+                        )
                     
-                    break
+                        break
         
-        # 如果没有找到具体方程，添加通用公式
-        if 'circle_center_x' not in state.parameters:
-            state.geometric_relations.append(
-                "圆的标准方程: (x-h)² + (y-k)² = r²"
-            )
+            # 如果没有找到具体方程，添加通用公式
+            if 'circle_center_x' not in state.parameters:
+                state.geometric_relations.append(
+                    "圆的标准方程: (x-h)² + (y-k)² = r²"
+                )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _extract_circle_params(self, eq: str):
         """
         从方程中提取圆心和半径

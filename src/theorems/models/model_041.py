@@ -60,29 +60,34 @@ class VietaTheorem(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，提取韦达定理关系
         """
-        # 查找二次方程
-        for eq in state.equations:
-            # 尝试匹配关于 x 的二次方程
-            result = self._extract_vieta_x(eq, state)
-            if result:
-                continue
+        try:
+            # 查找二次方程
+            for eq in state.equations:
+                # 尝试匹配关于 x 的二次方程
+                result = self._extract_vieta_x(eq, state)
+                if result:
+                    continue
             
-            # 尝试匹配关于 y 的二次方程
-            result = self._extract_vieta_y(eq, state)
-            if result:
-                continue
+                # 尝试匹配关于 y 的二次方程
+                result = self._extract_vieta_y(eq, state)
+                if result:
+                    continue
         
-        # 如果没有找到具体方程，添加通用韦达定理关系
-        if not any('韦达' in rel for rel in state.geometric_relations):
-            state.geometric_relations.append("韦达定理: x₁ + x₂ = -B/A, x₁·x₂ = C/A")
+            # 如果没有找到具体方程，添加通用韦达定理关系
+            if not any('韦达' in rel for rel in state.geometric_relations):
+                state.geometric_relations.append("韦达定理: x₁ + x₂ = -B/A, x₁·x₂ = C/A")
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _extract_vieta_x(self, eq: str, state) -> bool:
         """提取关于x的韦达定理"""
         # 尝试多种模式匹配

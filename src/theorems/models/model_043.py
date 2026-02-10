@@ -53,29 +53,34 @@ class VietaTheoremProduct(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，计算两根之积
         """
-        # 查找二次方程并提取系数
-        for eq in state.equations:
-            # 尝试关于 x 的方程
-            if 'x^2' in eq:
-                A, C = self._extract_coefficients_x(eq)
-                if A and C:
-                    self._add_product_relation(state, A, C, 'x')
-                    break
+        try:
+            # 查找二次方程并提取系数
+            for eq in state.equations:
+                # 尝试关于 x 的方程
+                if 'x^2' in eq:
+                    A, C = self._extract_coefficients_x(eq)
+                    if A and C:
+                        self._add_product_relation(state, A, C, 'x')
+                        break
             
-            # 尝试关于 y 的方程
-            elif 'y^2' in eq:
-                A, C = self._extract_coefficients_y(eq)
-                if A and C:
-                    self._add_product_relation(state, A, C, 'y')
-                    break
+                # 尝试关于 y 的方程
+                elif 'y^2' in eq:
+                    A, C = self._extract_coefficients_y(eq)
+                    if A and C:
+                        self._add_product_relation(state, A, C, 'y')
+                        break
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _extract_coefficients_x(self, eq: str):
         """提取关于x的二次项和常数项系数"""
         # 匹配 A*x^2 + ... + C = 0

@@ -72,29 +72,34 @@ class BasicInequality(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加基本不等式
         """
-        # 添加基本不等式公式
-        formulas = [
-            "基本不等式:",
-            "  a + b ≥ 2√(ab) (a, b > 0)",
-            "  等号成立条件: a = b",
-            "",
-            "常用变形:",
-            "  (a + b)/2 ≥ √(ab) (算术平均 ≥ 几何平均)",
-            "  a + b ≥ 2√(ab) ⟺ (√a - √b)² ≥ 0",
-        ]
+        try:
+            # 添加基本不等式公式
+            formulas = [
+                "基本不等式:",
+                "  a + b ≥ 2√(ab) (a, b > 0)",
+                "  等号成立条件: a = b",
+                "",
+                "常用变形:",
+                "  (a + b)/2 ≥ √(ab) (算术平均 ≥ 几何平均)",
+                "  a + b ≥ 2√(ab) ⟺ (√a - √b)² ≥ 0",
+            ]
         
-        for formula in formulas:
-            if formula not in state.geometric_relations:
-                state.geometric_relations.append(formula)
+            for formula in formulas:
+                if formula not in state.geometric_relations:
+                    state.geometric_relations.append(formula)
         
-        # 添加应用技巧
-        state.geometric_relations.append(
-            "应用场景: 已知和求积的最值，或已知积求和的最值"
-        )
+            # 添加应用技巧
+            state.geometric_relations.append(
+                "应用场景: 已知和求积的最值，或已知积求和的最值"
+            )
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

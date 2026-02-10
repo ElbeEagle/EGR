@@ -58,30 +58,35 @@ class VectorPerpendicularCondition(TheoremModel):
         
         return has_line and has_perp_info
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，建立垂直条件
         """
-        # 查找垂直关系
-        for rel in state.geometric_relations:
-            # IsPerpendicular(AB, CD) 或 Perpendicular
-            if 'IsPerpendicular' in rel or 'Perpendicular' in rel:
-                # 提取向量或线段
-                match = re.search(r'IsPerpendicular\((\w+),\s*(\w+)\)', rel)
-                if not match:
-                    match = re.search(r'Perpendicular\((\w+),\s*(\w+)\)', rel)
+        try:
+            # 查找垂直关系
+            for rel in state.geometric_relations:
+                # IsPerpendicular(AB, CD) 或 Perpendicular
+                if 'IsPerpendicular' in rel or 'Perpendicular' in rel:
+                    # 提取向量或线段
+                    match = re.search(r'IsPerpendicular\((\w+),\s*(\w+)\)', rel)
+                    if not match:
+                        match = re.search(r'Perpendicular\((\w+),\s*(\w+)\)', rel)
                 
-                if match:
-                    vec1 = match.group(1)
-                    vec2 = match.group(2)
+                    if match:
+                        vec1 = match.group(1)
+                        vec2 = match.group(2)
                     
-                    # 添加向量数量积为0的关系
-                    dot_product_rel = f"DotProduct({vec1}, {vec2}) = 0"
-                    if dot_product_rel not in state.geometric_relations:
-                        state.geometric_relations.append(dot_product_rel)
+                        # 添加向量数量积为0的关系
+                        dot_product_rel = f"DotProduct({vec1}, {vec2}) = 0"
+                        if dot_product_rel not in state.geometric_relations:
+                            state.geometric_relations.append(dot_product_rel)
                     
-                    # 如果是坐标形式，添加坐标乘积关系
-                    state.geometric_relations.append(f"VectorPerpendicular({vec1}, {vec2})")
+                        # 如果是坐标形式，添加坐标乘积关系
+                        state.geometric_relations.append(f"VectorPerpendicular({vec1}, {vec2})")
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

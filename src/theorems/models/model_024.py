@@ -99,41 +99,46 @@ class HyperbolaEqualAxis(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，推导等轴双曲线性质
         """
-        # 添加 a = b 关系
-        state.geometric_relations.append("等轴双曲线: a = b")
+        try:
+            # 添加 a = b 关系
+            state.geometric_relations.append("等轴双曲线: a = b")
         
-        # 如果已知 a 或 b，补充另一个
-        if 'a' in state.parameters and 'b' not in state.parameters:
-            state.parameters['b'] = state.parameters['a']
-        elif 'b' in state.parameters and 'a' not in state.parameters:
-            state.parameters['a'] = state.parameters['b']
+            # 如果已知 a 或 b，补充另一个
+            if 'a' in state.parameters and 'b' not in state.parameters:
+                state.parameters['b'] = state.parameters['a']
+            elif 'b' in state.parameters and 'a' not in state.parameters:
+                state.parameters['a'] = state.parameters['b']
         
-        # 添加离心率
-        if 'e' not in state.parameters:
-            state.parameters['e'] = 'sqrt(2)'
-            state.geometric_relations.append("等轴双曲线离心率: e = √2")
+            # 添加离心率
+            if 'e' not in state.parameters:
+                state.parameters['e'] = 'sqrt(2)'
+                state.geometric_relations.append("等轴双曲线离心率: e = √2")
         
-        # 添加渐近线（如果还没有）
-        has_asymptote = any('渐近线' in rel for rel in state.geometric_relations)
-        if not has_asymptote:
-            state.geometric_relations.append("渐近线: y = ±x")
+            # 添加渐近线（如果还没有）
+            has_asymptote = any('渐近线' in rel for rel in state.geometric_relations)
+            if not has_asymptote:
+                state.geometric_relations.append("渐近线: y = ±x")
         
-        # 如果有 a 和 b，计算 c
-        if 'a' in state.parameters and 'b' in state.parameters and 'c' not in state.parameters:
-            try:
-                a_num = float(state.parameters['a'])
-                # 对于等轴双曲线，c² = a² + b² = 2a²
-                c_num = (2 * a_num ** 2) ** 0.5
-                if c_num == int(c_num):
-                    state.parameters['c'] = str(int(c_num))
-                else:
-                    state.parameters['c'] = str(c_num)
-            except:
-                state.parameters['c'] = f"sqrt(2)*{state.parameters['a']}"
+            # 如果有 a 和 b，计算 c
+            if 'a' in state.parameters and 'b' in state.parameters and 'c' not in state.parameters:
+                try:
+                    a_num = float(state.parameters['a'])
+                    # 对于等轴双曲线，c² = a² + b² = 2a²
+                    c_num = (2 * a_num ** 2) ** 0.5
+                    if c_num == int(c_num):
+                        state.parameters['c'] = str(int(c_num))
+                    else:
+                        state.parameters['c'] = str(c_num)
+                except:
+                    state.parameters['c'] = f"sqrt(2)*{state.parameters['a']}"
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

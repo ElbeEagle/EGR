@@ -79,78 +79,90 @@ class EccentricityFormula(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，计算离心率
+        
+        Returns:
+            bool: 应用是否成功
         """
-        params = state.parameters
-        
-        # 获取 c 和 a（可能需要计算）
-        c_val = params.get('c')
-        a_val = params.get('a')
-        
-        # 如果没有 c，尝试从 a, b 计算
-        if not c_val and 'a' in params and 'b' in params:
-            a_val = params['a']
-            b_val = params['b']
-            
-            # 判断是椭圆还是双曲线
-            is_ellipse = any(entity_type.lower() == 'ellipse' for entity_type in state.entities.values())
-            is_hyperbola = any(entity_type.lower() == 'hyperbola' for entity_type in state.entities.values())
-            
-            if is_ellipse:
-                # 椭圆: c² = a² - b²
-                c_val = f"sqrt({a_val}^2 - {b_val}^2)"
-                params['c'] = c_val
-            elif is_hyperbola:
-                # 双曲线: c² = a² + b²
-                c_val = f"sqrt({a_val}^2 + {b_val}^2)"
-                params['c'] = c_val
-        
-        # 如果没有 a，从 a^2 获取
-        if not a_val and 'a^2' in params:
-            a_squared = params['a^2']
-            a_val = f"sqrt({a_squared})"
-            params['a'] = a_val
-        
-        # 如果仍然没有 c 和 a，无法计算
-        if not c_val or not a_val:
-            state.applied_models.append(self.model_id)
-            return
-        
-        # 符号形式
-        e_expr = f"{c_val}/{a_val}"
-        
-        # 尝试数值计算
         try:
-            c_num = self._eval_expr(c_val)
-            a_num = self._eval_expr(a_val)
-            e_num = c_num / a_num
+            params = state.parameters
             
-            # 常见离心率值的简化
-            if abs(e_num - 0.5) < 1e-6:
-                state.parameters['e'] = "1/2"
-            elif abs(e_num - 2**0.5) < 1e-6:
-                state.parameters['e'] = "sqrt(2)"
-            elif abs(e_num - 2**0.5 / 2) < 1e-6:
-                state.parameters['e'] = "sqrt(2)/2"
-            elif abs(e_num - 3**0.5 / 2) < 1e-6:
-                state.parameters['e'] = "sqrt(3)/2"
-            elif abs(e_num - 3**0.5 / 3) < 1e-6:
-                state.parameters['e'] = "sqrt(3)/3"
-            elif e_num == int(e_num):
-                state.parameters['e'] = str(int(e_num))
-            else:
-                # 尝试简化为分数
-                state.parameters['e'] = self._simplify_fraction(c_num, a_num)
-        except:
-            state.parameters['e'] = e_expr
-        
-        # 添加几何关系
-        state.geometric_relations.append(f"e = {c_val}/{a_val}")
-        
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 获取 c 和 a（可能需要计算）
+            c_val = params.get('c')
+            a_val = params.get('a')
+            
+            # 如果没有 c，尝试从 a, b 计算
+            if not c_val and 'a' in params and 'b' in params:
+                a_val = params['a']
+                b_val = params['b']
+                
+                # 判断是椭圆还是双曲线
+                is_ellipse = any(entity_type.lower() == 'ellipse' for entity_type in state.entities.values())
+                is_hyperbola = any(entity_type.lower() == 'hyperbola' for entity_type in state.entities.values())
+                
+                if is_ellipse:
+                    # 椭圆: c² = a² - b²
+                    c_val = f"sqrt({a_val}^2 - {b_val}^2)"
+                    params['c'] = c_val
+                elif is_hyperbola:
+                    # 双曲线: c² = a² + b²
+                    c_val = f"sqrt({a_val}^2 + {b_val}^2)"
+                    params['c'] = c_val
+            
+            # 如果没有 a，从 a^2 获取
+            if not a_val and 'a^2' in params:
+                a_squared = params['a^2']
+                a_val = f"sqrt({a_squared})"
+                params['a'] = a_val
+            
+            # 如果仍然没有 c 和 a，无法计算
+            if not c_val or not a_val:
+                state.applied_models.append(self.model_id)
+                return False
+            
+            # 符号形式
+            e_expr = f"{c_val}/{a_val}"
+            
+            # 尝试数值计算
+            try:
+                c_num = self._eval_expr(c_val)
+                a_num = self._eval_expr(a_val)
+                
+                # 检查除数不为0
+                if abs(a_num) < 1e-10:
+                    return False
+                
+                e_num = c_num / a_num
+                
+                # 常见离心率值的简化
+                if abs(e_num - 0.5) < 1e-6:
+                    state.parameters['e'] = "1/2"
+                elif abs(e_num - 2**0.5) < 1e-6:
+                    state.parameters['e'] = "sqrt(2)"
+                elif abs(e_num - 2**0.5 / 2) < 1e-6:
+                    state.parameters['e'] = "sqrt(2)/2"
+                elif abs(e_num - 3**0.5 / 2) < 1e-6:
+                    state.parameters['e'] = "sqrt(3)/2"
+                elif abs(e_num - 3**0.5 / 3) < 1e-6:
+                    state.parameters['e'] = "sqrt(3)/3"
+                elif e_num == int(e_num):
+                    state.parameters['e'] = str(int(e_num))
+                else:
+                    state.parameters['e'] = self._simplify_fraction(c_num, a_num)
+            except Exception:
+                state.parameters['e'] = e_expr
+            
+            # 添加几何关系
+            state.geometric_relations.append(f"e = {c_val}/{a_val}")
+            
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+            
+        except Exception:
+            return False
     
     def _eval_expr(self, expr: str) -> float:
         """

@@ -65,53 +65,58 @@ class ParabolaEquationStandardUp(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，提取参数
         """
-        # 查找标准方程
-        for eq in state.equations:
-            if not self._is_standard_parabola_up(eq):
-                continue
+        try:
+            # 查找标准方程
+            for eq in state.equations:
+                if not self._is_standard_parabola_up(eq):
+                    continue
             
-            # 提取系数 K (2p = K)
-            k_val = self._extract_coefficient(eq)
+                # 提取系数 K (2p = K)
+                k_val = self._extract_coefficient(eq)
             
-            if k_val is None:
-                continue
+                if k_val is None:
+                    continue
             
-            # 2p = K
-            state.parameters['2p'] = k_val
+                # 2p = K
+                state.parameters['2p'] = k_val
             
-            # 计算 p
-            try:
-                k_num = float(k_val)
-                p_num = k_num / 2
-                if p_num == int(p_num):
-                    state.parameters['p'] = str(int(p_num))
-                else:
-                    state.parameters['p'] = str(p_num)
+                # 计算 p
+                try:
+                    k_num = float(k_val)
+                    p_num = k_num / 2
+                    if p_num == int(p_num):
+                        state.parameters['p'] = str(int(p_num))
+                    else:
+                        state.parameters['p'] = str(p_num)
                 
-                # 焦点坐标 (0, p/2)
-                focus_y = p_num / 2
-                state.coordinates['Focus'] = ('0', str(focus_y) if focus_y != int(focus_y) else str(int(focus_y)))
+                    # 焦点坐标 (0, p/2)
+                    focus_y = p_num / 2
+                    state.coordinates['Focus'] = ('0', str(focus_y) if focus_y != int(focus_y) else str(int(focus_y)))
                 
-                # 准线方程 y = -p/2
-                directrix_y = -p_num / 2
-                state.geometric_relations.append(f"准线: y = {directrix_y}")
-                state.geometric_relations.append(f"焦点: (0, {focus_y})")
+                    # 准线方程 y = -p/2
+                    directrix_y = -p_num / 2
+                    state.geometric_relations.append(f"准线: y = {directrix_y}")
+                    state.geometric_relations.append(f"焦点: (0, {focus_y})")
                 
-            except:
-                state.parameters['p'] = f"{k_val}/2"
-                state.coordinates['Focus'] = ('0', f"{k_val}/4")
-                state.geometric_relations.append(f"准线: y = -{k_val}/4")
+                except:
+                    state.parameters['p'] = f"{k_val}/2"
+                    state.coordinates['Focus'] = ('0', f"{k_val}/4")
+                    state.geometric_relations.append(f"准线: y = -{k_val}/4")
             
-            # 记录已应用的模型
-            state.applied_models.append(self.model_id)
+                # 记录已应用的模型
+                state.applied_models.append(self.model_id)
             
-            # 只处理第一个匹配的方程
-            break
+                # 只处理第一个匹配的方程
+                break
     
+            return True
+
+        except Exception:
+            return False
     def _is_standard_parabola_up(self, equation: str) -> bool:
         """
         判断是否为标准抛物线方程（开口向上）

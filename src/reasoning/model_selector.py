@@ -50,7 +50,8 @@ class ModelSelector:
         self,
         symbolic_state: SymbolicState,
         abstract_state: AbstractState,
-        top_k: int = 5
+        top_k: int = 10,
+        excluded_models: Optional[set] = None
     ) -> Tuple[Optional[TheoremModel], Dict]:
         """
         选择下一个要应用的模型
@@ -59,33 +60,43 @@ class ModelSelector:
             symbolic_state: 符号状态（用于can_apply检查）
             abstract_state: 抽象状态（用于神经网络预测）
             top_k: Top-K候选数量
+            excluded_models: 要排除的模型ID集合（已应用过的模型）
         
         Returns:
             (selected_model, selection_info): 选择的模型和选择信息
         """
+        # 自动排除已应用过的模型
+        if excluded_models is None:
+            excluded_models = set(getattr(symbolic_state, 'applied_models', []))
+        
         if self.strategy == 'neural_top1':
-            return self._neural_top1_strategy(symbolic_state, abstract_state)
+            return self._neural_top1_strategy(symbolic_state, abstract_state, excluded_models)
         elif self.strategy == 'neural_topk':
-            return self._neural_topk_strategy(symbolic_state, abstract_state, top_k)
+            return self._neural_topk_strategy(symbolic_state, abstract_state, top_k, excluded_models)
         else:
             raise ValueError(f"Unknown strategy: {self.strategy}")
     
     def _neural_top1_strategy(
         self,
         symbolic_state: SymbolicState,
-        abstract_state: AbstractState
+        abstract_state: AbstractState,
+        excluded_models: set = None
     ) -> Tuple[Optional[TheoremModel], Dict]:
         """
         策略1: 神经网络Top-1 + can_apply过滤
         
         流程：
         1. 神经网络预测Top-1
-        2. 检查can_apply
-        3. 如果可用返回，否则返回None
+        2. 如果已排除则跳过
+        3. 检查can_apply
+        4. 如果可用返回，否则返回None
         
         Returns:
             (model, info): 模型对象和选择信息
         """
+        if excluded_models is None:
+            excluded_models = set()
+        
         # 1. 获取状态向量
         state_vector = torch.tensor(
             abstract_state.to_vector(),
@@ -93,54 +104,68 @@ class ModelSelector:
             device=self.device
         )
         
-        # 2. 神经网络预测
+        # 2. 神经网络预测Top-K（扩大范围以跳过已排除的）
         with torch.no_grad():
-            probs, best_model_id, entropy = self.neural_network.predict(state_vector)
+            probs, _, entropy = self.neural_network.predict(state_vector)
+            top_k_probs, top_k_ids = self.neural_network.get_top_k(state_vector, k=10)
         
-        # 3. 获取模型对象
-        model = self.theorem_library.get_model(best_model_id)
+        # 3. 找到第一个未排除且可用的模型
+        for model_id in top_k_ids.tolist():
+            if model_id in excluded_models:
+                continue
+            
+            model = self.theorem_library.get_model(model_id)
+            
+            can_apply = False
+            if model is not None:
+                try:
+                    can_apply = model.can_apply(symbolic_state)
+                except Exception:
+                    can_apply = False
+            
+            if model is not None and can_apply:
+                selection_info = {
+                    'strategy': 'neural_top1',
+                    'predicted_model_id': model_id,
+                    'predicted_confidence': float(probs[model_id]),
+                    'prediction_entropy': float(entropy),
+                    'can_apply': True,
+                    'model_available': True,
+                    'excluded_count': len(excluded_models)
+                }
+                return model, selection_info
         
-        # 4. 检查can_apply
-        can_apply = False
-        if model is not None:
-            try:
-                can_apply = model.can_apply(symbolic_state)
-            except Exception as e:
-                can_apply = False
-        
-        # 5. 构建选择信息
+        # 没有可用的
         selection_info = {
             'strategy': 'neural_top1',
-            'predicted_model_id': best_model_id,
-            'predicted_confidence': float(probs[best_model_id]),
             'prediction_entropy': float(entropy),
-            'can_apply': can_apply,
-            'model_available': model is not None
+            'can_apply': False,
+            'excluded_count': len(excluded_models)
         }
-        
-        # 6. 返回结果
-        if model is not None and can_apply:
-            return model, selection_info
-        else:
-            return None, selection_info
+        return None, selection_info
     
     def _neural_topk_strategy(
         self,
         symbolic_state: SymbolicState,
         abstract_state: AbstractState,
-        k: int = 5
+        k: int = 10,
+        excluded_models: set = None
     ) -> Tuple[Optional[TheoremModel], Dict]:
         """
-        策略2: 神经网络Top-K + can_apply过滤
+        策略2: 神经网络Top-K + can_apply过滤 + 排除已应用模型
         
         流程：
         1. 神经网络预测Top-K
-        2. 逐个检查can_apply
-        3. 返回第一个可用的模型
+        2. 跳过已排除的模型
+        3. 逐个检查can_apply
+        4. 返回第一个可用的模型
         
         Returns:
             (model, info): 模型对象和选择信息
         """
+        if excluded_models is None:
+            excluded_models = set()
+        
         # 1. 获取状态向量
         state_vector = torch.tensor(
             abstract_state.to_vector(),
@@ -162,10 +187,13 @@ class ModelSelector:
         selected_rank = -1
         
         for rank, (model_id, prob) in enumerate(zip(top_k_list, top_k_probs_list)):
+            # 跳过已排除的模型
+            excluded = model_id in excluded_models
+            
             model = self.theorem_library.get_model(model_id)
             
             can_apply = False
-            if model is not None:
+            if model is not None and not excluded:
                 try:
                     can_apply = model.can_apply(symbolic_state)
                 except Exception:
@@ -177,11 +205,12 @@ class ModelSelector:
                 'model_name': model.name if model else f"Model_{model_id}",
                 'probability': float(prob),
                 'can_apply': can_apply,
-                'model_available': model is not None
+                'model_available': model is not None,
+                'excluded': excluded
             })
             
-            # 选择第一个可用的
-            if selected_model is None and model is not None and can_apply:
+            # 选择第一个未排除且可用的
+            if selected_model is None and model is not None and can_apply and not excluded:
                 selected_model = model
                 selected_rank = rank + 1
         
@@ -192,8 +221,12 @@ class ModelSelector:
             'prediction_entropy': float(entropy),
             'candidates': candidates_info,
             'selected_rank': selected_rank,
-            'selected_model_id': selected_model.model_id if selected_model else None
+            'selected_model_id': selected_model.model_id if selected_model else None,
+            'excluded_count': len(excluded_models)
         }
+        
+        if selected_model:
+            selection_info['predicted_confidence'] = float(probs[selected_model.model_id])
         
         return selected_model, selection_info
     

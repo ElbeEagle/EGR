@@ -53,56 +53,61 @@ class ParabolaDirectrix(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加准线方程
         """
-        # 获取 p 值
-        p_val = state.parameters.get('p')
-        if not p_val and '2p' in state.parameters:
-            try:
-                two_p = float(state.parameters['2p'])
-                p_val = str(two_p / 2)
-            except:
-                p_val = f"{state.parameters['2p']}/2"
-        
-        if not p_val:
-            return
-        
-        # 判断开口方向（从已有的几何关系或坐标推断）
-        # 默认假设开口向右（最常见）
-        direction = self._infer_direction(state)
-        
-        # 计算准线
         try:
-            p_num = float(p_val)
-            p_half = p_num / 2
-            
-            if direction == 'right':
-                # y^2 = 2px，准线 x = -p/2
-                directrix = f"x = {-p_half}"
-            elif direction == 'up':
-                # x^2 = 2py，准线 y = -p/2
-                directrix = f"y = {-p_half}"
-            elif direction == 'left':
-                # y^2 = -2px，准线 x = p/2
-                directrix = f"x = {p_half}"
-            elif direction == 'down':
-                # x^2 = -2py，准线 y = p/2
-                directrix = f"y = {p_half}"
-            else:
-                # 默认向右
-                directrix = f"x = {-p_half}"
-            
-            state.geometric_relations.append(f"准线: {directrix}")
-            
-        except:
-            # 符号形式
-            state.geometric_relations.append(f"准线: x = -{p_val}/2 (或其他方向)")
+            # 获取 p 值
+            p_val = state.parameters.get('p')
+            if not p_val and '2p' in state.parameters:
+                try:
+                    two_p = float(state.parameters['2p'])
+                    p_val = str(two_p / 2)
+                except:
+                    p_val = f"{state.parameters['2p']}/2"
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            if not p_val:
+                return
+        
+            # 判断开口方向（从已有的几何关系或坐标推断）
+            # 默认假设开口向右（最常见）
+            direction = self._infer_direction(state)
+        
+            # 计算准线
+            try:
+                p_num = float(p_val)
+                p_half = p_num / 2
+            
+                if direction == 'right':
+                    # y^2 = 2px，准线 x = -p/2
+                    directrix = f"x = {-p_half}"
+                elif direction == 'up':
+                    # x^2 = 2py，准线 y = -p/2
+                    directrix = f"y = {-p_half}"
+                elif direction == 'left':
+                    # y^2 = -2px，准线 x = p/2
+                    directrix = f"x = {p_half}"
+                elif direction == 'down':
+                    # x^2 = -2py，准线 y = p/2
+                    directrix = f"y = {p_half}"
+                else:
+                    # 默认向右
+                    directrix = f"x = {-p_half}"
+            
+                state.geometric_relations.append(f"准线: {directrix}")
+            
+            except:
+                # 符号形式
+                state.geometric_relations.append(f"准线: x = -{p_val}/2 (或其他方向)")
+        
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _infer_direction(self, state) -> str:
         """
         推断抛物线开口方向

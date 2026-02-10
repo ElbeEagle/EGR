@@ -57,22 +57,27 @@ class DiscriminantDelta(TheoremModel):
         
         return has_quadratic or has_discussion
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，计算判别式
         """
-        # 查找二次方程的系数
-        for eq in state.equations:
-            # 简化处理：添加判别式关系
-            if '^2' in eq:
-                state.geometric_relations.append("Discriminant: Δ = b² - 4ac")
-                state.parameters['Delta'] = "b^2 - 4*a*c"
-                break
+        try:
+            # 查找二次方程的系数
+            for eq in state.equations:
+                # 简化处理：添加判别式关系
+                if '^2' in eq:
+                    state.geometric_relations.append("Discriminant: Δ = b² - 4ac")
+                    state.parameters['Delta'] = "b^2 - 4*a*c"
+                    break
         
-        # 添加判别式与根的关系
-        state.geometric_relations.append("Δ > 0 => Two distinct real roots")
-        state.geometric_relations.append("Δ = 0 => Two equal real roots")
-        state.geometric_relations.append("Δ < 0 => No real roots")
+            # 添加判别式与根的关系
+            state.geometric_relations.append("Δ > 0 => Two distinct real roots")
+            state.geometric_relations.append("Δ = 0 => Two equal real roots")
+            state.geometric_relations.append("Δ < 0 => No real roots")
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

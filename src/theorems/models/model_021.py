@@ -56,42 +56,47 @@ class HyperbolaAsymptote(TheoremModel):
         
         return True
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加渐近线方程
         """
-        a_val = state.parameters['a']
-        b_val = state.parameters['b']
+        try:
+            a_val = state.parameters['a']
+            b_val = state.parameters['b']
         
-        # 查找双曲线实体名称
-        hyperbola_name = None
-        for name, type_ in state.entities.items():
-            if type_.lower() == 'hyperbola':
-                hyperbola_name = name
-                break
+            # 查找双曲线实体名称
+            hyperbola_name = None
+            for name, type_ in state.entities.items():
+                if type_.lower() == 'hyperbola':
+                    hyperbola_name = name
+                    break
         
-        if hyperbola_name is None:
-            hyperbola_name = 'G'  # 默认名称
+            if hyperbola_name is None:
+                hyperbola_name = 'G'  # 默认名称
         
-        # 构建渐近线方程
-        # 格式: y = pm*(b/a)*x  其中pm表示±
-        asymptote_eq = f"y = pm*({b_val}/{a_val})*x"
+            # 构建渐近线方程
+            # 格式: y = pm*(b/a)*x  其中pm表示±
+            asymptote_eq = f"y = pm*({b_val}/{a_val})*x"
         
-        # 添加到方程列表
-        equation_str = f"Expression(Asymptote({hyperbola_name})) = ({asymptote_eq})"
-        state.equations.append(equation_str)
+            # 添加到方程列表
+            equation_str = f"Expression(Asymptote({hyperbola_name})) = ({asymptote_eq})"
+            state.equations.append(equation_str)
         
-        # 添加几何关系（便于人类阅读）
-        state.geometric_relations.append(f"渐近线: y = ±({b_val}/{a_val})x")
+            # 添加几何关系（便于人类阅读）
+            state.geometric_relations.append(f"渐近线: y = ±({b_val}/{a_val})x")
         
-        # 尝试简化渐近线斜率
-        slope = self._simplify_fraction(b_val, a_val)
-        if slope:
-            state.geometric_relations.append(f"渐近线斜率: ±{slope}")
+            # 尝试简化渐近线斜率
+            slope = self._simplify_fraction(b_val, a_val)
+            if slope:
+                state.geometric_relations.append(f"渐近线斜率: ±{slope}")
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _simplify_fraction(self, numerator: str, denominator: str) -> str:
         """
         简化分数

@@ -71,49 +71,54 @@ class EllipseEquationStandardY(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，提取椭圆参数
         """
-        for eq in state.equations:
-            if 'y^2' in eq and 'x^2' in eq and '+' in eq:
-                y_coef, x_coef = self._extract_coefficients(eq)
+        try:
+            for eq in state.equations:
+                if 'y^2' in eq and 'x^2' in eq and '+' in eq:
+                    y_coef, x_coef = self._extract_coefficients(eq)
                 
-                if y_coef and x_coef:
-                    # a² 对应 y² 的分母，b² 对应 x² 的分母
-                    state.parameters['a^2'] = y_coef
-                    state.parameters['b^2'] = x_coef
+                    if y_coef and x_coef:
+                        # a² 对应 y² 的分母，b² 对应 x² 的分母
+                        state.parameters['a^2'] = y_coef
+                        state.parameters['b^2'] = x_coef
                     
-                    # 尝试计算 a 和 b
-                    try:
-                        a_sq = float(y_coef)
-                        b_sq = float(x_coef)
+                        # 尝试计算 a 和 b
+                        try:
+                            a_sq = float(y_coef)
+                            b_sq = float(x_coef)
                         
-                        a_val = a_sq ** 0.5
-                        b_val = b_sq ** 0.5
+                            a_val = a_sq ** 0.5
+                            b_val = b_sq ** 0.5
                         
-                        if a_val == int(a_val):
-                            state.parameters['a'] = str(int(a_val))
-                        else:
-                            state.parameters['a'] = str(a_val)
+                            if a_val == int(a_val):
+                                state.parameters['a'] = str(int(a_val))
+                            else:
+                                state.parameters['a'] = str(a_val)
                         
-                        if b_val == int(b_val):
-                            state.parameters['b'] = str(int(b_val))
-                        else:
-                            state.parameters['b'] = str(b_val)
-                    except:
-                        # 符号形式
-                        state.parameters['a'] = f"sqrt({y_coef})"
-                        state.parameters['b'] = f"sqrt({x_coef})"
+                            if b_val == int(b_val):
+                                state.parameters['b'] = str(int(b_val))
+                            else:
+                                state.parameters['b'] = str(b_val)
+                        except:
+                            # 符号形式
+                            state.parameters['a'] = f"sqrt({y_coef})"
+                            state.parameters['b'] = f"sqrt({x_coef})"
                     
-                    # 添加几何关系
-                    state.geometric_relations.append("椭圆焦点在y轴")
+                        # 添加几何关系
+                        state.geometric_relations.append("椭圆焦点在y轴")
                     
-                    break
+                        break
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _extract_coefficients(self, eq: str):
         """
         从方程中提取 y² 和 x² 的系数（分母）

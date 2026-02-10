@@ -61,54 +61,59 @@ class ParabolaFocalRadius(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加焦半径公式
         """
-        # 获取 p 值
-        p_val = state.parameters.get('p')
-        if not p_val and '2p' in state.parameters:
-            try:
-                two_p = float(state.parameters['2p'])
-                p_val = str(two_p / 2)
-            except:
-                p_val = f"{state.parameters['2p']}/2"
-        
-        if not p_val:
-            return
-        
-        # 判断开口方向
-        direction = self._infer_direction(state)
-        
-        # 添加焦半径公式
         try:
-            p_num = float(p_val)
-            p_half = p_num / 2
-            
-            if direction == 'right':
-                # y^2 = 2px，|PF| = x + p/2
-                formula = f"焦半径公式: |PF| = x + {p_half}"
-            elif direction == 'up':
-                # x^2 = 2py，|PF| = y + p/2
-                formula = f"焦半径公式: |PF| = y + {p_half}"
-            elif direction == 'left':
-                # y^2 = -2px，|PF| = -x + p/2
-                formula = f"焦半径公式: |PF| = -x + {p_half}"
-            elif direction == 'down':
-                # x^2 = -2py，|PF| = -y + p/2
-                formula = f"焦半径公式: |PF| = -y + {p_half}"
-            else:
-                formula = f"焦半径公式: |PF| = x + {p_half}"
-            
-            state.geometric_relations.append(formula)
-            
-        except:
-            # 符号形式
-            state.geometric_relations.append(f"焦半径公式: |PF| = x + {p_val}/2")
+            # 获取 p 值
+            p_val = state.parameters.get('p')
+            if not p_val and '2p' in state.parameters:
+                try:
+                    two_p = float(state.parameters['2p'])
+                    p_val = str(two_p / 2)
+                except:
+                    p_val = f"{state.parameters['2p']}/2"
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            if not p_val:
+                return
+        
+            # 判断开口方向
+            direction = self._infer_direction(state)
+        
+            # 添加焦半径公式
+            try:
+                p_num = float(p_val)
+                p_half = p_num / 2
+            
+                if direction == 'right':
+                    # y^2 = 2px，|PF| = x + p/2
+                    formula = f"焦半径公式: |PF| = x + {p_half}"
+                elif direction == 'up':
+                    # x^2 = 2py，|PF| = y + p/2
+                    formula = f"焦半径公式: |PF| = y + {p_half}"
+                elif direction == 'left':
+                    # y^2 = -2px，|PF| = -x + p/2
+                    formula = f"焦半径公式: |PF| = -x + {p_half}"
+                elif direction == 'down':
+                    # x^2 = -2py，|PF| = -y + p/2
+                    formula = f"焦半径公式: |PF| = -y + {p_half}"
+                else:
+                    formula = f"焦半径公式: |PF| = x + {p_half}"
+            
+                state.geometric_relations.append(formula)
+            
+            except:
+                # 符号形式
+                state.geometric_relations.append(f"焦半径公式: |PF| = x + {p_val}/2")
+        
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _infer_direction(self, state) -> str:
         """
         推断抛物线开口方向

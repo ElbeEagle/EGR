@@ -52,7 +52,7 @@ class TheoremModel(ABC):
         pass
     
     @abstractmethod
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，直接修改state
         
@@ -65,7 +65,8 @@ class TheoremModel(ABC):
             state: SymbolicState - 当前符号状态（会被修改）
         
         Returns:
-            None
+            bool: 应用是否成功 (True=成功，False=失败)
+                 注：为了兼容性，返回None也被视为True
         """
         pass
     

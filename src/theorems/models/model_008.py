@@ -62,39 +62,44 @@ class ParabolaEquationStandardLeft(TheoremModel):
         
         return False
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，提取抛物线参数
         """
-        for eq in state.equations:
-            if 'y^2' in eq and 'x' in eq:
-                coef = self._extract_coefficient(eq)
+        try:
+            for eq in state.equations:
+                if 'y^2' in eq and 'x' in eq:
+                    coef = self._extract_coefficient(eq)
                 
-                if coef:
-                    # y² = -2px，coef 就是 2p
-                    state.parameters['2p'] = coef
+                    if coef:
+                        # y² = -2px，coef 就是 2p
+                        state.parameters['2p'] = coef
                     
-                    # 计算 p
-                    try:
-                        two_p = float(coef)
-                        p_val = two_p / 2
+                        # 计算 p
+                        try:
+                            two_p = float(coef)
+                            p_val = two_p / 2
                         
-                        if p_val == int(p_val):
-                            state.parameters['p'] = str(int(p_val))
-                        else:
-                            state.parameters['p'] = str(p_val)
-                    except:
-                        # 符号形式
-                        state.parameters['p'] = f"{coef}/2"
+                            if p_val == int(p_val):
+                                state.parameters['p'] = str(int(p_val))
+                            else:
+                                state.parameters['p'] = str(p_val)
+                        except:
+                            # 符号形式
+                            state.parameters['p'] = f"{coef}/2"
                     
-                    # 添加几何关系
-                    state.geometric_relations.append("抛物线开口向左")
+                        # 添加几何关系
+                        state.geometric_relations.append("抛物线开口向左")
                     
-                    break
+                        break
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
     
+            return True
+
+        except Exception:
+            return False
     def _extract_coefficient(self, eq: str):
         """
         从方程中提取系数

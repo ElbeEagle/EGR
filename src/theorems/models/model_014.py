@@ -58,22 +58,27 @@ class EllipseEccentricityRange(TheoremModel):
         
         return has_eccentricity
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加离心率范围约束
         """
-        # 添加约束条件
-        constraint_1 = "e > 0"
-        constraint_2 = "e < 1"
+        try:
+            # 添加约束条件
+            constraint_1 = "e > 0"
+            constraint_2 = "e < 1"
         
-        if constraint_1 not in state.constraints:
-            state.constraints.append(constraint_1)
+            if constraint_1 not in state.constraints:
+                state.constraints.append(constraint_1)
         
-        if constraint_2 not in state.constraints:
-            state.constraints.append(constraint_2)
+            if constraint_2 not in state.constraints:
+                state.constraints.append(constraint_2)
         
-        # 添加到几何关系
-        state.geometric_relations.append("EccentricityRange(Ellipse) = (0, 1)")
+            # 添加到几何关系
+            state.geometric_relations.append("EccentricityRange(Ellipse) = (0, 1)")
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False

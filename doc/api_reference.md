@@ -1,8 +1,8 @@
 # EGR API Reference
 
-**版本**: v1.1  
-**最后更新**: 2026-01-20  
-**状态**: 40/80 模型已实现 (50%) | Module 3 完成 ✅
+**版本**: v1.2  
+**最后更新**: 2026-02-09  
+**状态**: 40/80 模型已实现 (50%) | Module 3 完成 ✅ | Module 4 阶段1 完成 ✅
 
 ---
 
@@ -492,6 +492,164 @@ if recommended and recommended.can_apply(symbolic):
 
 ---
 
+## 推理引擎模块 (Module 4)
+
+### ReasoningEngine
+自动推理引擎 - 完整的问题求解器
+
+#### 初始化
+```python
+from src.reasoning import ReasoningEngine, ModelSelector
+from src.selector import MaxEntropyClassifier
+from src.theorems import TheoremLibrary
+from src.state import StateConstructor
+import torch
+
+# 加载组件
+library = TheoremLibrary()
+constructor = StateConstructor(theorem_library=library)
+
+# 加载神经网络
+neural_network = MaxEntropyClassifier()
+checkpoint = torch.load('checkpoints/model_selector.pth')
+neural_network.load_state_dict(checkpoint['model_state_dict'])
+neural_network.eval()
+
+# 创建选择器
+selector = ModelSelector(
+    neural_network=neural_network,
+    theorem_library=library,
+    strategy='neural_topk'  # 'neural_top1' 或 'neural_topk'
+)
+
+# 创建引擎
+engine = ReasoningEngine(
+    theorem_library=library,
+    model_selector=selector,
+    state_constructor=constructor,
+    max_steps=20,
+    completeness_threshold=0.95
+)
+```
+
+**参数**:
+- `max_steps` (int) - 最大推理步数，默认20
+- `completeness_threshold` (float) - 完整度阈值，默认0.95
+- `verbose` (bool) - 是否打印详细日志，默认True
+
+#### solve()
+求解数学问题
+```python
+result = engine.solve(
+    facts="G: Hyperbola; Expression(G) = (x^2/3 - y^2 = 1)",
+    query="Equation(Asymptote(G))"
+)
+
+# 结果
+if result.success:
+    print(f"答案: {result.answer}")
+    print(f"步数: {result.num_steps}")
+    print(f"模型序列: {result.model_names}")
+    print(f"耗时: {result.elapsed_time:.2f}s")
+else:
+    print(f"失败: {result.failure_reason}")
+```
+
+**参数**:
+- `facts` (str) - 事实表达式
+- `query` (str) - 查询表达式
+- `reasoning_depth` (int) - 初始推理深度，默认0
+
+**返回**: `ReasoningResult` - 推理结果对象
+
+---
+
+### ModelSelector
+模型选择器 - 结合神经网络和规则的选择策略
+
+#### select()
+选择下一个要应用的模型
+```python
+model, info = selector.select(
+    symbolic_state=symbolic_state,
+    abstract_state=abstract_state,
+    top_k=5
+)
+
+if model:
+    print(f"选中: {model.name}")
+    print(f"置信度: {info['predicted_confidence']:.3f}")
+```
+
+**策略**:
+- `neural_top1`: 神经网络Top-1 + can_apply过滤（快速）
+- `neural_topk`: 神经网络Top-K + can_apply过滤（可靠）
+
+---
+
+### ReasoningResult
+推理结果数据结构
+
+**关键属性**:
+```python
+result.success              # bool - 是否成功
+result.answer              # Any - 答案
+result.num_steps           # int - 推理步数
+result.model_sequence      # List[int] - 模型ID序列
+result.model_names         # List[str] - 模型名称序列
+result.completeness_scores # List[float] - 完整度变化
+result.elapsed_time        # float - 耗时（秒）
+result.reasoning_trace     # List[Dict] - 详细追踪
+```
+
+**方法**:
+```python
+result.get_summary()  # 获取简要总结
+result.to_dict()      # 转换为字典（可序列化）
+```
+
+---
+
+### 完整使用示例
+
+```python
+from src.reasoning import ReasoningEngine, ModelSelector
+from src.selector import MaxEntropyClassifier
+from src.theorems import TheoremLibrary
+from src.state import StateConstructor
+import torch
+
+# 1. 初始化
+library = TheoremLibrary()
+constructor = StateConstructor(theorem_library=library)
+
+neural_network = MaxEntropyClassifier()
+checkpoint = torch.load('checkpoints/model_selector.pth')
+neural_network.load_state_dict(checkpoint['model_state_dict'])
+neural_network.eval()
+
+selector = ModelSelector(neural_network, library, strategy='neural_topk')
+engine = ReasoningEngine(library, selector, constructor, max_steps=15)
+
+# 2. 求解问题
+result = engine.solve(
+    facts="G: Ellipse; Expression(G) = (x^2/4 + y^2 = 1)",
+    query="Length(MajorAxis(G))"
+)
+
+# 3. 分析结果
+print(result.get_summary())
+
+if result.success:
+    print(f"\n推理路径:")
+    for i, (model_name, score) in enumerate(
+        zip(result.model_names, result.completeness_scores[1:]), 1
+    ):
+        print(f"  {i}. {model_name} → 完整度={score:.2f}")
+```
+
+---
+
 ## 常见问题
 
 ### Q: 如何知道哪些模型已实现？
@@ -539,6 +697,21 @@ from src.selector import train_model
 model, history = train_model()
 ```
 
+### Q: 如何使用推理引擎？
+```python
+from src.reasoning import ReasoningEngine, ModelSelector
+# 初始化（见上文）
+result = engine.solve(
+    facts="G: Hyperbola; Expression(G) = (x^2/3 - y^2 = 1)",
+    query="Equation(Asymptote(G))"
+)
+print(result.get_summary())
+```
+
+### Q: 推理引擎支持哪些选择策略？
+- `neural_top1`: 只尝试Top-1（快速）
+- `neural_topk`: 尝试Top-K直到成功（可靠）
+
 ---
 
 ## 术语表
@@ -553,13 +726,20 @@ model, history = train_model()
 
 ---
 
-**文档版本**: v1.1  
+**文档版本**: v1.2  
 **维护**: EGR Team  
-**最后更新**: 2026-01-20
+**最后更新**: 2026-02-09
 
 ---
 
 ## 更新日志
+
+### v1.2 (2026-02-09)
+- ✅ 新增 Module 4 推理引擎API
+- ✅ ReasoningEngine接口
+- ✅ ModelSelector接口
+- ✅ ReasoningResult数据结构
+- ✅ 完整使用示例
 
 ### v1.1 (2026-01-20)
 - ✅ 新增 Module 3 模型选择器API

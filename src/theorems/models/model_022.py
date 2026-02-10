@@ -53,18 +53,23 @@ class HyperbolaFocusToAsymptoteDistance(TheoremModel):
         
         return True
     
-    def apply(self, state) -> None:
+    def apply(self, state) -> bool:
         """
         应用模型，添加焦点到渐近线距离
         """
-        b_val = state.parameters['b']
+        try:
+            b_val = state.parameters['b']
         
-        # 添加关系：焦点到渐近线距离 = b
-        state.geometric_relations.append(f"焦点到渐近线距离 = {b_val}")
+            # 添加关系：焦点到渐近线距离 = b
+            state.geometric_relations.append(f"焦点到渐近线距离 = {b_val}")
         
-        # 如果有焦点坐标，可以添加更具体的信息
-        if 'Focus' in state.coordinates or 'c' in state.parameters:
-            state.geometric_relations.append("对于双曲线，焦点到其渐近线的距离恒等于b")
+            # 如果有焦点坐标，可以添加更具体的信息
+            if 'Focus' in state.coordinates or 'c' in state.parameters:
+                state.geometric_relations.append("对于双曲线，焦点到其渐近线的距离恒等于b")
         
-        # 记录已应用的模型
-        state.applied_models.append(self.model_id)
+            # 记录已应用的模型
+            state.applied_models.append(self.model_id)
+            return True
+
+        except Exception:
+            return False
