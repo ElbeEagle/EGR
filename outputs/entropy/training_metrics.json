@@ -1,0 +1,35 @@
+{
+  "heuristic_baseline": {
+    "mae": 0.28448212,
+    "pearson": 0.39034497,
+    "rmse": 0.34833224,
+    "spearman": 0.44981156
+  },
+  "learned_linear": {
+    "all": {
+      "mae": 0.15314777,
+      "pearson": 0.83813292,
+      "rmse": 0.19768364,
+      "spearman": 0.85821714
+    },
+    "train": {
+      "mae": 0.15287796,
+      "pearson": 0.83816253,
+      "rmse": 0.19724527,
+      "spearman": 0.86011292
+    },
+    "validation": {
+      "mae": 0.15422646,
+      "pearson": 0.83736567,
+      "rmse": 0.19942663,
+      "spearman": 0.84929542
+    }
+  },
+  "sample_counts": {
+    "all": 4988,
+    "train": 3990,
+    "validation": 998
+  },
+  "selected_entry_count": 4988,
+  "target": "normalized_remaining_steps"
+}

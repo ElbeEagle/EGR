@@ -1,0 +1,612 @@
+{
+  "by_path_type": {
+    "correct": {
+      "avg_final_heuristic_entropy": 0.42557231,
+      "avg_final_learned_entropy": 0.30101905,
+      "avg_heuristic_entropy_delta": 0.34574154,
+      "avg_heuristic_monotonicity_rate": 1.0,
+      "avg_initial_heuristic_entropy": 0.77131385,
+      "avg_initial_learned_entropy": 0.86557358,
+      "avg_learned_entropy_delta": 0.56455453,
+      "avg_learned_monotonicity_rate": 1.0,
+      "avg_target_monotonicity_rate": 1.0,
+      "executable_rate": 1.0,
+      "trajectory_count": 325
+    },
+    "model": {
+      "avg_final_heuristic_entropy": 0.5508,
+      "avg_final_learned_entropy": 0.2710467,
+      "avg_heuristic_entropy_delta": 0.236772,
+      "avg_heuristic_monotonicity_rate": 1.0,
+      "avg_initial_heuristic_entropy": 0.787572,
+      "avg_initial_learned_entropy": 0.85800672,
+      "avg_learned_entropy_delta": 0.58696003,
+      "avg_learned_monotonicity_rate": 0.99848929,
+      "avg_target_monotonicity_rate": 1.0,
+      "executable_rate": 0.325,
+      "trajectory_count": 1000
+    },
+    "random": {
+      "avg_final_heuristic_entropy": 0.708633,
+      "avg_final_learned_entropy": 0.31594981,
+      "avg_heuristic_entropy_delta": 0.078939,
+      "avg_heuristic_monotonicity_rate": 1.0,
+      "avg_initial_heuristic_entropy": 0.787572,
+      "avg_initial_learned_entropy": 0.85800672,
+      "avg_learned_entropy_delta": 0.54205692,
+      "avg_learned_monotonicity_rate": 0.99935714,
+      "avg_target_monotonicity_rate": 1.0,
+      "executable_rate": 0.015,
+      "trajectory_count": 1000
+    }
+  },
+  "sample_trajectories": [
+    {
+      "final_heuristic_entropy": 0.403,
+      "final_learned_entropy": 0.44147896,
+      "heuristic_entropy_delta": 0.429,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.832,
+      "initial_learned_entropy": 0.81608211,
+      "learned_entropy_delta": 0.37460315,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        5,
+        21
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 2,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:0:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.403,
+      "final_learned_entropy": 0.44147896,
+      "heuristic_entropy_delta": 0.429,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.832,
+      "initial_learned_entropy": 0.81608211,
+      "learned_entropy_delta": 0.37460315,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        5,
+        21
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 157,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:100:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.493,
+      "final_learned_entropy": 0.25857449,
+      "heuristic_entropy_delta": 0.28,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.773,
+      "initial_learned_entropy": 0.88319827,
+      "learned_entropy_delta": 0.62462378,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        7,
+        2,
+        17,
+        63
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 158,
+      "sequence_length": 4,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:101:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.5005,
+      "final_learned_entropy": 0.39869175,
+      "heuristic_entropy_delta": 0.2635,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.764,
+      "initial_learned_entropy": 0.84634215,
+      "learned_entropy_delta": 0.4476504,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        9,
+        2,
+        29
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 165,
+      "sequence_length": 3,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:106:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.365,
+      "final_learned_entropy": 0.15500006,
+      "heuristic_entropy_delta": 0.426,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.791,
+      "initial_learned_entropy": 0.85487522,
+      "learned_entropy_delta": 0.69987516,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        3,
+        44,
+        54,
+        13
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 168,
+      "sequence_length": 4,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:107:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.396,
+      "final_learned_entropy": 0.45954082,
+      "heuristic_entropy_delta": 0.445,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.841,
+      "initial_learned_entropy": 0.85690126,
+      "learned_entropy_delta": 0.39736044,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        5,
+        12
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 172,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:108:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.403,
+      "final_learned_entropy": 0.44147896,
+      "heuristic_entropy_delta": 0.429,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.832,
+      "initial_learned_entropy": 0.81608211,
+      "learned_entropy_delta": 0.37460315,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        5,
+        21
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 174,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:109:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.517,
+      "final_learned_entropy": 0.57566512,
+      "heuristic_entropy_delta": 0.256,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.773,
+      "initial_learned_entropy": 0.88319827,
+      "learned_entropy_delta": 0.30753315,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        7,
+        17
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 180,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:113:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.494,
+      "final_learned_entropy": 0.5152765,
+      "heuristic_entropy_delta": 0.279,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.773,
+      "initial_learned_entropy": 0.88844843,
+      "learned_entropy_delta": 0.37317193,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        3,
+        0
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 181,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:114:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.362,
+      "final_learned_entropy": 0.45844431,
+      "heuristic_entropy_delta": 0.42,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.782,
+      "initial_learned_entropy": 0.85796074,
+      "learned_entropy_delta": 0.39951643,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        7,
+        5
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 184,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:116:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.3865,
+      "final_learned_entropy": 0.34352612,
+      "heuristic_entropy_delta": 0.3865,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.773,
+      "initial_learned_entropy": 0.85776945,
+      "learned_entropy_delta": 0.51424333,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        3,
+        0,
+        68
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 189,
+      "sequence_length": 3,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:119:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.493,
+      "final_learned_entropy": 0.25857449,
+      "heuristic_entropy_delta": 0.271,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.764,
+      "initial_learned_entropy": 0.90332249,
+      "learned_entropy_delta": 0.644748,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        7,
+        2,
+        29,
+        52
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 196,
+      "sequence_length": 4,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:124:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.5855,
+      "final_learned_entropy": 0.1450617,
+      "heuristic_entropy_delta": 0.1695,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.755,
+      "initial_learned_entropy": 0.8921167,
+      "learned_entropy_delta": 0.747055,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        7,
+        2,
+        17,
+        29,
+        68
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 199,
+      "sequence_length": 5,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:127:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.282,
+      "final_learned_entropy": 0.0,
+      "heuristic_entropy_delta": 0.482,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.764,
+      "initial_learned_entropy": 0.85425772,
+      "learned_entropy_delta": 0.85425772,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        9,
+        5,
+        21,
+        29,
+        52,
+        13
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 201,
+      "sequence_length": 6,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:129:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.4765,
+      "final_learned_entropy": 0.20458426,
+      "heuristic_entropy_delta": 0.2785,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.755,
+      "initial_learned_entropy": 0.98944951,
+      "learned_entropy_delta": 0.78486525,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        7,
+        29,
+        75,
+        52,
+        76
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 207,
+      "sequence_length": 5,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:133:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.5005,
+      "final_learned_entropy": 0.3331789,
+      "heuristic_entropy_delta": 0.1815,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.682,
+      "initial_learned_entropy": 0.79075266,
+      "learned_entropy_delta": 0.45757376,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        7,
+        2,
+        17
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 209,
+      "sequence_length": 3,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:135:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.526,
+      "final_learned_entropy": 0.48417365,
+      "heuristic_entropy_delta": 0.156,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.682,
+      "initial_learned_entropy": 0.79075266,
+      "learned_entropy_delta": 0.30657901,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        7,
+        29
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 210,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:136:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.4765,
+      "final_learned_entropy": 0.14481746,
+      "heuristic_entropy_delta": 0.2785,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.755,
+      "initial_learned_entropy": 0.92968272,
+      "learned_entropy_delta": 0.78486526,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        9,
+        2,
+        29,
+        17,
+        56
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 211,
+      "sequence_length": 5,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:137:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.5005,
+      "final_learned_entropy": 0.3579253,
+      "heuristic_entropy_delta": 0.2635,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.764,
+      "initial_learned_entropy": 0.8055757,
+      "learned_entropy_delta": 0.4476504,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        9,
+        2,
+        29
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 212,
+      "sequence_length": 3,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:138:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success",
+        "success"
+      ]
+    },
+    {
+      "final_heuristic_entropy": 0.362,
+      "final_learned_entropy": 0.43812881,
+      "heuristic_entropy_delta": 0.411,
+      "heuristic_monotonicity_rate": 1.0,
+      "initial_heuristic_entropy": 0.773,
+      "initial_learned_entropy": 0.85776945,
+      "learned_entropy_delta": 0.41964064,
+      "learned_monotonicity_rate": 1.0,
+      "next_model_ids": [
+        3,
+        13
+      ],
+      "path_executable": true,
+      "path_type": "correct",
+      "problem_id": 213,
+      "sequence_length": 2,
+      "solvable_on_path": true,
+      "target_monotonicity_rate": 1.0,
+      "trajectory_id": "correct:139:correct",
+      "transition_statuses": [
+        "initial",
+        "success",
+        "success"
+      ]
+    }
+  ],
+  "trajectory_count": 2325
+}

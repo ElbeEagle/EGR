@@ -8,6 +8,7 @@ import re
 import math
 from typing import Any, Optional, Union, Dict
 from src.state.symbolic_state import SymbolicState
+from src.solver import SymbolicSolver
 from .query_parser import QueryParser, ParsedQuery
 
 
@@ -20,6 +21,7 @@ class AnswerExtractor:
     
     def __init__(self):
         self.query_parser = QueryParser()
+        self.symbolic_solver = SymbolicSolver()
     
     def extract(
         self,
@@ -38,15 +40,21 @@ class AnswerExtractor:
         """
         # 解析query
         parsed = self.query_parser.parse(query_expr)
+
+        if parsed.operation == 'MultiQuery':
+            answers = [self.extract(symbolic_state, part) for part in parsed.arguments]
+            return "\n".join(str(answer) for answer in answers)
         
         # 根据操作类型提取答案
         if parsed.operation == 'Value':
             return self._extract_value(symbolic_state, parsed)
+        elif parsed.operation == 'AlgebraicExpression':
+            return self._extract_algebraic_expression(symbolic_state, parsed)
         elif parsed.operation == 'Eccentricity':
             return self._extract_eccentricity(symbolic_state, parsed)
         elif parsed.operation == 'Length':
             return self._extract_length(symbolic_state, parsed)
-        elif parsed.operation == 'Equation':
+        elif parsed.operation in ['Equation', 'Expression', 'LocusEquation']:
             return self._extract_equation(symbolic_state, parsed)
         elif parsed.operation == 'Coordinate':
             return self._extract_coordinate(symbolic_state, parsed)
@@ -56,9 +64,15 @@ class AnswerExtractor:
             return self._extract_area(symbolic_state, parsed)
         elif parsed.operation == 'Angle':
             return self._extract_angle(symbolic_state, parsed)
+        elif parsed.operation == 'Range':
+            return self._extract_range(symbolic_state, parsed)
+        elif parsed.operation == 'Abs':
+            return self._extract_abs(symbolic_state, parsed)
         else:
-            # 未知类型，返回所有可用信息
-            return self._extract_all_info(symbolic_state)
+            direct = self.symbolic_solver.direct_relation_value(symbolic_state, query_expr)
+            if direct is not None:
+                return direct
+            return f"{parsed.operation} not found"
     
     def _extract_value(
         self,
@@ -73,6 +87,10 @@ class AnswerExtractor:
         2. entities中的对象
         """
         target = parsed.target
+
+        solved = self.symbolic_solver.solve_variable(state, target)
+        if solved is not None:
+            return solved
         
         # 在parameters中查找
         if target in state.parameters:
@@ -84,6 +102,34 @@ class AnswerExtractor:
         
         # 未找到
         return f"Variable '{target}' not found"
+
+    def _extract_algebraic_expression(
+        self,
+        state: SymbolicState,
+        parsed: ParsedQuery
+    ) -> Any:
+        expr = parsed.full_expression
+        direct = self.symbolic_solver.direct_relation_value(state, expr)
+        if direct is not None:
+            return direct
+
+        substitutions = {}
+        for var in re.findall(r'\b[a-zA-Z]\w*\b', expr):
+            if var in ['sqrt', 'pi', 'Sin', 'Cos', 'Tan']:
+                continue
+            solved = self.symbolic_solver.solve_variable(state, var)
+            parsed_value = self.symbolic_solver.parse_expr(solved)
+            if parsed_value is not None:
+                substitutions[var] = parsed_value
+
+        sympy_expr = self.symbolic_solver.parse_expr(expr)
+        if sympy_expr is None:
+            return f"Expression '{expr}' not found"
+        if substitutions:
+            sympy_expr = sympy_expr.subs({self.symbolic_solver.parse_expr(k): v for k, v in substitutions.items()})
+        if sympy_expr.free_symbols:
+            return f"Expression '{expr}' not found"
+        return self.symbolic_solver.format_expr(sympy_expr)
     
     def _extract_eccentricity(
         self,
@@ -97,6 +143,19 @@ class AnswerExtractor:
         - 椭圆/双曲线: e = c/a
         - 抛物线: e = 1
         """
+        direct = self.symbolic_solver.direct_relation_value(state, parsed.full_expression)
+        if direct is not None:
+            return self.symbolic_solver.format_expr(direct)
+
+        target = parsed.target or parsed.nested_target
+        if target:
+            model = self.symbolic_solver.curve_models(state).get(target)
+            if model:
+                solved_model = self.symbolic_solver.solve_curve_parameters(state, model)
+                eccentricity = self.symbolic_solver.conic_eccentricity(solved_model)
+                if eccentricity is not None:
+                    return eccentricity
+
         # 策略1: 直接从参数中查找，尝试数值化
         if 'e' in state.parameters:
             e_val = state.parameters['e']
@@ -154,6 +213,9 @@ class AnswerExtractor:
         - Length(LatusRectum(G)) → 通径长度
         """
         nested_op = parsed.nested_operation
+        direct = self.symbolic_solver.direct_relation_value(state, parsed.full_expression)
+        if direct is not None:
+            return self.symbolic_solver.format_expr(direct)
         
         if not nested_op:
             # 无嵌套操作，返回未知
@@ -209,6 +271,15 @@ class AnswerExtractor:
         - Equation(Directrix(G)) → 准线方程
         - Equation(Tangent(...)) → 切线方程
         """
+        target_expr = parsed.target
+        if parsed.nested_operation and parsed.nested_target:
+            target_expr = f"{parsed.nested_operation}({parsed.nested_target})"
+
+        if target_expr:
+            solved = self.symbolic_solver.solve_expression(state, target_expr)
+            if solved is not None:
+                return solved
+
         nested_op = parsed.nested_operation
         
         if not nested_op:
@@ -252,6 +323,10 @@ class AnswerExtractor:
         
         if not target:
             return "Coordinate target not specified"
+
+        solved = self.symbolic_solver.solve_coordinate(state, target)
+        if solved is not None:
+            return solved
         
         # 直接从coordinates字典查找
         if target in state.coordinates:
@@ -276,6 +351,10 @@ class AnswerExtractor:
         """
         提取距离
         """
+        solved = self.symbolic_solver.solve_distance(state, parsed.full_expression)
+        if solved is not None:
+            return solved
+
         # 在几何关系中查找Distance
         for rel in state.geometric_relations:
             if 'Distance' in rel and '=' in rel:
@@ -293,6 +372,10 @@ class AnswerExtractor:
         """
         提取面积
         """
+        solved = self.symbolic_solver.solve_area(state, parsed.full_expression)
+        if solved is not None:
+            return solved
+
         # 在几何关系中查找Area
         for rel in state.geometric_relations:
             if 'Area' in rel and '=' in rel:
@@ -313,6 +396,40 @@ class AnswerExtractor:
                     pass
         
         return "Area not found"
+
+    def _extract_range(
+        self,
+        state: SymbolicState,
+        parsed: ParsedQuery
+    ) -> str:
+        target = parsed.target or parsed.nested_target
+        if not target:
+            return "Range target not specified"
+        # Range(Eccentricity(G)) is not a scalar variable range in this worker.
+        if '(' in target:
+            return f"Range({target}) not found"
+        solved = self.symbolic_solver.solve_range(state, target)
+        if solved is not None:
+            return solved
+        return f"Range({target}) not found"
+
+    def _extract_abs(
+        self,
+        state: SymbolicState,
+        parsed: ParsedQuery
+    ) -> str:
+        target = parsed.target
+        if not target:
+            return "Abs target not specified"
+        if target.startswith('LineSegmentOf('):
+            distance_query = f"Distance({target[len('LineSegmentOf('):-1]})"
+            solved = self.symbolic_solver.solve_distance(state, distance_query)
+            if solved is not None:
+                return solved
+        direct = self.symbolic_solver.direct_relation_value(state, parsed.full_expression)
+        if direct is not None:
+            return direct
+        return f"Abs({target}) not found"
     
     def _extract_angle(
         self,

@@ -1,0 +1,52 @@
+{
+  "by_path_type": {
+    "correct": {
+      "entries": 1435,
+      "executable_rate": 1.0,
+      "heuristic_entropy_mean": 0.52261533,
+      "heuristic_vs_target_pearson": 0.72397327,
+      "heuristic_vs_target_spearman": 0.68389723,
+      "target_mean": 0.5,
+      "trajectories": 325
+    },
+    "model": {
+      "entries": 4988,
+      "executable_rate": 0.325,
+      "heuristic_entropy_mean": 0.60586738,
+      "heuristic_vs_target_pearson": 0.39034497,
+      "heuristic_vs_target_spearman": 0.44981156,
+      "target_mean": 0.5,
+      "trajectories": 1000
+    },
+    "random": {
+      "entries": 4988,
+      "executable_rate": 0.015,
+      "heuristic_entropy_mean": 0.73646161,
+      "heuristic_vs_target_pearson": 0.29376757,
+      "heuristic_vs_target_spearman": 0.4497608,
+      "target_mean": 0.5,
+      "trajectories": 1000
+    }
+  },
+  "entry_count": 11411,
+  "input": "data/train_with_models_v2.json",
+  "max_samples": 1000,
+  "path_type_counts": {
+    "correct": 1435,
+    "model": 4988,
+    "random": 4988
+  },
+  "random_paths_per_sample": 1,
+  "sample_timeout_seconds": 0.5,
+  "schema_version": "entropy-label-v1",
+  "seed": 42,
+  "skipped_path_count": 0,
+  "skipped_paths": [],
+  "trajectory_count": 2325,
+  "transition_status_counts": {
+    "failed": 4471,
+    "initial": 2325,
+    "skipped": 168,
+    "success": 4447
+  }
+}

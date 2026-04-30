@@ -8,8 +8,10 @@
 2. 神经网络估计（需要训练）
 """
 
-import math
-from typing import Optional
+import json
+from pathlib import Path
+from typing import Any, Dict, Optional, Sequence
+
 from src.state.abstract_state import AbstractState
 
 
@@ -25,13 +27,27 @@ class EntropyEstimator:
     - 选择最大化信息增益的模型
     """
     
-    def __init__(self, mode: str = 'heuristic'):
+    def __init__(
+        self,
+        mode: str = 'heuristic',
+        model_path: Optional[str] = None,
+        weights: Optional[Sequence[float]] = None,
+        bias: float = 0.0
+    ):
         """
         Args:
-            mode: 'heuristic'（启发式）或 'neural'（神经网络）
+            mode: 'heuristic'（启发式）或 'learned'/'linear'/'neural'（学习型线性回归器）
+            model_path: learned-linear JSON模型路径
+            weights: learned-linear 权重（28维）
+            bias: learned-linear 偏置
         """
         self.mode = mode
-        self.neural_model = None  # 预留给神经网络模式
+        self.weights = list(weights) if weights is not None else None
+        self.bias = float(bias)
+        self.model_metadata: Dict[str, Any] = {}
+
+        if model_path is not None:
+            self.load_learned_model(model_path)
     
     def estimate(self, abstract_state: AbstractState) -> float:
         """
@@ -45,8 +61,79 @@ class EntropyEstimator:
         """
         if self.mode == 'heuristic':
             return self._heuristic_estimate(abstract_state)
+        if self.mode in {'learned', 'linear', 'neural'}:
+            return self.estimate_from_vector(abstract_state.to_vector())
+        raise ValueError(f"Unknown mode: {self.mode}")
+
+    def estimate_from_vector(self, state_vector: Sequence[float]) -> float:
+        """
+        从状态向量估计H(S)，用于训练/报告脚本复用 learned-linear 模型。
+        """
+        if self.mode == 'heuristic':
+            raise ValueError("Heuristic mode requires an AbstractState, not a raw vector")
+
+        if self.weights is None:
+            raise ValueError("Learned entropy estimator has no loaded weights")
+
+        if len(state_vector) != len(self.weights):
+            raise ValueError(
+                f"State vector dimension mismatch: {len(state_vector)} vs {len(self.weights)}"
+            )
+
+        entropy = self.bias
+        for weight, value in zip(self.weights, state_vector):
+            entropy += weight * value
+        return max(0.0, min(1.0, float(entropy)))
+
+    def load_learned_model(self, model_path: str) -> None:
+        """
+        加载由 scripts/entropy/train_entropy_estimator.py 生成的线性熵模型。
+        """
+        path = Path(model_path)
+        with path.open('r', encoding='utf-8') as f:
+            payload = json.load(f)
+
+        weights = payload.get('weights')
+        if not isinstance(weights, list) or not weights:
+            raise ValueError(f"Invalid learned entropy model: missing weights in {model_path}")
+
+        self.weights = [float(w) for w in weights]
+        self.bias = float(payload.get('bias', 0.0))
+        self.mode = 'learned'
+        self.model_metadata = {
+            key: value
+            for key, value in payload.items()
+            if key not in {'weights', 'bias'}
+        }
+
+    def compare(
+        self,
+        abstract_state: AbstractState,
+        learned_model_path: Optional[str] = None
+    ) -> Dict[str, float]:
+        """
+        返回 heuristic 与 learned estimator 的可比输出。
+        """
+        heuristic_entropy = self._heuristic_estimate(abstract_state)
+
+        if learned_model_path is not None:
+            learned = EntropyEstimator(mode='learned', model_path=learned_model_path)
+        elif self.mode in {'learned', 'linear', 'neural'}:
+            learned = self
         else:
-            raise ValueError(f"Unknown mode: {self.mode}")
+            return {'heuristic_entropy': heuristic_entropy}
+
+        learned_entropy = learned.estimate_from_vector(abstract_state.to_vector())
+        return {
+            'heuristic_entropy': heuristic_entropy,
+            'learned_entropy': learned_entropy,
+            'learned_minus_heuristic': learned_entropy - heuristic_entropy
+        }
+
+    @classmethod
+    def from_model_file(cls, model_path: str) -> 'EntropyEstimator':
+        """构造 learned-linear estimator。"""
+        return cls(mode='learned', model_path=model_path)
     
     def _heuristic_estimate(self, state: AbstractState) -> float:
         """
@@ -109,4 +196,16 @@ class EntropyEstimator:
         """
         h_current = self.estimate(current_state)
         h_next = self.estimate(next_state)
+        return h_current - h_next
+
+    def compute_info_gain_from_vectors(
+        self,
+        current_vector: Sequence[float],
+        next_vector: Sequence[float]
+    ) -> float:
+        """
+        learned-linear 模式下直接从向量计算信息增益。
+        """
+        h_current = self.estimate_from_vector(current_vector)
+        h_next = self.estimate_from_vector(next_vector)
         return h_current - h_next

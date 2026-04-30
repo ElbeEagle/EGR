@@ -47,12 +47,15 @@ class TheoremLibrary:
         from .models.model_014 import EllipseEccentricityRange
         from .models.model_016 import EllipseFocalRadius
         from .models.model_017 import ParabolaFocalRadius
+        from .models.model_018 import EllipseLatusRectum
         from .models.model_019 import HyperbolaLatusRectum
         from .models.model_021 import HyperbolaAsymptote
         from .models.model_022 import HyperbolaFocusToAsymptoteDistance
         from .models.model_024 import HyperbolaEqualAxis
+        from .models.model_027 import EllipseDirectrix
         from .models.model_029 import ParabolaDirectrix
         from .models.model_032 import EllipseFocalTrianglePerimeter
+        from .models.model_038 import EllipseTangentLine
         from .models.model_041 import VietaTheorem
         from .models.model_042 import VietaTheoremSum
         from .models.model_043 import VietaTheoremProduct
@@ -65,6 +68,7 @@ class TheoremLibrary:
         from .models.model_061 import VectorPerpendicularCondition
         from .models.model_062 import VectorCollinearCondition
         from .models.model_063 import BasicInequality
+        from .models.model_064 import BasicInequalityEqualCondition
         from .models.model_065 import DiscriminantDelta
         from .models.model_070 import IncircleRadiusFormula
         from .models.model_075 import CircleStandardEquation
@@ -103,12 +107,15 @@ class TheoremLibrary:
         self.register_model(EllipseEccentricityRange())
         self.register_model(EllipseFocalRadius())
         self.register_model(ParabolaFocalRadius())
+        self.register_model(EllipseLatusRectum())
         self.register_model(HyperbolaLatusRectum())
         self.register_model(HyperbolaAsymptote())
         self.register_model(HyperbolaFocusToAsymptoteDistance())
         self.register_model(HyperbolaEqualAxis())
+        self.register_model(EllipseDirectrix())
         self.register_model(ParabolaDirectrix())
         self.register_model(EllipseFocalTrianglePerimeter())
+        self.register_model(EllipseTangentLine())
         self.register_model(VietaTheorem())
         self.register_model(VietaTheoremSum())
         self.register_model(VietaTheoremProduct())
@@ -121,6 +128,7 @@ class TheoremLibrary:
         self.register_model(VectorPerpendicularCondition())
         self.register_model(VectorCollinearCondition())
         self.register_model(BasicInequality())
+        self.register_model(BasicInequalityEqualCondition())
         self.register_model(DiscriminantDelta())
         self.register_model(IncircleRadiusFormula())
         self.register_model(CircleStandardEquation())

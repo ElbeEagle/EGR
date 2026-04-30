@@ -1,0 +1,31 @@
+{
+  "answer_correctness": {
+    "available": false,
+    "note": "answer_correct is not available in train_with_models_v2-derived entropy labels"
+  },
+  "entry_count": 11411,
+  "heuristic_entropy": {
+    "vs_normalized_remaining_steps_pearson": 0.3484877,
+    "vs_normalized_remaining_steps_spearman": 0.44323723,
+    "vs_progress_pearson": -0.3484877,
+    "vs_remaining_steps_pearson": 0.20407196
+  },
+  "learned_entropy": {
+    "vs_normalized_remaining_steps_pearson": 0.83254101,
+    "vs_normalized_remaining_steps_spearman": 0.85925063,
+    "vs_progress_pearson": -0.83254101,
+    "vs_remaining_steps_pearson": 0.55542588
+  },
+  "learned_vs_target_error": {
+    "mae": 0.1573434,
+    "rmse": 0.20413102
+  },
+  "path_success": {
+    "executable_rate": 0.28602151,
+    "final_heuristic_vs_executable_pearson": -0.5828669,
+    "final_learned_vs_executable_pearson": 0.03570843,
+    "initial_heuristic_vs_executable_pearson": -0.16418146,
+    "initial_learned_vs_executable_pearson": 0.06145361,
+    "trajectory_count": 2325
+  }
+}
