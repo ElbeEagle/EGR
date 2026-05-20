@@ -50,6 +50,12 @@ class AnswerExtractor:
             return self._extract_value(symbolic_state, parsed)
         elif parsed.operation == 'AlgebraicExpression':
             return self._extract_algebraic_expression(symbolic_state, parsed)
+        elif parsed.operation == 'LineSegmentOf':
+            return self._extract_line_segment(symbolic_state, parsed)
+        elif parsed.operation == 'Slope':
+            return self._extract_slope(symbolic_state, parsed)
+        elif parsed.operation in ['Min', 'Max']:
+            return self._extract_optimization(symbolic_state, parsed)
         elif parsed.operation == 'Eccentricity':
             return self._extract_eccentricity(symbolic_state, parsed)
         elif parsed.operation == 'Length':
@@ -62,7 +68,7 @@ class AnswerExtractor:
             return self._extract_distance(symbolic_state, parsed)
         elif parsed.operation == 'Area':
             return self._extract_area(symbolic_state, parsed)
-        elif parsed.operation == 'Angle':
+        elif parsed.operation in ['Angle', 'AngleOf']:
             return self._extract_angle(symbolic_state, parsed)
         elif parsed.operation == 'Range':
             return self._extract_range(symbolic_state, parsed)
@@ -113,6 +119,10 @@ class AnswerExtractor:
         if direct is not None:
             return direct
 
+        solved_expr = self.symbolic_solver.solve_algebraic_expression(state, expr)
+        if solved_expr is not None:
+            return solved_expr
+
         substitutions = {}
         for var in re.findall(r'\b[a-zA-Z]\w*\b', expr):
             if var in ['sqrt', 'pi', 'Sin', 'Cos', 'Tan']:
@@ -130,6 +140,36 @@ class AnswerExtractor:
         if sympy_expr.free_symbols:
             return f"Expression '{expr}' not found"
         return self.symbolic_solver.format_expr(sympy_expr)
+
+    def _extract_line_segment(
+        self,
+        state: SymbolicState,
+        parsed: ParsedQuery
+    ) -> str:
+        solved = self.symbolic_solver.solve_line_segment(state, parsed.full_expression)
+        if solved is not None:
+            return solved
+        return "LineSegmentOf not found"
+
+    def _extract_slope(
+        self,
+        state: SymbolicState,
+        parsed: ParsedQuery
+    ) -> str:
+        solved = self.symbolic_solver.solve_slope(state, parsed.full_expression)
+        if solved is not None:
+            return solved
+        return "Slope not found"
+
+    def _extract_optimization(
+        self,
+        state: SymbolicState,
+        parsed: ParsedQuery
+    ) -> str:
+        solved = self.symbolic_solver.solve_optimization(state, parsed.full_expression)
+        if solved is not None:
+            return solved
+        return f"{parsed.operation} not found"
     
     def _extract_eccentricity(
         self,
@@ -422,8 +462,7 @@ class AnswerExtractor:
         if not target:
             return "Abs target not specified"
         if target.startswith('LineSegmentOf('):
-            distance_query = f"Distance({target[len('LineSegmentOf('):-1]})"
-            solved = self.symbolic_solver.solve_distance(state, distance_query)
+            solved = self.symbolic_solver.solve_line_segment(state, target)
             if solved is not None:
                 return solved
         direct = self.symbolic_solver.direct_relation_value(state, parsed.full_expression)
@@ -439,6 +478,10 @@ class AnswerExtractor:
         """
         提取角度
         """
+        direct = self.symbolic_solver.direct_relation_value(state, parsed.full_expression)
+        if direct is not None:
+            return direct
+
         # 在几何关系中查找Angle
         for rel in state.geometric_relations:
             if 'Angle' in rel and '=' in rel:

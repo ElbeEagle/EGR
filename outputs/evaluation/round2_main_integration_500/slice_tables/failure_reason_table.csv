@@ -1,0 +1,4 @@
+failure_reason,total_samples,final_answer_correct_count,final_answer_accuracy,reasoning_success_count,reasoning_success_rate,answer_accuracy_among_successful_reasoning,theorem_selection_labeled_steps,theorem_selection_top1_accuracy,theorem_selection_top3_accuracy,theorem_selection_top5_accuracy
+answer_mismatch,290,0,0.0,290,1.0,0.0,429,0.11655011655011654,0.25874125874125875,0.3473193473193473
+max_steps,133,0,0.0,0,0.0,0.0,399,0.10526315789473684,0.2656641604010025,0.3684210526315789
+no_model,30,0,0.0,0,0.0,0.0,0,0.0,0.0,0.0

@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-05-19T06:59:09.990468+00:00",
+  "artifacts": {
+    "curve_type": {
+      "path": "/Users/ebeleagel/Documents/GitHub/EGR/outputs/evaluation/round2_main_integration_500/slice_tables/curve_type_table.csv",
+      "size_bytes": 860
+    },
+    "failure_reason": {
+      "path": "/Users/ebeleagel/Documents/GitHub/EGR/outputs/evaluation/round2_main_integration_500/slice_tables/failure_reason_table.csv",
+      "size_bytes": 535
+    },
+    "failure_reason_distribution": {
+      "path": "/Users/ebeleagel/Documents/GitHub/EGR/outputs/evaluation/round2_main_integration_500/slice_tables/failure_reason_distribution.csv",
+      "size_bytes": 71
+    },
+    "markdown": {
+      "path": "/Users/ebeleagel/Documents/GitHub/EGR/outputs/evaluation/round2_main_integration_500/slice_tables.md",
+      "size_bytes": 1007
+    },
+    "overall": {
+      "path": "/Users/ebeleagel/Documents/GitHub/EGR/outputs/evaluation/round2_main_integration_500/slice_tables/overall_table.csv",
+      "size_bytes": 397
+    },
+    "query_type": {
+      "path": "/Users/ebeleagel/Documents/GitHub/EGR/outputs/evaluation/round2_main_integration_500/slice_tables/query_type_table.csv",
+      "size_bytes": 1340
+    },
+    "reasoning_failure_reason_distribution": {
+      "path": "/Users/ebeleagel/Documents/GitHub/EGR/outputs/evaluation/round2_main_integration_500/slice_tables/reasoning_failure_reason_distribution.csv",
+      "size_bytes": 60
+    }
+  }
+}

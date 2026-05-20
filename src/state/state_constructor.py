@@ -206,6 +206,8 @@ class StateConstructor:
                     coords_str = match.group(2)
                     coords = tuple(c.strip() for c in coords_str.split(','))
                     state.coordinates[point_name] = coords
+                else:
+                    state.geometric_relations.append(fact)
             
             # 类型4: 几何关系（各种函数调用）
             elif any(kw in fact for kw in [
@@ -213,7 +215,7 @@ class StateConstructor:
                 'PointOnCurve', 'Focus', 'Vertex', 'Asymptote', 'Directrix',
                 'LeftFocus', 'RightFocus', 'UpperVertex', 'LowerVertex',
                 'Center', 'Radius', 'MidPoint', 'Slope', 'Length',
-                'Eccentricity', 'Area', 'Perimeter', 'Angle'
+                'Eccentricity', 'Area', 'Perimeter', 'Angle', 'IsChordOf'
             ]):
                 state.geometric_relations.append(fact)
             

@@ -1,0 +1,2 @@
+slice,total_samples,final_answer_correct_count,final_answer_accuracy,reasoning_success_count,reasoning_success_rate,answer_accuracy_among_successful_reasoning,theorem_selection_labeled_steps,theorem_selection_top1_accuracy,theorem_selection_top3_accuracy,theorem_selection_top5_accuracy
+all,500,34,0.068,319,0.638,0.10658307210031348,886,0.11512415349887133,0.26636568848758463,0.3600451467268623

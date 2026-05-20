@@ -1,0 +1,14 @@
+{
+  "schema_version": "egr_eval_protocol_v1",
+  "generated_at": "2026-05-19T06:33:00.325590+00:00",
+  "run": {
+    "num_samples": 999999,
+    "seed": 42,
+    "data_path": "data/train_with_models_v2.json",
+    "selector_report_path": "outputs/selector/evaluation_results.json",
+    "protocol_entrypoint": "scripts/evaluation/run_eval_slices.py",
+    "reasoning_entrypoint": "scripts/reasoning/batch_test.py:init_engine",
+    "compact_artifacts": true
+  },
+  "sample_level_artifacts_written": false
+}

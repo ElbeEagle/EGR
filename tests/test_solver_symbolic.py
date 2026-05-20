@@ -76,3 +76,72 @@ def test_distance_between_coordinates():
     solver = SymbolicSolver()
     state = SymbolicState(coordinates={"A": ("0", "0"), "B": ("3", "4")})
     assert solver.solve_distance(state, "Distance(A, B)") == "5"
+
+
+def test_parabola_chord_slope_from_midpoint():
+    solver = SymbolicSolver()
+    state = SymbolicState(
+        entities={"G": "Parabola", "A": "Point", "B": "Point", "P": "Point"},
+        equations=["Expression(G) = (y^2 = 4*x)"],
+        coordinates={"P": ("1", "1")},
+        geometric_relations=[
+            "IsChordOf(LineSegmentOf(A, B), G) = True",
+            "MidPoint(LineSegmentOf(A, B)) = P",
+        ],
+    )
+    assert solver.solve_slope(state, "Slope(OverlappingLine(LineSegmentOf(A, B)))") == "2"
+
+
+def test_parabola_chord_length_from_line_intersection():
+    solver = SymbolicSolver()
+    state = SymbolicState(
+        entities={"l": "Line", "C": "Parabola", "A": "Point", "B": "Point"},
+        equations=[
+            "Expression(C) = (y^2 = 4*x)",
+            "Expression(l) = (y = x - 1)",
+        ],
+        geometric_relations=["Intersection(l, C) = {A, B}"],
+    )
+    assert solver.solve_line_segment(state, "LineSegmentOf(A, B)") == "8"
+
+
+def test_parabola_focus_distance_from_x_coordinate():
+    solver = SymbolicSolver()
+    state = SymbolicState(
+        entities={"G": "Parabola", "P": "Point", "F": "Point"},
+        equations=["Expression(G) = (y^2 = 8*x)"],
+        geometric_relations=[
+            "Focus(G) = F",
+            "PointOnCurve(P, G)",
+            "XCoordinate(P)=4",
+        ],
+    )
+    assert solver.solve_line_segment(state, "LineSegmentOf(P, F)") == "6"
+
+
+def test_parabola_focus_distance_from_axis_distance():
+    solver = SymbolicSolver()
+    state = SymbolicState(
+        entities={"G": "Parabola", "P": "Point", "F": "Point"},
+        equations=["Expression(G) = (y^2 = 16*x)"],
+        geometric_relations=[
+            "Focus(G)=F",
+            "PointOnCurve(P, G)",
+            "Distance(P, xAxis) = 12",
+        ],
+    )
+    assert solver.solve_line_segment(state, "LineSegmentOf(P, F)") == "13"
+
+
+def test_parabola_min_point_focus_sum_uses_directrix_distance():
+    solver = SymbolicSolver()
+    state = SymbolicState(
+        entities={"G": "Parabola", "P": "Point", "A": "Point", "F": "Point"},
+        equations=["Expression(G) = (x^2 = 8*y)"],
+        coordinates={"A": ("-2", "4")},
+        geometric_relations=["PointOnCurve(P, G)", "Focus(G) = F"],
+    )
+    assert solver.solve_optimization(
+        state,
+        "Min(Abs(LineSegmentOf(P, A)) + Abs(LineSegmentOf(P, F)))",
+    ) == "6"

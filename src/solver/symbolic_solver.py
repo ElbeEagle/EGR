@@ -919,6 +919,481 @@ class SymbolicSolver:
         solution = positive[0]
         return self.format_centered_conic(solution[a2], -solution[b2], "Hyperbola")
 
+    def solve_algebraic_expression(self, state: SymbolicState, expression: str) -> Optional[str]:
+        replacements: Dict[str, str] = {}
+        for match in re.finditer(r"Abs\(LineSegmentOf\(([^(),]+),\s*([^(),]+)\)\)", expression):
+            segment = f"LineSegmentOf({match.group(1).strip()}, {match.group(2).strip()})"
+            value = self.solve_line_segment(state, segment)
+            if value is None:
+                return None
+            replacements[match.group(0)] = f"({value})"
+
+        if not replacements:
+            return None
+
+        substituted = expression
+        for old, new in replacements.items():
+            substituted = substituted.replace(old, new)
+        parsed = self.parse_expr(substituted)
+        if parsed is None or parsed.free_symbols:
+            return None
+        return self.format_expr(parsed)
+
+    def solve_line_segment(self, state: SymbolicState, query: str) -> Optional[str]:
+        query = query.strip()
+        if query.startswith("Abs(") and query.endswith(")"):
+            query = query[4:-1].strip()
+
+        direct = self.direct_relation_value(state, query) or self.direct_relation_value(state, f"Abs({query})")
+        if direct:
+            return self.format_expr(direct)
+
+        args = self.function_args(query)
+        if len(args) != 2:
+            return None
+        left, right = args
+
+        left_coord = self.coordinate_for_distance_arg(state, left)
+        right_coord = self.coordinate_for_distance_arg(state, right)
+        if left_coord and right_coord:
+            return self.format_expr(sp.sqrt((left_coord[0] - right_coord[0]) ** 2 + (left_coord[1] - right_coord[1]) ** 2))
+
+        focus_distance = self.solve_parabola_point_focus_segment(state, left, right)
+        if focus_distance is not None:
+            return focus_distance
+
+        intersection_length = self.solve_segment_between_intersection_points(state, left, right)
+        if intersection_length is not None:
+            return intersection_length
+
+        midpoint_length = self.solve_parabola_chord_length_from_midpoint(state, left, right)
+        if midpoint_length is not None:
+            return midpoint_length
+
+        focus_projection = self.solve_focus_projection_midpoint_segment(state, left, right)
+        if focus_projection is not None:
+            return focus_projection
+
+        return None
+
+    def solve_slope(self, state: SymbolicState, query: str) -> Optional[str]:
+        direct = self.direct_relation_value(state, query)
+        if direct:
+            return self.format_expr(direct)
+
+        args = self.function_args(query)
+        if len(args) != 1:
+            return None
+        target = args[0].strip()
+
+        direct_expression = self.find_direct_expression(state, target)
+        if direct_expression:
+            slope = self.line_slope(direct_expression)
+            if slope is not None:
+                return self.format_expr(slope)
+
+        segment_args = self.segment_args_from_line_like(target)
+        if segment_args:
+            left, right = segment_args
+            midpoint_slope = self.solve_parabola_chord_slope_from_midpoint(state, left, right)
+            if midpoint_slope is not None:
+                return midpoint_slope
+
+        if re.match(r"^\w+$", target):
+            focus_slope = self.solve_focus_chord_slope(state, target)
+            if focus_slope is not None:
+                return focus_slope
+
+        return None
+
+    def solve_optimization(self, state: SymbolicState, query: str) -> Optional[str]:
+        call = re.match(r"^(Min|Max)\((.*)\)$", query.strip())
+        if not call:
+            return None
+        operation, inner = call.groups()
+        if operation == "Min":
+            reflected = self.solve_min_point_focus_sum(state, inner)
+            if reflected is not None:
+                return reflected
+        return None
+
+    def segment_args_from_line_like(self, target: str) -> Optional[List[str]]:
+        target = target.strip()
+        call = re.match(r"^(\w+)\((.*)\)$", target)
+        if not call:
+            return None
+        op = call.group(1)
+        args = self.split_top_level(call.group(2), [","])
+        if op == "LineSegmentOf" and len(args) == 2:
+            return args
+        if op in {"OverlappingLine", "LineOf"}:
+            if len(args) == 1:
+                return self.segment_args_from_line_like(args[0])
+            if len(args) == 2:
+                return args
+        return None
+
+    def solve_parabola_chord_slope_from_midpoint(
+        self,
+        state: SymbolicState,
+        left: str,
+        right: str,
+    ) -> Optional[str]:
+        curve = self.curve_for_chord_segment(state, left, right)
+        midpoint = self.midpoint_name_for_segment(state, left, right)
+        if not curve or not midpoint:
+            return None
+        model = self.curve_models(state).get(curve)
+        coord = self.point_coordinate(state, midpoint)
+        if not model or model.curve_type != "Parabola" or model.parabola_p is None or coord is None:
+            return None
+        slope = self.parabola_chord_slope_from_midpoint(model, coord)
+        return self.format_expr(slope) if slope is not None else None
+
+    def parabola_chord_slope_from_midpoint(
+        self,
+        model: CurveModel,
+        midpoint: Tuple[sp.Expr, sp.Expr],
+    ) -> Optional[sp.Expr]:
+        p = model.parabola_p
+        if p is None:
+            return None
+        x_mid, y_mid = midpoint
+        if model.parabola_axis == "x" and y_mid != 0:
+            return sp.simplify(2 * p / y_mid)
+        if model.parabola_axis == "y":
+            return sp.simplify(x_mid / (2 * p))
+        return None
+
+    def solve_parabola_chord_length_from_midpoint(
+        self,
+        state: SymbolicState,
+        left: str,
+        right: str,
+    ) -> Optional[str]:
+        curve = self.curve_for_chord_segment(state, left, right)
+        midpoint = self.midpoint_name_for_segment(state, left, right)
+        if not curve or not midpoint:
+            return None
+        model = self.curve_models(state).get(curve)
+        coord = self.point_coordinate(state, midpoint)
+        if not model or model.curve_type != "Parabola" or model.parabola_p is None or coord is None:
+            return None
+        length = self.parabola_chord_length_from_midpoint(model, coord)
+        return self.format_expr(length) if length is not None else None
+
+    def parabola_chord_length_from_midpoint(
+        self,
+        model: CurveModel,
+        midpoint: Tuple[sp.Expr, sp.Expr],
+    ) -> Optional[sp.Expr]:
+        p = model.parabola_p
+        if p is None:
+            return None
+        x_mid, y_mid = midpoint
+        if model.parabola_axis == "x":
+            sum_t = sp.simplify(y_mid / p)
+            diff_square = sp.simplify(4 * x_mid / p - sum_t**2)
+            if diff_square == 0:
+                return None
+            return sp.sqrt(sp.simplify(diff_square * ((p * sum_t) ** 2 + (2 * p) ** 2)))
+        if model.parabola_axis == "y":
+            sum_t = sp.simplify(x_mid / p)
+            diff_square = sp.simplify(4 * y_mid / p - sum_t**2)
+            if diff_square == 0:
+                return None
+            return sp.sqrt(sp.simplify(diff_square * ((2 * p) ** 2 + (p * sum_t) ** 2)))
+        return None
+
+    def solve_segment_between_intersection_points(
+        self,
+        state: SymbolicState,
+        left: str,
+        right: str,
+    ) -> Optional[str]:
+        for relation in state.geometric_relations:
+            if "=" not in relation or "Intersection" not in relation:
+                continue
+            lhs, rhs = relation.split("=", 1)
+            if not self.normalize_relation_lhs(lhs).startswith("Intersection("):
+                continue
+            intersection_args = self.function_args(lhs.strip())
+            points = self.set_members(rhs)
+            if len(intersection_args) != 2 or not self.same_unordered_pair(points, [left, right]):
+                continue
+
+            first, second = [arg.strip() for arg in intersection_args]
+            line, curve = self.line_curve_pair(state, first, second)
+            if not line or not curve:
+                continue
+            line_expr = self.find_direct_expression(state, line)
+            curve_expr = self.find_direct_expression(state, curve)
+            if not line_expr or not curve_expr:
+                continue
+            length = self.length_from_line_curve_intersections(line_expr, curve_expr)
+            if length is not None:
+                return self.format_expr(length)
+        return None
+
+    def length_from_line_curve_intersections(self, line_expr: str, curve_expr: str) -> Optional[sp.Expr]:
+        line_eq = self.parse_equation_expr(line_expr)
+        curve_eq = self.parse_equation_expr(curve_expr)
+        if line_eq is None or curve_eq is None:
+            return None
+        try:
+            solutions = sp.solve([line_eq, curve_eq], [X, Y], dict=True)
+        except Exception:
+            return None
+        if len(solutions) < 2:
+            return None
+        p1 = (sp.simplify(solutions[0][X]), sp.simplify(solutions[0][Y]))
+        p2 = (sp.simplify(solutions[1][X]), sp.simplify(solutions[1][Y]))
+        return sp.sqrt(sp.simplify((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2))
+
+    def solve_parabola_point_focus_segment(self, state: SymbolicState, left: str, right: str) -> Optional[str]:
+        for point, focus in [(left, right), (right, left)]:
+            curve = self.curve_for_focus_arg(state, focus)
+            if not curve or not self.point_on_curve(state, point, curve):
+                continue
+            model = self.curve_models(state).get(curve)
+            if not model or model.curve_type != "Parabola" or model.parabola_p is None:
+                continue
+            if model.parabola_axis == "x":
+                x_value = self.axis_coordinate_value(state, point, "x")
+                if x_value is not None:
+                    return self.format_expr(sp.Abs(sp.simplify(x_value + model.parabola_p)))
+                y_distance = self.distance_to_axis_value(state, point, "xAxis")
+                if y_distance is not None and model.parabola_p != 0:
+                    x_from_axis = sp.simplify(y_distance**2 / (4 * model.parabola_p))
+                    return self.format_expr(sp.Abs(sp.simplify(x_from_axis + model.parabola_p)))
+            if model.parabola_axis == "y":
+                y_value = self.axis_coordinate_value(state, point, "y")
+                if y_value is not None:
+                    return self.format_expr(sp.Abs(sp.simplify(y_value + model.parabola_p)))
+                x_distance = self.distance_to_axis_value(state, point, "yAxis")
+                if x_distance is not None and model.parabola_p != 0:
+                    y_from_axis = sp.simplify(x_distance**2 / (4 * model.parabola_p))
+                    return self.format_expr(sp.Abs(sp.simplify(y_from_axis + model.parabola_p)))
+        return None
+
+    def solve_focus_projection_midpoint_segment(self, state: SymbolicState, left: str, right: str) -> Optional[str]:
+        for focus, endpoint in [(left, right), (right, left)]:
+            curve = self.curve_for_focus_arg(state, focus)
+            if not curve:
+                continue
+            model = self.curve_models(state).get(curve)
+            if not model or model.curve_type != "Parabola" or model.parabola_axis != "x" or model.parabola_p is None:
+                continue
+            pattern_ok = (
+                self.has_relation_containing(state, "MidPoint(LineSegmentOf(P,F))", "N")
+                and self.has_relation_containing(state, "MidPoint(LineSegmentOf(P,Q))", "M")
+                and self.has_relation_containing(state, "Intersection(LineSegmentOf(M,N),xAxis)", endpoint)
+            )
+            if not pattern_ok:
+                continue
+            angle = self.direct_relation_value(state, f"AngleOf(N, {endpoint}, {focus})")
+            theta = self.parse_angle_value(angle)
+            if theta is None:
+                continue
+            return self.format_expr(sp.simplify(sp.Abs(model.parabola_p) / (2 * sp.cos(theta) ** 2)))
+        return None
+
+    def solve_min_point_focus_sum(self, state: SymbolicState, expression: str) -> Optional[str]:
+        segments = []
+        for match in re.finditer(r"Abs\(LineSegmentOf\(([^(),]+),\s*([^(),]+)\)\)", expression):
+            segments.append([match.group(1).strip(), match.group(2).strip()])
+        if len(segments) != 2:
+            return None
+        common = set(segments[0]) & set(segments[1])
+        if len(common) != 1:
+            return None
+        moving_point = next(iter(common))
+        endpoints = [point for segment in segments for point in segment if point != moving_point]
+        for focus in endpoints:
+            curve = self.curve_for_focus_arg(state, focus)
+            fixed = next((point for point in endpoints if point != focus), None)
+            if not curve or not fixed or not self.point_on_curve(state, moving_point, curve):
+                continue
+            model = self.curve_models(state).get(curve)
+            coord = self.point_coordinate(state, fixed)
+            if not model or model.curve_type != "Parabola" or model.parabola_p is None or coord is None:
+                continue
+            if model.parabola_axis == "x":
+                return self.format_expr(sp.Abs(sp.simplify(coord[0] + model.parabola_p)))
+            if model.parabola_axis == "y":
+                return self.format_expr(sp.Abs(sp.simplify(coord[1] + model.parabola_p)))
+        return None
+
+    def solve_focus_chord_slope(self, state: SymbolicState, line: str) -> Optional[str]:
+        chord = self.focus_chord_for_line(state, line)
+        if not chord:
+            return None
+        curve, left, right, focus = chord
+        model = self.curve_models(state).get(curve)
+        if not model or model.curve_type != "Parabola" or model.parabola_p is None:
+            return None
+
+        midpoint = self.midpoint_name_for_segment(state, left, right)
+        distance = self.direct_relation_value(state, f"Distance({midpoint}, Directrix({curve}))") if midpoint else None
+        distance_value = self.parse_expr(distance)
+        if distance_value is not None:
+            p = sp.Abs(model.parabola_p)
+            if model.parabola_axis == "x" and sp.simplify(distance_value - 2 * p) != 0:
+                return f"pm*{self.format_expr(sp.sqrt(sp.simplify(2 * p / (distance_value - 2 * p))))}"
+            if model.parabola_axis == "y":
+                return f"pm*{self.format_expr(sp.sqrt(sp.simplify((distance_value - 2 * p) / (2 * p))))}"
+        return None
+
+    def focus_chord_for_line(self, state: SymbolicState, line: str) -> Optional[Tuple[str, str, str, str]]:
+        for relation in state.geometric_relations:
+            if "=" not in relation or "Intersection" not in relation:
+                continue
+            lhs, rhs = relation.split("=", 1)
+            args = self.function_args(lhs.strip())
+            points = self.set_members(rhs)
+            if len(args) != 2 or len(points) != 2 or line not in [arg.strip() for arg in args]:
+                continue
+            other = args[0].strip() if args[1].strip() == line else args[1].strip()
+            model = self.curve_models(state).get(other)
+            if not model or model.curve_type != "Parabola":
+                continue
+            focus = self.focus_point_for_curve(state, other)
+            if focus and self.line_contains_point(state, line, focus):
+                return other, points[0], points[1], focus
+        return None
+
+    def line_contains_point(self, state: SymbolicState, line: str, point: str) -> bool:
+        for relation in state.geometric_relations:
+            compact = self.normalize_relation_lhs(relation)
+            if compact in {f"PointOnCurve({point},{line})", f"PointOnCurve({point},{line})=True"}:
+                return True
+        return False
+
+    def line_curve_pair(self, state: SymbolicState, first: str, second: str) -> Tuple[Optional[str], Optional[str]]:
+        models = self.curve_models(state)
+        if state.entities.get(first) == "Line" and second in models:
+            return first, second
+        if state.entities.get(second) == "Line" and first in models:
+            return second, first
+        if first in models and second not in models:
+            return second, first
+        if second in models and first not in models:
+            return first, second
+        return None, None
+
+    def curve_for_chord_segment(self, state: SymbolicState, left: str, right: str) -> Optional[str]:
+        for relation in state.geometric_relations:
+            compact = self.normalize_relation_lhs(relation)
+            match = re.match(r"IsChordOf\(LineSegmentOf\(([^,]+),([^)]+)\),(\w+)\)", compact)
+            if match and self.same_unordered_pair([match.group(1), match.group(2)], [left, right]):
+                return match.group(3)
+
+        for curve in self.curve_models(state):
+            if self.point_on_curve(state, left, curve) and self.point_on_curve(state, right, curve):
+                return curve
+
+        for relation in state.geometric_relations:
+            if "=" not in relation or "Intersection" not in relation:
+                continue
+            lhs, rhs = relation.split("=", 1)
+            points = self.set_members(rhs)
+            if not self.same_unordered_pair(points, [left, right]):
+                continue
+            for arg in self.function_args(lhs.strip()):
+                if arg.strip() in self.curve_models(state):
+                    return arg.strip()
+        return None
+
+    def midpoint_name_for_segment(self, state: SymbolicState, left: str, right: str) -> Optional[str]:
+        for relation in state.geometric_relations:
+            if "=" not in relation:
+                continue
+            lhs, rhs = relation.split("=", 1)
+            compact_lhs = self.normalize_relation_lhs(lhs)
+            match = re.match(r"MidPoint\(LineSegmentOf\(([^,]+),([^)]+)\)\)", compact_lhs)
+            if match and self.same_unordered_pair([match.group(1), match.group(2)], [left, right]):
+                return self.normalize_relation_lhs(rhs)
+        return None
+
+    def point_on_curve(self, state: SymbolicState, point: str, curve: str) -> bool:
+        for relation in state.geometric_relations:
+            compact = self.normalize_relation_lhs(relation)
+            if compact in {f"PointOnCurve({point},{curve})", f"PointOnCurve({point},{curve})=True"}:
+                return True
+        return False
+
+    def point_coordinate(self, state: SymbolicState, point: str) -> Optional[Tuple[sp.Expr, sp.Expr]]:
+        if point in state.coordinates:
+            return self.parse_coordinate_tuple(state.coordinates[point])
+        x_value = self.axis_coordinate_value(state, point, "x")
+        y_value = self.axis_coordinate_value(state, point, "y")
+        if x_value is not None and y_value is not None:
+            return x_value, y_value
+        return None
+
+    def axis_coordinate_value(self, state: SymbolicState, point: str, axis: str) -> Optional[sp.Expr]:
+        coord = state.coordinates.get(point)
+        if coord:
+            parsed = self.parse_coordinate_tuple(coord)
+            if parsed:
+                return parsed[0] if axis == "x" else parsed[1]
+        name = "XCoordinate" if axis == "x" else "YCoordinate"
+        direct = self.direct_relation_value(state, f"{name}({point})")
+        return self.parse_expr(direct)
+
+    def distance_to_axis_value(self, state: SymbolicState, point: str, axis: str) -> Optional[sp.Expr]:
+        direct = self.direct_relation_value(state, f"Distance({point}, {axis})")
+        direct = direct or self.direct_relation_value(state, f"Distance({axis}, {point})")
+        return self.parse_expr(direct)
+
+    def curve_for_focus_arg(self, state: SymbolicState, focus: str) -> Optional[str]:
+        focus_match = re.match(r"Focus\((\w+)\)", focus)
+        if focus_match:
+            return focus_match.group(1)
+        return self.curve_for_focus_point(state, focus)
+
+    def curve_for_focus_point(self, state: SymbolicState, point: str) -> Optional[str]:
+        for relation in state.geometric_relations:
+            compact = self.normalize_relation_lhs(relation)
+            patterns = [
+                rf"Focus\((\w+)\)={re.escape(point)}",
+                rf"{re.escape(point)}=Focus\((\w+)\)",
+            ]
+            for pattern in patterns:
+                match = re.match(pattern, compact)
+                if match:
+                    return match.group(1)
+        return None
+
+    def focus_point_for_curve(self, state: SymbolicState, curve: str) -> Optional[str]:
+        for relation in state.geometric_relations:
+            compact = self.normalize_relation_lhs(relation)
+            match = re.match(rf"Focus\({re.escape(curve)}\)=(\w+)", compact)
+            if match:
+                return match.group(1)
+        return None
+
+    def set_members(self, text: str) -> List[str]:
+        stripped = text.strip()
+        if stripped.startswith("{") and stripped.endswith("}"):
+            stripped = stripped[1:-1]
+        return [part.strip() for part in self.split_top_level(stripped, [","]) if part.strip()]
+
+    def same_unordered_pair(self, left: Sequence[str], right: Sequence[str]) -> bool:
+        return len(left) == len(right) == 2 and {self.normalize_relation_lhs(item) for item in left} == {
+            self.normalize_relation_lhs(item) for item in right
+        }
+
+    def parse_angle_value(self, value: Optional[str]) -> Optional[sp.Expr]:
+        if value is None:
+            return None
+        compact = self.normalize_relation_lhs(value)
+        unit_match = re.match(r"ApplyUnit\(([^,]+),degree\)", compact)
+        if unit_match:
+            degrees = self.parse_expr(unit_match.group(1))
+            return sp.simplify(degrees * sp.pi / 180) if degrees is not None else None
+        return self.parse_expr(value)
+
     def solve_range(self, state: SymbolicState, variable: str) -> Optional[str]:
         symbol = sp.Symbol(variable)
         for model in self.curve_models(state).values():
@@ -1040,11 +1515,17 @@ class SymbolicSolver:
         return None
 
     def coordinate_for_distance_arg(self, state: SymbolicState, arg: str) -> Optional[Tuple[sp.Expr, sp.Expr]]:
-        if arg in state.coordinates:
-            return self.parse_coordinate_tuple(state.coordinates[arg])
+        coord = self.point_coordinate(state, arg)
+        if coord:
+            return coord
         focus_match = re.match(r"Focus\((\w+)\)", arg)
         if focus_match:
             coord = self.solve_coordinate(state, arg)
+            if coord:
+                return self.parse_coordinate_text(coord)
+        focus_curve = self.curve_for_focus_point(state, arg)
+        if focus_curve:
+            coord = self.solve_coordinate(state, f"Focus({focus_curve})")
             if coord:
                 return self.parse_coordinate_text(coord)
         if arg == "xAxis":
