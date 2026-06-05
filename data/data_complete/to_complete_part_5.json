@@ -1,0 +1,1694 @@
+{
+  "_meta": {
+    "part": 5,
+    "total_parts": 10,
+    "num_samples": 240,
+    "id_range": [
+      3077,
+      3839
+    ],
+    "task": "补齐 process（解题过程）与 models（80模型库中的模型id序列）"
+  },
+  "samples": [
+    {
+      "id": 3077,
+      "text": "顶点在原点，焦点是$F(0 , 5)$的抛物线方程是?",
+      "fact_expressions": "G: Parabola;O: Origin;Vertex(G) = O;F: Point;Coordinate(F) = (0, 5);Focus(G) = F",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2=20*y"
+    },
+    {
+      "id": 3083,
+      "text": "已知椭圆$C$: $\\frac{x^{2}}{3}+y^{2}=1$的两个焦点为$F_{1}$ ,$ F_{2}$ ,点$P(x_{0},y_{0})$满足$0<\\frac{x_{0}^{2}}{3} + y_{0}^{2}<1$, 则$|P F_{1}|+|P F_{2}|$的取值范围为?直线$\\frac{x_{0} x}{3} + y_{0} y=1$与椭圆$C$的公共点的个数为?",
+      "fact_expressions": "C: Ellipse;G: Line;y0: Number;x0: Number;P: Point;F1: Point;F2: Point;Expression(C) = (x^2/3 + y^2 = 1);Expression(G) = (y*y0 + (x*x0)/3 = 1);Coordinate(P) = (x0, y0);Focus(C) = {F1,F2};0<x0^2/3+y0^2;x0^2/3+y0^2<1",
+      "query_expressions": "Range(Abs(LineSegmentOf(P,F1))+Abs(LineSegmentOf(P,F2)));NumIntersection(G,C)",
+      "answer_expressions": "[2*sqrt(2),2*sqrt(3))\n0"
+    },
+    {
+      "id": 3085,
+      "text": "已知抛物线$y^{2}=4 x$的焦点为$F$，准线与$x$轴的交点为$M$，$N$为抛物线上的一点，且满足$|N F|=\\frac{\\sqrt{3}}{2}|MN|$，则$\\angle NMF$=?",
+      "fact_expressions": "G: Parabola;N: Point;F: Point;M: Point;Expression(G) = (y^2 = 4*x);Focus(G) = F;Intersection(Directrix(G), xAxis) = M;PointOnCurve(N, G);Abs(LineSegmentOf(N, F)) = (sqrt(3)/2)*Abs(LineSegmentOf(M, N))",
+      "query_expressions": "AngleOf(N, M, F)",
+      "answer_expressions": "pi/6"
+    },
+    {
+      "id": 3090,
+      "text": "$P$为抛物线$y^{2}=4 x$上任意一点，$P$在$y$轴上的射影为$Q$，点$M(4 , 5)$，则$PQ$与$PM$长度之和的最小值为?",
+      "fact_expressions": "G: Parabola;P: Point;Q: Point;M: Point;Expression(G) = (y^2 = 4*x);Coordinate(M) = (4, 5);PointOnCurve(P, G);Projection(P, yAxis) = Q",
+      "query_expressions": "Min(Length(LineSegmentOf(P, Q)) + Length(LineSegmentOf(P, M)))",
+      "answer_expressions": "sqrt(34) - 1"
+    },
+    {
+      "id": 3091,
+      "text": "若点$P$到点$F(4,0)$的距离比它到直线$x+5=0$的距离少$1$，则动点$P$的轨迹方程是?",
+      "fact_expressions": "G: Line;F: Point;P: Point;Expression(G) = (x + 5 = 0);Coordinate(F) = (4, 0);Distance(P, F) = Distance(P, G) - 1",
+      "query_expressions": "LocusEquation(P)",
+      "answer_expressions": "y^2=16*x"
+    },
+    {
+      "id": 3092,
+      "text": "已知双曲线$C$: $x^{2}-\\frac{y^{2}}{m}=1(m>0)$的左，右焦点分别为$F_{1}$ , $F_{2}$ , 过$F_{2}$的直线与双曲线$C$的右支相交于$P$、$Q$两点，若$P Q \\perp P F_{1}$，且$|P F_{1}|=|P Q|$，则$m$=?",
+      "fact_expressions": "C: Hyperbola;m: Number;G: Line;P: Point;Q: Point;F1: Point;F2:Point;m>0;Expression(C) = (x^2 - y^2/m = 1);LeftFocus(C)=F1;RightFocus(C)=F2;PointOnCurve(F2, G);Intersection(G,RightPart(C)) = {P, Q};IsPerpendicular(LineSegmentOf(P, Q), LineSegmentOf(P, F1));Abs(LineSegmentOf(P, F1)) = Abs(LineSegmentOf(P, Q))",
+      "query_expressions": "m",
+      "answer_expressions": "4 - 2*sqrt(2)"
+    },
+    {
+      "id": 3093,
+      "text": "以双曲线$\\frac{x^{2}}{3}-y^{2}=1$的一条准线为准线，顶点在原点的抛物线方程是?",
+      "fact_expressions": "G: Hyperbola;H: Parabola;Expression(G) = (x^2/3 - y^2 = 1);O: Origin;Directrix(H) = OneOf(Directrix(G));Vertex(H) = O",
+      "query_expressions": "Expression(H)",
+      "answer_expressions": "y^2 = pm*6*x"
+    },
+    {
+      "id": 3095,
+      "text": "已知双曲线$\\frac{x^{2}}{64}-\\frac{y^{2}}{36}=1$的左、右焦点分别为$F_{1}$、$F_{2}$，直线$l$过点$F_{1}$交双曲线的左支于$A$、$B$两点，且$|A B|=9$，则$\\triangle A B F_{2}$的周长为?",
+      "fact_expressions": "l: Line;G: Hyperbola;A: Point;B: Point;F2: Point;F1: Point;Expression(G) = (x^2/64 - y^2/36 = 1);LeftFocus(G) = F1;RightFocus(G) = F2;PointOnCurve(F1, l);Intersection(l,LeftPart(G))={A, B};Abs(LineSegmentOf(A, B)) = 9",
+      "query_expressions": "Perimeter(TriangleOf(A, B, F2))",
+      "answer_expressions": "50"
+    },
+    {
+      "id": 3099,
+      "text": "已知椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的左右焦点分别为$F_{1}$、$F_{2}$，离心率为$e$，若椭圆上存在点$P$，使得$\\frac{PF_{1}}{PF_{2}}=e$，则该离心率$e$的取值范围是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a > b;b > 0;F1: Point;F2: Point;LeftFocus(G) = F1;RightFocus(G) = F2;e: Number;Eccentricity(G) = e;P: Point;PointOnCurve(P, G);LineSegmentOf(P, F1)/LineSegmentOf(P, F2) = e",
+      "query_expressions": "Range(e)",
+      "answer_expressions": "[sqrt(2)-1, 1)"
+    },
+    {
+      "id": 3103,
+      "text": "已知抛物线$C$: $y^{2}=4 x$的焦点为$F$，过点$F$且斜率为$1$的直线$l$交抛物线$C$于$M$、$N$两点，$b=\\frac{|M F|+|N F|}{2}$，若线段$M N$的垂直平分线与$x$轴交点的横坐标为$a$，则$a-b$的值为?",
+      "fact_expressions": "l: Line;C: Parabola;M: Point;N: Point;F: Point;a:Number;b:Number;Expression(C) = (y^2 = 4*x);Focus(C) = F;PointOnCurve(F, l);Slope(l) = 1;Intersection(l, C) = {M, N};b = (Abs(LineSegmentOf(M, F)) + Abs(LineSegmentOf(N, F)))/2;XCoordinate(Intersection(PerpendicularBisector(LineSegmentOf(M,N))), xAxis) = a",
+      "query_expressions": "a - b",
+      "answer_expressions": "1"
+    },
+    {
+      "id": 3104,
+      "text": "双曲线$\\frac{x^{2}}{12}-\\frac{y^{2}}{9}=-1$的渐近线方程为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/12 - y^2/9 = -1)",
+      "query_expressions": "Expression(Asymptote(G))",
+      "answer_expressions": "y=pm*(sqrt(3)/2)*x"
+    },
+    {
+      "id": 3106,
+      "text": "点$A(x_{0}, y_{0})$在双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{32}=1$的右支上, 若点$A$到右焦点的距离等于$2 x_{0}$, 则$x_{0}$=?",
+      "fact_expressions": "G: Hyperbola;A: Point;x0:Number;y0:Number;Expression(G) = (x^2/4 - y^2/32 = 1);Coordinate(A) = (x0, y0);PointOnCurve(A, RightPart(G));Distance(A,RightFocus(G)) = 2*x0",
+      "query_expressions": "x0",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3107,
+      "text": "已知抛物线$C$: $y^{2}=4 x$，过焦点$F$的直线$l$与抛物线$C$交于$A$、$B$两点，若线段$A F$, $B F$的中点在$y$轴上的射影分别为$P$、$Q$，且$|P Q|=4$，则直线$l$的方程为?",
+      "fact_expressions": "C: Parabola;Expression(C) = (y^2 = 4*x);F: Point;Focus(C) = F;l: Line;PointOnCurve(F, l) = True;Intersection(l, C) = {A, B};A: Point;B: Point;Projection(MidPoint(LineSegmentOf(A, F)), yAxis) = P;P: Point;Projection(MidPoint(LineSegmentOf(B, F)), yAxis) = Q;Q: Point;Abs(LineSegmentOf(P, Q)) = 4",
+      "query_expressions": "Expression(l)",
+      "answer_expressions": "x+pm*sqrt(3)*y-1=0"
+    },
+    {
+      "id": 3108,
+      "text": "点$A(x_{0} , y_{0})$在双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{32}=1$的右支上，若点$A$到右焦点的距离等于$2 x_{0}$，则$x_{0}$=?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/4 - y^2/32 = 1);A: Point;x0: Number;y0: Number;Coordinate(A) = (x0, y0);PointOnCurve(A, RightPart(G));Distance(A, RightFocus(G)) = 2*x0",
+      "query_expressions": "x0",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3109,
+      "text": "过点$M(-2,0)$的直线$m$与椭圆$\\frac{x^{2}}{2}+y^{2}=1$交于$P_{1}$、$P_{2}$，线段$P_{1} P_{2}$的中点为$P$，设直线$m$的斜率为$k_{1}$，直线$O P$的斜率为$k_{2}$，则$k_{1} k_{2}$的值为?",
+      "fact_expressions": "M: Point;Coordinate(M) = (-2, 0);m: Line;PointOnCurve(M, m) = True;G: Ellipse;Expression(G) = (x^2/2 + y^2 = 1);Intersection(m, G) = {P1, P2};P1: Point;P2: Point;MidPoint(LineSegmentOf(P1,P2)) = P;P: Point;Slope(m) = k1;k1: Number;O: Origin;Slope(LineOf(O,P)) = k2;k2: Number",
+      "query_expressions": "k1*k2",
+      "answer_expressions": "-1/2"
+    },
+    {
+      "id": 3115,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的渐近线方程为$y=\\pm \\frac{1}{2} x$，且双曲线过点$(\\frac{10}{3}, \\frac{4}{3})$，则双曲线的标准方程为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);a: Number;b: Number;a>0;b>0;Expression(Asymptote(G)) = (y = pm*(x/2));H: Point;Coordinate(H) = (10/3, 4/3);PointOnCurve(H, G)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2/4-y^2=1"
+    },
+    {
+      "id": 3116,
+      "text": "已知$P$为双曲线$x^{2}-y^{2}=1$右支上的一个动点，若点$P$到直线$y=x+2$的距离大于$m$恒成立，则实数$m$的取值范围是?",
+      "fact_expressions": "G: Hyperbola;H: Line;P: Point;m: Real;Expression(G) = (x^2 - y^2 = 1);Expression(H) = (y = x + 2);PointOnCurve(P, RightPart(G));Distance(P, H) > m",
+      "query_expressions": "Range(m)",
+      "answer_expressions": "(-oo, sqrt(2)]"
+    },
+    {
+      "id": 3120,
+      "text": "已知$P$是以$F_{1}$、$F_{2}$为焦点的椭圆$\\frac{x^{2}}{a^{2}} +\\frac{y^{2}}{b^{2}}=1 (a>b>0)$上的一点,若$\\overrightarrow{P F_{1}} \\cdot \\overrightarrow{P F_{2}}=0$, $\\tan \\angle P F_{1} F_{2}=\\frac{1}{2}$, 则此椭圆的离心率为?",
+      "fact_expressions": "P: Point;PointOnCurve(P,G) = True;G: Ellipse;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a > b;b > 0;Focus(G) = {F1,F2};F1: Point;F2: Point;DotProduct(VectorOf(P,F1),VectorOf(P,F2))=0;Tan(AngleOf(P,F1,F2)) = 1/2",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(5)/3"
+    },
+    {
+      "id": 3121,
+      "text": "设$F_{1}$、$F_{2}$是椭圆$\\frac{x^{2}}{4}+y^{2}=1$的两个焦点，点$P$在椭圆上，且$\\overrightarrow{F_{1} P} \\cdot \\overrightarrow{P F_{2}}=0$，则$\\triangle F_{1} P F_{2}$的面积为?",
+      "fact_expressions": "G: Ellipse;F1: Point;P: Point;F2: Point;Expression(G) = (x^2/4 + y^2 = 1);Focus(G) = {F1, F2};PointOnCurve(P, G);DotProduct(VectorOf(F1, P), VectorOf(P, F2)) = 0",
+      "query_expressions": "Area(TriangleOf(F1, P, F2))",
+      "answer_expressions": "1"
+    },
+    {
+      "id": 3124,
+      "text": "若双曲线$\\frac{x^{2}}{3} + \\frac{y^{2}}{p}=1$的一个焦点在抛物线$y^{2}=2 p x$的准线上，则$p$的值为?",
+      "fact_expressions": "G: Hyperbola;p: Number;H: Parabola;Expression(G) = (x^2/3 + y^2/p = 1);Expression(H) = (y^2 = 2*(p*x));PointOnCurve(OneOf(Focus(G)), Directrix(H))",
+      "query_expressions": "p",
+      "answer_expressions": "-6"
+    },
+    {
+      "id": 3127,
+      "text": "经过点$(-\\sqrt{2}, \\sqrt{3})$ ,$(\\frac{\\sqrt{5}}{3}, \\sqrt{2})$的双曲线方程是?",
+      "fact_expressions": "G: Hyperbola;H: Point;I: Point;Coordinate(H) = (-sqrt(2), sqrt(3));Coordinate(I) = (sqrt(5)/3, sqrt(2));PointOnCurve(H,G);PointOnCurve(I,G)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2-y^2/3=1"
+    },
+    {
+      "id": 3130,
+      "text": "抛物线$y^{2}=a x$的焦点为$(-1,0)$，则$a$=?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y^2 = a*x);a: Number;Coordinate(Focus(G)) = (-1, 0)",
+      "query_expressions": "a",
+      "answer_expressions": "-4"
+    },
+    {
+      "id": 3132,
+      "text": "若一条双曲线与$\\frac{x^{2}}{8}-y^{2}=1$有共同渐近线，且与椭圆$\\frac{x^{2}}{20}+\\frac{y^{2}}{2}=1$有相同的焦点，则此双曲线的方程为?",
+      "fact_expressions": "G: Hyperbola;H: Ellipse;C:Curve;Expression(H) = (x^2/20 + y^2/2 = 1);Expression(C)= (x^2/8 - y^2 = 1);Asymptote(G)=Asymptote(C);Focus(G) = Focus(H)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2/16-y^2/2=1"
+    },
+    {
+      "id": 3134,
+      "text": "已知抛物线$y^{2}=4 x$上一点到焦点的距离为$5$，这点的坐标为?",
+      "fact_expressions": "G: Parabola;P:Point;Expression(G) = (y^2 = 4*x);PointOnCurve(P,G);Distance(P,Focus(G))=5",
+      "query_expressions": "Coordinate(P)",
+      "answer_expressions": "(4,pm*4)"
+    },
+    {
+      "id": 3136,
+      "text": "过$M(1 , 0)$作抛物线$y^{2}=8 x$的弦$A B$，若$|A B|=\\frac{8 \\sqrt{10}}{3}$，则直线$A B$的倾斜角是?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y^2 = 8*x);M: Point;Coordinate(M) = (1, 0);A: Point;B: Point;IsChordOf(LineSegmentOf(A, B), G);PointOnCurve(M, LineSegmentOf(A, B));Abs(LineSegmentOf(A, B)) = (8*sqrt(10))/3",
+      "query_expressions": "Inclination(LineOf(A, B))",
+      "answer_expressions": "{ApplyUnit(60, degree), ApplyUnit(120, degree)}"
+    },
+    {
+      "id": 3143,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的离心率为$\\sqrt{3}$ , $A$ , $B$为左，右顶点，点$P$为双曲线$C$在第一象限的任意一点，点$O$为坐标原点，若直线$P A $, $P B$，$P O$的斜率分别为$k_{1}$ ,$ k_{2}$ , $k_{3}$，记$m=k_{1} k_{2} k_{3}$，则$m$的取值范围为?",
+      "fact_expressions": "C: Hyperbola;b: Number;a: Number;A: Point;P: Point;B: Point;O: Origin;a>0;b>0;Expression(C) = (-y^2/b^2 + x^2/a^2 = 1);Eccentricity(C) = sqrt(3);LeftVertex(C)=A;RightVertex(C)=B;PointOnCurve(P, C);Quadrant(P)=1;Slope(LineOf(P,A))=k1;Slope(LineOf(P,B))=k2;Slope(LineOf(P,O))=k3;k1:Number;k2:Number;k3:Number;m:Number;m=k1*k2*k3",
+      "query_expressions": "Range(m)",
+      "answer_expressions": "(0,2*sqrt(2))"
+    },
+    {
+      "id": 3145,
+      "text": "已知椭圆$\\frac{x^{2}}{25}+\\frac{y^{2}}{16}=1$上一点$P$到右准线的距离为$10$，则点$P$到它的左焦点的距离为?",
+      "fact_expressions": "G: Ellipse;P: Point;Expression(G) = (x^2/25 + y^2/16 = 1);PointOnCurve(P, G);Distance(P, RightDirectrix(G)) = 10",
+      "query_expressions": "Distance(P, LeftFocus(G))",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3146,
+      "text": "设$A(x_{1} , y_{1})$ , $B(x_{2} , y_{2})$是抛物线$y=2 x^{2}$上的两点，直线$l$是$A B$的垂直平分线. 当且仅当$x_{1}+x_{2}$取?值时，直线$l$过抛物线的焦点$F$",
+      "fact_expressions": "l: Line;G: Parabola;A: Point;B: Point;F: Point;x1: Number;x2: Number;y1: Number;y2: Number;Expression(G) = (y = 2*x^2);Coordinate(A) = (x1, y1);Coordinate(B) = (x2, y2);PointOnCurve(A, G);PointOnCurve(B, G);PerpendicularBisector(LineSegmentOf(A, B)) = l;Focus(G) = F;PointOnCurve(F, l)",
+      "query_expressions": "x1 + x2",
+      "answer_expressions": "{(5/4, +oo), 0}"
+    },
+    {
+      "id": 3152,
+      "text": "若椭圆和双曲线有相同焦点$F_{1}$，$F_{2}$，点$P$是两条曲线的一个公共点，并且$\\overrightarrow{PF_{1}} \\cdot \\overrightarrow{PF_{2}}=0$,$e_{1}$，$e_{2}$分别为它们的离心率，则$\\frac{1}{e_{1} ^2}+\\frac{1}{e_{2}^2}$的值是?",
+      "fact_expressions": "G: Hyperbola;H: Ellipse;P: Point;F1: Point;F2: Point;e1:Number;e2:Number;Focus(G)={F1,F2};Focus(H)={F1,F2};OneOf(Intersection(G,H))=P;DotProduct(VectorOf(P, F1), VectorOf(P, F2)) = 0;Eccentricity(H)=e1;Eccentricity(G)=e2",
+      "query_expressions": "1/(e1^2) + 1/(e2^2)",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3159,
+      "text": "若点$P(2,-1)$为圆$(x-1)^{2}+y^{2}=25$的弦$A B$的中点，则直线$A B$的方程是?",
+      "fact_expressions": "G: Circle;Expression(G) = (y^2 + (x - 1)^2 = 25);P: Point;Coordinate(P) = (2, -1);A: Point;B: Point;IsChordOf(LineSegmentOf(A, B), G);MidPoint(LineSegmentOf(A, B)) = P",
+      "query_expressions": "Expression(LineOf(A, B))",
+      "answer_expressions": "x-y-3=0"
+    },
+    {
+      "id": 3160,
+      "text": "已知抛物线的焦点为$F$，准线与$x$轴的交点为$M$、$N$为抛物线上的一点，且满足$|N F|=\\frac{2}{3}|M N|$，则$\\tan \\angle N M F$=?",
+      "fact_expressions": "G: Parabola;Focus(G) = F;F: Point;Intersection(Directrix(G),xAxis) = M;M: Point;PointOnCurve(N,G) = True;N: Point;Abs(LineSegmentOf(N, F)) = (2/3)*Abs(LineSegmentOf(M, N))",
+      "query_expressions": "Tan(AngleOf(N, M, F))",
+      "answer_expressions": "sqrt(5)/2"
+    },
+    {
+      "id": 3165,
+      "text": "已知点$P$是椭圆$C$: $\\frac{x^{2}}{8}+\\frac{y^{2}}{4}=1$上的动点，$F_{1}$ , $F_{2}$分别为左、右焦点，$O$为坐标原点，则$\\frac {|{|PF_{1}|-|PF_{2}|}|}{|OP|}$的取值范围是?",
+      "fact_expressions": "C: Ellipse;P: Point;F1: Point;F2: Point;O: Origin;Expression(C) = (x^2/8 + y^2/4 = 1);PointOnCurve(P, C);LeftFocus(C) = F1;RightFocus(C) = F2",
+      "query_expressions": "Range(Abs((Abs(LineSegmentOf(P, F1)) - Abs(LineSegmentOf(P, F2))))/Abs(LineSegmentOf(O, P)))",
+      "answer_expressions": "[0, sqrt(2)]"
+    },
+    {
+      "id": 3170,
+      "text": "椭圆$\\frac{x^{2}}{4}+\\frac{y^{2}}{3}=1$上一点$A$到左焦点的距离为$\\frac{5}{2}$，则$A$点到右准线的距离为?",
+      "fact_expressions": "G: Ellipse;A: Point;Expression(G) = (x^2/4 + y^2/3 = 1);PointOnCurve(A, G);Distance(A, LeftFocus(G)) = 5/2",
+      "query_expressions": "Distance(A,RightDirectrix(G))",
+      "answer_expressions": "3"
+    },
+    {
+      "id": 3175,
+      "text": "已知$(4 , 2)$是直线$l$被椭圆$\\frac{x^{2}}{36}+\\frac{y^{2}}{9}=1$所截得的线段的中点，则$l$的方程是?",
+      "fact_expressions": "l: Line;G: Ellipse;Expression(G) = (x^2/36 + y^2/9 = 1);Coordinate(MidPoint(InterceptChord(l,G))) = (4, 2)",
+      "query_expressions": "Expression(l)",
+      "answer_expressions": "x+2*y-8=0"
+    },
+    {
+      "id": 3179,
+      "text": "设双曲线$C$：$\\frac{x^{2}}{a^{2}}-y^{2}=1  (a>0)$与直线$l$: $y+x=1$相交于两不同点$A$、$B$，设直线$l$与$y$轴交点为$P$，且$PA=\\frac{5}{12} PB$，则$a$=?",
+      "fact_expressions": "l: Line;C: Hyperbola;a: Number;P: Point;A: Point;B: Point;a>0;Expression(C) = (-y^2 + x^2/a^2 = 1);Negation(A=B);Intersection(C, l) = {A, B};Expression(l)=(y+x=1);Intersection(l,yAxis)=P;LineSegmentOf(P, A) = (5/12)*LineSegmentOf(P, B)",
+      "query_expressions": "a",
+      "answer_expressions": "17/13"
+    },
+    {
+      "id": 3180,
+      "text": "设双曲线的半焦距为$c$，两条准线间的距离为$d$，且$c=d$，则双曲线的离心率$e$等于?",
+      "fact_expressions": "G: Hyperbola;c: Number;HalfFocalLength(G) = c;l1: Line;l2: Line;Directrix(G) = {l1,l2};Distance(l1,l2) = d;d: Number;c = d;e: Number;Eccentricity(G) = e",
+      "query_expressions": "e",
+      "answer_expressions": "sqrt(2)"
+    },
+    {
+      "id": 3184,
+      "text": "椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$满足$a \\leq  \\sqrt{3} b$，离心率为$e$，则$e^{2}$的最大值是?",
+      "fact_expressions": "G: Ellipse;b: Number;a: Number;a > b;b > 0;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);Eccentricity(G)=e;a <=sqrt(3)*b;e:Number",
+      "query_expressions": "Max(e^2)",
+      "answer_expressions": "2/3"
+    },
+    {
+      "id": 3197,
+      "text": "已知$P$在圆$(x-1)^{2}+y^{2}=1$上移动，$Q$在椭圆$\\frac{x^{2}}{9}+\\frac{y^{2}}{4}=1$上移动，则$|P Q|$最小值是?",
+      "fact_expressions": "G: Ellipse;H: Circle;P: Point;Q: Point;Expression(G) = (x^2/9 + y^2/4 = 1);Expression(H) = (y^2 + (x - 1)^2 = 1);PointOnCurve(P, H);PointOnCurve(Q, G)",
+      "query_expressions": "Min(Abs(LineSegmentOf(P, Q)))",
+      "answer_expressions": "4*sqrt(5)/5-1"
+    },
+    {
+      "id": 3203,
+      "text": "若双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的焦距等于实轴长的$\\sqrt{3}$倍，则$C$的渐近线方程为?",
+      "fact_expressions": "C: Hyperbola;Expression(C) = (-y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a>0;b>0;FocalLength(C) = sqrt(3)*Length(RealAxis(C))",
+      "query_expressions": "Expression(Asymptote(C))",
+      "answer_expressions": "y=pm*sqrt(2)*x"
+    },
+    {
+      "id": 3204,
+      "text": "若双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{m}=1$的焦距为$6$，则$m$的值为?",
+      "fact_expressions": "G: Hyperbola;m: Number;Expression(G) = (x^2/4 - y^2/m = 1);FocalLength(G) = 6",
+      "query_expressions": "m",
+      "answer_expressions": "5"
+    },
+    {
+      "id": 3206,
+      "text": "已知$F$是抛物线$C$:$y^{2}=4 x$的焦点，过$F$且斜率为$1$的直线交抛物线$C$与$A$ , $B$两点，则$|AB|$=?",
+      "fact_expressions": "C: Parabola;G: Line;A: Point;B: Point;F: Point;Expression(C) = (y^2 = 4*x);Focus(C) = F;PointOnCurve(F, G);Slope(G) = 1;Intersection(G, C) = {A, B}",
+      "query_expressions": "Abs(LineSegmentOf(A, B))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3207,
+      "text": "已知抛物线$y=x^{2}$上有一条长为$2$的动弦$A B$，则$A B$中点$M$到$x$轴的最短距离为?",
+      "fact_expressions": "G: Parabola;A: Point;B: Point;M: Point;Expression(G) = (y = x^2);IsChordOf(LineSegmentOf(A, B), G);Length(LineSegmentOf(A, B)) = 2;MidPoint(LineSegmentOf(A, B)) = M",
+      "query_expressions": "Min(Distance(M, xAxis))",
+      "answer_expressions": ""
+    },
+    {
+      "id": 3208,
+      "text": "已知双曲线$\\frac{x^{2}}{16}-\\frac{y^{2}}{20}=1$上一点$M$到它的一个焦点的距离等于$6$，则点$M$到另一个焦点的距离?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/16 - y^2/20 = 1);M: Point;PointOnCurve(M, G);F1: Point;F2: Point;OneOf(Focus(G)) = F1;OneOf(Focus(G)) = F2;Negation(F1=F2);Distance(M, F1) = 6",
+      "query_expressions": "Distance(M, F2)",
+      "answer_expressions": "14"
+    },
+    {
+      "id": 3219,
+      "text": "已知椭圆$C$: $\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的离心率为$\\frac{\\sqrt{3}}{2}$，过右焦点$F$且斜率为$k(k>0)$的直线与$C$相交于$A$、$B$两点. 若$\\overrightarrow{A F}=3\\overrightarrow{F B}$，则$k$=?",
+      "fact_expressions": "C: Ellipse;b: Number;a: Number;G: Line;A: Point;F: Point;B: Point;a > b;b > 0;k:Number;k>0;Expression(C) = (y^2/b^2 + x^2/a^2 = 1);Eccentricity(C) = sqrt(3)/2;RightFocus(C)=F;PointOnCurve(F, G);Slope(G) = k;Intersection(G, C) = {A, B};VectorOf(A, F) = 3*VectorOf(F, B)",
+      "query_expressions": "k",
+      "answer_expressions": "sqrt(2)"
+    },
+    {
+      "id": 3230,
+      "text": "已知椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的右焦点为$F$、$P$点在椭圆上，以$P$点为圆心的圆与$y$轴相切，且同时与$x$轴相切于椭圆的右焦点$F$，则椭圆$\\frac{y^{2}}{a^{2}}+\\frac{x^{2}}{b^{2}}=1$的离心率为?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);Z: Ellipse;Expression(Z) = (y^2/a^2+x^2/b^2 = 1);b: Number;a: Number;a > b;b > 0;F: Point;RightFocus(G) = F;P: Point;PointOnCurve(P, G);H: Circle;Center(H) = P;IsTangent(H, yAxis);TangentPoint(H, xAxis) = F",
+      "query_expressions": "Eccentricity(Z)",
+      "answer_expressions": "(sqrt(5)-1)/2"
+    },
+    {
+      "id": 3231,
+      "text": "椭圆$4 x^{2}+y^{2}=16$的焦点坐标是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (4*x^2 + y^2 = 16)",
+      "query_expressions": "Coordinate(Focus(G))",
+      "answer_expressions": "{(0, -2*sqrt(3)), (0, 2*sqrt(3))}"
+    },
+    {
+      "id": 3242,
+      "text": "已知双曲线$C$过点$P(\\sqrt {3} , 2 \\sqrt{2})$，一条渐近线方程为$y=\\frac{2 \\sqrt {3}}{3} x$，双曲线$C$的标准方程为?",
+      "fact_expressions": "C: Hyperbola;P: Point;Coordinate(P) = (sqrt(3), 2*sqrt(2));PointOnCurve(P, C);Expression(OneOf(Asymptote(C))) = (y = x*(2*sqrt(3)/3))",
+      "query_expressions": "Expression(C)",
+      "answer_expressions": "y^2/4-x^2/3=1"
+    },
+    {
+      "id": 3249,
+      "text": "已知动点$P$到定点$(2 , 0)$的距离比它到定直线$l$: $x=-1$的距离大$1$，则点$P$的轨迹方程为?",
+      "fact_expressions": "P: Point;G: Point;Coordinate(G) = (2, 0);l: Line;Expression(l) = (x = -1);Distance(P, G) = Distance(P, l) + 1",
+      "query_expressions": "LocusEquation(P)",
+      "answer_expressions": "y^2=4*x"
+    },
+    {
+      "id": 3251,
+      "text": "抛物线$y=\\frac{1}{8} x^{2}$的焦点坐标为?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y = x^2/8)",
+      "query_expressions": "Coordinate(Focus(G))",
+      "answer_expressions": "(0,2)"
+    },
+    {
+      "id": 3255,
+      "text": "设$P$为双曲线$x^{2}-\\frac{y^{2}}{12}=1$上的一点，$F_{1}$、$F_{2}$是该双曲线的两个焦点，若$|P F_{1}|=\\frac{3}{2}|P F_{2}|$，则$\\cos \\angle F_{1} PF_{2}$为?",
+      "fact_expressions": "P: Point;G: Hyperbola;Expression(G) = (x^2 - y^2/12 = 1);PointOnCurve(P, G) = True;F1: Point;F2: Point;Focus(G) = {F1, F2};Abs(LineSegmentOf(P, F1)) = (3/2)*Abs(LineSegmentOf(P, F2))",
+      "query_expressions": "Cos(AngleOf(F1, P, F2))",
+      "answer_expressions": "-13/4"
+    },
+    {
+      "id": 3257,
+      "text": "已知过点$T(-1,2)$作抛物线$C$: $y^{2}=2 p x(p>0)$的两条切线,切点分别为$A$、$B$, 直线$A B$经过抛物线$C$的焦点$F$,则$|T A|^2 +|T B|^2$=?",
+      "fact_expressions": "C: Parabola;p: Number;A: Point;B: Point;T: Point;l1: Line;l2: Line;F: Point;p>0;Expression(C) = (y^2 = 2*(p*x));Coordinate(T) = (-1, 2);Focus(C)=F;TangentOfPoint(T, C) = {l1, l2};TangentPoint(l1,C)=A;TangentPoint(l2,C)=B;PointOnCurve(F, LineOf(A,B))",
+      "query_expressions": "Abs(LineSegmentOf(T, A))^2 + Abs(LineSegmentOf(T, B))^2",
+      "answer_expressions": "64"
+    },
+    {
+      "id": 3261,
+      "text": "已知椭圆的短轴长等于$2$，长轴端点与短轴端点间的距离等于$\\sqrt {5}$，则此椭圆的标准方程是?",
+      "fact_expressions": "G: Ellipse;Length(MinorAxis(G)) = 2;Distance(Endpoint(MajorAxis(G)),Endpoint(MinorAxis(G)))=sqrt(5)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "{x^2/4+y^2=1,x^2+y^2/4=1}"
+    },
+    {
+      "id": 3265,
+      "text": "双曲线以直线$x \\pm \\sqrt {2} y=0$为渐近线，且经过抛物线$x^{2}-4 x+4 y+8=0$的焦点，则该双曲线的方程为?",
+      "fact_expressions": "G: Hyperbola;L: Line;Expression(L) = (x + pm*sqrt(2)*y = 0);Asymptote(G) = L;H: Parabola;Expression(H) = (4*y + x^2 - 4*x + 8 = 0);PointOnCurve(Focus(H), G) = True",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "y^2/2-x^2/4=1"
+    },
+    {
+      "id": 3267,
+      "text": "若点$M(-2 , 8)$在抛物线$y^{2}=2 px$的准线上，则实数$p$的值为?",
+      "fact_expressions": "G: Parabola;p: Real;M: Point;Expression(G) = (y^2 = 2*(p*x));Coordinate(M) = (-2, 8);PointOnCurve(M, Directrix(G))",
+      "query_expressions": "p",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3275,
+      "text": "设双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的离心率为$\\sqrt{3}$，且它的一条准线与抛物线$y^{2}=4 x$的准线重合，则此双曲线的方程为?",
+      "fact_expressions": "C: Hyperbola;a: Number;b: Number;a > 0;b > 0;Expression(C) = (x^2/a^2 - y^2/b^2 = 1);Eccentricity(C) = sqrt(3);E: Parabola;Expression(E) = (y^2 = 4*x);OneOf(Directrix(C)) = Directrix(E)",
+      "query_expressions": "Expression(C)",
+      "answer_expressions": "x^2/3 - y^2/6 = 1"
+    },
+    {
+      "id": 3279,
+      "text": "若点$P(2 , 0)$到双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1$的一条渐近线的距离为$ \\sqrt{2}$，则双曲线的离心率为?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;P: Point;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);Coordinate(P) = (2, 0);Distance(P, OneOf(Asymptote(G))) = sqrt(2)",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(2)"
+    },
+    {
+      "id": 3280,
+      "text": "抛物线$x^{2}=y$的焦点到准线的距离为?",
+      "fact_expressions": "G: Parabola;Expression(G) = (x^2 = y)",
+      "query_expressions": "Distance(Focus(G),Directrix(G))",
+      "answer_expressions": "1/2"
+    },
+    {
+      "id": 3282,
+      "text": "椭圆$\\frac{x^{2}}{100}+\\frac{y^{2}}{64}=1$的焦点坐标是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (x^2/100 + y^2/64 = 1)",
+      "query_expressions": "Coordinate(Focus(G))",
+      "answer_expressions": "(pm*6,0)"
+    },
+    {
+      "id": 3290,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1  (a>0 , b>0)$的离心率为$2$，一个焦点与抛物线$y^{2}=16 x$的焦点相同，则双曲线的焦点坐标为?渐近线方程为?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;H: Parabola;a>0;b>0;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);Expression(H) = (y^2 = 16*x);Eccentricity(G) = 2;OneOf(Focus(G)) = Focus(H)",
+      "query_expressions": "Coordinate(Focus(G));Expression(Asymptote(G))",
+      "answer_expressions": "(pm*4,0)\ny=pm*sqrt(3)*x"
+    },
+    {
+      "id": 3292,
+      "text": "设$F_{1}$ , $ F_{2}$分别是椭圆$\\frac{y^{2}}{16}+\\frac{y^{2}}{16}=1$的左、右焦点,$P$为椭圆上一点,$M$是$F_{1} P$的中点,$|OM|=3$, 则$P$点到椭圆左焦点距离为?",
+      "fact_expressions": "G: Ellipse;F1: Point;F2:Point;P: Point;O: Origin;M: Point;Expression(G) = (y^2/16 + y^2/16 = 1);LeftFocus(G) = F1;RightFocus(G) = F2;PointOnCurve(P, G);MidPoint(LineSegmentOf(F1, P)) = M;Abs(LineSegmentOf(O, M)) = 3",
+      "query_expressions": "Distance(P, LeftFocus(G))",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3293,
+      "text": "已知定点$Q(2,-1)$, $F$为抛物线$y^{2}=4 x$的焦点,动点$P$为抛物线上任意一点, 当$|P Q|+|P F|$取最小值时,$P$的坐标为?",
+      "fact_expressions": "G: Parabola;P: Point;Q: Point;F: Point;Expression(G) = (y^2 = 4*x);Focus(G) = F;Coordinate(Q) = (2, -1);PointOnCurve(P, G);WhenMin(Abs(LineSegmentOf(P, Q)) + Abs(LineSegmentOf(P, F)))",
+      "query_expressions": "Coordinate(P)",
+      "answer_expressions": "(1/4, -1)"
+    },
+    {
+      "id": 3295,
+      "text": "过抛物线$x^{2}=4 y$的焦点$F$作直线$l$交抛物线于$A$ , $B$两点，则弦$AB$的中点$M$的轨迹方程是?",
+      "fact_expressions": "l: Line;G: Parabola;A: Point;B: Point;Expression(G) = (x^2 = 4*y);Focus(G)=F;PointOnCurve(F,l);Intersection(l,G) = {A,B};IsChordOf(LineSegmentOf(A,B),G);MidPoint(LineSegmentOf(A,B))=M;M:Point;F:Point",
+      "query_expressions": "LocusEquation(M)",
+      "answer_expressions": "x^2=2*y-2"
+    },
+    {
+      "id": 3298,
+      "text": "抛物线$y=ax^{2}$的准线方程为$y=-\\frac{1}{4}$，则实数$a$的值为?",
+      "fact_expressions": "G: Parabola;a: Real;Expression(G) = (y = a*x^2);Expression(Directrix(G)) = (y = -1/4)",
+      "query_expressions": "a",
+      "answer_expressions": "1"
+    },
+    {
+      "id": 3300,
+      "text": "已知动点$P$在椭圆$\\frac{x^{2}}{25}+\\frac{y^{2}}{16}=1$上，点$M$在圆$C_{2}$:$(x-3)^{2}+y^{2}=1$上，点$A(3 , 0)$满足$P M \\perp A M$，则$|P M|$的最小值为?",
+      "fact_expressions": "G: Ellipse;C2: Circle;P: Point;M: Point;A: Point;Expression(G) = (x^2/25 + y^2/16 = 1);Expression(C2) = ((x-3)^2+y^2=1);Coordinate(A) = (3, 0);PointOnCurve(P, G);PointOnCurve(M, C2);IsPerpendicular(LineSegmentOf(P, M), LineSegmentOf(A, M))",
+      "query_expressions": "Min(Abs(LineSegmentOf(P, M)))",
+      "answer_expressions": "sqrt(3)"
+    },
+    {
+      "id": 3303,
+      "text": "已知直线$l$垂直于$x$轴，且$l$被抛物线$y^{2}=4 x$截得的线段长为$4 \\sqrt{3}$，则直线$l$的方程为?",
+      "fact_expressions": "l: Line;G: Parabola;Expression(G) = (y^2 = 4*x);IsPerpendicular(l,xAxis);Length(InterceptChord(l,G))=4*sqrt(3)",
+      "query_expressions": "Expression(l)",
+      "answer_expressions": "x=3"
+    },
+    {
+      "id": 3305,
+      "text": "已知椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的离心率为$\\frac{\\sqrt{2}}{2}$，右焦点为$F(1,0)$，三角形$A B C$的三个顶点都在椭圆上，设它的三条边$A B$ ,$B C$ , $A C$的中点分别为$D$、$E$、$F$，且三条边所在直线的斜率分别为$k_{1}$, $k_{2}$, $k_{3}$$(k_{1} k_{2} k_{3} \\neq 0)$ . 若直线$O D$ , $O E$ , $O F$的斜率之和为$-1$($O$为坐标原点)，则$\\frac{1}{k_{1}}+\\frac{1}{k_{2}}+\\frac{1}{k_{3}}$=?",
+      "fact_expressions": "G: Ellipse;a: Number;b: Number;O: Origin;D: Point;A: Point;B: Point;C: Point;E: Point;F: Point;a > b;b > 0;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);Coordinate(F) = (1, 0);Eccentricity(G) = sqrt(2)/2;RightFocus(G) = F;PointOnCurve(Vertex(TriangleOf(A, B, C)), G);MidPoint(LineSegmentOf(A, B)) = D;MidPoint(LineSegmentOf(B, C)) = E;MidPoint(LineSegmentOf(A, C)) = F;k1: Number;k2: Number;k3: Number;Slope(OverlappingLine(LineSegmentOf(A, B))) = k1;Slope(OverlappingLine(LineSegmentOf(B, C))) = k2;Slope(OverlappingLine(LineSegmentOf(A, C))) = k3;Negation(k1*k2*k3 = 0);Slope(LineOf(O, D)) + Slope(LineOf(O, E)) + Slope(LineOf(O, F)) = -1",
+      "query_expressions": "1/k2 + 1/k1 + 1/k3",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3308,
+      "text": "已知双曲线$C$与曲线$\\frac{x^{2}}{9}-\\frac{y^{2}}{16}=1$有公共的渐近线，且经过点$A(-3 , 4 \\sqrt{2})$，则$C$的方程为?",
+      "fact_expressions": "C: Hyperbola;G: Curve;A: Point;Expression(G) = (x^2/9 - y^2/16 = 1);Coordinate(A) = (-3,4*sqrt(2));Asymptote(G)=Asymptote(C);PointOnCurve(A,C)",
+      "query_expressions": "Expression(C)",
+      "answer_expressions": "y^2/16-x^2/9=1"
+    },
+    {
+      "id": 3309,
+      "text": "经过点$(3 , 2)$且与双曲线$\\frac{y^{2}}{4}-\\frac{x^{2}}{3}=1$的渐近线相同的双曲线方程为?",
+      "fact_expressions": "H: Point;Coordinate(H) = (3, 2);G: Hyperbola;Expression(G) = (-x^2/3 + y^2/4 = 1);Z: Hyperbola;Asymptote(Z) = Asymptote(G);PointOnCurve(H, Z)",
+      "query_expressions": "Expression(Z)",
+      "answer_expressions": "x^2/8-y^2/6=1"
+    },
+    {
+      "id": 3319,
+      "text": "椭圆$\\frac{x^{2}}{6}+\\frac{y^{2}}{2}=1$和双曲线$\\frac{x^{2}}{3}-y^{2}=1$的公共焦点为$F_{1}$、$F_{2}$、$P$是两曲线的一个交点，那么$cos \\angle F_{1} PF_{2}$的值是?",
+      "fact_expressions": "H: Ellipse;Expression(H) = (x^2/6 + y^2/2 = 1);G: Hyperbola;Expression(G) = (x^2/3 - y^2 = 1);F1: Point;F2: Point;Focus(H) = {F1, F2};Focus(G) = {F1, F2};P: Point;OneOf(Intersection(H, G)) = P",
+      "query_expressions": "Cos(AngleOf(F1, P, F2))",
+      "answer_expressions": "1/3"
+    },
+    {
+      "id": 3320,
+      "text": "已知抛物线$x^{2}=4 y$上一点$P$到焦点$F$的距离是$5$，则点$P$的横坐标是?",
+      "fact_expressions": "G: Parabola;P: Point;F: Point;Expression(G) = (x^2 = 4*y);PointOnCurve(P, G);Focus(G) = F;Distance(P, F) = 5",
+      "query_expressions": "XCoordinate(P)",
+      "answer_expressions": "pm*4"
+    },
+    {
+      "id": 3321,
+      "text": "已知双曲线$\\frac{y^{2}}{9}-\\frac{x^{2}}{m^{2}}=1(m>0)$的一个顶点到它的一条渐近线的距离为$1$，则$m$=?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (y^2/9 - x^2/m^2 = 1);m: Number;m>0;Distance(OneOf(Vertex(G)), OneOf(Asymptote(G))) = 1",
+      "query_expressions": "m",
+      "answer_expressions": "3*sqrt(2)/4"
+    },
+    {
+      "id": 3322,
+      "text": "双曲线$x^{2}-\\frac{y^{2}}{4}=1$的焦点到渐近线的距离等于?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2 - y^2/4 = 1)",
+      "query_expressions": "Distance(Focus(G), Asymptote(G))",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3323,
+      "text": "双曲线的渐进线方程是$3 x \\pm 4 y=0$，则双曲线的离心率等于?",
+      "fact_expressions": "G: Hyperbola;Expression(Asymptote(G)) = (pm*4*y + 3*x = 0)",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "{5/3, 4/3}"
+    },
+    {
+      "id": 3325,
+      "text": "双曲线$\\frac{x^{2}}{25}-\\frac{y^{2}}{16}=1$的渐近线方程为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/25 - y^2/16 = 1)",
+      "query_expressions": "Expression(Asymptote(G))",
+      "answer_expressions": "y=pm*(4/5)*x"
+    },
+    {
+      "id": 3326,
+      "text": "设点$P$是双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1$上除顶点外的任意一点，$F_{1}$, $F_{2}$分别为左、右焦点，$c$为半焦距，$\\triangle P F_{1} F_{2}$的内切圆与边$F_{1} F_{2}$切于点$M$，求$|F_{1} M| \\cdot|F_{2} M|$=?",
+      "fact_expressions": "G: Hyperbola;a: Number;b: Number;F1: Point;F2: Point;P: Point;M: Point;c: Number;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);PointOnCurve(P, G);Negation(P = Vertex(G));LeftFocus(G) = F1;RightFocus(G) = F2;HalfFocalLength(G) = c;TangentPoint(InscribedCircle(TriangleOf(P, F1, F2)), LineSegmentOf(F1, F2)) = M",
+      "query_expressions": "Abs(LineSegmentOf(F1, M))*Abs(LineSegmentOf(F2, M))",
+      "answer_expressions": "b^2"
+    },
+    {
+      "id": 3335,
+      "text": "已知$F_{1}$、$F_{2}$为椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的两个焦点，过$F_{2}$作椭圆的弦$A B$，若$\\triangle A F_{1} B$的周长为$16$ ,椭圆的离心率为$e=\\frac{\\sqrt{3}}{2}$，则椭圆的方程为?",
+      "fact_expressions": "G: Ellipse;b: Number;a: Number;A: Point;B: Point;F1: Point;F2: Point;e:Number;a > b;b > 0;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);Focus(G) = {F1, F2};PointOnCurve(F2, LineSegmentOf(A, B));IsChordOf(LineSegmentOf(A, B), G);Perimeter(TriangleOf(A, F1, B)) = 16;Eccentricity(G) = e;e=sqrt(3)/2",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2/16+y^2/4=1"
+    },
+    {
+      "id": 3336,
+      "text": "已知过抛物线$x^{2}=4 y$的焦点，斜率为$k(k>0)$的直线$l$交抛物线于$A(x_{1} , y_{2})$ , $B(x_{2}, y_{2}) $, $(x_{1}<x_{2})$两点，且$| A B| =8$. 求直线$l$的方程?",
+      "fact_expressions": "l: Line;G: Parabola;A: Point;B: Point;k: Number;x1:Number;x2:Number;y2:Number;Expression(G) = (x^2 = 4*y);Coordinate(A) = (x1,y1);Coordinate(B)=(x2,y2);PointOnCurve(Focus(G), l);Slope(l)=k;Intersection(l, G)={A,B};Abs(LineSegmentOf(A, B)) = 8;k>0;x1<x2;y1:Number",
+      "query_expressions": "Expression(l)",
+      "answer_expressions": ""
+    },
+    {
+      "id": 3344,
+      "text": "若抛物线$y^{2}=2 px$的焦点坐标为$(1,0)$, 则$p$=?准线方程为?",
+      "fact_expressions": "G: Parabola;p: Number;Expression(G) = (y^2 = 2*(p*x));Coordinate(Focus(G)) = (1, 0)",
+      "query_expressions": "p;Expression(Directrix(G))",
+      "answer_expressions": "2\nx=-1"
+    },
+    {
+      "id": 3345,
+      "text": "已知以$F$为焦点的抛物线$C$: $y^{2}=4 x$上的两点$A$、$B$满足$\\overrightarrow\n{A F}=3\\overrightarrow{F B}$，则$|A B|$=?",
+      "fact_expressions": "C: Parabola;A: Point;F: Point;B: Point;Expression(C) = (y^2 = 4*x);Focus(C)=F;PointOnCurve(A,C);PointOnCurve(B,C);VectorOf(A,F)=3*VectorOf(F,B)",
+      "query_expressions": "Abs(LineSegmentOf(A, B))",
+      "answer_expressions": "16/3"
+    },
+    {
+      "id": 3351,
+      "text": "已知抛物线$C$: $y^{2}=2 p x(p>0)$的焦点为$F$, $A(0, \\sqrt{3})$，抛物线$C$上的点$B$满足$A B \\perp A F$，且$|B F|=4$，则$p$=?",
+      "fact_expressions": "C: Parabola;Expression(C) = (y^2 = 2*(p*x));p: Number;p>0;F: Point;Focus(C) = F;A: Point;Coordinate(A) = (0, sqrt(3));B: Point;PointOnCurve(B, C);IsPerpendicular(LineSegmentOf(A, B), LineSegmentOf(A, F));Abs(LineSegmentOf(B, F)) = 4",
+      "query_expressions": "p",
+      "answer_expressions": "{2, 6}"
+    },
+    {
+      "id": 3355,
+      "text": "直线$y=k x+1$与双曲线$x^{2}-y^{2}=1$的左支交于$A$，$B$两点，另一条直线$l$过点$(-2 , 0)$和$A B$的中点，则直线$l$在$y$轴上的截距$b$的取值范围为?",
+      "fact_expressions": "l: Line;G: Hyperbola;H: Line;k: Number;I: Point;A: Point;B: Point;Expression(G) = (x^2 - y^2 = 1);Expression(H) = (y = k*x + 1);Coordinate(I) = (-2, 0);Intersection(H, LeftPart(G)) = {A, B};PointOnCurve(I, l);PointOnCurve(MidPoint(LineSegmentOf(A, B)), l);b: Number;Intercept(l, yAxis) = b",
+      "query_expressions": "Range(b)",
+      "answer_expressions": "(-oo, -2-sqrt(2)) + (2, +oo)"
+    },
+    {
+      "id": 3357,
+      "text": "过椭圆$\\frac{x^{2}}{4}+\\frac{y^{2}}{2}=1$的一个焦点$F_{1}$的直线与椭圆交于$A$、$B$两点，则$A$、$B$与椭圆的另一个焦点构成的$\\triangle A B F_{2}$周长等于?",
+      "fact_expressions": "G: Ellipse;H: Line;A: Point;B: Point;F2: Point;F1: Point;Expression(G) = (x^2/4 + y^2/2 = 1);PointOnCurve(F1, H);Intersection(H, G) = {A, B};OneOf(Focus(G))=F1;OneOf(Focus(G))=F2;Negation(F1=F2)",
+      "query_expressions": "Perimeter(TriangleOf(A, B, F2))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3358,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$与抛物线$y^{2}=8 x$有一个共同的焦点$F$，两曲线的一个交点为$P$，若$|F P|=5$，则点$F$到双曲线的渐近线的距离为?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;H: Parabola;F: Point;P: Point;a>0;b>0;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);Expression(H) = (y^2 = 8*x);OneOf(Focus(G)) = F;Focus(H) = F;OneOf(Intersection(G,H))=P;Abs(LineSegmentOf(F, P)) = 5",
+      "query_expressions": "Distance(F,Asymptote(G))",
+      "answer_expressions": "sqrt(3)"
+    },
+    {
+      "id": 3359,
+      "text": "$P$是双曲线$\\frac{x^{2}}{16}-\\frac{y^{2}}{9}=1$的右支上一点，$M$、$N$分别是圆$(x+5)^{2}+y^{2}=9$和$(x-5)^{2}+y^{2}=4$上 的点，则$|PM|-|PN|$的最大值为?",
+      "fact_expressions": "P: Point;PointOnCurve(P, RightPart(G)) = True;G: Hyperbola;Expression(G) = (x^2/16 - y^2/9 = 1);C1: Circle;Expression(C1) = (y^2 + (x + 5)^2 = 9);PointOnCurve(M,C1) = True;M: Point;C2: Circle;Expression(C2) = (y^2 + (x - 5)^2 = 4);PointOnCurve(N,C2) = True;N: Point",
+      "query_expressions": "Max(Abs(LineSegmentOf(P, M)) - Abs(LineSegmentOf(P, N)))",
+      "answer_expressions": "13"
+    },
+    {
+      "id": 3360,
+      "text": "已知$c$是椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1 (a>b>0)$的半焦距，则$\\frac{b+c}{a}$的取值范围为?",
+      "fact_expressions": "G: Ellipse;b: Number;a: Number;a>b;b>0;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);HalfFocalLength(G) = c;c: Number",
+      "query_expressions": "Range((b + c)/a)",
+      "answer_expressions": "(1, sqrt(2)]"
+    },
+    {
+      "id": 3361,
+      "text": "若方程$(1-k) x^{2}+(3-k^{2}) y^{2}=4$表示椭圆，则$k$的取值范围是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (x^2*(1 - k) + y^2*(3 - k^2) = 4);k: Number",
+      "query_expressions": "Range(k)",
+      "answer_expressions": "(-sqrt(3), 1)"
+    },
+    {
+      "id": 3370,
+      "text": "已知两点$M(4,0)$,$N(1,0)$，点$P$满足$\\overrightarrow{M N} \\cdot \\overrightarrow{M P}=6|\\overrightarrow{P N}|$，则$P$点的轨迹方程为?",
+      "fact_expressions": "M: Point;N: Point;P: Point;Coordinate(M) = (4, 0);Coordinate(N) = (1, 0);DotProduct(VectorOf(M, N), VectorOf(M, P)) = 6*Abs(VectorOf(P, N))",
+      "query_expressions": "LocusEquation(P)",
+      "answer_expressions": "x^2/4 + y^2/3 = 1"
+    },
+    {
+      "id": 3371,
+      "text": "在抛物线$y^{2}=16 x$内，通过点$(2 , 1)$且在此点被平分的弦所在直线的方程是?",
+      "fact_expressions": "G: Parabola;H: LineSegment;I: Point;Expression(G) = (y^2 = 16*x);Coordinate(I) = (2, 1);PointOnCurve(I,H);MidPoint(H)=I;IsChordOf(H,G)",
+      "query_expressions": "Expression(OverlappingLine(H))",
+      "answer_expressions": "8*x-y-15=0"
+    },
+    {
+      "id": 3383,
+      "text": "经过点$P(4,-2)$的抛物线的标准方程为?",
+      "fact_expressions": "G: Parabola;P: Point;Coordinate(P) = (4, -2);PointOnCurve(P, G)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "{y^2 = x, x^2 = -8*y}"
+    },
+    {
+      "id": 3395,
+      "text": "已知抛物线$y=\\frac{1}{4} x^{2}$的焦点$F$和点$A(-1 , 7)$.$P$为抛物线上的一点，则$|PA|+|PF|$的最小值是?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y = (1/4)*x^2);F: Point;Focus(G) = F;A: Point;Coordinate(A) = (-1, 7);P: Point;PointOnCurve(P, G)",
+      "query_expressions": "Min(Abs(LineSegmentOf(P, A)) + Abs(LineSegmentOf(P, F)))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3403,
+      "text": "双曲线$16 x^{2}-9 y^{2}=144$的左、右两焦点分别为$F_{1}$、$F_{2}$，点$P$在双曲线上，且$|P F_{1}| \\cdot|P F_{2}|=64$，则$\\angle F_{1} P F_{2}$=?",
+      "fact_expressions": "G: Hyperbola;P: Point;F1: Point;F2: Point;Expression(G) = (16*x^2 - 9*y^2 = 144);LeftFocus(G) = F1;RightFocus(G) = F2;PointOnCurve(P, G);Abs(LineSegmentOf(P, F1))*Abs(LineSegmentOf(P, F2)) = 64",
+      "query_expressions": "AngleOf(F1, P, F2)",
+      "answer_expressions": "ApplyUnit(60, degree)"
+    },
+    {
+      "id": 3407,
+      "text": "若椭圆$m x^{2}+y^{2}=1$的一个焦点与抛物线$y^{2}=4 x$的焦点重合，则$m$=?",
+      "fact_expressions": "G: Parabola;H: Ellipse;m: Number;Expression(G) = (y^2 = 4*x);Expression(H) = (m*x^2 + y^2 = 1);OneOf(Focus(H)) = Focus(G)",
+      "query_expressions": "m",
+      "answer_expressions": "1/2"
+    },
+    {
+      "id": 3409,
+      "text": "已知双曲线$C_{1}$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的离心率为$2$. 若抛物线$C_{2}$: $x^{2}=2 py(p>0)$的焦点到双曲线$C_{1}$的渐近线的距离为$2$，则抛物线$C_{2}$的方程为?",
+      "fact_expressions": "C1: Hyperbola;Expression(C1) = ((x^2/a^2) - (y^2/b^2) = 1);a: Number;b: Number;a>0;Eccentricity(C1)=2;C2: Parabola;Expression(C2)=(x^2=2*p*y);p:Number;p>0;Distance(Focus(C2),Asymptote(C1))=2;b>0",
+      "query_expressions": "Expression(C2)",
+      "answer_expressions": "x^2=16*y"
+    },
+    {
+      "id": 3410,
+      "text": "已知点$M(4,0)$，点$P$在曲线$y^{2}=8 x$上运动，点$Q$在曲线$(x-2)^{2}+y^{2}=1$上运动，则$\\frac{|P M|^{2}}{|P Q|}$的最小值是?",
+      "fact_expressions": "M: Point;Coordinate(M) = (4, 0);P: Point;PointOnCurve(P, G);G: Curve;Expression(G) = (y^2 = 8*x);Q: Point;G1:Curve;Expression(G1) = (y^2 + (x - 2)^2 = 1);PointOnCurve(Q, G1)",
+      "query_expressions": "Min(Abs(LineSegmentOf(P, M))^2/Abs(LineSegmentOf(P, Q)))",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3415,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的一个焦点是抛物线$y^{2}=8 x$的焦点，且双曲线$C$的离心率为$2$，那么双曲线$C$的方程为?",
+      "fact_expressions": "C: Hyperbola;Expression(C) = (-y^2/b^2 + x^2/a^2 = 1);a: Number;b: Number;a>0;b>0;G: Parabola;Expression(G) = (y^2 = 8*x);OneOf(Focus(C)) = Focus(G);Eccentricity(C) = 2",
+      "query_expressions": "Expression(C)",
+      "answer_expressions": ""
+    },
+    {
+      "id": 3417,
+      "text": "双曲线$9 y^{2}-4 x^{2}=36$的焦点为?离心率为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (-4*x^2 + 9*y^2 = 36)",
+      "query_expressions": "Coordinate(Focus(G));Eccentricity(G)",
+      "answer_expressions": "(0,pm*sqrt(13))\nsqrt(13)/2"
+    },
+    {
+      "id": 3418,
+      "text": "设点$P$是椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1  (a>0 , b>0)$上一点，$F_{1}$、$F_{2}$分别是椭圆的左、右焦点，$I$为$\\Delta PF_{1}F_{2}$的内心，若$S_{\\Delta IPF 1}+S_{\\Delta IPF 2}=2 S_{\\Delta IF 1 F 2}$，则该椭圆的离心率是?",
+      "fact_expressions": "G: Ellipse;b: Number;a: Number;P: Point;F1: Point;F2: Point;I: Point;a>0;b>0;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);PointOnCurve(P, G);LeftFocus(G) = F1;RightFocus(G) = F2;Incenter(TriangleOf(P,F1,F2))=I;Area(TriangleOf(I,P,F1))+Area(TriangleOf(I,P,F2))=2*Area(TriangleOf(I,F1,F2))",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "1/2"
+    },
+    {
+      "id": 3426,
+      "text": "双曲线的渐近线为$y=\\pm 2 x$, 则双曲线的离心率为?",
+      "fact_expressions": "G: Hyperbola;Expression(Asymptote(G)) = (y = pm*(2*x))",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "{sqrt(3), sqrt(6)/2}"
+    },
+    {
+      "id": 3427,
+      "text": "已知中心在原点且焦点在$x$轴的双曲线$C$，过点$P(2 , \\sqrt{3})$且离心率为$2$，则双曲线$C$的标准方程为?",
+      "fact_expressions": "C: Hyperbola;O:Origin;Center(C)=O;PointOnCurve(Focus(C),xAxis);P: Point;Coordinate(P) = (2, sqrt(3));PointOnCurve(P,C);Eccentricity(C) = 2",
+      "query_expressions": "Expression(C)",
+      "answer_expressions": "x^2/3-y^2/9=1"
+    },
+    {
+      "id": 3428,
+      "text": "$P$是椭圆$\\frac{x^{2}}{9}+\\frac{y^{2}}{4}=1$上的点，$F_{1}$、$F_{2}$是两个焦点，则$|P F_{1}| \\cdot|P F_{2}|$的最大值与最小值之差是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (x^2/9 + y^2/4 = 1);P: Point;PointOnCurve(P, G);F1: Point;F2: Point;Focus(G) = {F1, F2}",
+      "query_expressions": "Max(Abs(LineSegmentOf(P, F1))*Abs(LineSegmentOf(P, F2)))-Min(Abs(LineSegmentOf(P, F1))*Abs(LineSegmentOf(P, F2)))",
+      "answer_expressions": "5"
+    },
+    {
+      "id": 3432,
+      "text": "已知定点$M(-2,4)$和抛物线$y=\\frac{1}{8} x^{2}$的焦点$F$，在拋物线上求一点$P$使$|PM|+|PF|$的值最小，则$P$点的坐标是?",
+      "fact_expressions": "G: Parabola;M: Point;P: Point;F: Point;Expression(G) = (y = x^2/8);Coordinate(M) = (-2, 4);Focus(G)=F;PointOnCurve(P,G);WhenMin(Abs(LineSegmentOf(P,M))+Abs(LineSegmentOf(P,F)))",
+      "query_expressions": "Coordinate(P)",
+      "answer_expressions": "(-2,1/2)"
+    },
+    {
+      "id": 3437,
+      "text": "过双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左焦点且垂直于$x$轴的直线与双曲线交于$M$、$N$两点.以$MN$为直径的圆恰好过双曲线的右顶点，则双曲线的离心率等于?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a>0;b>0;PointOnCurve(LeftFocus(G), L) = True;IsPerpendicular(L, xAxis) = True;L: Line;Intersection(L, G) = {M, N};M: Point;N: Point;Q: Circle;IsDiameter(LineSegmentOf(M, N), Q) = True;PointOnCurve(RightVertex(G), Q) = True",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3443,
+      "text": "已知抛物线方程为$y^{2}=x$，点$M$在此抛物线上运动，则点$A(4,0)$与点$M$之间的距离$|M A|$的最小值为?",
+      "fact_expressions": "G: Parabola;A: Point;M: Point;Coordinate(A) = (4, 0);Expression(G) = (y^2 = x);PointOnCurve(M, G);Distance(A,M)=Abs(LineSegmentOf(M,A))",
+      "query_expressions": "Min(Abs(LineSegmentOf(M, A)))",
+      "answer_expressions": "sqrt(15)/2"
+    },
+    {
+      "id": 3445,
+      "text": "已知椭圆$C_{1}$: $\\frac{x^{2}}{4}+\\frac{y^{2}}{b^{2}}=1 (0<b<2)$的离心率为$\\frac{1}{2}$, $F_{1}$和$F_{2}$是$C_{1}$的左右焦点，$M$是$C_{1}$上的动点，点$N$在线段$F_{1} M$的延长线上，$|M N|=| M F_{2} |$，线段$F_{2} N$的中点为$P$，则$|F_{1} P|$的最大值为?",
+      "fact_expressions": "C1: Ellipse;Expression(C1) = (x^2/4 + y^2/b^2 = 1);b: Number;0<b;b<2;Eccentricity(C1) = 1/2;F1: Point;F2: Point;LeftFocus(C1) = F1;RightFocus(C1) = F2;M: Point;PointOnCurve(M, C1);N: Point;PointOnCurve(N, OverlappingLine(LineSegmentOf(F1, M)));Abs(LineSegmentOf(M, N)) = Abs(LineSegmentOf(M, F2));P: Point;MidPoint(LineSegmentOf(F2, N)) = P",
+      "query_expressions": "Max(Abs(LineSegmentOf(F1, P)))",
+      "answer_expressions": "3"
+    },
+    {
+      "id": 3446,
+      "text": "椭圆的长轴长是短轴长的$2$倍，则它的离心率?",
+      "fact_expressions": "G: Ellipse;Length(MajorAxis(G)) = 2*Length(MinorAxis(G))",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(3)/2"
+    },
+    {
+      "id": 3447,
+      "text": "已知抛物线$y^{2}=4 x$, 过点$P(4,0)$的直线与抛物线相交于$A(x_{1}, y_{1})$, $B(x_{2}, y_{2})$两点，则$y_{1}^{2}+y_{2}^{2}$的最小值是?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y^2 = 4*x);H: Line;P: Point;Coordinate(P) = (4, 0);PointOnCurve(P, H);A: Point;B: Point;x1: Number;x2: Number;y1: Number;y2: Number;Coordinate(A) = (x1, y1);Coordinate(B) = (x2, y2);Intersection(H, G) = {A, B}",
+      "query_expressions": "Min(y1^2 + y2^2)",
+      "answer_expressions": "32"
+    },
+    {
+      "id": 3452,
+      "text": "求与双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{2}=1$共焦点，则过点$(2 , 1)$的圆锥曲线的方程为?",
+      "fact_expressions": "G: Hyperbola;H: Point;C: ConicSection;Expression(G) = (x^2/4 - y^2/2 = 1);Coordinate(H) = (2, 1);PointOnCurve(H,C);Focus(G)=Focus(C)",
+      "query_expressions": "Expression(C)",
+      "answer_expressions": ""
+    },
+    {
+      "id": 3457,
+      "text": "若点$P$是以$F_{1}$、$F_{2}$为焦点的双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1$上一点，满足$P F_{2} \\perp F_{1} F_{2}$，且$|P F_{1}|=2|P F_{2}|$，则此双曲线的离心率为?",
+      "fact_expressions": "G: Hyperbola;a: Number;b: Number;P: Point;F2: Point;F1: Point;PointOnCurve(P,G);Focus(G)={F1,F2};Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);IsPerpendicular(LineSegmentOf(P, F2), LineSegmentOf(F1, F2));Abs(LineSegmentOf(P, F1)) = 2*Abs(LineSegmentOf(P, F2))",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(3)"
+    },
+    {
+      "id": 3458,
+      "text": "已知$P(x , y)$是椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1  (a>b>0)$上的动点，$F_{1}$、$F_{2}$是焦点，则$|P F_{1}| \\cdot|P F_{2}|$的取值范围是?",
+      "fact_expressions": "G: Ellipse;b: Number;a: Number;P: Point;F2: Point;F1: Point;a > b;b > 0;x1:Number;y1:Number;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);Coordinate(P) = (x1, y1);PointOnCurve(P, G);Focus(G)={F1,F2}",
+      "query_expressions": "Range(Abs(LineSegmentOf(P, F2))*Abs(LineSegmentOf(P, F1)))",
+      "answer_expressions": "[b^2,a^2]"
+    },
+    {
+      "id": 3460,
+      "text": "已知点$P$为直线$a x+y-4=0$上一点，$P A$, $P B$是椭圆$C$: $\\frac{x^{2}}{a^{2}}+y^{2}=1(a>0)$的两条切线，若恰好存在一点$P$使得$P A \\perp P B$，则椭圆$C$的离心率为?",
+      "fact_expressions": "C: Ellipse;a: Number;G: Line;P: Point;A: Point;B: Point;a>0;Expression(C) = (y^2 + x^2/a^2 = 1);Expression(G) = (a*x + y - 4 = 0);PointOnCurve(P, G);IsTangent(LineOf(P, A), C);IsTangent(LineOf(P, B), C);IsPerpendicular(LineSegmentOf(P, A),LineSegmentOf(P, B))",
+      "query_expressions": "Eccentricity(C)",
+      "answer_expressions": "sqrt(6)/3"
+    },
+    {
+      "id": 3462,
+      "text": "已知过点$(0,1)$的直线与抛物线$x^{2}=4 y$交于$A(x_{1}, y_{1})$ , $B(x_{2}, y_{2})$两点，若$y_{1}+y_{2}=\\frac{9}{4}$，则$|A B|$=?",
+      "fact_expressions": "H: Line;I: Point;Coordinate(I) = (0, 1);PointOnCurve(I, H);G: Parabola;Expression(G) = (x^2 = 4*y);Intersection(H, G) = {A, B};A: Point;Coordinate(A) = (x1, y1);x1: Number;y1: Number;B: Point;Coordinate(B) = (x2, y2);x2: Number;y2: Number;y1 + y2 = 9/4",
+      "query_expressions": "Abs(LineSegmentOf(A, B))",
+      "answer_expressions": "17/4"
+    },
+    {
+      "id": 3469,
+      "text": "过抛物线$y^{2}=2 x$的焦点$F$作直线交抛物线于$A$、$B$两点，若$|AB|=\\frac{25}{12}$,$|AF|<|BF|$，则$|AF|$=?",
+      "fact_expressions": "G: Parabola;H: Line;A: Point;B: Point;F: Point;Expression(G) = (y^2 = 2*x);Focus(G) = F;PointOnCurve(F, H);Intersection(H, G) = {A, B};Abs(LineSegmentOf(A, B)) = 25/12;Abs(LineSegmentOf(A, F)) < Abs(LineSegmentOf(B, F))",
+      "query_expressions": "Abs(LineSegmentOf(A, F))",
+      "answer_expressions": "5/6"
+    },
+    {
+      "id": 3475,
+      "text": "$P$是双曲线$\\frac{x^{2}}{9}-\\frac{y^{2}}{16}=1$的右支上一点，$M$、$N$分别是圆$(x+5)^{2}+y^{2}=4$和$(x-5)^{2}+y^{2}=1$上的点，则$|P M|-|P N|$的最大值等于?",
+      "fact_expressions": "P: Point;PointOnCurve(P, RightPart(G)) = True;G: Hyperbola;Expression(G) = (x^2/9 - y^2/16 = 1);M: Point;PointOnCurve(M,H1) = True;H1: Circle;Expression(H1) = (y^2 + (x + 5)^2 = 4);N: Point;PointOnCurve(N,H2) = True;H2: Circle;Expression(H2) = (y^2 + (x - 5)^2 = 1)",
+      "query_expressions": "Max(Abs(LineSegmentOf(P, M)) - Abs(LineSegmentOf(P, N)))",
+      "answer_expressions": "9"
+    },
+    {
+      "id": 3478,
+      "text": "若方程$x^{2} \\cos \\alpha-y^{2} \\sin \\alpha+2=0$表示一个椭圆,则圆$(x+\\cos \\alpha)^{2}+(y+\\sin \\alpha)^{2}=1$的圆心在第?象限",
+      "fact_expressions": "G: Ellipse;H: Circle;alpha: Number;Expression(H) = ((x + Cos(alpha))^2 + (y + Sin(alpha))^2 = 1);Expression(G) = (x^2*Cos(alpha) - y^2*Sin(alpha) + 2 = 0)",
+      "query_expressions": "Quadrant(Center(H))",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3484,
+      "text": "已知点$A(-2 , 0)$ , $B(2 , 0)$，若点$P(x, y)$在曲线$\\frac{x^{2}}{16}+\\frac{y^{2}}{12}=1$上，则$|PA|+|PB|$=?",
+      "fact_expressions": "G: Curve;A: Point;B: Point;P: Point;x1: Number;y1: Number;Expression(G) = (x^2/16 + y^2/12 = 1);Coordinate(A) = (-2, 0);Coordinate(B) = (2, 0);Coordinate(P) = (x1, y1);PointOnCurve(P, G)",
+      "query_expressions": "Abs(LineSegmentOf(P, A)) + Abs(LineSegmentOf(P, B))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3485,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的一条渐近线方程是$y=\\sqrt{3} x$，它的一个焦点与抛物线$y^{2}=16 x$的焦点相同，则双曲线的方程为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);a: Number;b: Number;a>0;b>0;Expression(OneOf(Asymptote(G))) = (y = sqrt(3)*x);H: Parabola;Expression(H) = (y^2 = 16*x);OneOf(Focus(G)) = Focus(H)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2/4-y^2/12=1"
+    },
+    {
+      "id": 3487,
+      "text": "已知椭圆$C$: $\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的右焦点为$F(3 , 0)$，且点$(-3 ,\\frac{3 \\sqrt{2}}{2})$在椭圆$C$上，则椭圆$C$的标准方程为?",
+      "fact_expressions": "C: Ellipse;b: Number;a: Number;G: Point;F: Point;a>0;b>0;Expression(C) = (y^2/b^2 + x^2/a^2 = 1);RightFocus(C)=F;Coordinate(F) = (3, 0);PointOnCurve(G, C);Coordinate(G)=(-3,3*sqrt(2)/2)",
+      "query_expressions": "Expression(C)",
+      "answer_expressions": "x^2/18+y^2/9=1"
+    },
+    {
+      "id": 3488,
+      "text": "方程$\\frac{x^{2}}{2 m}+\\frac{y^{2}}{1-m}=1$表示焦点在$y$轴上的椭圆，则$m$的取值范围是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (y^2/(1 - m) + x^2/((2*m)) = 1);PointOnCurve(Focus(G), yAxis);m: Number",
+      "query_expressions": "Range(m)",
+      "answer_expressions": "(0, 1/3)"
+    },
+    {
+      "id": 3491,
+      "text": "过抛物线$y^{2}=4 x$焦点的直线与抛物线交于不同的两点$A$、$B$，则$|A B|$的最小值是?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y^2 = 4*x);H: Line;PointOnCurve(Focus(G), H);A: Point;B: Point;Intersection(H, G) = {A, B};Negation(A=B)",
+      "query_expressions": "Min(Abs(LineSegmentOf(A, B)))",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3493,
+      "text": "双曲线$\\frac{x^{2}}{16}-\\frac{y^{2}}{9}=1$上的点$P$到点$(5,0)$的距离为$8.5$，则点$P$到点$(-5,0)$的距离?",
+      "fact_expressions": "G: Hyperbola;H: Point;I: Point;P: Point;Expression(G) = (x^2/16 - y^2/9 = 1);Coordinate(H) = (5, 0);Coordinate(I) = (-5, 0);PointOnCurve(P, G);Distance(P, H) = 8.5",
+      "query_expressions": "Distance(P, I)",
+      "answer_expressions": "16.5"
+    },
+    {
+      "id": 3494,
+      "text": "已知$F_{1}$、$F_{2}$是椭圆$\\frac{x^{2}}{4}+y^{2}=1$的左、右焦点，则焦距为?",
+      "fact_expressions": "G: Ellipse;F1: Point;F2: Point;Expression(G) = (x^2/4 + y^2 = 1);LeftFocus(G) = F1;RightFocus(G) = F2",
+      "query_expressions": "FocalLength(G)",
+      "answer_expressions": "2*sqrt(3)"
+    },
+    {
+      "id": 3496,
+      "text": "斜率为$1$的直线与抛物线$y^{2}=x$只有一个公共点，这条直线的方程是?",
+      "fact_expressions": "G: Parabola;H: Line;Expression(G) = (y^2 = x);Slope(H)=1;NumIntersection(H,G)=1",
+      "query_expressions": "Expression(H)",
+      "answer_expressions": "y=x+1/4"
+    },
+    {
+      "id": 3498,
+      "text": "已知直线$y=-x-4$与抛物线$y^{2}=-12 x$相交于$A$、$B$两点，抛物线的焦点为$F$, $\\overrightarrow{F A} \\cdot \\overrightarrow{F B}$=?",
+      "fact_expressions": "H: Line;Expression(H) = (y = -x - 4);G: Parabola;Expression(G) = (y^2 = -12*x);A: Point;B: Point;Intersection(H, G) = {A, B};F: Point;Focus(G) = F",
+      "query_expressions": "DotProduct(VectorOf(F, A), VectorOf(F, B))",
+      "answer_expressions": "-83"
+    },
+    {
+      "id": 3502,
+      "text": "过双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的右焦点$F$和虚轴端点$B$作一条直线，若右顶点$A$到直线$F B$的距离等于$\\frac{b}{\\sqrt{7}}$，则双曲线的离心率$e$=?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;F: Point;B: Point;A: Point;e: Number;a>0;b>0;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);RightFocus(G)=F;Endpoint(ImageinaryAxis(G))=B;RightVertex(G)=A;Distance(A, LineOf(F,B)) = b/sqrt(7);Eccentricity(G) = e;L:Line;PointOnCurve(F,L);PointOnCurve(B,L)",
+      "query_expressions": "e",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3508,
+      "text": "已知$F_{1}$、$F_{2}$为椭圆$C_{1}$和双曲线$C_{2}$的公共焦点，$P$为$C_{1}$和$C_{2}$的一个公共点，且$\\angle F_{1} P F_{2}=\\frac{\\pi}{3}$，椭圆$C_{1}$和双曲线$C_{2}$的离心率分别为$e_{1}$,$e_{2}$，则$e_{1} \\cdot e_{2}$的最小值为?",
+      "fact_expressions": "C1: Ellipse;C2: Hyperbola;F1: Point;P: Point;F2: Point;Focus(C1)={F1,F2};Focus(C2)={F1,F2};OneOf(Intersection(C1,C2))=P;AngleOf(F1, P, F2) = pi/3;e1:Number;e2:Number;Eccentricity(C1)=e1;Eccentricity(C2)=e2",
+      "query_expressions": "Min(e1*e2)",
+      "answer_expressions": "sqrt(3)/2"
+    },
+    {
+      "id": 3510,
+      "text": "抛物线$y^{2}=x$的准线方程是?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y^2 = x)",
+      "query_expressions": "Expression(Directrix(G))",
+      "answer_expressions": "x = -1/4"
+    },
+    {
+      "id": 3511,
+      "text": "椭圆$m x^{2}+y^{2}=1$的焦点在$y$轴上, 长轴长是短轴长的$3$倍,则$m$=?",
+      "fact_expressions": "G: Ellipse;m: Number;Expression(G) = (m*x^2 + y^2 = 1);PointOnCurve(Focus(G), yAxis);Length(MajorAxis(G))=3*Length(MinorAxis(G))",
+      "query_expressions": "m",
+      "answer_expressions": "9"
+    },
+    {
+      "id": 3517,
+      "text": "若抛物线$y^{2}=4 x$上一点$M$到该抛物线的焦点$F$的距离$|M F|=5$，则点$M$到$x$轴的距离为?",
+      "fact_expressions": "G: Parabola;M: Point;F: Point;Expression(G) = (y^2 = 4*x);PointOnCurve(M,G);Focus(G)=F;Distance(M,F)=Abs(LineSegmentOf(M,F));Abs(LineSegmentOf(M,F))=5",
+      "query_expressions": "Distance(M, xAxis)",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3520,
+      "text": "5. 在平面直角坐标系 $x O y$ 中，若双曲线 $x^{2}-\\frac{y^{2}} {b^{2}}=1(b>0)$ 的两条渐近线互相垂直，则正实数 $b$ 的值为？",
+      "fact_expressions": "E: Hyperbola;b: Real;b > 0;Expression(E) = (x**2 - y**2/b**2 = 1);l1: Line;l2: Line;Asymptote(E) = {l1, l2};IsPerpendicular(l1, l2)",
+      "query_expressions": "b",
+      "answer_expressions": "1"
+    },
+    {
+      "id": 3523,
+      "text": "抛物线$C$: $y^{2}=4 x$的焦点为$F$，点$P$在抛物线上，且$P F=3$，则点$P$到直线$x=-1$的距离为?",
+      "fact_expressions": "C: Parabola;Expression(C) = (y^2 = 4*x);F: Point;Focus(C) = F;P: Point;PointOnCurve(P, C);LineSegmentOf(P, F) = 3;G: Line;Expression(G) = (x = -1)",
+      "query_expressions": "Distance(P, G)",
+      "answer_expressions": "3"
+    },
+    {
+      "id": 3527,
+      "text": "已知直线$y=x-1$与抛物线$y^{2}=4 x$交于$A$、$B$两点，则弦$A B$的长为?",
+      "fact_expressions": "G: Parabola;H: Line;A: Point;B: Point;Expression(G) = (y^2 = 4*x);Expression(H) = (y = x - 1);Intersection(H, G) = {A, B};IsChordOf(LineSegmentOf(A,B),G)",
+      "query_expressions": "Length(LineSegmentOf(A,B))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3536,
+      "text": "若点$P$是以$F_{1}$, $F_{2}$为焦点的双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1$上一点，满足$P F_{1}\\perp P F_{2}$，且$|P F_{1}|=2|P F_{2}|$，则此双曲线的离心率为?",
+      "fact_expressions": "P: Point;PointOnCurve(P, G);F1: Point;F2: Point;Focus(G) = {F1, F2};G: Hyperbola;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;IsPerpendicular(LineSegmentOf(P, F1), LineSegmentOf(P, F2));Abs(LineSegmentOf(P, F1)) = 2*Abs(LineSegmentOf(P, F2))",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(5)"
+    },
+    {
+      "id": 3539,
+      "text": "已知$F_{1}$、$F_{2}$是椭圆$\\frac{x^{2}}{4}+y^{2}=1$的两个焦点，$P$是该椭圆上的一个动点，则$|PF_{1}| \\cdot|PF_{2}|$的最大值是?",
+      "fact_expressions": "G: Ellipse;P: Point;F1: Point;F2: Point;Expression(G) = (x^2/4 + y^2 = 1);Focus(G) = {F1, F2};PointOnCurve(P, G)",
+      "query_expressions": "Max(Abs(LineSegmentOf(P,F1))*Abs(LineSegmentOf(P,F2)))",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3542,
+      "text": "若椭圆$\\frac{x^{2}}{4}+\\frac{y^{2}}{a^{2}}=1$与双曲线$\\frac{x^{2}}{a}-\\frac{y^{2}}{2}=1$的焦点相同，则椭圆的离心率$e$=?",
+      "fact_expressions": "G: Hyperbola;a: Number;H: Ellipse;e: Number;Expression(G) = (-y^2/2 + x^2/a = 1);Expression(H) = (x^2/4 + y^2/a^2 = 1);Focus(H) = Focus(G);Eccentricity(H) = e",
+      "query_expressions": "e",
+      "answer_expressions": "sqrt(3)/2"
+    },
+    {
+      "id": 3546,
+      "text": "已知抛物线$C$: $y^{2}=4 x$的焦点为$F$，其准线与$x$轴的交点为$K$，过点$F$的直线与抛物线$C$相交于$A$、$B$两点，若$|A F|-|B F|=\\frac{3}{2}$，则$|\\frac{A K}{B K}|$=?",
+      "fact_expressions": "C: Parabola;H: Line;A: Point;F: Point;B: Point;K: Point;Expression(C)=(y^2=4*x);Focus(C)=F;Intersection(Directrix(C), xAxis) = K;PointOnCurve(F,H);Intersection(H, C) = {A, B};Abs(LineSegmentOf(A, F)) - Abs(LineSegmentOf(B, F)) = 3/2",
+      "query_expressions": "Abs(LineSegmentOf(A, K)/LineSegmentOf(B, K))",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3551,
+      "text": "抛物线$x^{2}=4(y-m)$与圆$x^{2} + y^{2}=1$相交于第一象限的$P$点，且在$P$点处两曲线的切线互相垂直，则$m$=?",
+      "fact_expressions": "P: Point;m: Number;H: Circle;G: Parabola;Expression(G) = (x^2 = 4*(y-m));Expression(H) = (x^2 + y^2 = 1);Quadrant(P) = 1;Intersection(H, G)=P;IsPerpendicular(TangentOnPoint(P, G), TangentOnPoint(P, H))",
+      "query_expressions": "m",
+      "answer_expressions": "(sqrt(2)-1)/2"
+    },
+    {
+      "id": 3554,
+      "text": "已知$F$是抛物线$C$: $x^{2}=12 y$的焦点，$P$是$C$上一点，直线$F P$交直线$y=-3$于点$Q$. 若$\\overrightarrow{P Q}=2 \\overrightarrow{F Q}$，则$|P Q|$=?",
+      "fact_expressions": "C: Parabola;G: Line;F: Point;P: Point;Q: Point;Expression(C) = (x^2 = 12*y);Expression(G) = (y=-3);Focus(C) = F;PointOnCurve(P, C);Intersection(LineOf(F,P),G) = Q;VectorOf(P, Q) = 2*VectorOf(F, Q)",
+      "query_expressions": "Abs(LineSegmentOf(P, Q))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3555,
+      "text": "抛物线$y^{2}=4 ax(a<0)$的焦点坐标是?",
+      "fact_expressions": "G: Parabola;a: Number;a<0;Expression(G) = (y^2 = 4*(a*x))",
+      "query_expressions": "Coordinate(Focus(G))",
+      "answer_expressions": "(a, 0)"
+    },
+    {
+      "id": 3556,
+      "text": "已知点$P$是椭圆$C_{1}$: $\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$与圆$C_{2}$: $x^{2}+y^{2}=a^{2}-b^{2}$的一个交点，且$2 \\angle PF_{1}F_{2}=\\angle PF_{2} F_{1}$，其中$F_{1}$ , $F_{2}$分别为椭圆$C_{1}$的左右焦点，则椭圆$C_{1}$的离心率为?",
+      "fact_expressions": "C1: Ellipse;Expression(C1) = (x^2/a^2+y^2/b^2 = 1);a: Number;b: Number;a>b;b>0;C2: Circle;Expression(C2) = (y^2+x^2 = a^2-b^2);P: Point;OneOf(Intersection(C1,C2)) = P;2*AngleOf(P,F1,F2) = AngleOf(P,F2,F1);F1: Point;F2: Point;LeftFocus(C1) = F1;RightFocus(C1) = F2",
+      "query_expressions": "Eccentricity(C1)",
+      "answer_expressions": "sqrt(3) - 1"
+    },
+    {
+      "id": 3557,
+      "text": "双曲线$C$的离心率为$2$，写出满足条件的一个双曲线$C$的标准方程?",
+      "fact_expressions": "C: Hyperbola;Eccentricity(C) = 2",
+      "query_expressions": "Expression(C)",
+      "answer_expressions": "x^2-y^2/3=1"
+    },
+    {
+      "id": 3558,
+      "text": "椭圆$4 x^{2}+6 y^{2}=24$的短轴长是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (4*x^2 + 6*y^2 = 24)",
+      "query_expressions": "Length(MinorAxis(G))",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3561,
+      "text": "已知平面内有一条线段$A B$，其长为$6$，动点$P$满足$P A-P B=4$ , $O$为$A B$的中点，则$P O$的最小值为?",
+      "fact_expressions": "A: Point;B: Point;Length(LineSegmentOf(A,B)) = 6;P: Point;LineSegmentOf(P,A) - LineSegmentOf(P,B) = 4;O: Origin;MidPoint(LineSegmentOf(A,B)) = O",
+      "query_expressions": "Min(LineSegmentOf(P, O))",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3562,
+      "text": "已知$A$，$B$为椭圆$C$:$\\frac{x^{2}}{m+1}+\\frac{y^{2}}{m}=1$的长轴的两个端点，$P$是椭圆$C$上的动点，且$\\angle A P B$的最大值是$\\frac{2 \\pi}{3}$ ,则$m$=?",
+      "fact_expressions": "C: Ellipse;m: Number;A: Point;P: Point;B: Point;Expression(C) = (x^2/(m + 1) + y^2/m = 1);Endpoint(MajorAxis(C))={A,B};PointOnCurve(P, C);Max(AngleOf(A,P,B))=2*pi/3",
+      "query_expressions": "m",
+      "answer_expressions": "1/2"
+    },
+    {
+      "id": 3563,
+      "text": "若抛物线$y^{2}=2 x$上的一点$M$到坐标原点$O$的距离为$\\sqrt {3}$，则点$M$到该抛物线焦点的距离为?",
+      "fact_expressions": "G: Parabola;M: Point;O: Origin;Expression(G) = (y^2 = 2*x);PointOnCurve(M, G);Distance(M, O) = sqrt(3)",
+      "query_expressions": "Distance(M, Focus(G))",
+      "answer_expressions": "3/2"
+    },
+    {
+      "id": 3565,
+      "text": "$P$在抛物线$y^{2}=2 x$上，那么点$P$到点$Q(0 , 2)$的距离与$P$到抛物线准线的距离之和的最小值是?",
+      "fact_expressions": "G: Parabola;Q: Point;P: Point;Expression(G) = (y^2 = 2*x);Coordinate(Q) = (0, 2);PointOnCurve(P,G)",
+      "query_expressions": "Min(Distance(P,Q)+Distance(P,Directrix(G)))",
+      "answer_expressions": "sqrt(17)/2"
+    },
+    {
+      "id": 3566,
+      "text": "点$P$是双曲线$\\frac{x^{2}}{16}-\\frac{y^{2}}{9}=1$左支上的一点，其右焦点为$F$，若$M$为线段$F P$的中点, 且$M$到坐标原点的距离为$7$，则$|P F|$=?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/16 - y^2/9 = 1);P: Point;PointOnCurve(P, LeftPart(G));F: Point;RightFocus(G) = F;M: Point;MidPoint(LineSegmentOf(F, P)) = M;O: Origin;Distance(M, O) = 7",
+      "query_expressions": "Abs(LineSegmentOf(P, F))",
+      "answer_expressions": ""
+    },
+    {
+      "id": 3570,
+      "text": "已知$P$是椭圆$4 x^{2} + y^{2}=1$上一点，$F$为其中一个焦点，则$P F$的最小值为?",
+      "fact_expressions": "G: Ellipse;P: Point;F: Point;Expression(G) = (4*x^2 + y^2 = 1);PointOnCurve(P, G);OneOf(Focus(G))=F",
+      "query_expressions": "Min(LineSegmentOf(P, F))",
+      "answer_expressions": "1 - sqrt(3)/2"
+    },
+    {
+      "id": 3572,
+      "text": "设$F_{1}$、$F_{2}$是椭圆$C$: $\\frac{x^{2}}{4}+\\frac{y^{2}}{m^{2}}=1(0<m<2)$的两个焦点，$P(x_{0}, y_{0})$是$C$上一点，且满足$\\Delta P F_{1} F_{2}$的面积为$\\sqrt{3}$, 则$|x_{0}|$的取值范围是?",
+      "fact_expressions": "C: Ellipse;Expression(C) = (x^2/4 + y^2/m^2 = 1);m: Number;0 < m;m < 2;F1: Point;F2: Point;Focus(C) = {F1, F2};P: Point;x0: Number;y0: Number;Coordinate(P) = (x0, y0);PointOnCurve(P, C);Area(TriangleOf(P, F1, F2)) = sqrt(3)",
+      "query_expressions": "Range(Abs(x0))",
+      "answer_expressions": "[0, 1]"
+    },
+    {
+      "id": 3576,
+      "text": "已知$E(2 , 2)$是抛物线$C$: $y^{2}=2 px$上一点，经过点$(2 , 0)$的直线$l$与抛物线$C$交于$A$、$B$两点(不同于点$E$)，直线$EA$，$EB$分别交直线$x=-2$于点$M$，$N$，则$\\angle MON$的大小为?",
+      "fact_expressions": "E: Point;Coordinate(E) = (2, 2);C: Parabola;Expression(C) = (y^2 = 2*p*x);p: Number;H: Point;Coordinate(H) = (2, 0);l: Line;PointOnCurve(H, l) = True;Intersection(l, C) = {A, B};A: Point;B: Point;Negation(A = E);Negation(B = E);G: Line;Expression(G) = (x = -2);Intersection(LineOf(E, A), G) = M;M: Point;Intersection(LineOf(E, B), G) = N;N: Point;O: Origin",
+      "query_expressions": "AngleOf(M, O, N)",
+      "answer_expressions": "pi/2"
+    },
+    {
+      "id": 3578,
+      "text": "已知斜率为$2$的直线$l$过抛物线$y^{2}=ax(a>0)$的焦点$F$，且与$y$轴相交于点$A$，若$\\triangle OAF$($O$为坐标原点)的面积为$4$，则抛物线方程为?",
+      "fact_expressions": "l: Line;G: Parabola;a: Number;O: Origin;A: Point;F: Point;a>0;Expression(G) = (y^2 = a*x);Slope(l) = 2;Focus(G) = F;PointOnCurve(F, l);Intersection(l,yAxis) = A;Area(TriangleOf(O, A, F)) = 4",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "y^2 = 8*x"
+    },
+    {
+      "id": 3579,
+      "text": "抛物线$y^{2}=4 mx(m>0)$的焦点到双曲线$\\frac{x^{2}}{16}-\\frac{y^{2}}{9}=1$的一条渐近线的距离为$3$，则此抛物线的方程为?",
+      "fact_expressions": "H: Parabola;Expression(H) = (y^2 = 4*(m*x));m: Number;m>0;G: Hyperbola;Expression(G) = (x^2/16 - y^2/9 = 1);Distance(Focus(H), OneOf(Asymptote(G))) = 3",
+      "query_expressions": "Expression(H)",
+      "answer_expressions": "y^2=20*x"
+    },
+    {
+      "id": 3587,
+      "text": "双曲线$\\frac{y^{2}}{64}-\\frac{x^{2}}{36}=1$上一点$P$到它的一个焦点的距离等于$3$，那么点$P$与两个焦点所构成的三角形的周长等于?",
+      "fact_expressions": "G: Hyperbola;P: Point;Expression(G) = (-x^2/36 + y^2/64 = 1);PointOnCurve(P, G);Distance(P, OneOf(Focus(G))) = 3;F1:Point;F2:Point;Focus(G)={F1,F2}",
+      "query_expressions": "Perimeter(TriangleOf(P,F1,F2))",
+      "answer_expressions": "42"
+    },
+    {
+      "id": 3588,
+      "text": "双曲线的焦点在$x$轴上, 实轴长为$4$, 离心率为$3$, 则该双曲线的标准方程为?渐近线方程为?",
+      "fact_expressions": "G: Hyperbola;PointOnCurve(Focus(G), xAxis);Length(RealAxis(G)) = 4;Eccentricity(G) = 3",
+      "query_expressions": "Expression(G);Expression(Asymptote(G))",
+      "answer_expressions": "x^2/4 - y^2/32 = 1\ny= pm*2*sqrt(2)*x"
+    },
+    {
+      "id": 3591,
+      "text": "$P$为直线$y=\\frac{b}{3 a} x$与双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$左支的交点，$F_{1}$是左焦点，$P F_{1}$垂直于$x$轴，则双曲线的离心率$e$=?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;H: Line;P: Point;F1: Point;e: Number;a>0;b>0;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);Expression(H) = (y = x*(b/(3*a)));LeftFocus(G) = F1;Intersection(H,LeftPart(G))=P;IsPerpendicular(LineSegmentOf(P,F1),xAxis);Eccentricity(G) = e",
+      "query_expressions": "e",
+      "answer_expressions": "3*sqrt(2)/4"
+    },
+    {
+      "id": 3603,
+      "text": "双曲线$\\frac{x^{2}}{2}-\\frac{y^{2}}{4}=-1$的渐近线方程为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/2 - y^2/4 = -1)",
+      "query_expressions": "Expression(Asymptote(G))",
+      "answer_expressions": "y=pm*sqrt(2)*x"
+    },
+    {
+      "id": 3605,
+      "text": "椭圆$\\frac{x^{2}}{3}+y^{2}=1$上的点到直线$x+y=4$的最近距离为?",
+      "fact_expressions": "G: Ellipse;H: Line;P:Point;Expression(G) = (x^2/3 + y^2 = 1);Expression(H) = (x + y = 4);PointOnCurve(P,G)",
+      "query_expressions": "Min(Distance(P, H))",
+      "answer_expressions": "sqrt(2)"
+    },
+    {
+      "id": 3606,
+      "text": "直线$y=x+b$与曲线$x=\\sqrt{1-y^{2}}$恰有一个交点，则实数的$b$的取值范围是?",
+      "fact_expressions": "G: Line;b: Real;H: Curve;Expression(G) = (y = b + x);Expression(H) = (x = sqrt(1 - y^2));NumIntersection(G, H)=1",
+      "query_expressions": "Range(b)",
+      "answer_expressions": "(-1,1]+{-sqrt(2)}"
+    },
+    {
+      "id": 3607,
+      "text": "设椭圆$C_{1}$的离心率为$\\frac{5}{13}$，焦点在$x$轴上且长轴长为$26$. 若曲线$C_{2}$上的点到椭圆$C_{1}$的两个焦点的距离的差的绝对值等于$8$，则曲线$C_{2}$的标准方程为?",
+      "fact_expressions": "C1: Ellipse;C2: Curve;Eccentricity(C1) = 5/13;PointOnCurve(Focus(C1),xAxis);Length(MajorAxis(C1))=26;P:Point;F1:Point;F2:Point;Focus(C1)={F1,F2};PointOnCurve(P,C2);Abs(Distance(P,F1)-Distance(P,F2))=8",
+      "query_expressions": "Expression(C2)",
+      "answer_expressions": "x^2/16-y^2/9=1"
+    },
+    {
+      "id": 3610,
+      "text": "以双曲线$x^{2}-y^{2}=-2$的焦点为焦点的椭圆方程可以是? (写出符合要求的一个方程即可) ?",
+      "fact_expressions": "G: Hyperbola;H: Ellipse;Expression(G) = (x^2 - y^2 =-2);Focus(G)=Focus(H)",
+      "query_expressions": "Expression(H)",
+      "answer_expressions": "y^2/5+x^2=1"
+    },
+    {
+      "id": 3613,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^2}=1(a>0, b>0)$的右焦点为$F$，若过点$F$且倾斜角为$\\frac{\\pi}{6}$的直线与双曲线的右支有且只有一个公共点，则该双曲线的离心率的取值范围?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;H: Line;F: Point;a>0;b>0;Expression(G) = (-y^2/(b^2) + x^2/a^2 = 1);RightFocus(G) = F;PointOnCurve(F, H);Inclination(H) = pi/6;NumIntersection(H, RightPart(G)) = 1",
+      "query_expressions": "Range(Eccentricity(G))",
+      "answer_expressions": "[2*sqrt(3)/3, +oo)"
+    },
+    {
+      "id": 3614,
+      "text": "设$M(-5,0)$, $N(5,0)$, $\\triangle M N P$的周长是$36$，则$\\triangle M N P$的顶点$P$的轨迹方程为?",
+      "fact_expressions": "M: Point;N: Point;P: Point;Coordinate(M) = (-5, 0);Coordinate(N) = (5, 0);Perimeter(TriangleOf(M, N, P)) = 36",
+      "query_expressions": "LocusEquation(P)",
+      "answer_expressions": "(x^2/169+y^2/144=1)&Negation(y=0)"
+    },
+    {
+      "id": 3615,
+      "text": "双曲线$\\frac{x^{2}}{4}-y^{2}=1$的渐近线方程为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/4 - y^2 = 1)",
+      "query_expressions": "Expression(Asymptote(G))",
+      "answer_expressions": "y=pm*(1/2)*x"
+    },
+    {
+      "id": 3617,
+      "text": "设点$F_{1}(-c , 0)$ , $F_{2}(c, 0)$分别是双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1$的左右焦点，$P$为双曲线上的一\n点，且$\\overrightarrow {P F_{1}} \\cdot \\overrightarrow {P F_{2}}=-\\frac{2 c^{2}}{3}$，则此双曲线的离心率的取值范围是?",
+      "fact_expressions": "G: Hyperbola;a: Number;b: Number;c: Number;F1: Point;F2: Point;P: Point;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);Coordinate(F1) = (-c, 0);Coordinate(F2) = (c, 0);LeftFocus(G) = F1;RightFocus(G) = F2;PointOnCurve(P, G);DotProduct(VectorOf(P, F1), VectorOf(P, F2)) = -2*c^2/3",
+      "query_expressions": "Range(Eccentricity(G))",
+      "answer_expressions": "[sqrt(3), +oo)"
+    },
+    {
+      "id": 3620,
+      "text": "已知$F$是抛物线$C$: $y^{2}=2 p x(p>0)$的焦点，过$F$作直线与$C$相交于$P$、$Q$两点，且$Q$在第一象限，若$2 \\overrightarrow{P F}=\\overrightarrow{F Q}$，则直线$P Q$的斜率是?",
+      "fact_expressions": "C: Parabola;p: Number;G: Line;Q: Point;P: Point;F: Point;p>0;Expression(C) = (y^2 = 2*(p*x));Focus(C) = F;PointOnCurve(F,G);Intersection(G, C) = {P, Q};Quadrant(Q)=1;2*VectorOf(P, F) = VectorOf(F, Q)",
+      "query_expressions": "Slope(LineOf(P,Q))",
+      "answer_expressions": "2*sqrt(2)"
+    },
+    {
+      "id": 3623,
+      "text": "设双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的半焦距为$c$. 已知原点到直线$l$: $b x+a y=a b$的距离等于$\\frac{1}{4}  c+1$，则$c$的最小值为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a>0;b>0;HalfFocalLength(G)=c;c:Number;O:Origin;l:Line;Expression(l) = (a*y + b*x = a*b);Distance(O,l)=(c/4+1)",
+      "query_expressions": "Min(c)",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3624,
+      "text": "若双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{m}=1$的渐近线方程为$y=\\pm \\frac{\\sqrt{3}}{2} x$，则双曲线的焦距为?",
+      "fact_expressions": "G: Hyperbola;m: Number;Expression(G) = (x^2/4 - y^2/m = 1);Expression(Asymptote(G)) = (y = pm*(x*(sqrt(3)/2)))",
+      "query_expressions": "FocalLength(G)",
+      "answer_expressions": "2*sqrt(7)"
+    },
+    {
+      "id": 3627,
+      "text": "设$F_{1}$、$F_{2}$分别是椭圆$\\frac{x^{2}}{25}-\\frac{y^{2}}{9}=1$的左、右焦点，点$P$在椭圆上，若$|P F_{1}|=9|P F_{2}|$，则$P$点的坐标为?",
+      "fact_expressions": "G: Ellipse;P: Point;F1: Point;F2: Point;Expression(G) = (x^2/25 - y^2/9 = 1);LeftFocus(G) = F1;RightFocus(G) = F2;PointOnCurve(P, G);Abs(LineSegmentOf(P, F1)) = 9*Abs(LineSegmentOf(P, F2))",
+      "query_expressions": "Coordinate(P)",
+      "answer_expressions": "(5,0)"
+    },
+    {
+      "id": 3628,
+      "text": "若椭圆经过点$(2 , 3)$，且焦点为$F_{1}(-2,0)$, $F_{2}(2,0)$，则这个椭圆的离心率等于?",
+      "fact_expressions": "G: Ellipse;PointOnCurve(H, G) = True;H: Point;Coordinate(H) = (2, 3);F1: Point;F2: Point;Focus(G) = {F1,F2};Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0)",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "1/2"
+    },
+    {
+      "id": 3629,
+      "text": "已知点$P$是抛物线$y^{2}=-8 x$上一点，设$P$到此抛物线准线的距离是$d_{1}$，到直线$x+y-10=0$的距离是$d_{2}$，则$d_{l}+d_{2}$的最小值是?",
+      "fact_expressions": "G: Parabola;H: Line;P: Point;d1: Number;d2: Number;Expression(G) = (y^2 = -8*x);Expression(H) = (x + y - 10 = 0);PointOnCurve(P, G);Distance(P, Directrix(G)) = d1;Distance(P, H) = d2",
+      "query_expressions": "Min(d2 + d1)",
+      "answer_expressions": "6*sqrt(2)"
+    },
+    {
+      "id": 3631,
+      "text": "若抛物线$y^{2}=2 p x$的焦点与双曲线$\\frac{x^{2}}{3}-y^{2}=1$的左焦点重合，则实数$p$=?",
+      "fact_expressions": "G: Hyperbola;H: Parabola;p: Real;Expression(G) = (x^2/3 - y^2 = 1);Expression(H) = (y^2 = 2*(p*x));Focus(H) = LeftFocus(G)",
+      "query_expressions": "p",
+      "answer_expressions": "-4"
+    },
+    {
+      "id": 3634,
+      "text": "已知点$B$为双曲线$\\frac{y^{2}}{a^{2}}-\\frac{x^{2}}{b^{2}}=1(a>0, b>0)$的左准线与$x$轴的交点，点$A$坐标为$(0, b)$，若满足$\\overrightarrow{A P}=3 \\overrightarrow{A B}$, 点$P$在双曲线上，则双曲线的离心率为?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;A: Point;P: Point;B: Point;a>0;b>0;Expression(G) = (-x^2/b^2 + y^2/a^2 = 1);Intersection(LeftDirectrix(G), xAxis) = B;Coordinate(A) = (0, b);VectorOf(A, P) = 3*VectorOf(A, B);PointOnCurve(P, G)",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "3*sqrt(5)/5"
+    },
+    {
+      "id": 3635,
+      "text": "设$F_{1}$、$F_{2}$是椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1  (a>b>0)$的左、右焦点，若椭圆上存在点$P$，使得$\\overrightarrow{P F_{1}} \\cdot \\overrightarrow{P F_{2}}<0$，则椭圆的离心率的取值范围?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a > b;b > 0;F1: Point;F2: Point;LeftFocus(G) = F1;RightFocus(G) = F2;P: Point;PointOnCurve(P, G);DotProduct(VectorOf(P, F1), VectorOf(P, F2))<0",
+      "query_expressions": "Range(Eccentricity(G))",
+      "answer_expressions": "(sqrt(2)/2, 1)"
+    },
+    {
+      "id": 3638,
+      "text": "经过抛物线$y^{2}=4 x$的焦点且平行于直线$3 x-2 y=0$的直线$l$的方程是?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y^2 = 4*x);l: Line;PointOnCurve(Focus(G), l);H: Line;Expression(H) = (3*x - 2*y = 0);IsParallel(H, l)",
+      "query_expressions": "Expression(l)",
+      "answer_expressions": "3*x-2*y-3=0"
+    },
+    {
+      "id": 3639,
+      "text": "$P$是椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1$上的任意一点，$F_{1}$、$F_{2}$是它的两个焦点，$O$为坐标原点，有一动点$Q$满足$\\overrightarrow{O Q}=\\overrightarrow{P F_{1}}+\\overrightarrow{P F_{2}}$，则动点$Q$的轨迹方程是?",
+      "fact_expressions": "G: Ellipse;b: Number;a: Number;O: Origin;Q: Point;P: Point;F1: Point;F2:Point;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);PointOnCurve(P,G);Focus(G)={F1,F2};VectorOf(O, Q) = VectorOf(P, F1) + VectorOf(P, F2)",
+      "query_expressions": "LocusEquation(Q)",
+      "answer_expressions": "x^2/(4*a^2)+y^2/(4*b^2)=1"
+    },
+    {
+      "id": 3641,
+      "text": "已知抛物线$y^{2}=8 x$过其焦点$F$的直线交抛物线于$A$、$B$两点过$A B$中点$M$作$Y$轴垂线交$Y$轴于点$N$, 若$|M N|=2$,则$|A B|$=?",
+      "fact_expressions": "G: Parabola;H: Line;A: Point;B: Point;M: Point;N: Point;F:Point;Expression(G) = (y^2 = 8*x);PointOnCurve(F,H);Focus(G)=F;Intersection(H,G)={A,B};MidPoint(LineSegmentOf(A,B))=M;L:Line;PointOnCurve(M,L);IsPerpendicular(L,yAxis);Intersection(L,yAxis)=N;Abs(LineSegmentOf(M, N)) = 2",
+      "query_expressions": "Abs(LineSegmentOf(A, B))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3648,
+      "text": "若双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的一个焦点$F(5,0)$，一条渐近线的斜率为$\\frac{3}{4}$，则$a$=?",
+      "fact_expressions": "C:Hyperbola;a:Number;b:Number;a>0;b>0;F:Point;Expression(C)=(x^2/a^2-y^2/b^2=1);OneOf(Focus(C))=F;Coordinate(F)=(5,0);Slope(OneOf(Asymptote(C)))=3/4",
+      "query_expressions": "a",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3651,
+      "text": "已知点$P$是抛物线$y^{2}=2 x$上的一个动点，则点$P$到点$(0 , 2)$的距离与$P$到该抛物线准线的距离之和的最小值为?",
+      "fact_expressions": "G: Parabola;H: Point;P: Point;Expression(G) = (y^2 = 2*x);Coordinate(H) = (0, 2);PointOnCurve(P, G)",
+      "query_expressions": "Min(Distance(P,H)+Distance(P,Directrix(G)))",
+      "answer_expressions": "sqrt(17)/2"
+    },
+    {
+      "id": 3653,
+      "text": "中心在坐标原点，焦点在$y$轴上的双曲线的渐近线过点$P(2 , 1)$，其离心率为?",
+      "fact_expressions": "O: Origin;Center(G) = O;G: Hyperbola;PointOnCurve(Focus(G), yAxis);P: Point;Coordinate(P) = (2, 1);PointOnCurve(P, Asymptote(G))",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(5)"
+    },
+    {
+      "id": 3659,
+      "text": "长度为$a$的线段$AB$的两个端点$A$ , $B$都在抛物线$y^{2}=2 p x(p>0,a>2 p)$上滑动，则线段$AB$的中点$M$到$y$轴的最短距离是?",
+      "fact_expressions": "A: Point;B: Point;Length(LineSegmentOf(A, B)) = a;a: Number;Endpoint(LineSegmentOf(A, B)) = {A, B};G: Parabola;Expression(G) = (y^2 = 2*p*x);p: Number;p>0;a>2*p;PointOnCurve(A,G) = True;PointOnCurve(B,G) = True;MidPoint(LineSegmentOf(A,B)) = M;M: Point",
+      "query_expressions": "Min(Distance(M, yAxis))",
+      "answer_expressions": "(a-p)/2"
+    },
+    {
+      "id": 3663,
+      "text": "设$F_{1}$、$F_{2}$分别是椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1  (a>b>0)$的左、右焦点，$P$是其右准线上纵坐标为$ \\sqrt {3} c$($c$为半焦距) 的点，且$F_{1} F_{2}=F_{2} P$，则椭圆的离心率是?",
+      "fact_expressions": "G: Ellipse;a: Number;b: Number;F1: Point;F2: Point;P: Point;a > b;b > 0;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);LeftFocus(G) = F1;RightFocus(G) = F2;PointOnCurve(P,RightDirectrix(G));YCoordinate(P)=sqrt(3)*c;c:Number;HalfFocalLength(G)=c;LineSegmentOf(F1, F2) = LineSegmentOf(F2, P)",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(2)/2"
+    },
+    {
+      "id": 3665,
+      "text": "已知圆$C_{1}$: $x^{2}+y^{2}=9$，圆$C_{2}$: $x^{2}+y^{2}=4$, 定点$M(1,0)$,动点$A$、$B$分别在圆$C_{2}$和圆$C_{1}$上，满足$\\angle A M B=90^{\\circ}$, 则线段$A B$的取值范围?",
+      "fact_expressions": "C1: Circle;C2: Circle;B: Point;A: Point;M: Point;Expression(C1) = (x^2 + y^2 = 9);Expression(C2) = (x^2 + y^2 = 4);Coordinate(M) = (1, 0);PointOnCurve(A, C2);PointOnCurve(B, C1);AngleOf(A, M, B) = ApplyUnit(90, degree)",
+      "query_expressions": "Range(LineSegmentOf(A,B))",
+      "answer_expressions": "[2*sqrt(3)-1,2*sqrt(3)+1]"
+    },
+    {
+      "id": 3666,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a,b>0)$的离心率为$\\frac{\\sqrt{6}}{2}$, 则$\\frac{a^{2}+4}{b}$的最小值为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a>0;b>0;Eccentricity(G) = sqrt(6)/2",
+      "query_expressions": "Min((a^2 + 4)/b)",
+      "answer_expressions": "4*sqrt(2)"
+    },
+    {
+      "id": 3667,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左、右焦点分别为$F_{1}(-c, 0)$ , $F_{2}(c, 0)$，若双曲线上存在一点$P$使$\\frac{\\sin \\angle P F_{1} F_{2}}{\\sin \\angle P F_{2} F_{1}}=\\frac{a}{c}$，则该双曲线的离心率的取值范围是?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;F1: Point;F2: Point;P: Point;a>0;b>0;c:Number;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);Coordinate(F1) = (-c, 0);Coordinate(F2) = (c, 0);LeftFocus(G) = F1;RightFocus(G)=F2;PointOnCurve(P,G);Sin(AngleOf(P,F1,F2))/Sin(AngleOf(P,F2,F1))=a/c",
+      "query_expressions": "Range(Eccentricity(G))",
+      "answer_expressions": "(1,sqrt(2)+1)"
+    },
+    {
+      "id": 3668,
+      "text": "已知抛物线$y=\\frac{1}{4} x^{2}$，则过其焦点垂直于其对称轴的直线方程为?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y = x^2/4);l:Line;PointOnCurve(Focus(G),l);IsPerpendicular(l,SymmetryAxis(G))",
+      "query_expressions": "Expression(l)",
+      "answer_expressions": "y = 1"
+    },
+    {
+      "id": 3674,
+      "text": "若双曲线$\\frac{x^{2}}{9}-y^{2}=1$的左右焦点分别为$F_{1}$、$F_{2}$、$A$是双曲线左支上的一点，且$|A F_{1}|=5$，那么$|A F_{2}|$=?",
+      "fact_expressions": "C: Hyperbola;Expression(C) = (x^2/9 - y^2 = 1);F1: Point;F2: Point;F1 = LeftFocus(C);F2 = RightFocus(C);A: Point;PointOnCurve(A, LeftPart(C));Abs(LineSegmentOf(A, F1)) = 5",
+      "query_expressions": "Abs(LineSegmentOf(A, F2))",
+      "answer_expressions": "11"
+    },
+    {
+      "id": 3678,
+      "text": "直线$y=x-1$被抛物线$y^{2}=4 x$截得线段的中点坐标是?",
+      "fact_expressions": "G: Parabola;H: Line;Expression(G) = (y^2 = 4*x);Expression(H) = (y = x - 1)",
+      "query_expressions": "Coordinate(MidPoint(InterceptChord(H,G)))",
+      "answer_expressions": "(3,2)"
+    },
+    {
+      "id": 3679,
+      "text": "已知抛物线$C$: $y^{2}=-2 p x (p>0)$，斜率为$-2$的直线过$C$的焦点$F$且与抛物线$C$交于$P$、$Q$两点，若线段$P Q$的中点$M$的纵坐标为$2$，则$p$=?",
+      "fact_expressions": "C: Parabola;Expression(C) = (y^2 = -2*p*x);p: Number;p>0;Slope(G) = -2;G: Line;Focus(C) = F;F: Point;PointOnCurve(F, G) = True;Intersection(G, C) = {P, Q};P: Point;Q: Point;M: Point;MidPoint(LineSegmentOf(P, Q)) = M;YCoordinate(M) = 2",
+      "query_expressions": "p",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3681,
+      "text": "已知抛物线$x^{2}=y$上一点$A$到准线的距离为$\\frac{5}{4}$, 则$A$到顶点的距离等于?",
+      "fact_expressions": "G: Parabola;A: Point;Expression(G) = (x^2 = y);PointOnCurve(A, G);Distance(A, Directrix(G)) = 5/4",
+      "query_expressions": "Distance(A, Vertex(G))",
+      "answer_expressions": "sqrt(2)"
+    },
+    {
+      "id": 3684,
+      "text": "以$F_{1}$、$F_{2}$为焦点的椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1  (a>b>0)$上一动点$P$，当$\\angle F_{1} P_{2}$最大时$\\angle P F_{1} F_{2}$的正切值为$2$，则此椭圆离心率的大小为?",
+      "fact_expressions": "G: Ellipse;b: Number;a: Number;F1: Point;P: Point;F2: Point;a > b;b > 0;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);PointOnCurve(P,G);Focus(G)={F1,F2};WhenMax(AngleOf(F1,P,F2));Tan(AngleOf(P, F1, F2)) = 2",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(5)/5"
+    },
+    {
+      "id": 3686,
+      "text": "双曲线$\\frac{x^{2}}{4}-y^{2}=1$的渐近线为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/4 - y^2 = 1)",
+      "query_expressions": "Expression(Asymptote(G))",
+      "answer_expressions": "y=(pm*1/2)*x"
+    },
+    {
+      "id": 3688,
+      "text": "若双曲线的离心率为$\\sqrt{2}$，且一个顶点坐标是$(0 , 3)$，则它的标准方程为?",
+      "fact_expressions": "G: Hyperbola;Eccentricity(G) = sqrt(2);Coordinate(OneOf(Vertex(G))) = (0, 3)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "y^2-x^2=9"
+    },
+    {
+      "id": 3689,
+      "text": "双曲线$C$: $x^{2}-y^{2}=1$的渐近线方程为? 若双曲线$C$的右顶点为$A$，过$A$的直线$l$与双曲线$C$的两条渐近线交于$P$、$Q$两点，且$\\overrightarrow{P A}=2 \\overrightarrow{A Q}$，则直线$l$的斜率为?",
+      "fact_expressions": "l: Line;C: Hyperbola;P: Point;A: Point;Q: Point;Expression(C) = (x^2 - y^2 = 1);RightVertex(C) = A;PointOnCurve(A, l);l1: Line;l2: Line;Asymptote(C) = {l1, l2};Intersection(l, l1) = P;Intersection(l, l2) = Q;VectorOf(P, A) = 2*VectorOf(A, Q)",
+      "query_expressions": "Expression(Asymptote(C));Slope(l)",
+      "answer_expressions": "x + pm*y = 0\n"
+    },
+    {
+      "id": 3694,
+      "text": "已知椭圆$E$的离心率为$e$，两焦点为$F_{1}$ , $F_{2}$，抛物线$C$以$F_{1}$为顶点，$F_{2}$为焦点，$P$为两曲线的一个交点，若$\\frac{|P F_{1}|}{|P F_{2}|}=e$，则$e$的值为?",
+      "fact_expressions": "C: Parabola;E: Ellipse;F1: Point;F2:Point;P: Point;e:Number;Eccentricity(E) = e;Focus(E)={F1,F2};Vertex(C)=F1;Focus(C)=F2;OneOf(Intersection(E,C))=P;Abs(LineSegmentOf(P,F1))/Abs(LineSegmentOf(P,F2)) = e",
+      "query_expressions": "e",
+      "answer_expressions": "sqrt(3)/3"
+    },
+    {
+      "id": 3697,
+      "text": "已知$F_{1}(-c, 0)$ , $F_{2}(c, 0)$为椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的两个焦点，$P$为椭圆上一点，且$\\overrightarrow{P F_{1}} \\cdot \\overrightarrow{P F_{2}}=c^{2}$，则此椭圆离心率的取值范围是?",
+      "fact_expressions": "F1: Point;F2: Point;Coordinate(F1) = (-c, 0);Coordinate(F2) = (c, 0);Focus(G) = {F1, F2};c: Number;G: Ellipse;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);a: Number;b: Number;a > b;b > 0;P: Point;PointOnCurve(P, G);DotProduct(VectorOf(P, F1), VectorOf(P, F2)) = c^2",
+      "query_expressions": "Range(Eccentricity(G))",
+      "answer_expressions": "[sqrt(3)/3, sqrt(2)/2]"
+    },
+    {
+      "id": 3699,
+      "text": "中心在原点，焦点在$x$轴上的双曲线的实轴与虚轴相等，一个焦点到一条渐近线的距离为$\\sqrt{2}$,则双曲线方程为?",
+      "fact_expressions": "Center(G) = O;O: Origin;PointOnCurve(Focus(G), xAxis) = True;G: Hyperbola;RealAxis(G) = ImageinaryAxis(G);Distance(OneOf(Focus(G)), OneOf(Asymptote(G))) = sqrt(2)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2-y^2=2"
+    },
+    {
+      "id": 3705,
+      "text": "已知椭圆$C$:$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1(a>b>0)$的离心率为?",
+      "fact_expressions": "C: Ellipse;Expression(C) = (y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a > b;b > 0",
+      "query_expressions": "Eccentricity(C)",
+      "answer_expressions": ""
+    },
+    {
+      "id": 3708,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1 (a>0, b>0)$的一条渐近线的斜率为$\\frac{1}{2}$，则该双曲线的离心率是?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a>0;b>0;Slope(OneOf(Asymptote(G))) = 1/2",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "sqrt(5)/2"
+    },
+    {
+      "id": 3710,
+      "text": "如果椭圆$\\frac{x^{2}}{100}+\\frac{y^{2}}{36}=1$上一点$P$到焦点$F_{1}$的距离等于$6$，则点$P$到另一个焦点$F_{2}$的距离为?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (x^2/100 + y^2/36 = 1);P: Point;PointOnCurve(P, G) = True;F1: Point;F2: Point;OneOf(Focus(G)) = F1;OneOf(Focus(G)) = F2;Negation(F1 = F2);Distance(P, F1) = 6",
+      "query_expressions": "Distance(P, F2)",
+      "answer_expressions": "14"
+    },
+    {
+      "id": 3714,
+      "text": "已知双曲线$\\frac{x^{2}}{9}-\\frac{y^{2}}{b^{2}}=1(b>0)$的一条渐近线的倾斜角为$\\frac{\\pi}{3}$，则$b$的值为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/9 - y^2/b^2 = 1);b: Number;b>0;Inclination(OneOf(Asymptote(G))) = pi/3",
+      "query_expressions": "b",
+      "answer_expressions": "3*sqrt(3)"
+    },
+    {
+      "id": 3715,
+      "text": "已知椭圆$\\frac{x^{2}}{4}+\\frac{y^{2}}{2}=1$ ,过点$P(1 , 1)$作直线$l$，与椭圆交于$A$、$B$两点，且点$P$是线段$A B$的中点，则直线的斜率为?",
+      "fact_expressions": "l: Line;G: Ellipse;Expression(G) = (x^2/4 + y^2/2 = 1);A: Point;B: Point;P: Point;Coordinate(P) = (1, 1);PointOnCurve(P,l);Intersection(l,G)={A,B};MidPoint(LineSegmentOf(A,B)) = P",
+      "query_expressions": "Slope(l)",
+      "answer_expressions": ""
+    },
+    {
+      "id": 3718,
+      "text": "已知离心率为$2$的双曲线$\\frac{x^{2}}{m}+\\frac{y^{2}}{n}=1(m, n \\in R)$的右焦点与抛物线$y^{2}=4 x$的焦点重合，\n则$\\frac{m}{n}$=?",
+      "fact_expressions": "G: Hyperbola;n: Real;m: Real;H: Parabola;Expression(G) = (y^2/n + x^2/m = 1);Expression(H) = (y^2 = 4*x);Eccentricity(G)=2;RightFocus(G)=Focus(H)",
+      "query_expressions": "m/n",
+      "answer_expressions": "1/3"
+    },
+    {
+      "id": 3722,
+      "text": "直线与双曲线$x^{2}-4 y^{2}=4$交于$A$, $B$两点，若线段$AB$的中点坐标为$(8 , 1)$，则直线的方程为?",
+      "fact_expressions": "A: Point;B: Point;G: Hyperbola;H: Line;Expression(G) = (x^2 - 4*y^2 = 4);Intersection(H, G) = {A,B};Coordinate(MidPoint(LineSegmentOf(A,B))) =(8,1)",
+      "query_expressions": "Expression(H)",
+      "answer_expressions": "2*x-y-15=0"
+    },
+    {
+      "id": 3724,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1$的离心率为$2$，焦点与椭圆$\\frac{x^{2}}{25}+\\frac{y^{2}}{9}=1$的焦点相同，那么双曲线的焦点坐标为?渐近线方程为?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;H: Ellipse;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);Expression(H) = (x^2/25 + y^2/9 = 1);Eccentricity(G) = 2;Focus(G) = Focus(H)",
+      "query_expressions": "Coordinate(Focus(G));Expression(Asymptote(G))",
+      "answer_expressions": "(pm*4, 0)\nsqrt(3)*x+pm*y=0"
+    },
+    {
+      "id": 3725,
+      "text": "椭圆$\\frac{x^{2}}{4}+\\frac{y^{2}}{a^{2}}=1$与双曲线$\\frac{x^{2}}{a}-\\frac{y^{2}}{2}=1$有相同的焦点，则$a$的值是?",
+      "fact_expressions": "G: Hyperbola;a: Number;H: Ellipse;Expression(G) = (-y^2/2 + x^2/a = 1);Expression(H) = (x^2/4 + y^2/a^2 = 1);Focus(H) = Focus(G)",
+      "query_expressions": "a",
+      "answer_expressions": "1"
+    },
+    {
+      "id": 3728,
+      "text": "过椭圆$2 x^{2}+y^{2}=4$上点$P$作$x$轴的垂线$P D$ , $D$为垂足，则点$P$在椭圆上运动时，线段$P D$中点$M$的轨迹方程是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (2*x^2 + y^2 = 4);D: Point;P: Point;M: Point;PointOnCurve(P, G);IsPerpendicular(LineSegmentOf(P,D),xAxis);FootPoint(LineSegmentOf(P,D),xAxis)=D;MidPoint(LineSegmentOf(P,D))=M;PointOnCurve(P,LineSegmentOf(P,D))",
+      "query_expressions": "LocusEquation(M)",
+      "answer_expressions": "x^2/2+y^2=1"
+    },
+    {
+      "id": 3732,
+      "text": "过双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左焦点且垂直于$x$轴的直线与双曲线相交于$M$、$N$两点,$O$为双曲线的中心,$\\overrightarrow{O M} \\cdot \\overrightarrow{O N}=0$, 则双曲线的离心率为?",
+      "fact_expressions": "G: Hyperbola;b: Number;a: Number;H: Line;O: Origin;M: Point;N: Point;a>0;b>0;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);PointOnCurve(LeftFocus(G), H);IsPerpendicular(H,xAxis);Intersection(H, G) = {M, N};Center(G) = O;DotProduct(VectorOf(O, M), VectorOf(O, N)) = 0",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "(sqrt(5)+1)/2"
+    },
+    {
+      "id": 3733,
+      "text": "已知点$A$、$B$在抛物线$\\Gamma$: $y^{2}=4 x$上，点$M$在$\\Gamma$的准线上，线段$M A$, $M B$的中点均在抛物线$\\Gamma$上，设直线$A B$与$y$轴交于点$N(0, n)$，则$|n|$的最小值为?",
+      "fact_expressions": "Gamma: Parabola;Expression(Gamma) = (y^2 = 4*x);A: Point;B: Point;PointOnCurve(A, Gamma);PointOnCurve(B, Gamma);M: Point;PointOnCurve(M, Directrix(Gamma));PointOnCurve(MidPoint(LineSegmentOf(M, A)), Gamma);PointOnCurve(MidPoint(LineSegmentOf(M, B)), Gamma);N: Point;n: Number;Coordinate(N) = (0, n);Intersection(LineOf(A, B), yAxis) = N",
+      "query_expressions": "Min(Abs(n))",
+      "answer_expressions": "2*sqrt(2)"
+    },
+    {
+      "id": 3736,
+      "text": "若双曲线$x^{2}+k y^{2}=1$的一个焦点是$(3 , 0)$，则实数$k$=?",
+      "fact_expressions": "G: Hyperbola;k: Real;Expression(G) = (x^2+k*y^2=1);Coordinate(OneOf(Focus(G))) = (3, 0)",
+      "query_expressions": "k",
+      "answer_expressions": "-1/8"
+    },
+    {
+      "id": 3738,
+      "text": "若抛物线$y^{2}=2 px(p>0)$上一点$M$到直线$x=-\\frac{p}{2}$和到对称轴的距离分别是$10$和$6$，则该抛物线的方程是?",
+      "fact_expressions": "G: Parabola;p: Number;H: Line;p>0;M:Point;Expression(G) = (y^2 = 2*p*x);Expression(H) = (x = -p/2);PointOnCurve(M,G);Distance(M,H)=10;Distance(M,SymmetryAxis(G))=6",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "{y^2=4*x,y^2=36*x}"
+    },
+    {
+      "id": 3744,
+      "text": "过抛物线$x^{2}=4 y$的焦点$F$作直线交抛物线于$P_{1}(x_{1}, y_{1})$,$P_2(x_{2}, y_{2})$两点，若$y_{1}+y_{2}=6$，求$|P_{1} P_{2}|$的值?",
+      "fact_expressions": "G: Parabola;Expression(G) = (x^2 = 4*y);H: Line;F: Point;Focus(G) = F;PointOnCurve(F, H);P1: Point;P2: Point;x1: Number;x2: Number;y1: Number;y2: Number;Coordinate(P1) = (x1, y1);Coordinate(P2) = (x2, y2);Intersection(H, G) = {P1, P2};y1 + y2 = 6",
+      "query_expressions": "Abs(LineSegmentOf(P1, P2))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3747,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a, b>0)$的左右焦点为$F_{1}$, $F_{2}$ ,过$F_{2}$作$x$轴的垂线与$C$相交于$A$、$B$两点，$F_{1} B$与$y$轴相交于$D$. 若$A D \\perp F_{1} B$，则双曲线$C$的离心率为?",
+      "fact_expressions": "C: Hyperbola;Expression(C) = (-y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a>0;b>0;F1: Point;F2: Point;LeftFocus(C) = F1;RightFocus(C) = F2;A: Point;B: Point;L: Line;PointOnCurve(F2,L) = True;IsPerpendicular(L,xAxis) = True;Intersection(L,C) = {A,B};D: Point;Intersection(LineSegmentOf(F1,B),yAxis) = D;IsPerpendicular(LineSegmentOf(A,D),LineSegmentOf(F1,B)) = True",
+      "query_expressions": "Eccentricity(C)",
+      "answer_expressions": "sqrt(3)"
+    },
+    {
+      "id": 3750,
+      "text": "已知$y=\\frac{1}{x}$的图象为双曲线，在双曲线的两支上分别取点$P$、$Q$，则线段$P Q$的最小值为?",
+      "fact_expressions": "G: Hyperbola;P: Point;Q: Point;Expression(G) = (y=1/x);PointOnCurve(P,LeftPart(G));PointOnCurve(Q,RightPart(G))",
+      "query_expressions": "Min(LineSegmentOf(P,Q))",
+      "answer_expressions": "2*sqrt(2)"
+    },
+    {
+      "id": 3751,
+      "text": "抛物线$y^{2}=4 x$上一点$M$到焦点的距离为$5$，则点$M$的横坐标是?",
+      "fact_expressions": "G: Parabola;M: Point;Expression(G) = (y^2 = 4*x);PointOnCurve(M, G);Distance(M, Focus(G)) = 5",
+      "query_expressions": "XCoordinate(M)",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3753,
+      "text": "若抛物线${y}^{2}=2 p x(p>0)$的焦点与椭圆$\\frac{x^{2}}{6}+\\frac{y^{2}}{2}=1$的右焦点重合，则$p$=?",
+      "fact_expressions": "G: Parabola;p: Number;H: Ellipse;p>0;Expression(G) = (y^2 = 2*(p*x));Expression(H) = (x^2/6 + y^2/2 = 1);Focus(G) = RightFocus(H)",
+      "query_expressions": "p",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3754,
+      "text": "点$P$是抛物线$y^{2}=4 x$上一动点，则点$P$到点$A(0,1)$的距离与$P$到直线$x=-1$的距离和的最小值是?",
+      "fact_expressions": "G: Parabola;Expression(G) = (y^2 = 4*x);P:Point;PointOnCurve(P,G);A: Point;Coordinate(A) = (0, 1);l:Line;Expression(l) = (x = -1)",
+      "query_expressions": "Min(Distance(P,A)+Distance(P,l))",
+      "answer_expressions": "sqrt(2)"
+    },
+    {
+      "id": 3762,
+      "text": "$P$是双曲线$\\frac{x^{2}}{9}-\\frac{y^{2}}{16}=1$的右支上一点，$M$、$N$、分别是圆$(x+5)^{2}+y^{2}=4$和$(x-5)^{2}+y^{2}=1$上 的点，则|$PM$|-|$PN$|的最大值为?",
+      "fact_expressions": "P: Point;PointOnCurve(P, RightPart(G)) = True;G: Hyperbola;Expression(G) = (x^2/9 - y^2/16 = 1);M: Point;C1: Circle;Expression(C1) = (y^2 + (x + 5)^2 = 4);PointOnCurve(M,C1) = True;N: Point;C2: Circle;Expression(C2) = (y^2 + (x - 5)^2 = 1);PointOnCurve(N,C2) = True",
+      "query_expressions": "Max(Abs(LineSegmentOf(P,M)) - Abs(LineSegmentOf(P,N)))",
+      "answer_expressions": "9"
+    },
+    {
+      "id": 3768,
+      "text": "已知双曲线$C$: $\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的左，右顶点分别为$A$，$B$，点$F$为双曲线$C$的左焦点，过点$F$作垂直于$x$轴的直线与双曲线$C$交于点$P$，$ Q$，其中点$P$在第二象限，连接$P B$交$y$轴于点$E$，连接$A E$交$Q F$于点$M$，若$\\overrightarrow{F M}=2 \\overrightarrow{M Q}$，则双曲线$C$的离心率为?",
+      "fact_expressions": "C: Hyperbola;a: Number;b: Number;G: Line;P: Point;B: Point;A: Point;E: Point;Q: Point;F: Point;M: Point;a>0;b>0;Expression(C) = (-y^2/b^2 + x^2/a^2 = 1);LeftVertex(C) = A;RightVertex(C) = B ;LeftFocus(C) = F;PointOnCurve(F, G);IsPerpendicular(xAxis, G);Intersection(G, C) = {P, Q};Quadrant(P) = 2;Intersection(LineSegmentOf(P, B), yAxis) = E;Intersection(LineSegmentOf(A, E), LineSegmentOf(Q, F)) = M;VectorOf(F, M) = 2*VectorOf(M, Q)",
+      "query_expressions": "Eccentricity(C)",
+      "answer_expressions": "5"
+    },
+    {
+      "id": 3773,
+      "text": "与双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{2}=1$有相同的焦点，且过点$Q(2,1)$的圆锥曲线方程为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/4 - y^2/2 = 1);Focus(G) = Focus(H);Q: Point;Coordinate(Q) = (2, 1);PointOnCurve(Q, H) = True;H: ConicSection",
+      "query_expressions": "Expression(H)",
+      "answer_expressions": "{(x^2/8+y^2/2=1),(x^2/3-y^2/3=1)}"
+    },
+    {
+      "id": 3775,
+      "text": "设点$F_{1}$ , $F_{2}$为双曲线$C$: $x^{2}-\\frac{y^{2}}{3}=1$的左、右焦点，$P$为$C$上一点，若$\\triangle PF_{1} F_{2}$的面积为$6$，则$\\overrightarrow{P F_{1}} \\cdot \\overrightarrow{P F_{2}}$=?",
+      "fact_expressions": "C: Hyperbola;P: Point;F1: Point;F2: Point;Expression(C) = (x^2 - y^2/3 = 1);LeftFocus(C)=F1;RightFocus(C)=F2;PointOnCurve(P, C);Area(TriangleOf(P, F1, F2)) = 6",
+      "query_expressions": "DotProduct(VectorOf(P, F1), VectorOf(P, F2))",
+      "answer_expressions": "9"
+    },
+    {
+      "id": 3780,
+      "text": "已知双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0 , b>0)$的一条渐近线方程是$y=\\sqrt{3} x$，它的一个焦点与抛物线$y^{2}=16 x$的焦点相同，则双曲线的方程是?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (-y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a>0;b>0;Expression(OneOf(Asymptote(G))) = (y = sqrt(3)*x);H: Parabola;Expression(H) = (y^2 = 16*x);OneOf(Focus(G)) = Focus(H)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2/4-y^2/12=1"
+    },
+    {
+      "id": 3782,
+      "text": "已知点$P$是抛物线$y^{2}=4$上的点，设点$P$到抛物线准线的距离为$d_{1}$到圆$(x+3)^{2}+(y-3)^{2}=1$上的一动点$Q$的距离为$d_{2}$，则$d_{1}+d_{2}$的最小值是?",
+      "fact_expressions": "P: Point;G: Parabola;Expression(G) = (y^2 = 4);PointOnCurve(P, G);d1: Number;d2: Number;Distance(P, Directrix(G)) = d1;Distance(P, Q) = d2;H: Circle;Expression(H) = ((x + 3)^2 + (y - 3)^2 = 1);Q: Point;PointOnCurve(Q, H)",
+      "query_expressions": "Min(d1+ d2)",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3783,
+      "text": "已知$A$、$B$是抛物线$x^{2}=4 y$上的两点，线段$A B$的中点为$M(2 , 2)$，则$|A B |$等于?",
+      "fact_expressions": "G: Parabola;B: Point;A: Point;M: Point;Expression(G) = (x^2 = 4*y);Coordinate(M) = (2, 2);PointOnCurve(A, G);PointOnCurve(B, G);MidPoint(LineSegmentOf(A,B)) = M",
+      "query_expressions": "Abs(LineSegmentOf(A, B))",
+      "answer_expressions": "4*sqrt(2)"
+    },
+    {
+      "id": 3789,
+      "text": "求与$\\frac{x^{2}}{5}+\\frac{y^{2}}{4}=1$有相同的离心率且过点$( \\sqrt{5}, 2)$的椭圆方程?",
+      "fact_expressions": "C: Curve;Expression(C) = (x^2/5 + y^2/4 = 1);G: Ellipse;Eccentricity(C) = Eccentricity(G);H: Point;Coordinate(H) = (sqrt(5), 2);PointOnCurve(H, G) = True",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "{(x^2/10+y^2/8=1),(41*y^2/4+41*x^2/5=1)}"
+    },
+    {
+      "id": 3792,
+      "text": "已知抛物线$y^{2}=4 x$, 过焦点$F$的弦与抛物线交于$A$、$B$两点，过$A$、$B$分别作$y$轴垂线，垂足分别为$C$、$D$，则$|AB|+|BD|$的最小值是?",
+      "fact_expressions": "G: Parabola;A: Point;B: Point;D: Point;C: Point;L1:Line;L2:Line;H:LineSegment;Expression(G) = (y^2 = 4*x);Focus(G)=F;PointOnCurve(F,H);Intersection(H,G)={A,B};PointOnCurve(A,L1);PointOnCurve(B,L2);IsPerpendicular(L1,yAxis);IsPerpendicular(L2,yAxis);FootPoint(L1,yAxis)=C;FootPoint(L2,yAxis)=D;IsChordOf(H,G);F:Point",
+      "query_expressions": "Min(Abs(LineSegmentOf(A, B)) + Abs(LineSegmentOf(B, D)))",
+      "answer_expressions": "2"
+    },
+    {
+      "id": 3803,
+      "text": "设点$P$是椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1  (a>0 , b>0)$上一点，$F_{1}$、$F_{2}$分别是椭圆的左、右焦点，$I$为$\\Delta PF_{1} F_{2}$的内心，若$S_{\\Delta IPF 1}+S_{\\Delta IPF 2}=2 S_{\\Delta IF 1 F 2}$，则该椭圆的离心率是?",
+      "fact_expressions": "P: Point;G: Ellipse;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;a>0;b>0;PointOnCurve(P, G);F1: Point;F2: Point;LeftFocus(G) = F1;RightFocus(G) = F2;I: Point;Incenter(TriangleOf(P,F1,F2))=I;Area(TriangleOf(I, P, F1)) + Abs(TriangleOf(I, P, F2)) = 2*Area(TriangleOf(I, F1, F2))",
+      "query_expressions": "Eccentricity(G)",
+      "answer_expressions": "1/2"
+    },
+    {
+      "id": 3804,
+      "text": "设圆$C$: $(x-3)^{2}+y^{2}=4$经过抛物线$y^{2}=2 p x(p>0)$的焦点，则抛物线的方程是?",
+      "fact_expressions": "C: Circle;Expression(C) = (y^2 + (x - 3)^2 = 4);G: Parabola;Expression(G) = (y^2 = 2*(p*x));p: Number;p>0;PointOnCurve(Focus(G), C)",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "{y^2=2*x, y^2=10*x}"
+    },
+    {
+      "id": 3805,
+      "text": "曲线$\\frac{x^{2}}{4}+\\frac{y^{2}}{1+m}=1$的离心率$e=\\frac{1}{2}$，则$m$的值为?",
+      "fact_expressions": "E: Curve;m: Number;Expression(E) = (x**2/4 + y**2/(m + 1) = 1);Eccentricity(E) = e;e = 1/2;e: Number",
+      "query_expressions": "m",
+      "answer_expressions": "{2, 13/3}"
+    },
+    {
+      "id": 3806,
+      "text": "已知$P$是双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{12}=1$上的动点，$F_{1}$、$F_{2}$分别是其左、右焦点，$O$为坐标原点，则$\\frac{|P F_{1}|+|P F_{2}|}{| P O| }$的取值范围是?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/4 - y^2/12 = 1);P: Point;PointOnCurve(P, G);F1: Point;F2: Point;LeftFocus(G)=F1;RightFocus(G)=F2;O: Origin",
+      "query_expressions": "Range((Abs(LineSegmentOf(P,F1))+Abs(LineSegmentOf(P,F2)))/Abs(LineSegmentOf(P,O)))",
+      "answer_expressions": "(2,4]"
+    },
+    {
+      "id": 3807,
+      "text": "已知双曲线的渐近线方程为$y=\\pm \\frac{x}{2}$，虚轴长为$4$，则该双曲线的标准方程是?",
+      "fact_expressions": "G: Hyperbola;Expression(Asymptote(G)) = (y = pm*(x/2));Length(ImageinaryAxis(G)) = 4",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "{x^2/16-y^2/4=1,y^2-x^2/4=1}"
+    },
+    {
+      "id": 3814,
+      "text": "已知$F_{1}$、$F_{2}$分别为双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{6}=1$的左、右焦点，$M$为双曲线右支上一点且满足$\\overrightarrow{M F_{1}} \\cdot \\overrightarrow{M F_{2}}=0$，若直线$M F_{2}$与双曲线的另一个交点为$N$，则$\\Delta M F_{1} N$的面积为?",
+      "fact_expressions": "G: Hyperbola;M: Point;F2: Point;F1: Point;N: Point;Expression(G) = (x^2/4 - y^2/6 = 1);LeftFocus(G) = F1;RightFocus(G) = F2;PointOnCurve(M,RightPart(G));DotProduct(VectorOf(M,F1),VectorOf(M,F2))=0;OneOf(Intersection(LineOf(M,F2),G))=N",
+      "query_expressions": "Area(TriangleOf(M, F1, N))",
+      "answer_expressions": "24"
+    },
+    {
+      "id": 3815,
+      "text": "椭圆$\\frac{x^{2}}{25}+\\frac{y^{2}}{9}=1$上的点$M$到焦点$F_{1}$的距离为$2$ ,$ N$为$M F_{1}$的中点，则$|O N|$($O$为坐标原点)的值为?",
+      "fact_expressions": "G: Ellipse;M: Point;F1: Point;O: Origin;N: Point;Expression(G) = (x^2/25 + y^2/9 = 1);OneOf(Focus(G))=F1;Distance(M,F1)=2;MidPoint(LineSegmentOf(M,F1))=N;PointOnCurve(M,G)",
+      "query_expressions": "Abs(LineSegmentOf(O, N))",
+      "answer_expressions": "4"
+    },
+    {
+      "id": 3820,
+      "text": "在平面直角坐标系$x O y$中，若双曲线$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1  (a>0 , b>0)$的离心率为$\\frac{5}{4}$，则该双曲线的渐近线方程为?",
+      "fact_expressions": "E: Hyperbola;a: Number;b: Number;a>0;b>0;Expression(E) = (-y^2/b^2 + x^2/a^2 = 1);Eccentricity(E) = 5/4",
+      "query_expressions": "Expression(Asymptote(E))",
+      "answer_expressions": "y=pm*3/4*x"
+    },
+    {
+      "id": 3823,
+      "text": "双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{12}=1$的焦点到渐近线的距离为?",
+      "fact_expressions": "G: Hyperbola;Expression(G) = (x^2/4 - y^2/12 = 1)",
+      "query_expressions": "Distance(Focus(G), Asymptote(G))",
+      "answer_expressions": ""
+    },
+    {
+      "id": 3827,
+      "text": "若椭圆$\\frac{x^{2}}{a^{2}}+\\frac{y^{2}}{b^{2}}=1$的焦点在$x$轴上，过点$(1 , \\frac{1}{2})$做圆$x^{2}+y^{2}=1$的切线，切点分别为$A$，$B$，直线$A B$恰好经过椭圆的右焦点和上顶点，则椭圆的方程是?",
+      "fact_expressions": "G: Ellipse;Expression(G) = (y^2/b^2 + x^2/a^2 = 1);b: Number;a: Number;PointOnCurve(Focus(G), xAxis);H: Circle;Expression(H) = (x^2 + y^2 = 1);F: Point;Coordinate(F) = (1, 1/2);L1: Line;L2: Line;TangentOfPoint(F, H) = {L1, L2};A: Point;B: Point;TangentPoint(L1, H) = A;TangentPoint(L2, H) = B;PointOnCurve(RightFocus(G), LineOf(A, B));PointOnCurve(UpperVertex(G), LineOf(A, B))",
+      "query_expressions": "Expression(G)",
+      "answer_expressions": "x^2/5+y^2/4=1"
+    },
+    {
+      "id": 3832,
+      "text": "已知$F_{1}$、$F_{2}$为椭圆$\\frac{x^{2}}{25}+\\frac{y^{2}}{9}=1$的两个焦点，过$F_{1}$的直线交椭圆于$A$、$B$两点，若$|F_{2} A|+| F_{2} B |=12$，则$|AB|$=?",
+      "fact_expressions": "G: Ellipse;H: Line;F2: Point;A: Point;B: Point;F1: Point;Expression(G) = (x^2/25 + y^2/9 = 1);Focus(G) = {F1, F2};PointOnCurve(F1, H);Intersection(H, G) = {A, B};Abs(LineSegmentOf(F2, A)) + Abs(LineSegmentOf(F2, B)) = 12",
+      "query_expressions": "Abs(LineSegmentOf(A, B))",
+      "answer_expressions": "8"
+    },
+    {
+      "id": 3833,
+      "text": "已知$M(4, 2)$是直线$l$被椭圆$x^{2}+4 y^{2}=36$所截得的线段$A B$的中点，则直线$l$的方程为?",
+      "fact_expressions": "M: Point;Coordinate(M) = (4, 2);l: Line;G: Ellipse;Expression(G) = (x^2 + 4*y^2 = 36);A: Point;B: Point;MidPoint(LineSegmentOf(A, B)) = M;InterceptChord(l, G) = LineSegmentOf(A, B)",
+      "query_expressions": "Expression(l)",
+      "answer_expressions": "x+2*y-8=0"
+    },
+    {
+      "id": 3835,
+      "text": "已知$F_{1}$, $F_{2}$为双曲线$C$: $x^{2}-y^{2}=2$的左，右焦点，点$P$在$C$上，$|PF_{1}|=2|P F_{2}|$，则$\\cos \\angle F_{1} P F_{2}$?",
+      "fact_expressions": "C: Hyperbola;P: Point;F1: Point;F2: Point;Expression(C) = (x^2 - y^2 = 2);LeftFocus(C) =F1;RightFocus(C)=F2;PointOnCurve(P, C);Abs(LineSegmentOf(P, F1)) = 2*Abs(LineSegmentOf(P, F2))",
+      "query_expressions": "Cos(AngleOf(F1, P, F2))",
+      "answer_expressions": "3/4"
+    },
+    {
+      "id": 3836,
+      "text": "已知双曲线$\\frac{x^{2}}{16}-\\frac{y^{2}}{4}=1$上一点$P$到一个焦点的距离为$10$，则它到另一个焦点的距离为?",
+      "fact_expressions": "G: Hyperbola;P: Point;Expression(G) = (x^2/16 - y^2/4 = 1);PointOnCurve(P, G);Distance(P, F1) = 10;F1: Point;F2: Point;OneOf(Focus(G)) = F1;OneOf(Focus(G)) = F2;Negation(F1 = F2)",
+      "query_expressions": "Distance(P, F2)",
+      "answer_expressions": "{2, 18}"
+    },
+    {
+      "id": 3838,
+      "text": "椭圆$\\frac{x^{2}}{4}+\\frac{y^{2}}{2}=1$的左、右焦点分别为$F_{1}$、$F_{2}$，直线$l$过$F_{2}$与椭圆相交于$A$，$B$两点，$O$为坐标原点，以$A B$为直径的圆恰好过$O$，求直线$l$的方程?",
+      "fact_expressions": "l: Line;G: Ellipse;H: Circle;A: Point;B: Point;F1: Point;F2: Point;O: Origin;Expression(G) = (x^2/4 + y^2/2 = 1);LeftFocus(G) = F1;RightFocus(G) = F2;PointOnCurve(F2,l);Intersection(l, G) = {A,B};IsDiameter(LineSegmentOf(A, B),H);PointOnCurve(O, H)",
+      "query_expressions": "Expression(l)",
+      "answer_expressions": "y=pm*sqrt(2)*(x-sqrt(2))"
+    },
+    {
+      "id": 3839,
+      "text": "已知双曲线$E$:$\\frac{x^{2}}{a^{2}}-\\frac{y^{2}}{b^{2}}=1(a>0, b>0)$的右焦点为$F$，过点$F$向双曲线的一条渐近线引垂线， 垂足为$P$，交另一条渐近线于$Q$，若$5  \\overrightarrow{P F}=3 \\overrightarrow{F Q}$，则该双曲线$E$的离心率为?",
+      "fact_expressions": "E: Hyperbola;b: Number;a: Number;P: Point;F: Point;Q: Point;a>0;b>0;Expression(E) = (-y^2/b^2 + x^2/a^2 = 1);RightFocus(E) = F;L1:Line;L2:Line;L:Line;OneOf(Asymptote(E))=L1;OneOf(Asymptote(E))=L2;Negation(L1=L2);PointOnCurve(F,L);IsPerpendicular(L1,L);FootPoint(L1,L)=P;Intersection(L2,L)=Q;5*VectorOf(P, F) = 3*VectorOf(F, Q)",
+      "query_expressions": "Eccentricity(E)",
+      "answer_expressions": "sqrt(5)/2"
+    }
+  ]
+}

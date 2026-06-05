@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "task": "已有 process，仅需补齐 models",
+    "num_samples": 2
+  },
+  "samples": [
+    {
+      "id": 1543,
+      "text": "已知两个定点$A(0,4)$ , $B(0,1)$，动点$P$满足$|P A|=2|P B|$，则动点$P$的轨迹方程为?",
+      "fact_expressions": "A: Point;B: Point;P: Point;Coordinate(A) = (0, 4);Coordinate(B) = (0, 1);Abs(LineSegmentOf(P, A)) = 2*Abs(LineSegmentOf(P, B))",
+      "query_expressions": "LocusEquation(P)",
+      "answer_expressions": "x^2+y^2=4",
+      "process": "设点P的坐标为(x,y),将条件|PA|=2|PB|利用两点间的距离公式化为坐标表示,再化简即可得解.设点P的坐标为(x,y),由|PA|=2|PB|可得,\\sqrt{x^{2}+(y-4)^{2}}=2\\sqrt{x^{2}+(y-1)^{2}}整理可得x^{2}+y^{2}=4,所以动点P的轨迹方程为x^{2}+y2=4"
+    },
+    {
+      "id": 4539,
+      "text": "设$P$是曲线$2 x^{2}-y^{2}=1$上的一动点，$O$为坐标原点，$M$为线段$O P$的中点，则点$M$的轨迹方程为?",
+      "fact_expressions": "P: Point;PointOnCurve(P, G);G: Curve;Expression(G) = (2*x^2 - y^2 = 1);O: Origin;M: Point;MidPoint(LineSegmentOf(O, P)) = M",
+      "query_expressions": "LocusEquation(M)",
+      "answer_expressions": "8*x^2-4*y^2=1",
+      "process": "设P(x,y),M(x_{0},y_{0}),因为M是线段OP的中点,则有\\begin{cases}x_{0}=\\frac{x}{2}\\\\y_{0}=\\frac{y}{2}\\end{cases}(x=2x_{0}\\begin{cases}y=2y\\\\\\end{cases}所以2\\times(2x_{0})^{2}-(y_{0}^{2}=1,即8x_{0}^{2}-y_{0}^{2}."
+    }
+  ]
+}
