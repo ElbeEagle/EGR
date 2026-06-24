@@ -1,25 +1,27 @@
 \begin{abstract}
-Large language models (LLMs) have substantially advanced mathematical problem solving, yet they typically generate a solution as an unconstrained sequence of tokens. This formulation entangles three distinct decisions: selecting the mathematical principle to apply, executing the corresponding symbolic transformation, and determining whether the current reasoning state is sufficient to produce an answer. Consequently, a fluent derivation may still contain an inapplicable theorem, an invalid computation, or a premature conclusion. We introduce EGR, a neural-symbolic framework that reformulates conic-section problem solving as sequential theorem-model prediction and executable state transition. EGR represents each problem with a dual-layer state: a symbolic state preserves exact equations, geometric relations, parameters, and constraints, while an abstract state provides a fixed-dimensional representation for neural decision making. At each step, a neural selector predicts a distribution over theorem models, and a symbolic applicator checks their applicability and executes deterministic state transitions. A learned state-entropy estimator measures residual solving uncertainty, ranks candidate transitions through information gain, and controls when neural prediction should terminate. A terminal-state answer extractor then derives and validates the final answer. Beyond operating as a standalone solver, EGR exposes its selector and applicator as modular interfaces for LLMs, providing theorem-level guidance and grounded symbolic execution. Experiments on conic-section problems demonstrate that EGR improves final-answer accuracy and theorem-model selection over neural and LLM baselines. Integrating EGR with diverse LLMs further yields consistent gains in answer correctness, executable-step rate, and reasoning reliability. These results establish executable theorem-model transition as an effective neural-symbolic alternative to direct answer generation and as a practical mechanism for enhancing LLM mathematical reasoning.
+Large language models (LLMs) have substantially advanced mathematical problem solving, yet they typically generate solutions as unconstrained token sequences. This paradigm entangles three decisions that are central to reliable mathematical reasoning: selecting an applicable mathematical principle, executing the corresponding symbolic operation, and deciding when the current problem state is sufficient to answer the query. Consequently, a fluent derivation may still contain an inapplicable theorem, an invalid computation, or a premature conclusion. We introduce EGR, a neural-symbolic framework that reformulates conic-section problem solving as a state-conditioned theorem-model transition process. EGR represents each problem with a dual-layer state: a symbolic state preserves exact equations, geometric relations, parameters, and constraints for symbolic execution, while an abstract state provides compact features for neural prediction. At each step, a neural selector predicts candidate theorem models conditioned on the abstract state, and a symbolic applicator checks their applicability and executes deterministic transitions over the symbolic state. A learned state-entropy estimator measures residual solving burden, ranks candidate transitions through information gain, and controls when neural theorem prediction should terminate. A terminal-state answer extractor then derives and validates the final answer from the terminal symbolic state. Beyond operating as a standalone solver, EGR exposes its selector and applicator as modular interfaces for LLMs, providing state-conditioned theorem guidance and grounded symbolic execution. Experiments on conic-section problems demonstrate that EGR improves final-answer accuracy and theorem-model selection over neural and LLM baselines. Integrating EGR with diverse LLMs further yields consistent gains in answer correctness, executable-step rate, and reasoning reliability. These results establish state-conditioned theorem-model transition as an effective neural-symbolic alternative to direct answer generation and as a practical mechanism for enhancing LLM mathematical reasoning.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
 
-Mathematical problem solving requires more than producing a plausible sequence of natural-language statements. A solver must determine which mathematical principle is relevant, verify that its preconditions hold, execute the associated symbolic operation correctly, and recognize when the accumulated information is sufficient to answer the question. Large language models (LLMs) perform these functions implicitly within autoregressive generation. This approach has achieved strong results on mathematical benchmarks through scale, chain-of-thought prompting, tool use, and process supervision~\cite{cobbe2021training,wei2022chain,lightman2023lets}. Nevertheless, direct generation does not explicitly separate mathematical decision making from mathematical execution. An LLM may select an inappropriate theorem, apply a valid theorem under invalid conditions, make an algebraic error, or continue generating after a solution has already been determined.
+Mathematical problem solving is not merely the generation of a plausible final answer. A reliable solver must maintain the information currently known about the problem, determine which mathematical principle is applicable, verify that its preconditions are satisfied, execute the corresponding symbolic operation, and decide when the accumulated information is sufficient to answer the query. Large language models (LLMs) perform these functions implicitly within autoregressive generation. This paradigm has achieved strong results through scale, chain-of-thought prompting, tool use, and process supervision~\cite{cobbe2021training,wei2022chain,lightman2023lets}, but it does not explicitly separate mathematical decision making from mathematical execution. As a result, a fluent derivation may still select an inappropriate theorem, apply a theorem under invalid conditions, make an algebraic error, or continue generating after the answer has already been determined.
 
-Symbolic solvers address a complementary part of the problem. Given a formal operation and a valid symbolic state, they can execute exact transformations and preserve mathematical constraints. Their reliability, however, depends on selecting the right operation at the right time. In realistic multi-step problems, exhaustive symbolic search is expensive, while manually specified procedural rules are difficult to scale. This creates a natural division of labor: neural models are effective at predicting promising decisions from complex contexts, whereas symbolic systems are effective at executing and checking precise mathematical operations. The central challenge is to couple these capabilities in a representation that supports both learning and execution.
+Symbolic solvers provide a complementary form of reliability. Given a valid symbolic state and a specified operation, they can execute exact transformations, preserve constraints, and make intermediate results auditable. Their limitation is that the correct operation is rarely known in advance. In multi-step problems, exhaustive symbolic search can be expensive, while hand-crafted procedural rules are difficult to scale across heterogeneous problem states. This suggests a natural division of labor: neural models should predict promising mathematical operations from the current problem condition, while symbolic computation should verify and execute those operations. The key challenge is to define an interface in which learned prediction and symbolic execution operate over a shared, evolving representation of the problem.
 
-We study this challenge in conic-section problem solving. Conic-section problems are a suitable testbed because they combine structured geometric concepts with multi-step algebraic derivations. A solution may depend on recognizing a curve type, recovering parameters from a standard equation, invoking relations involving foci, directrices, eccentricity, tangents, or asymptotes, and performing exact symbolic computation. These problems therefore expose a failure mode that is obscured by answer-only evaluation: a system may possess the required knowledge but fail to select or execute the appropriate theorem model at an intermediate state.
+We study this challenge in conic-section problem solving. Conic-section problems combine structured geometric concepts with multi-step algebraic derivations. A solution may require recognizing a curve type, recovering parameters from a standard equation, applying relations involving foci, directrices, eccentricity, tangents, or asymptotes, and simplifying exact symbolic expressions. More importantly, each step depends on the information already derived: the current problem condition determines which theorem can be selected, whether its preconditions hold, and how applying it changes the subsequent condition. These problems therefore expose a limitation of direct problem-to-answer prediction: a correct final answer does not reveal whether the solver made reliable intermediate decisions, and an incorrect answer does not identify whether the failure came from selection, execution, or termination.
 
-We propose EGR, an entropy-guided neural-symbolic model-transition solver. Instead of learning a direct mapping from a problem to its answer, EGR formulates solving as a sequence of state-conditioned theorem-model decisions:
+We propose EGR, an entropy-guided neural-symbolic solver that formalizes conic-section solving as a state-conditioned theorem-model transition process. Instead of learning a direct mapping from a problem to its answer, EGR represents solving as an iterative sequence in which a neural prediction layer selects the next executable theorem model and a symbolic computing layer applies it to update the problem state:
 \begin{equation}
 S_0 \xrightarrow{M_0} S_1 \xrightarrow{M_1} \cdots
 \xrightarrow{M_{T-1}} S_T \xrightarrow{\mathrm{Extract}} \hat{a},
 \label{eq:intro_transition}
 \end{equation}
-where $S_t$ is the reasoning state at step $t$, $M_t$ is an executable theorem model, and $\hat{a}$ is the final answer. This formulation makes the mathematical decisions underlying a solution explicit and independently evaluable.
+where $S_t$ denotes the current problem state, $M_t$ is an executable theorem model selected at step $t$, and $\hat{a}$ is the extracted answer. This formulation turns mathematical reasoning into a sequence of explicit decisions and executable transitions. The decision at each step is conditioned on the current state, and applying the selected model produces the next state on which the following decision is made.
 
-EGR realizes this formulation with four tightly coupled mechanisms. First, a dual-layer state representation maintains an exact \emph{SymbolicState} for mathematical execution and a compact \emph{AbstractState} for neural prediction. Second, a neural theorem-model selector estimates $p(M_t \mid S_t)$ rather than predicting the final answer. Third, a symbolic model applicator checks explicit applicability conditions and performs deterministic state transitions. Fourth, a learned state entropy $H(S_t)$ estimates residual solving uncertainty. It provides a progress signal, supports candidate ranking through information gain, and controls whether neural theorem prediction should continue. Once the state is both low-entropy and answer-ready, a terminal-state extractor derives and validates the final answer.
+This formulation determines the structure of EGR. Because both prediction and execution depend on the current problem condition, EGR first introduces a state representation for the evolving information available during solving. Since neural prediction and symbolic execution require different forms of state, EGR uses a dual-layer representation: an abstract state provides compact features for theorem-model prediction, while a symbolic state preserves exact equations, parameters, relations, constraints, and query information for mathematical execution. Because model selection must be defined over an explicit action space, EGR constructs a theorem-model pool in which each model is an executable mathematical operation with preconditions and corresponding symbolic computation.
+
+Given this representation, the neural selector learns to predict a distribution over theorem models from the abstract state rather than predicting the final answer. The symbolic applicator then receives a candidate model and the symbolic state, checks whether the model is applicable, and executes the associated computation to produce a deterministic state transition. To control the iterative process, EGR learns a state entropy $H(S_t)$ that estimates the residual solving burden of the current state. This signal ranks candidate transitions through expected progress and determines whether further neural theorem prediction is necessary. When the state is both low-entropy and answer-ready, the answer extractor derives and validates the final answer from the terminal symbolic state.
 
 \begin{figure*}[t]
     \centering
@@ -28,16 +30,16 @@ EGR realizes this formulation with four tightly coupled mechanisms. First, a dua
     \label{fig:paradigm_architecture}
 \end{figure*}
 
-The same decomposition provides a structured way to enhance LLM reasoning. EGR exposes a \emph{decision interface}, through which the selector supplies likely theorem models, and an \emph{execution interface}, through which the applicator checks and executes a proposed model. An LLM can therefore retain its flexible language understanding and high-level reasoning while delegating theorem selection or symbolic execution to specialized components. This design differs from simply appending calculator outputs to a prompt: the interaction is defined over explicit mathematical states and executable theorem models, so each external intervention has a clear semantic role.
+The same decomposition also provides a structured mechanism for enhancing LLM reasoning. EGR exposes a decision interface, through which the selector supplies state-conditioned theorem-model guidance, and an execution interface, through which the applicator checks and executes a proposed model over the symbolic state. An LLM can therefore retain its flexible language understanding and high-level reasoning while delegating theorem selection or symbolic execution to specialized components. This differs from simply attaching a calculator or verifier to generated text: the interaction is defined over explicit problem states and executable theorem models, so each intervention has a precise mathematical role.
 
-Our experiments address three questions. First, can the complete neural-symbolic loop improve end-to-end conic-section solving? Second, can a learned selector predict the next theorem model more accurately and more executably than general-purpose LLMs? Third, do the selector and applicator provide complementary improvements when integrated with LLMs? We evaluate final-answer accuracy, theorem-model Top-$k$ accuracy, executable-step rate, progress-producing transition rate, entropy calibration, and correction and harm rates under LLM augmentation. The results show that the gains are not explained by answer extraction alone: model prediction, applicability-constrained execution, and entropy-based control each contribute to the complete system.
+Our experiments address three questions. First, can the complete state-conditioned transition loop improve end-to-end conic-section solving? Second, can the learned selector predict executable theorem models more accurately than general-purpose LLMs? Third, do theorem-model guidance and symbolic execution provide complementary benefits when integrated with LLMs? We evaluate final-answer accuracy, theorem-model Top-$k$ accuracy, executable-step rate, progress-producing transition rate, entropy calibration, and correction and harm rates under LLM augmentation. The results show that the gains are not explained by answer extraction alone: learned model selection, applicability-constrained symbolic execution, and entropy-based termination control each contribute to the complete system.
 
 Our contributions are fourfold:
 \begin{itemize}
-    \item We reformulate conic-section problem solving as sequential theorem-model prediction and executable state transition, replacing an opaque problem-to-answer mapping with an explicit mathematical decision process.
-    \item We introduce a dual-layer neural-symbolic architecture that couples a learnable abstract state with an exact symbolic state, enabling neural selection and deterministic theorem execution in a closed loop.
-    \item We develop a learned state-entropy mechanism that estimates residual solving progress, ranks candidate transitions through information gain, and controls the termination of neural model prediction.
-    \item We expose theorem selection and symbolic application as modular interfaces for LLMs and demonstrate that they provide complementary improvements in mathematical accuracy and reasoning reliability.
+    \item We formulate conic-section problem solving as a state-conditioned theorem-model transition process, replacing direct problem-to-answer prediction with an explicit process of neural model selection and symbolic state update.
+    \item We introduce a dual-layer neural-symbolic architecture that couples an abstract state for theorem-model prediction with an exact symbolic state for deterministic mathematical execution.
+    \item We develop a learned state-entropy mechanism that estimates residual solving burden, ranks candidate transitions through information gain, and controls the termination of neural theorem prediction.
+    \item We expose theorem-model selection and symbolic application as modular interfaces for LLMs and demonstrate that they provide complementary improvements in mathematical accuracy and reasoning reliability.
 \end{itemize}
 
 \section{Related Work}
@@ -63,21 +65,78 @@ Automated theorem proving systems use symbolic search, tactic prediction, premis
 
 Uncertainty has been used in active learning, planning, selective prediction, and sequential decision making to identify ambiguous decisions and allocate computation~\cite{TODO_uncertainty_survey,TODO_information_gain_planning}. In LLM reasoning, token-level entropy, verifier scores, outcome rewards, and process rewards have been used to guide decoding or select candidate solutions~\cite{TODO_llm_uncertainty,lightman2023lets}. EGR distinguishes two quantities that are often conflated. Prediction entropy measures uncertainty in the selector's distribution over theorem models, whereas state entropy estimates the residual burden of solving the current mathematical state. The latter is trained as a progress signal and supports both information-gain ranking and neural continuation control. This distinction allows uncertainty about \emph{which action to choose} and uncertainty about \emph{how much of the problem remains} to play different algorithmic roles.
 
+\section{Problem Formulation}
+\label{sec:problem_formulation}
+
+We formulate conic-section problem solving as a state-conditioned theorem-model transition problem. A conic-section problem is denoted by
+\begin{equation}
+x=(F,q),
+\end{equation}
+where $F$ is a finite set of facts, equations, geometric relations, and algebraic constraints over conic-section objects, and $q$ specifies the target quantity or expression. The goal is to derive an answer $a$ entailed by the accumulated facts for query $q$.
+
+\noindent\emph{Definition 1 (State).}
+A state $S_t$ is the structured intermediate condition of the problem after $t$ reasoning steps. It records the mathematical information currently available for further inference, including derived facts, unresolved constraints, the query target, and the progress of the reasoning process. In the formulation, $S_t$ is the object on which the next theorem-model decision is conditioned. In the implementation, EGR maintains this state with synchronized symbolic and abstract representations.
+
+\noindent\emph{Definition 2 (Theorem model).}
+Let
+\begin{equation}
+\mathcal{M}=\{M_1,M_2,\ldots,M_K\}
+\end{equation}
+be a finite theorem-model space. A theorem model is an executable mathematical operation rather than a natural-language theorem label. Each model $M_i$ is defined by an applicability predicate and a symbolic transition function:
+\begin{equation}
+M_i=\left(\mathrm{pre}_i,\mathrm{trans}_i\right).
+\label{eq:model_definition}
+\end{equation}
+The predicate $\mathrm{pre}_i(S_t)$ specifies whether the model is mathematically applicable in the current state, and $\mathrm{trans}_i(S_t)$ specifies the symbolic computation induced by applying it.
+
+\noindent\emph{Definition 3 (State transition).}
+A state transition is the executable update produced by applying a theorem model to a valid current state. A transition induced by $M_i$ is valid only when
+\begin{equation}
+\mathrm{pre}_i(S_t)=1.
+\end{equation}
+The successor state is then obtained deterministically:
+\begin{equation}
+S_{t+1}=\mathrm{trans}_i(S_t).
+\label{eq:symbolic_transition}
+\end{equation}
+This definition separates model selection from model application: a theorem model may be predicted by a neural component, but the state changes only through an executable symbolic transition.
+
+\noindent\emph{Definition 4 (Conic-section problem solving).}
+Given $x=(F,q)$ and theorem-model space $\mathcal{M}$, conic-section problem solving requires finding a finite theorem-model sequence
+\begin{equation}
+\tau=(M_0,M_1,\ldots,M_{T-1})
+\end{equation}
+that starts from $S_0=\mathrm{Construct}(F,q)$ and satisfies
+\begin{equation}
+S_{t+1}=\mathrm{trans}_{M_t}(S_t),
+\quad \mathrm{pre}_{M_t}(S_t)=1,
+\label{eq:valid_transition}
+\end{equation}
+for each step $t$. The process terminates at a state $S_T$ that is answer-ready for query $q$, and the final answer is obtained by
+\begin{equation}
+\hat{a}=\mathrm{Extract}(S_T,q).
+\label{eq:answer_extract}
+\end{equation}
+EGR uses a learned state entropy $H_{\psi}(S_t)$ as a control signal for this iterative process. Neural theorem prediction terminates only when the current state has low residual solving burden and the symbolic state contains sufficient information for answer extraction:
+\begin{equation}
+\mathrm{Stop}_{\mathrm{neural}}(S_t,q)=
+\mathbf{1}\!\left[
+H_{\psi}(S_t)\leq \epsilon_H
+\wedge
+\mathrm{AnswerReady}(S_t,q)
+\right].
+\label{eq:stop_condition}
+\end{equation}
+
+This formulation yields three separable evaluation levels. Model-selection accuracy evaluates whether the chosen $M_t$ is an appropriate next theorem model. Transition validity evaluates whether the selected model is executable and produces a mathematically consistent successor state. Final-answer accuracy evaluates whether $\hat{a}$ is equivalent to the reference answer. Separating these levels is essential because a correct answer can obscure unreliable intermediate reasoning, while a valid local transition does not by itself guarantee successful completion.
+
 \section{Method}
 \label{sec:method}
 
 \subsection{Overview}
 \label{sec:overview}
 
-EGR treats a solution as an alternating sequence of neural decisions and symbolic transitions. Given a problem, the state constructor produces an initial symbolic state and its abstract counterpart. At each step, the theorem-model selector predicts a distribution over candidate models from the abstract state. The symbolic applicator rejects candidates whose preconditions are not satisfied and simulates or executes valid state transitions. The entropy controller evaluates the residual uncertainty of the resulting states and combines model probability, expected information gain, and prediction confidence to select the next transition. This process repeats until the state is answer-ready and its residual uncertainty falls below a learned stopping threshold. The answer extractor then computes and validates the final answer from the terminal symbolic state.
-
-The architecture separates four responsibilities:
-\begin{enumerate}
-    \item \textbf{Representation:} encode exact mathematical content and learnable decision features without forcing either representation to serve both purposes.
-    \item \textbf{Prediction:} estimate which theorem model is useful in the current state.
-    \item \textbf{Execution:} determine whether the predicted model is applicable and perform the corresponding symbolic computation.
-    \item \textbf{Control:} estimate progress, rank valid transitions, and determine when further neural prediction is unnecessary.
-\end{enumerate}
+EGR implements the formulation above through a neural prediction layer and a symbolic computing layer. Given a problem, the system constructs an initial symbolic state and its abstract counterpart. At each step, the selector predicts candidate theorem models from the abstract state. The applicator checks the candidates against the symbolic state, executes valid symbolic transitions, and produces successor states. The entropy estimator evaluates the residual solving burden of the current and candidate states, so the solver can prefer progress-producing transitions and decide whether another neural prediction step is required. Once the state is both low-entropy and answer-ready, the extractor derives and validates the final answer from the terminal symbolic state.
 
 \begin{figure*}[t]
     \centering
@@ -86,81 +145,48 @@ The architecture separates four responsibilities:
     \label{fig:single_transition}
 \end{figure*}
 
-\subsection{Problem Formulation}
-\label{sec:problem_formulation}
-
-A conic-section problem is denoted by
-\begin{equation}
-x = (F,q),
-\end{equation}
-where $F$ is a set of facts, equations, geometric relations, and constraints, and $q$ specifies the target quantity or expression. Let
-\begin{equation}
-\mathcal{M}=\{M_1,M_2,\ldots,M_K\}
-\end{equation}
-be a finite theorem-model space. A theorem model $M_i$ is an executable mathematical operation rather than a natural-language theorem label. It consists of an applicability predicate and a transition function:
-\begin{equation}
-M_i = \left(\mathrm{pre}_i,\mathrm{trans}_i\right).
-\label{eq:model_definition}
-\end{equation}
-The predicate $\mathrm{pre}_i(S)$ determines whether the model can be applied to symbolic state $S$, and $\mathrm{trans}_i(S)$ performs the associated symbolic transformation.
-
-The system constructs an initial state $S_0$ from $(F,q)$ and seeks a finite model sequence
-\begin{equation}
-\tau=(M_0,M_1,\ldots,M_{T-1})
-\end{equation}
-that induces valid transitions
-\begin{equation}
-S_{t+1}=\mathrm{trans}_{M_t}(S_t),
-\quad \mathrm{pre}_{M_t}(S_t)=1,
-\label{eq:valid_transition}
-\end{equation}
-and reaches a terminal state $S_T$ from which the answer can be extracted:
-\begin{equation}
-\hat{a}=\mathrm{Extract}(S_T,q).
-\label{eq:answer_extract}
-\end{equation}
-
-This formulation defines three evaluation levels. Model-selection accuracy evaluates whether $M_t$ is an appropriate next action. Transition validity evaluates whether a selected action is executable and produces a mathematically consistent state. Final-answer accuracy evaluates whether $\hat{a}$ is equivalent to the reference answer. Keeping these levels separate is necessary because a valid intermediate transition does not by itself guarantee a correct final answer, and a correct answer does not reveal whether the reasoning process was reliable.
-
-\subsection{Dual-Layer Reasoning State}
+\subsection{Dual-Layer State Representation}
 \label{sec:dual_state}
 
-The evolving problem state must support exact symbolic manipulation and efficient neural prediction. A single representation is poorly suited to both objectives: a complete symbolic structure is variable in size and difficult to consume directly with a lightweight neural selector, whereas a fixed-dimensional vector cannot preserve every equation and constraint required for exact execution. EGR therefore maintains two synchronized representations.
+The state is the interface between theorem-model prediction and symbolic execution. Because the next model decision depends on the current problem condition, EGR must represent what is already known, what remains unresolved, and which query is being pursued. A single representation is not sufficient for both layers: neural prediction benefits from compact, fixed-dimensional features, whereas symbolic execution requires exact equations, parameters, relations, and constraints. EGR therefore maintains a dual-layer state
+\begin{equation}
+S_t=\left(S_t^{\mathrm{sym}},S_t^{\mathrm{abs}}\right),
+\end{equation}
+where $S_t^{\mathrm{sym}}$ is the exact symbolic state and $S_t^{\mathrm{abs}}$ is the neural abstraction derived from it.
 
-\subsubsection{Symbolic State}
-
-The symbolic state $S_t^{\mathrm{sym}}$ stores the exact mathematical content available after step $t$. Its fields include geometric entities, curve types, equations, parameters, coordinates, geometric relations, algebraic constraints, the query target, and the history of applied theorem models. The representation is monotone for derivational facts: a valid transition adds a derived fact or refines an existing parameter while preserving the constraints inherited from previous states. When an operation transforms an expression, the state records both the normalized result and its provenance.
-
-The symbolic state supports four operations. First, it provides the values inspected by theorem-model preconditions. Second, it serves as the execution environment for symbolic transformations. Third, it permits consistency checks after a transition. Fourth, it contains the exact expressions used by the answer extractor. Thus, neural prediction never directly modifies mathematical content; all changes pass through an executable theorem model.
-
-\subsubsection{Abstract State}
+The symbolic state $S_t^{\mathrm{sym}}$ stores the mathematical content available after step $t$, including geometric entities, curve types, equations, parameters, coordinates, algebraic constraints, the query target, and the history of applied theorem models. It provides the environment in which theorem-model preconditions are checked and symbolic transformations are executed. A valid transition may add a derived fact, refine an unknown parameter, normalize an expression, or reduce an unresolved constraint, but it must preserve consistency with the previous state.
 
 The abstract state is a fixed-dimensional projection of the symbolic state:
 \begin{equation}
 S_t^{\mathrm{abs}}=\phi(S_t^{\mathrm{sym}},q,t)\in\mathbb{R}^{d}.
 \label{eq:abstract_state}
 \end{equation}
-The projection $\phi$ encodes curve type, query type, the availability of relevant parameters and relations, structural properties of the current equations, state completeness, and normalized reasoning depth. These features describe \emph{what is known} and \emph{what remains structurally possible} without replacing the exact symbolic state.
+The projection encodes curve type, query type, available parameters and relations, structural properties of equations, state completeness, and normalized reasoning depth. It describes the current condition in a form suitable for theorem-model prediction and entropy estimation without replacing the exact symbolic state. After each symbolic transition, EGR reconstructs $S_{t+1}^{\mathrm{abs}}$ from the updated $S_{t+1}^{\mathrm{sym}}$, ensuring that neural predictions remain conditioned on the actual result of symbolic execution.
 
-After each transition, EGR reconstructs $S_{t+1}^{\mathrm{abs}}$ from the updated symbolic state. This synchronization ensures that selector predictions and entropy estimates are conditioned on the actual results of symbolic execution, rather than on an independently generated textual trace.
+\subsection{Theorem-Model Pool}
+\label{sec:theorem_pool}
+
+The state-conditioned formulation requires an explicit action space. EGR instantiates this action space as a theorem-model pool containing 80 executable conic-section models. Each theorem model corresponds to a domain operation, such as recovering canonical parameters, deriving geometric relations, applying focus-directrix or eccentricity relations, computing tangent or asymptote properties, solving algebraic constraints, or normalizing an expression. All models share the same interface in Eq.~\eqref{eq:model_definition}: an applicability predicate specifies when the operation can be used, and a transition function specifies how the symbolic state is updated.
+
+This design makes theorem use both learnable and executable. The selector predicts over a finite set of theorem models, while the applicator interprets each selected model as a concrete symbolic operation. Thus a model identifier is not merely a label for evaluation; it is an instruction whose preconditions and effects are explicitly defined in the symbolic computing layer.
 
 \subsection{Neural Theorem-Model Selector}
 \label{sec:selector}
 
-The selector estimates a conditional distribution over theorem models:
+The selector is needed because the next useful theorem model depends on the current state and is difficult to determine by exhaustive search or hand-written procedural rules. Rather than predicting the final answer, the selector learns the conditional distribution over executable theorem models:
 \begin{equation}
 p_{\theta}(M_i\mid S_t^{\mathrm{abs}})
 =\mathrm{softmax}\!\left(f_{\theta}(S_t^{\mathrm{abs}})\right)_i,
 \label{eq:selector}
 \end{equation}
-where $f_{\theta}$ is a neural scoring function and $\theta$ denotes its parameters. Unlike a final-answer predictor, the selector is supervised at intermediate reasoning states. Given training trajectories with gold model $M_t^*$, it minimizes
+where $f_{\theta}$ is a neural scoring function. Given training trajectories with gold next model $M_t^*$, the selector is trained by
 \begin{equation}
 \mathcal{L}_{\mathrm{sel}}
 =-\sum_t \log p_{\theta}(M_t^*\mid S_t^{\mathrm{abs}}).
 \label{eq:selector_loss}
 \end{equation}
 
-At inference time, the selector returns a ranked set of candidates rather than committing immediately to the highest-probability model. This is important because a high-probability prediction may be inapplicable in the exact symbolic state, and multiple theorem sequences may constitute valid solutions. The candidate set is therefore passed to the symbolic applicator and entropy controller for grounded evaluation.
+At inference time, the selector returns a ranked set of candidates instead of committing directly to the highest-probability model. This is necessary because a plausible neural prediction may be inapplicable in the exact symbolic state, and more than one theorem sequence may lead to a valid solution. The candidate set is therefore passed to the applicator for symbolic grounding and to the entropy estimator for progress-aware ranking.
 
 We also compute the selector's normalized prediction entropy:
 \begin{equation}
@@ -170,59 +196,59 @@ p_{\theta}(M_i\mid S_t^{\mathrm{abs}})
 \log p_{\theta}(M_i\mid S_t^{\mathrm{abs}}).
 \label{eq:prediction_entropy}
 \end{equation}
-This quantity measures ambiguity over the next model. It is distinct from the state entropy introduced in Section~\ref{sec:state_entropy}, which estimates how much reasoning remains.
+This quantity measures ambiguity over the next theorem model. It is distinct from state entropy, which estimates the residual burden of solving the current mathematical state.
 
 \subsection{Symbolic Model Applicator}
 \label{sec:applicator}
 
-For each candidate theorem model $M_i$, the applicator first evaluates
+The applicator is required because neural selection alone does not guarantee that a theorem model is applicable, mathematically consistent, or productive. Given a candidate model $M_i$ and symbolic state $S_t^{\mathrm{sym}}$, the applicator first evaluates
 \begin{equation}
 A_i(S_t^{\mathrm{sym}})=
 \mathbf{1}\!\left[\mathrm{pre}_i(S_t^{\mathrm{sym}})\right].
 \label{eq:applicability}
 \end{equation}
-Candidates with $A_i=0$ are rejected before execution. For an applicable candidate, the applicator computes
+Candidates with $A_i=0$ are rejected before execution. For an applicable model, the applicator performs the symbolic computation specified by the theorem model:
 \begin{equation}
 \widetilde{S}_{t+1}^{(i)}
 =\mathrm{trans}_i(S_t^{\mathrm{sym}}).
 \label{eq:candidate_transition}
 \end{equation}
-The transition may recover curve parameters, derive a geometric relation, instantiate a standard formula, solve an algebraic constraint, or normalize an expression. Because each transformation is implemented symbolically, the same input state and theorem model produce the same successor state.
+This computation updates the current problem condition and thereby realizes the state transition defined in the formulation.
 
-The applicator additionally checks whether the candidate transition contributes new information. A transition is considered productive if it adds a previously unavailable fact, reduces an unresolved constraint, or makes the query more directly computable. Non-productive transitions are removed to prevent repeated actions and stationary loops. Each accepted transition records the theorem model, verified preconditions, newly derived expressions, and the before-and-after symbolic states. This record provides an executable reasoning trace for analysis and LLM interaction.
+The applicator further checks whether the successor state is consistent and progress-producing. A transition is productive when it adds a previously unavailable fact, refines an unknown value, reduces an unresolved constraint, or makes the query more directly computable. Non-productive or repeated transitions are removed to prevent stationary loops. Each accepted transition records the selected theorem model, verified preconditions, derived expressions, and the before-and-after symbolic states, yielding an auditable reasoning trace for analysis and LLM interaction.
 
 \subsection{State Entropy and Information Gain}
 \label{sec:state_entropy}
 
-Selecting an applicable theorem model is not sufficient: the model should also advance the problem toward an answer. EGR introduces a learned state entropy
+An applicable theorem model is not necessarily the best next step; it should also move the state closer to an answer-ready condition. EGR therefore introduces a learned state entropy
 \begin{equation}
 H_{\psi}(S_t)=g_{\psi}(S_t^{\mathrm{abs}})\in[0,1],
 \label{eq:state_entropy}
 \end{equation}
-where larger values indicate greater residual solving uncertainty. The estimator is trained with process-level supervision derived from solution trajectories. Let $r_t$ denote the number of reasoning steps remaining after state $S_t$, and let $R$ be the normalization horizon. We define the progress target
+where larger values indicate greater residual solving burden. The estimator is trained from solution trajectories. Let $r_t$ be the number of remaining reasoning steps after $S_t$, and let $R$ be a normalization horizon. The target is
 \begin{equation}
-y_t=\min\left(1,\frac{r_t}{R}\right)
+y_t=\min\left(1,\frac{r_t}{R}\right),
 \end{equation}
-and optimize
+and the training loss is
 \begin{equation}
 \mathcal{L}_{H}=\sum_t
 \left(H_{\psi}(S_t)-y_t\right)^2.
 \label{eq:entropy_loss}
 \end{equation}
-Other calibrated trajectory targets can be substituted without changing the inference framework. The essential property is that $H_{\psi}$ estimates residual problem-solving burden rather than the correctness probability of a final answer.
+The essential property is that $H_{\psi}$ estimates remaining problem-solving burden rather than the probability that a final answer is correct.
 
-For an applicable candidate $M_i$, the predicted information gain is
+For an applicable candidate $M_i$, EGR estimates the progress produced by the symbolic transition through information gain:
 \begin{equation}
 \mathrm{IG}(M_i,S_t)
 =H_{\psi}(S_t)-H_{\psi}(\widetilde{S}_{t+1}^{(i)}).
 \label{eq:information_gain}
 \end{equation}
-A positive value indicates that the symbolic transition moves the state toward a lower-uncertainty configuration. Because $H_{\mathrm{pred}}(S_t)$ is shared by all candidates at step $t$, subtracting it as a candidate-independent constant would not affect their ranking. We instead use it to calibrate how strongly EGR trusts the neural policy relative to symbolic progress. Let
+Selector confidence is computed as
 \begin{equation}
-c_{\mathrm{pred}}(S_t)=1-H_{\mathrm{pred}}(S_t)
+c_{\mathrm{pred}}(S_t)=1-H_{\mathrm{pred}}(S_t).
 \label{eq:prediction_confidence}
 \end{equation}
-denote selector confidence. EGR scores an applicable candidate using
+EGR then scores each applicable and productive candidate by combining neural preference with expected progress:
 \begin{equation}
 \mathrm{Score}(M_i,S_t)
 =\lambda_p c_{\mathrm{pred}}(S_t)
@@ -230,114 +256,88 @@ p_{\theta}(M_i\mid S_t^{\mathrm{abs}})
 +\lambda_g\mathrm{IG}(M_i,S_t),
 \label{eq:integrated_score}
 \end{equation}
-subject to $A_i(S_t^{\mathrm{sym}})=1$ and a productive transition. The selected theorem model is
+and selects
 \begin{equation}
 M_t=\arg\max_{M_i}\mathrm{Score}(M_i,S_t).
 \label{eq:model_selection}
 \end{equation}
+When the selector distribution is confident, the learned theorem-model policy has greater influence. When the selector is uncertain, executable transitions that substantially reduce residual solving burden become more important.
 
-When selector entropy is low, the learned theorem-model distribution has greater influence. When it is high, EGR relies more heavily on the progress induced by executable symbolic transitions. This calibration gives prediction entropy an operational effect without treating it as candidate-specific uncertainty.
-
-\subsection{Entropy-Guided Neural Termination}
+\subsection{Neural Termination and Answer Extraction}
 \label{sec:termination}
+\label{sec:answer_extractor}
 
-State entropy also determines whether another neural theorem-selection step is required. We distinguish \emph{neural termination} from a proof of global algorithmic termination. The former is a learned control decision; the latter would require a separate formal argument about all possible trajectories.
-
-Let $\mathrm{Ready}(S_t,q)$ indicate that the symbolic state contains sufficient information to compute the requested answer. EGR stops neural prediction when
+The same state entropy also controls whether another neural theorem-model prediction step is needed. This is a learned continuation decision, not a proof of global algorithmic termination. EGR stops neural prediction only when the state has sufficiently low residual solving burden and the symbolic state is structurally answer-ready:
 \begin{equation}
 \mathrm{Stop}_{\mathrm{neural}}(S_t,q)
 =\mathbf{1}\!\left[
 H_{\psi}(S_t)\leq\epsilon_H
 \;\wedge\;
-\mathrm{Ready}(S_t,q)=1
+\mathrm{AnswerReady}(S_t^{\mathrm{sym}},q)
 \right].
-\label{eq:stop_condition}
 \end{equation}
-The answer-readiness condition prevents a low entropy estimate from being treated as direct evidence of answer correctness. Conversely, if the query is structurally answerable but the entropy remains high, the controller can request another transition or invoke a verification pass. A maximum-step bound and repeated-state detection provide operational safeguards for unresolved cases.
+The answer-readiness condition prevents a low entropy estimate from being treated as a final answer. Conversely, if the query is structurally answerable but uncertainty remains high, the controller can request another transition or a verification pass. A maximum-step bound and repeated-state detection provide safeguards for unresolved cases.
 
-\subsection{Terminal-State Answer Extraction}
-\label{sec:answer_extractor}
-
-Given terminal symbolic state $S_T^{\mathrm{sym}}$, the answer extractor identifies the expression associated with query $q$, performs the remaining exact simplification or equation solving, and returns $\hat{a}$. Validation depends on the query type. It may include symbolic equivalence checking, substitution into the original constraints, consistency with geometric domains, or comparison of normalized expressions. The system returns an answer only when the extraction and validation procedures succeed; otherwise, the problem is marked unresolved rather than assigned an unsupported value.
-
-The final output consists of the validated answer, the theorem-model sequence, the state-transition trace, the entropy trajectory, and the termination reason. This decomposition supports both answer-level evaluation and diagnosis of intermediate failures.
+When the stopping condition is satisfied, the extractor operates on the terminal symbolic state $S_T^{\mathrm{sym}}$. It locates the expression associated with $q$, performs any remaining exact simplification or equation solving, and validates the result through symbolic equivalence, substitution into the original constraints, domain consistency, or normalized-expression comparison. The system returns an answer only when extraction and validation succeed; otherwise, the instance is marked unresolved. This separation ensures that stopping neural prediction and producing a verified answer remain distinct decisions.
 
 \subsection{End-to-End Inference}
 \label{sec:inference}
 
-Algorithm~\ref{alg:egr_inference} gives the complete inference procedure. At every iteration, EGR reconstructs the abstract state from the current symbolic state, evaluates whether the problem is answer-ready, and otherwise ranks only applicable, consistent, productive, and non-repeating candidate transitions.
+Algorithm~\ref{alg:egr_inference} summarizes the complete inference procedure. Neural predictions propose candidate theorem models, symbolic execution filters and updates states, state entropy ranks progress and controls continuation, and the extractor finalizes the answer only from a validated terminal state.
 
 % Requires \usepackage{algorithm} and \usepackage{algpseudocode}.
 \begin{algorithm*}[t]
 \caption{End-to-End EGR Inference}
 \label{alg:egr_inference}
 \begin{algorithmic}[1]
-\Require Problem $x=(F,q)$; theorem-model library $\mathcal{M}$; selector $p_{\theta}$; entropy estimator $H_{\psi}$; Top-$k$ size $K$; threshold $\epsilon_H$; maximum steps $T_{\max}$
+\Require Problem $x=(F,q)$; theorem-model pool $\mathcal{M}$; selector $p_{\theta}$; entropy estimator $H_{\psi}$; Top-$k$ size $K$; threshold $\epsilon_H$; maximum steps $T_{\max}$
 \Ensure Validated answer $\hat{a}$ with trace $\tau$, or $\mathrm{Unresolved}(r)$
-\State $S^{\mathrm{sym}}_0 \gets \mathrm{ConstructSymbolicState}(F,q)$
-\State $\tau \gets [\,]$; $\mathcal{V}\gets\{\mathrm{Key}(S^{\mathrm{sym}}_0)\}$
+\State $S^{\mathrm{sym}}_0 \gets \mathrm{ConstructSymbolicState}(F,q)$; $\tau\gets[\,]$; $\mathcal{V}\gets\{\mathrm{Key}(S^{\mathrm{sym}}_0)\}$
 \For{$t=0$ to $T_{\max}-1$}
-    \State $S^{\mathrm{abs}}_t \gets \phi(S^{\mathrm{sym}}_t,q,t)$
-    \State $h_t \gets H_{\psi}(S^{\mathrm{abs}}_t)$
+    \State $S^{\mathrm{abs}}_t \gets \phi(S^{\mathrm{sym}}_t,q,t)$; $h_t \gets H_{\psi}(S^{\mathrm{abs}}_t)$
     \If{$h_t \leq \epsilon_H$ \textbf{and} $\mathrm{AnswerReady}(S^{\mathrm{sym}}_t,q)$}
         \State $(\hat{a},v) \gets \mathrm{ExtractAndValidate}(S^{\mathrm{sym}}_t,q)$
         \If{$v$}
             \State \Return $(\hat{a},\tau)$
         \EndIf
     \EndIf
-    \State $\mathcal{C}_t \gets \mathrm{TopK}\!\left(p_{\theta}(\cdot\mid S^{\mathrm{abs}}_t),K\right)$
-    \State $c_t \gets 1-H_{\mathrm{pred}}(S^{\mathrm{abs}}_t)$
-    \State $\mathcal{B}_t \gets [\,]$ \Comment{Executable and progress-producing candidates}
+    \State $\mathcal{B}_t \gets [\,]$; $\mathcal{C}_t \gets \mathrm{TopK}\!\left(p_{\theta}(\cdot\mid S^{\mathrm{abs}}_t),K\right)$
     \ForAll{$M_i \in \mathcal{C}_t$}
-        \If{\textbf{not} $\mathrm{Applicable}(M_i,S^{\mathrm{sym}}_t)$}
-            \State \textbf{continue}
+        \If{$\mathrm{Applicable}(M_i,S^{\mathrm{sym}}_t)$}
+            \State $\widetilde{S}^{(i)}_{t+1} \gets \mathrm{SimulateTransition}(M_i,S^{\mathrm{sym}}_t)$
+            \If{$\mathrm{Consistent}(\widetilde{S}^{(i)}_{t+1})$ \textbf{and} $\mathrm{Productive}(S^{\mathrm{sym}}_t,\widetilde{S}^{(i)}_{t+1})$ \textbf{and} $\mathrm{Key}(\widetilde{S}^{(i)}_{t+1})\notin\mathcal{V}$}
+                \State $s_i \gets \mathrm{Score}(M_i,S_t)$
+                \State $\mathcal{B}_t.\mathrm{append}(M_i,\widetilde{S}^{(i)}_{t+1},s_i)$
+            \EndIf
         \EndIf
-        \State $\widetilde{S}^{(i)}_{t+1} \gets \mathrm{SimulateTransition}(M_i,S^{\mathrm{sym}}_t)$
-        \If{\textbf{not} $\mathrm{Consistent}(\widetilde{S}^{(i)}_{t+1})$ \textbf{or} \textbf{not} $\mathrm{Productive}(S^{\mathrm{sym}}_t,\widetilde{S}^{(i)}_{t+1})$}
-            \State \textbf{continue}
-        \EndIf
-        \If{$\mathrm{Key}(\widetilde{S}^{(i)}_{t+1})\in\mathcal{V}$}
-            \State \textbf{continue}
-        \EndIf
-        \State $\Delta H_i \gets h_t-H_{\psi}(\phi(\widetilde{S}^{(i)}_{t+1},q,t+1))$
-        \State $s_i \gets \lambda_p c_t p_{\theta}(M_i\mid S^{\mathrm{abs}}_t)+\lambda_g\Delta H_i$
-        \State $\mathcal{B}_t.\mathrm{append}(M_i,\widetilde{S}^{(i)}_{t+1},s_i,\Delta H_i)$
     \EndFor
     \If{$\mathcal{B}_t=\emptyset$}
         \State \Return $\mathrm{Unresolved}(\textsc{NoExecutableProgress})$
     \EndIf
-    \State $(M_t,S^{\mathrm{sym}}_{t+1},s_t,\Delta H_t)\gets\arg\max_{(M,S,s,\Delta H)\in\mathcal{B}_t}s$
-    \State $\tau.\mathrm{append}(M_t,S^{\mathrm{sym}}_{t+1},h_t,\Delta H_t,s_t)$
-    \State $\mathcal{V}\gets\mathcal{V}\cup\{\mathrm{Key}(S^{\mathrm{sym}}_{t+1})\}$
+    \State $(M_t,S^{\mathrm{sym}}_{t+1},s_t)\gets\arg\max_{(M,S,s)\in\mathcal{B}_t}s$
+    \State $\tau.\mathrm{append}(M_t,S^{\mathrm{sym}}_{t+1},h_t,s_t)$; $\mathcal{V}\gets\mathcal{V}\cup\{\mathrm{Key}(S^{\mathrm{sym}}_{t+1})\}$
 \EndFor
 \State \Return $\mathrm{Unresolved}(\textsc{MaxSteps})$
 \end{algorithmic}
 \end{algorithm*}
 
-This procedure ensures that neural predictions influence the reasoning path but cannot directly alter the symbolic state. Every accepted state change is mediated by an executable theorem model.
+The procedure enforces the central separation of the framework: neural prediction influences which theorem models are considered, but every accepted state change is mediated by a symbolic theorem model.
 
 \subsection{EGR-Augmented LLM Reasoning}
 \label{sec:llm_integration}
 
-EGR provides modular interfaces that can be attached to an LLM without changing the internal architecture of the language model.
+The same decomposition provides modular interfaces for enhancing LLM reasoning. Because theorem-model selection and symbolic application are explicit components, EGR can assist an LLM without changing the internal architecture of the language model. The selector provides decision guidance about what theorem model is promising in the current state, while the applicator provides execution grounding by checking and applying a proposed model over the symbolic state.
 
 \begin{figure*}[t]
     \centering
     \includegraphics[width=0.98\textwidth]{paper/figures/figure3_llm_augmentation_interfaces_v3.png}
-    \caption{Modular interfaces for EGR-augmented LLM mathematical reasoning. Selector guidance addresses \emph{what to apply}; the symbolic applicator grounds \emph{how to execute}; Full EGR additionally maintains the executable state, controls continuation, and validates the terminal answer. These four configurations correspond directly to the LLM augmentation experiments.}
+    \caption{Modular interfaces for EGR-augmented LLM mathematical reasoning. Selector guidance addresses \emph{what to apply}; the symbolic applicator grounds \emph{how to execute}; full EGR additionally maintains the executable state, controls continuation, and validates the terminal answer. These configurations correspond directly to the LLM augmentation experiments.}
     \label{fig:llm_interfaces}
 \end{figure*}
 
-\paragraph{LLM + Model Selector.}
-At each reasoning state, EGR serializes the relevant abstract and symbolic context and supplies the LLM with the selector's Top-$k$ theorem models, their probabilities, and concise applicability descriptions. The LLM uses these candidates to plan or verbalize the next step. This condition tests whether explicit theorem-level decision guidance addresses errors in choosing what to apply.
+With selector guidance, EGR serializes the relevant state context and supplies the LLM with Top-$k$ theorem models, probabilities, and concise applicability descriptions. This setting tests whether theorem-level decision guidance reduces errors in choosing what to apply. With symbolic application, the LLM proposes a theorem model and any required arguments, and the applicator either returns an exact successor state or a structured rejection reason. This setting isolates the value of grounded execution when the LLM remains responsible for model selection. The full integration combines selector guidance, symbolic application, entropy-based continuation control, and answer extraction; the LLM handles problem interpretation and natural-language explanation, while EGR maintains the executable reasoning state.
 
-\paragraph{LLM + Symbolic Applicator.}
-The LLM proposes a theorem model and any required arguments. The applicator checks the proposal against the current symbolic state. If applicable, it returns the exact successor state; otherwise, it returns a structured rejection reason. The LLM then continues from the verified state. This condition isolates the value of grounded execution when the LLM remains responsible for theorem selection.
-
-\paragraph{LLM + Full EGR.}
-The full integration combines selector guidance, symbolic application, entropy-based continuation control, and answer extraction. The LLM is responsible for problem interpretation and natural-language explanation, while EGR maintains the executable reasoning state. This configuration tests whether the complete neural-symbolic process provides gains beyond either interface alone.
-
-All integrations use the same theorem-model library and evaluation split as the standalone solver. No gold theorem sequence or reference answer is exposed to the LLM. This ensures that improvements reflect model-generated guidance and symbolic execution rather than privileged supervision at test time.
+All integrations use the same theorem-model pool and evaluation split as the standalone solver. No gold theorem sequence or reference answer is exposed to the LLM, so improvements reflect model-generated guidance and symbolic execution rather than privileged supervision at test time.
 
 \section{Experiments}
 \label{sec:experiments}
@@ -519,8 +519,8 @@ Remaining errors fall into four categories: theorem-model selection, symbolic co
 \section{Conclusion}
 \label{sec:conclusion}
 
-We presented EGR, a neural-symbolic framework that reformulates conic-section problem solving as theorem-model prediction and executable state transition. The method separates responsibilities that are entangled in direct answer generation: a neural selector predicts what mathematical model to apply, a symbolic applicator determines whether and how it can be executed, a learned state entropy estimates residual solving progress and controls neural continuation, and a terminal-state extractor derives and validates the answer. The dual-layer state representation enables these components to operate over a shared reasoning process without sacrificing either neural learnability or symbolic precision.
+We presented EGR, a neural-symbolic framework that formulates conic-section problem solving as a state-conditioned theorem-model transition process. The method separates responsibilities that are entangled in direct answer generation: the selector predicts which theorem model is promising under the current abstract state, the applicator verifies and executes the selected model over the symbolic state, state entropy estimates residual solving burden and controls neural continuation, and the extractor derives and validates the answer from a terminal symbolic state. The dual-layer state representation enables these components to operate over a shared reasoning process without sacrificing either neural learnability or symbolic precision.
 
-The experiments show that this formulation improves both end-to-end solving and intermediate theorem-model prediction. They also demonstrate that the selector and applicator provide complementary interfaces for LLMs: theorem guidance improves mathematical decisions, while symbolic application grounds their execution. The complete integration yields more accurate, executable, and reliable reasoning than direct LLM generation.
+The experiments show that this formulation improves both end-to-end solving and intermediate theorem-model prediction. They also demonstrate that the selector and applicator provide complementary interfaces for LLMs: state-conditioned theorem guidance improves mathematical decisions, while symbolic application grounds their execution in verified state transitions. The complete integration yields more accurate, executable, and reliable reasoning than direct LLM generation.
 
-More broadly, the results suggest that mathematical reasoning systems need not choose between flexible neural generation and rigid symbolic solving. A productive alternative is to let neural models predict structured mathematical operations while requiring every accepted operation to induce an explicit symbolic state transition. Progress-aware control then connects local decisions to a well-defined terminal objective. Although this work focuses on conic sections, the formulation applies to other mathematical domains in which problems can be represented by evolving states and domain knowledge can be expressed as executable theorem models.
+More broadly, the results suggest that mathematical reasoning systems need not choose between flexible neural generation and rigid symbolic solving. A productive alternative is to let neural models predict structured mathematical operations conditioned on explicit states while requiring every accepted operation to induce a valid symbolic transition. Progress-aware control then connects local theorem-model decisions to an answer-ready terminal state. Although this work focuses on conic sections, the formulation applies to other mathematical domains in which problems can be represented by evolving states and domain knowledge can be expressed as executable theorem models.
