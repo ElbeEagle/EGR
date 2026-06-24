@@ -1,0 +1,46 @@
+% Requires \usepackage{algorithm} and \usepackage{algpseudocode}.
+\begin{algorithm*}[t]
+\caption{End-to-End EGR Inference}
+\label{alg:egr_inference}
+\begin{algorithmic}[1]
+\Require Problem $x=(F,q)$; theorem-model library $\mathcal{M}$; selector $p_{\theta}$; entropy estimator $H_{\psi}$; Top-$k$ size $K$; threshold $\epsilon_H$; maximum steps $T_{\max}$
+\Ensure Validated answer $\hat{a}$ with trace $\tau$, or $\mathrm{Unresolved}(r)$
+\State $S^{\mathrm{sym}}_0 \gets \mathrm{ConstructSymbolicState}(F,q)$
+\State $\tau \gets [\,]$; $\mathcal{V}\gets\{\mathrm{Key}(S^{\mathrm{sym}}_0)\}$
+\For{$t=0$ to $T_{\max}-1$}
+    \State $S^{\mathrm{abs}}_t \gets \phi(S^{\mathrm{sym}}_t,q,t)$
+    \State $h_t \gets H_{\psi}(S^{\mathrm{abs}}_t)$
+    \If{$h_t \leq \epsilon_H$ \textbf{and} $\mathrm{AnswerReady}(S^{\mathrm{sym}}_t,q)$}
+        \State $(\hat{a},v) \gets \mathrm{ExtractAndValidate}(S^{\mathrm{sym}}_t,q)$
+        \If{$v$}
+            \State \Return $(\hat{a},\tau)$
+        \EndIf
+    \EndIf
+    \State $\mathcal{C}_t \gets \mathrm{TopK}\!\left(p_{\theta}(\cdot\mid S^{\mathrm{abs}}_t),K\right)$
+    \State $c_t \gets 1-H_{\mathrm{pred}}(S^{\mathrm{abs}}_t)$
+    \State $\mathcal{B}_t \gets [\,]$ \Comment{Executable and progress-producing candidates}
+    \ForAll{$M_i \in \mathcal{C}_t$}
+        \If{\textbf{not} $\mathrm{Applicable}(M_i,S^{\mathrm{sym}}_t)$}
+            \State \textbf{continue}
+        \EndIf
+        \State $\widetilde{S}^{(i)}_{t+1} \gets \mathrm{SimulateTransition}(M_i,S^{\mathrm{sym}}_t)$
+        \If{\textbf{not} $\mathrm{Consistent}(\widetilde{S}^{(i)}_{t+1})$ \textbf{or} \textbf{not} $\mathrm{Productive}(S^{\mathrm{sym}}_t,\widetilde{S}^{(i)}_{t+1})$}
+            \State \textbf{continue}
+        \EndIf
+        \If{$\mathrm{Key}(\widetilde{S}^{(i)}_{t+1})\in\mathcal{V}$}
+            \State \textbf{continue}
+        \EndIf
+        \State $\Delta H_i \gets h_t-H_{\psi}(\phi(\widetilde{S}^{(i)}_{t+1},q,t+1))$
+        \State $s_i \gets \lambda_p c_t p_{\theta}(M_i\mid S^{\mathrm{abs}}_t)+\lambda_g\Delta H_i$
+        \State $\mathcal{B}_t.\mathrm{append}(M_i,\widetilde{S}^{(i)}_{t+1},s_i,\Delta H_i)$
+    \EndFor
+    \If{$\mathcal{B}_t=\emptyset$}
+        \State \Return $\mathrm{Unresolved}(\textsc{NoExecutableProgress})$
+    \EndIf
+    \State $(M_t,S^{\mathrm{sym}}_{t+1},s_t,\Delta H_t)\gets\arg\max_{(M,S,s,\Delta H)\in\mathcal{B}_t}s$
+    \State $\tau.\mathrm{append}(M_t,S^{\mathrm{sym}}_{t+1},h_t,\Delta H_t,s_t)$
+    \State $\mathcal{V}\gets\mathcal{V}\cup\{\mathrm{Key}(S^{\mathrm{sym}}_{t+1})\}$
+\EndFor
+\State \Return $\mathrm{Unresolved}(\textsc{MaxSteps})$
+\end{algorithmic}
+\end{algorithm*}

@@ -1,0 +1,47 @@
+% Requires \usepackage{algorithm} and \usepackage{algpseudocode}.
+\begin{algorithm*}[t]
+\caption{Entropy-Guided Neural-Symbolic Inference with Executable Theorem Models}
+\label{alg:egr_inference}
+\begin{algorithmic}[1]
+\Require Problem $x=(F,q)$; theorem-model library $\mathcal{M}$; selector $p_{\theta}$; state-entropy estimator $H_{\psi}$; Top-$k$ size $K$; stopping threshold $\epsilon_H$; maximum steps $T_{\max}$
+\Ensure Validated answer $\hat{a}$ and reasoning trace $\tau$, or $\mathrm{Unresolved}(r)$
+\State $S^{\mathrm{sym}} \gets \mathrm{ConstructState}(F,q)$
+\State $\tau \gets [\,]$; $\mathcal{V} \gets \{\mathrm{Key}(S^{\mathrm{sym}})\}$
+\For{$t=0$ to $T_{\max}-1$}
+    \State $S^{\mathrm{abs}} \gets \phi(S^{\mathrm{sym}},q,t)$
+    \State $h \gets H_{\psi}(S^{\mathrm{abs}})$
+    \If{$h \leq \epsilon_H$ \textbf{and} $\mathrm{AnswerReady}(S^{\mathrm{sym}},q)$}
+        \State $(\hat{a},v) \gets \mathrm{ExtractAndValidate}(S^{\mathrm{sym}},q)$
+        \If{$v=\mathrm{true}$}
+            \State \Return $(\hat{a},\tau)$
+        \EndIf
+    \EndIf
+    \State $\mathcal{C} \gets \mathrm{TopK}\!\left(p_{\theta}(\cdot\mid S^{\mathrm{abs}}),K\right)$
+    \State $c_{\mathrm{pred}} \gets 1-H_{\mathrm{pred}}(S^{\mathrm{abs}})$
+    \State $\mathcal{B} \gets [\,]$ \Comment{Scored executable transitions}
+    \ForAll{$M_i \in \mathcal{C}$}
+        \If{$\neg\mathrm{Applicable}(M_i,S^{\mathrm{sym}})$}
+            \State \textbf{continue}
+        \EndIf
+        \State $\widetilde{S}^{(i)} \gets \mathrm{Simulate}(M_i,S^{\mathrm{sym}})$
+        \If{$\neg\mathrm{Consistent}(\widetilde{S}^{(i)})$ \textbf{or} $\neg\mathrm{Productive}(S^{\mathrm{sym}},\widetilde{S}^{(i)})$}
+            \State \textbf{continue}
+        \EndIf
+        \If{$\mathrm{Key}(\widetilde{S}^{(i)}) \in \mathcal{V}$}
+            \State \textbf{continue}
+        \EndIf
+        \State $\mathrm{IG}_i \gets h-H_{\psi}(\phi(\widetilde{S}^{(i)},q,t+1))$
+        \State $s_i \gets \lambda_p c_{\mathrm{pred}}p_{\theta}(M_i\mid S^{\mathrm{abs}})+\lambda_g\mathrm{IG}_i$
+        \State $\mathcal{B}.\mathrm{append}(M_i,\widetilde{S}^{(i)},s_i,\mathrm{IG}_i)$
+    \EndFor
+    \If{$\mathcal{B}=\emptyset$}
+        \State \Return $\mathrm{Unresolved}(\textsc{NoExecutableProgress})$
+    \EndIf
+    \State $(M_t,S',s_t,\mathrm{IG}_t) \gets \arg\max_{(M,S,s,\mathrm{IG})\in\mathcal{B}} s$
+    \State $S^{\mathrm{sym}} \gets S'$ \Comment{Simulation and execution are deterministic}
+    \State $\tau.\mathrm{append}(M_t,S^{\mathrm{sym}},h,\mathrm{IG}_t,s_t)$
+    \State $\mathcal{V} \gets \mathcal{V}\cup\{\mathrm{Key}(S^{\mathrm{sym}})\}$
+\EndFor
+\State \Return $\mathrm{Unresolved}(\textsc{MaxSteps})$
+\end{algorithmic}
+\end{algorithm*}
