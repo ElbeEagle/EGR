@@ -4,7 +4,7 @@
 
 ### Recommended Title
 
-> **Beyond Answer Generation: Entropy-Guided Neural-Symbolic Model Transitions for Conic-Section Reasoning**
+> **Neuro-Symbolic Theorem Prediction and State Transition for Conic-Section Problem Solving**
 
 这个标题直接表达论文的核心转向：数学求解不再被建模为一次性的答案生成，而是被建模为可执行 theorem model 驱动的状态转移过程。
 

@@ -25,7 +25,7 @@ Given this representation, the neural selector learns to predict a distribution 
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=0.98\textwidth]{paper/figures/figure1_paradigm_overall_architecture_v3.png}
+    \includegraphics[width=0.98\textwidth]{paper/figures/figure1.png}
     \caption{From direct answer generation to executable neural-symbolic model transitions. Direct LLM reasoning entangles theorem selection, symbolic computation, and termination in free-form generation. EGR instead maintains an explicit reasoning state and alternates neural theorem-model prediction with deterministic symbolic execution. State entropy controls continuation, and the answer is extracted only from a validated terminal state.}
     \label{fig:paradigm_architecture}
 \end{figure*}
@@ -140,7 +140,7 @@ EGR implements the formulation above through a neural prediction layer and a sym
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=0.98\textwidth]{paper/figures/figure2_single_neural_symbolic_transition_v3.png}
+    \includegraphics[width=0.98\textwidth]{paper/figures/figure2.png}
     \caption{A single EGR reasoning step over synchronized symbolic and abstract states. The neural selector proposes Top-$k$ theorem models from the abstract state. The symbolic applicator filters inapplicable or non-productive candidates and simulates valid transitions. State-entropy reduction and selector confidence rank the executable successors before the selected theorem model updates the symbolic state.}
     \label{fig:single_transition}
 \end{figure*}
@@ -330,7 +330,7 @@ The same decomposition provides modular interfaces for enhancing LLM reasoning. 
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=0.98\textwidth]{paper/figures/figure3_llm_augmentation_interfaces_v3.png}
+    \includegraphics[width=0.98\textwidth]{paper/figures/figure3.png}
     \caption{Modular interfaces for EGR-augmented LLM mathematical reasoning. Selector guidance addresses \emph{what to apply}; the symbolic applicator grounds \emph{how to execute}; full EGR additionally maintains the executable state, controls continuation, and validates the terminal answer. These configurations correspond directly to the LLM augmentation experiments.}
     \label{fig:llm_interfaces}
 \end{figure*}
