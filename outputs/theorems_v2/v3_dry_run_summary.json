@@ -1,0 +1,97 @@
+{
+  "rows_with_models": 5359,
+  "changed_observed_rows": 319,
+  "changed_executable_rows": 239,
+  "operation_counts": {
+    "insert_verified_dependency": 241,
+    "replace_misaligned_model": 319,
+    "remove_adjacent_duplicate": 12,
+    "move_dependency_before_consumer": 1
+  },
+  "operation_confidence_counts": {
+    "insert_verified_dependency:medium": 241,
+    "replace_misaligned_model:high": 319,
+    "remove_adjacent_duplicate:high": 12,
+    "move_dependency_before_consumer:medium": 1
+  },
+  "replacement_pairs": {
+    "3->4": 55,
+    "7->10": 14,
+    "5->6": 13,
+    "7->9": 125,
+    "7->8": 25,
+    "14->15": 30,
+    "19->20": 2,
+    "6->5": 10,
+    "11->12": 3,
+    "4->3": 4,
+    "7->5": 3,
+    "0->1": 1,
+    "9->7": 12,
+    "10->8": 3,
+    "18->19": 2,
+    "9->10": 5,
+    "3->5": 2,
+    "6->9": 1,
+    "7->3": 4,
+    "3->7": 1,
+    "5->3": 1,
+    "27->29": 2,
+    "1->0": 1
+  },
+  "semantic_flag_counts": {
+    "63:likely_semantic_drift": 291,
+    "70:legacy_semantics_unverified": 26,
+    "64:likely_semantic_drift": 7,
+    "79:likely_semantic_drift": 73,
+    "68:likely_semantic_drift": 288,
+    "69:likely_semantic_drift": 23,
+    "77:likely_semantic_drift": 211,
+    "68:legacy_semantics_unverified": 32,
+    "63:legacy_semantics_unverified": 44,
+    "71:likely_semantic_drift": 43,
+    "77:legacy_semantics_unverified": 10,
+    "64:legacy_semantics_unverified": 19,
+    "79:legacy_semantics_unverified": 59,
+    "70:likely_semantic_drift": 9,
+    "69:legacy_semantics_unverified": 7
+  },
+  "quality_candidates": {
+    "C": 3998,
+    "B": 71,
+    "D": 929,
+    "A": 361
+  },
+  "fully_replayable_rows": {
+    "executable": 432,
+    "original": 299,
+    "observed": 361
+  },
+  "status_counts": {
+    "original": {
+      "NO_MATCH": 14833,
+      "APPLIED": 4157,
+      "SPECIFICATION_ONLY": 1142,
+      "AMBIGUOUS_BINDING": 78,
+      "ALREADY_KNOWN": 16
+    },
+    "observed": {
+      "NO_MATCH": 14358,
+      "APPLIED": 4618,
+      "SPECIFICATION_ONLY": 1142,
+      "AMBIGUOUS_BINDING": 80,
+      "ALREADY_KNOWN": 16
+    },
+    "executable": {
+      "NO_MATCH": 14082,
+      "APPLIED": 5135,
+      "SPECIFICATION_ONLY": 1142,
+      "AMBIGUOUS_BINDING": 80,
+      "ALREADY_KNOWN": 16
+    }
+  },
+  "unparsed_fact_atoms": 4291,
+  "adapter_errors": 78,
+  "source_rows": 7757,
+  "input": "C:\\GitHub\\EGR\\data\\train_with_models_v2.json"
+}

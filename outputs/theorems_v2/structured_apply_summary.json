@@ -1,0 +1,34 @@
+{
+  "total_rows": 5355,
+  "original_steps": 20212,
+  "concrete_model_count": 51,
+  "bare_statuses": {
+    "NO_MATCH": 13202,
+    "APPLIED": 3819,
+    "SPECIFICATION_ONLY": 3105,
+    "AMBIGUOUS_BINDING": 71,
+    "ALREADY_KNOWN": 15
+  },
+  "bare_all_step_apply_rate": 0.18968929348901642,
+  "bare_concrete_step_apply_rate": 0.22411878178523412,
+  "bare_fully_executable_rows": 284,
+  "bare_fully_executable_rate": 0.05303454715219421,
+  "corrected_statuses": {
+    "NO_MATCH": 12263,
+    "APPLIED": 4795,
+    "ALREADY_KNOWN": 247,
+    "SPECIFICATION_ONLY": 3105,
+    "AMBIGUOUS_BINDING": 76,
+    "CONFLICT": 2
+  },
+  "corrected_operations": {
+    "move_dependency_before_consumer": 519,
+    "insert_dependency": 276,
+    "replace_directional_model": 507
+  },
+  "corrected_fully_executable_rows": 471,
+  "corrected_fully_executable_rate": 0.08795518207282914,
+  "repair_artifact_rows": 1256,
+  "unparsed_fact_atoms": 6882,
+  "adapter_errors": 76
+}

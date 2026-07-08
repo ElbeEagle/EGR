@@ -1,0 +1,38 @@
+{
+  "source_rows": 7757,
+  "rows_with_reviewed_models": 5359,
+  "candidate_rows": 7757,
+  "high_confidence_rows": 432,
+  "operation_decisions": {
+    "insert_verified_dependency:approve_executable_only": 241,
+    "replace_misaligned_model:approve_observed": 319,
+    "remove_adjacent_duplicate:approve_observed": 12,
+    "move_dependency_before_consumer:approve_executable_only": 1
+  },
+  "semantic_actions": {
+    "tactic.basic_inequality_bound": 160,
+    "geometry.incircle_incenter_relation": 29,
+    "unresolved.legacy_model_63": 175,
+    "unresolved.legacy_model_64": 7,
+    "unresolved.legacy_model_79": 61,
+    "unresolved.legacy_model_68": 132,
+    "geometry.midpoint_midline_relation": 188,
+    "unresolved.legacy_model_69": 23,
+    "unresolved.legacy_model_77": 91,
+    "tactic.dimensionless_homogenization": 130,
+    "unresolved.legacy_model_71": 22,
+    "tactic.area_equivalence": 21,
+    "tactic.inequality_equality_condition": 19,
+    "tactic.quadratic_extremum": 51,
+    "unresolved.legacy_model_70": 6,
+    "geometry.trapezoid_midline_relation": 7,
+    "tactic.feasibility_by_discriminant": 20
+  },
+  "semantic_review_basis": {
+    "reviewed_text_cue": 507,
+    "needs_relabel": 517,
+    "inferred_ratio_rewrite": 118
+  },
+  "changed_observed_rows": 319,
+  "changed_executable_rows": 239
+}

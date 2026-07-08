@@ -1,0 +1,353 @@
+{
+  "input": "data\\train_with_models_v3_candidate.json",
+  "sequence_field": "models_v3_executable",
+  "total_rows": 5355,
+  "step_statuses": {
+    "APPLIED": 7795,
+    "NO_MATCH": 11397,
+    "SPECIFICATION_ONLY": 1142,
+    "AMBIGUOUS_BINDING": 91,
+    "ALREADY_KNOWN": 16
+  },
+  "sequence_success_rows": 635,
+  "sequence_success_rate": 0.11858076563958916,
+  "initial_goal_statuses": {
+    "GOAL_UNSUPPORTED": 2248,
+    "GOAL_NOT_REACHED": 3092,
+    "VALUE_UNRESOLVED": 13,
+    "ANSWER_UNSUPPORTED": 2
+  },
+  "initial_answer_correct_rows": 0,
+  "goal_statuses": {
+    "GOAL_UNSUPPORTED": 2248,
+    "GOAL_NOT_REACHED": 2538,
+    "ANSWER_CORRECT": 229,
+    "VALUE_UNRESOLVED": 330,
+    "ANSWER_INCORRECT": 2,
+    "ANSWER_UNSUPPORTED": 8
+  },
+  "goal_progress_rows": 229,
+  "goal_supported_rows": 3107,
+  "goal_supported_rate": 0.5802054154995332,
+  "answer_evaluable_rows": 231,
+  "answer_correct_rows": 229,
+  "answer_accuracy_when_evaluable": 0.9913419913419913,
+  "sequence_success_goal_statuses": {
+    "GOAL_UNSUPPORTED": 116,
+    "ANSWER_CORRECT": 218,
+    "GOAL_NOT_REACHED": 223,
+    "VALUE_UNRESOLVED": 73,
+    "ANSWER_INCORRECT": 2,
+    "ANSWER_UNSUPPORTED": 3
+  },
+  "selector_usable_rows": 218,
+  "first_failure_statuses": {
+    "NO_MATCH": 4577,
+    "SPECIFICATION_ONLY": 100,
+    "AMBIGUOUS_BINDING": 43
+  },
+  "first_failure_models": {
+    "2:NO_MATCH": 610,
+    "3:NO_MATCH": 553,
+    "5:NO_MATCH": 446,
+    "7:NO_MATCH": 289,
+    "1:NO_MATCH": 265,
+    "0:NO_MATCH": 251,
+    "78:NO_MATCH": 202,
+    "52:NO_MATCH": 162,
+    "13:NO_MATCH": 143,
+    "75:NO_MATCH": 142,
+    "72:NO_MATCH": 130,
+    "6:NO_MATCH": 119,
+    "46:NO_MATCH": 112,
+    "62:NO_MATCH": 99,
+    "38:NO_MATCH": 89,
+    "54:NO_MATCH": 80,
+    "9:NO_MATCH": 62,
+    "49:NO_MATCH": 61,
+    "61:NO_MATCH": 56,
+    "53:NO_MATCH": 52,
+    "76:NO_MATCH": 50,
+    "59:NO_MATCH": 50,
+    "44:NO_MATCH": 46,
+    "4:NO_MATCH": 43,
+    "42:NO_MATCH": 41,
+    "56:NO_MATCH": 41,
+    "17:NO_MATCH": 40,
+    "68:SPECIFICATION_ONLY": 39,
+    "55:NO_MATCH": 38,
+    "32:NO_MATCH": 32,
+    "57:NO_MATCH": 30,
+    "63:SPECIFICATION_ONLY": 29,
+    "75:AMBIGUOUS_BINDING": 26,
+    "47:NO_MATCH": 25,
+    "21:NO_MATCH": 24,
+    "16:NO_MATCH": 22,
+    "39:NO_MATCH": 19,
+    "27:NO_MATCH": 16,
+    "65:NO_MATCH": 15,
+    "24:NO_MATCH": 13,
+    "70:SPECIFICATION_ONLY": 12,
+    "77:SPECIFICATION_ONLY": 11,
+    "12:NO_MATCH": 10,
+    "10:NO_MATCH": 9,
+    "23:NO_MATCH": 8,
+    "25:NO_MATCH": 8,
+    "66:NO_MATCH": 8,
+    "45:NO_MATCH": 8,
+    "19:NO_MATCH": 6,
+    "17:AMBIGUOUS_BINDING": 6,
+    "30:NO_MATCH": 5,
+    "0:AMBIGUOUS_BINDING": 5,
+    "73:NO_MATCH": 5,
+    "8:NO_MATCH": 4,
+    "11:NO_MATCH": 4,
+    "40:NO_MATCH": 4,
+    "48:NO_MATCH": 4,
+    "2:AMBIGUOUS_BINDING": 4,
+    "79:SPECIFICATION_ONLY": 4,
+    "33:NO_MATCH": 4,
+    "51:NO_MATCH": 4,
+    "71:SPECIFICATION_ONLY": 3,
+    "41:NO_MATCH": 3,
+    "67:NO_MATCH": 3,
+    "60:NO_MATCH": 2,
+    "69:SPECIFICATION_ONLY": 2,
+    "28:NO_MATCH": 2,
+    "58:NO_MATCH": 2,
+    "29:NO_MATCH": 2,
+    "36:NO_MATCH": 1,
+    "31:NO_MATCH": 1,
+    "26:NO_MATCH": 1,
+    "74:NO_MATCH": 1,
+    "38:AMBIGUOUS_BINDING": 1,
+    "1:AMBIGUOUS_BINDING": 1
+  },
+  "first_failure_missing_predicates": {
+    "ExpressionPolynomial": 458,
+    "LineNormalFormOf": 364,
+    "PointPositionOf": 227,
+    "RequestedPointLineDistanceOf": 153,
+    "IntersectionOf": 140,
+    "SlopeOf": 121,
+    "PointOnCurve": 109,
+    "VectorScaleRelation": 99,
+    "RequestedDotProductOf": 97,
+    "RequestedAreaOf": 73,
+    "QuadraticPolynomialOf": 63,
+    "RightAngleOf": 61,
+    "RequestedDistanceOf": 46,
+    "AngleValueOf": 42,
+    "MidPointOf": 41,
+    "MidpointOf": 41,
+    "TangentRelation": 36,
+    "VectorOf": 32,
+    "RequestedSlopeOf": 32,
+    "ConicStandardForm": 28,
+    "OrderConstraint": 19,
+    "TriangleOf": 15,
+    "EquationConstraint": 11,
+    "DiscriminantOf": 9,
+    "IntersectionCountOf": 9,
+    "ParameterOf": 8,
+    "QuantityValueOf": 7,
+    "FocusOf": 5
+  },
+  "query_goal_statuses": {
+    "Abs": {
+      "VALUE_UNRESOLVED": 7,
+      "GOAL_NOT_REACHED": 267,
+      "GOAL_UNSUPPORTED": 109,
+      "ANSWER_CORRECT": 4
+    },
+    "AngleOf": {
+      "GOAL_UNSUPPORTED": 30
+    },
+    "Area": {
+      "GOAL_NOT_REACHED": 184,
+      "GOAL_UNSUPPORTED": 13
+    },
+    "Coordinate": {
+      "GOAL_NOT_REACHED": 188,
+      "GOAL_UNSUPPORTED": 19,
+      "VALUE_UNRESOLVED": 6,
+      "ANSWER_UNSUPPORTED": 1
+    },
+    "Cos": {
+      "GOAL_UNSUPPORTED": 26
+    },
+    "Distance": {
+      "GOAL_UNSUPPORTED": 127,
+      "ANSWER_CORRECT": 25,
+      "GOAL_NOT_REACHED": 106,
+      "VALUE_UNRESOLVED": 4
+    },
+    "DotProduct": {
+      "GOAL_UNSUPPORTED": 21
+    },
+    "Eccentricity": {
+      "GOAL_NOT_REACHED": 622,
+      "VALUE_UNRESOLVED": 61,
+      "ANSWER_CORRECT": 55,
+      "GOAL_UNSUPPORTED": 5,
+      "ANSWER_UNSUPPORTED": 1
+    },
+    "Expression": {
+      "GOAL_NOT_REACHED": 629,
+      "GOAL_UNSUPPORTED": 59,
+      "VALUE_UNRESOLVED": 219,
+      "ANSWER_CORRECT": 74,
+      "ANSWER_INCORRECT": 2,
+      "ANSWER_UNSUPPORTED": 4
+    },
+    "FocalLength": {
+      "ANSWER_CORRECT": 32,
+      "GOAL_NOT_REACHED": 26,
+      "VALUE_UNRESOLVED": 6,
+      "GOAL_UNSUPPORTED": 1
+    },
+    "Inclination": {
+      "GOAL_UNSUPPORTED": 13
+    },
+    "Intercept": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "Length": {
+      "ANSWER_CORRECT": 27,
+      "VALUE_UNRESOLVED": 19,
+      "GOAL_UNSUPPORTED": 85,
+      "GOAL_NOT_REACHED": 29
+    },
+    "LineSegmentOf": {
+      "GOAL_UNSUPPORTED": 11
+    },
+    "Locus": {
+      "GOAL_UNSUPPORTED": 5
+    },
+    "LocusEquation": {
+      "GOAL_UNSUPPORTED": 165
+    },
+    "Max": {
+      "GOAL_UNSUPPORTED": 172
+    },
+    "Min": {
+      "GOAL_UNSUPPORTED": 398
+    },
+    "MinorAxis": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "NumIntersection": {
+      "GOAL_UNSUPPORTED": 7
+    },
+    "OTHER": {
+      "GOAL_UNSUPPORTED": 32
+    },
+    "OneOf": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "Perimeter": {
+      "GOAL_NOT_REACHED": 61,
+      "ANSWER_CORRECT": 3,
+      "ANSWER_UNSUPPORTED": 1
+    },
+    "R": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "Radius": {
+      "GOAL_NOT_REACHED": 4,
+      "GOAL_UNSUPPORTED": 11
+    },
+    "Range": {
+      "GOAL_UNSUPPORTED": 441
+    },
+    "S": {
+      "GOAL_UNSUPPORTED": 2
+    },
+    "Sin": {
+      "GOAL_UNSUPPORTED": 10
+    },
+    "Slope": {
+      "GOAL_NOT_REACHED": 37,
+      "GOAL_UNSUPPORTED": 49,
+      "VALUE_UNRESOLVED": 1
+    },
+    "Tan": {
+      "GOAL_UNSUPPORTED": 8
+    },
+    "VectorOf": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "XCoordinate": {
+      "GOAL_NOT_REACHED": 30,
+      "GOAL_UNSUPPORTED": 5
+    },
+    "YCoordinate": {
+      "GOAL_NOT_REACHED": 9,
+      "GOAL_UNSUPPORTED": 1
+    },
+    "a": {
+      "GOAL_NOT_REACHED": 109,
+      "GOAL_UNSUPPORTED": 13,
+      "VALUE_UNRESOLVED": 2,
+      "ANSWER_UNSUPPORTED": 1
+    },
+    "b": {
+      "GOAL_NOT_REACHED": 35,
+      "GOAL_UNSUPPORTED": 9
+    },
+    "c": {
+      "GOAL_NOT_REACHED": 3,
+      "GOAL_UNSUPPORTED": 1
+    },
+    "d": {
+      "GOAL_UNSUPPORTED": 5
+    },
+    "e": {
+      "GOAL_NOT_REACHED": 37,
+      "VALUE_UNRESOLVED": 5,
+      "ANSWER_CORRECT": 9,
+      "GOAL_UNSUPPORTED": 5
+    },
+    "k": {
+      "GOAL_UNSUPPORTED": 116
+    },
+    "lambda": {
+      "GOAL_UNSUPPORTED": 19
+    },
+    "m": {
+      "GOAL_UNSUPPORTED": 193
+    },
+    "n": {
+      "GOAL_UNSUPPORTED": 14
+    },
+    "p": {
+      "GOAL_NOT_REACHED": 162,
+      "GOAL_UNSUPPORTED": 4
+    },
+    "r": {
+      "GOAL_UNSUPPORTED": 7
+    },
+    "sqrt": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "t": {
+      "GOAL_UNSUPPORTED": 12
+    },
+    "x": {
+      "GOAL_UNSUPPORTED": 10
+    },
+    "y": {
+      "GOAL_UNSUPPORTED": 7
+    },
+    "yA": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "ym": {
+      "GOAL_UNSUPPORTED": 1
+    }
+  },
+  "unparsed_fact_atoms": 3750,
+  "adapter_errors": 78,
+  "trajectory_rows": 635,
+  "selector_trajectory_rows": 218
+}

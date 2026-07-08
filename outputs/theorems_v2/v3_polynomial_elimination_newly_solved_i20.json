@@ -1,0 +1,278 @@
+[
+  {
+    "id": 495,
+    "sequence": [
+      7,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "APPLIED"
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 2289,
+    "sequence": [
+      7,
+      2,
+      17
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 3310,
+    "sequence": [
+      7
+    ],
+    "step_statuses": [
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 3876,
+    "sequence": [
+      7,
+      2,
+      17
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 4392,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 5148,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 5228,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 5575,
+    "sequence": [
+      9,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 5671,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 6657,
+    "sequence": [
+      7,
+      2,
+      17
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 6712,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 6804,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 6938,
+    "sequence": [
+      7,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "APPLIED"
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 6954,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 6964,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 7003,
+    "sequence": [
+      7,
+      2,
+      29
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "NO_MATCH",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 7104,
+    "sequence": [
+      7,
+      17
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 7571,
+    "sequence": [
+      7,
+      17
+    ],
+    "step_statuses": [
+      "APPLIED",
+      "APPLIED"
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  }
+]

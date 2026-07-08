@@ -1,0 +1,243 @@
+[
+  {
+    "id": 867,
+    "query_expressions": "Eccentricity(G)",
+    "answer_expressions": "2",
+    "sequence": [
+      5,
+      21,
+      12,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 903,
+    "query_expressions": "Expression(G)",
+    "answer_expressions": "y^2=2*x",
+    "sequence": [
+      7,
+      29
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 1649,
+    "query_expressions": "Eccentricity(C)",
+    "answer_expressions": "sqrt(3)",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 1976,
+    "query_expressions": "Eccentricity(G)",
+    "answer_expressions": "2*sqrt(3)/3",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 2038,
+    "query_expressions": "Eccentricity(C)",
+    "answer_expressions": "3*sqrt(5)/5",
+    "sequence": [
+      6,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 2060,
+    "query_expressions": "Expression(C)",
+    "answer_expressions": "x^2/16-y^2/9=1",
+    "sequence": [
+      5,
+      21,
+      12
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 2710,
+    "query_expressions": "Eccentricity(G)",
+    "answer_expressions": "sqrt(10)",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 3070,
+    "query_expressions": "Eccentricity(C)",
+    "answer_expressions": "sqrt(13)/3",
+    "sequence": [
+      6,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 3271,
+    "query_expressions": "e",
+    "answer_expressions": "sqrt(3)",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 3547,
+    "query_expressions": "Eccentricity(C)",
+    "answer_expressions": "2*sqrt(3)/3",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 3701,
+    "query_expressions": "Eccentricity(C)",
+    "answer_expressions": "sqrt(5)",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 4010,
+    "query_expressions": "Eccentricity(G)",
+    "answer_expressions": "sqrt(5)/2",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 4813,
+    "query_expressions": "Eccentricity(G)",
+    "answer_expressions": "sqrt(5)",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 5317,
+    "query_expressions": "Expression(G)",
+    "answer_expressions": "y^2=x",
+    "sequence": [
+      7,
+      29
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 5599,
+    "query_expressions": "e",
+    "answer_expressions": "5/3",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 6096,
+    "query_expressions": "Eccentricity(C)",
+    "answer_expressions": "sqrt(6)/2",
+    "sequence": [
+      6,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 6286,
+    "query_expressions": "e",
+    "answer_expressions": "sqrt(13)/2",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 6346,
+    "query_expressions": "FocalLength(C)",
+    "answer_expressions": "2*sqrt(13)",
+    "sequence": [
+      5,
+      21,
+      12
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 6620,
+    "query_expressions": "Eccentricity(G)",
+    "answer_expressions": "sqrt(2)",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 6666,
+    "query_expressions": "e",
+    "answer_expressions": "sqrt(5)",
+    "sequence": [
+      6,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 6766,
+    "query_expressions": "FocalLength(G)",
+    "answer_expressions": "10",
+    "sequence": [
+      5,
+      21,
+      12
+    ],
+    "goal": "ANSWER_CORRECT"
+  },
+  {
+    "id": 6928,
+    "query_expressions": "Eccentricity(G)",
+    "answer_expressions": "5/3",
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "goal": "ANSWER_CORRECT"
+  }
+]

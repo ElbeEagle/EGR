@@ -1,0 +1,364 @@
+{
+  "input": "C:\\GitHub\\EGR\\data\\train_with_models_v3_candidate.json",
+  "sequence_field": "models_v3_observed",
+  "assisted_apply": false,
+  "max_support_steps": 12,
+  "total_rows": 5355,
+  "step_statuses": {
+    "APPLIED": 7580,
+    "NO_MATCH": 11367,
+    "SPECIFICATION_ONLY": 1142,
+    "AMBIGUOUS_BINDING": 95,
+    "ALREADY_KNOWN": 16
+  },
+  "sequence_success_rows": 597,
+  "sequence_success_rate": 0.11148459383753502,
+  "initial_goal_statuses": {
+    "GOAL_UNSUPPORTED": 2248,
+    "GOAL_NOT_REACHED": 2983,
+    "VALUE_UNRESOLVED": 97,
+    "ANSWER_UNSUPPORTED": 27
+  },
+  "initial_answer_correct_rows": 0,
+  "goal_statuses": {
+    "GOAL_UNSUPPORTED": 2248,
+    "GOAL_NOT_REACHED": 2405,
+    "VALUE_UNRESOLVED": 440,
+    "ANSWER_CORRECT": 228,
+    "ANSWER_UNSUPPORTED": 33,
+    "ANSWER_INCORRECT": 1
+  },
+  "goal_progress_rows": 228,
+  "goal_supported_rows": 3107,
+  "goal_supported_rate": 0.5802054154995332,
+  "answer_evaluable_rows": 229,
+  "answer_correct_rows": 228,
+  "answer_accuracy_when_evaluable": 0.9956331877729258,
+  "sequence_success_goal_statuses": {
+    "GOAL_UNSUPPORTED": 105,
+    "ANSWER_CORRECT": 204,
+    "GOAL_NOT_REACHED": 201,
+    "VALUE_UNRESOLVED": 80,
+    "ANSWER_INCORRECT": 1,
+    "ANSWER_UNSUPPORTED": 6
+  },
+  "selector_usable_rows": 204,
+  "support_applications": 0,
+  "support_models": {},
+  "first_failure_statuses": {
+    "NO_MATCH": 4613,
+    "SPECIFICATION_ONLY": 99,
+    "AMBIGUOUS_BINDING": 46
+  },
+  "first_failure_models": {
+    "2:NO_MATCH": 610,
+    "3:NO_MATCH": 546,
+    "5:NO_MATCH": 361,
+    "7:NO_MATCH": 290,
+    "1:NO_MATCH": 269,
+    "0:NO_MATCH": 252,
+    "13:NO_MATCH": 230,
+    "78:NO_MATCH": 203,
+    "52:NO_MATCH": 166,
+    "75:NO_MATCH": 144,
+    "72:NO_MATCH": 128,
+    "46:NO_MATCH": 114,
+    "6:NO_MATCH": 114,
+    "62:NO_MATCH": 99,
+    "38:NO_MATCH": 90,
+    "54:NO_MATCH": 75,
+    "32:NO_MATCH": 72,
+    "49:NO_MATCH": 63,
+    "9:NO_MATCH": 62,
+    "61:NO_MATCH": 59,
+    "42:NO_MATCH": 49,
+    "76:NO_MATCH": 49,
+    "59:NO_MATCH": 47,
+    "53:NO_MATCH": 46,
+    "44:NO_MATCH": 46,
+    "4:NO_MATCH": 44,
+    "17:NO_MATCH": 41,
+    "68:SPECIFICATION_ONLY": 38,
+    "55:NO_MATCH": 36,
+    "16:NO_MATCH": 28,
+    "63:SPECIFICATION_ONLY": 28,
+    "75:AMBIGUOUS_BINDING": 26,
+    "47:NO_MATCH": 25,
+    "21:NO_MATCH": 24,
+    "56:NO_MATCH": 24,
+    "27:NO_MATCH": 22,
+    "39:NO_MATCH": 19,
+    "65:NO_MATCH": 17,
+    "57:NO_MATCH": 16,
+    "24:NO_MATCH": 13,
+    "12:NO_MATCH": 12,
+    "77:SPECIFICATION_ONLY": 12,
+    "70:SPECIFICATION_ONLY": 12,
+    "45:NO_MATCH": 9,
+    "10:NO_MATCH": 9,
+    "23:NO_MATCH": 8,
+    "25:NO_MATCH": 8,
+    "66:NO_MATCH": 8,
+    "28:NO_MATCH": 7,
+    "19:NO_MATCH": 6,
+    "30:NO_MATCH": 6,
+    "17:AMBIGUOUS_BINDING": 6,
+    "11:NO_MATCH": 5,
+    "51:NO_MATCH": 5,
+    "0:AMBIGUOUS_BINDING": 5,
+    "73:NO_MATCH": 5,
+    "8:NO_MATCH": 4,
+    "40:NO_MATCH": 4,
+    "48:NO_MATCH": 4,
+    "2:AMBIGUOUS_BINDING": 4,
+    "79:SPECIFICATION_ONLY": 4,
+    "33:NO_MATCH": 4,
+    "71:SPECIFICATION_ONLY": 3,
+    "41:NO_MATCH": 3,
+    "58:NO_MATCH": 3,
+    "67:NO_MATCH": 2,
+    "60:NO_MATCH": 2,
+    "69:SPECIFICATION_ONLY": 2,
+    "55:AMBIGUOUS_BINDING": 2,
+    "29:NO_MATCH": 2,
+    "36:NO_MATCH": 1,
+    "31:NO_MATCH": 1,
+    "26:NO_MATCH": 1,
+    "74:NO_MATCH": 1,
+    "52:AMBIGUOUS_BINDING": 1,
+    "38:AMBIGUOUS_BINDING": 1,
+    "1:AMBIGUOUS_BINDING": 1
+  },
+  "first_failure_missing_predicates": {
+    "ExpressionPolynomial": 458,
+    "LineNormalFormOf": 367,
+    "PointPositionOf": 159,
+    "RequestedPointLineDistanceOf": 159,
+    "IntersectionOf": 142,
+    "SlopeOf": 122,
+    "PointOnCurve": 111,
+    "VectorScaleRelation": 99,
+    "RequestedDotProductOf": 98,
+    "QuadraticPolynomialOf": 74,
+    "RightAngleOf": 63,
+    "RequestedDistanceOf": 44,
+    "RequestedAreaOf": 43,
+    "MidPointOf": 40,
+    "MidpointOf": 40,
+    "AngleValueOf": 37,
+    "TangentRelation": 36,
+    "RequestedSlopeOf": 33,
+    "VectorOf": 30,
+    "ConicStandardForm": 29,
+    "OrderConstraint": 18,
+    "TriangleOf": 15,
+    "ParameterOf": 13,
+    "DiscriminantOf": 9,
+    "IntersectionCountOf": 8,
+    "QuantityValueOf": 7,
+    "FocusOf": 5
+  },
+  "query_goal_statuses": {
+    "Abs": {
+      "VALUE_UNRESOLVED": 7,
+      "GOAL_NOT_REACHED": 267,
+      "GOAL_UNSUPPORTED": 109,
+      "ANSWER_CORRECT": 4
+    },
+    "AngleOf": {
+      "GOAL_UNSUPPORTED": 30
+    },
+    "Area": {
+      "GOAL_NOT_REACHED": 184,
+      "GOAL_UNSUPPORTED": 13
+    },
+    "Coordinate": {
+      "VALUE_UNRESOLVED": 58,
+      "GOAL_NOT_REACHED": 105,
+      "ANSWER_UNSUPPORTED": 27,
+      "GOAL_UNSUPPORTED": 19,
+      "ANSWER_CORRECT": 5
+    },
+    "Cos": {
+      "GOAL_UNSUPPORTED": 26
+    },
+    "Distance": {
+      "GOAL_UNSUPPORTED": 127,
+      "ANSWER_CORRECT": 25,
+      "GOAL_NOT_REACHED": 106,
+      "VALUE_UNRESOLVED": 4
+    },
+    "DotProduct": {
+      "GOAL_UNSUPPORTED": 21
+    },
+    "Eccentricity": {
+      "GOAL_NOT_REACHED": 622,
+      "VALUE_UNRESOLVED": 71,
+      "ANSWER_CORRECT": 45,
+      "GOAL_UNSUPPORTED": 5,
+      "ANSWER_UNSUPPORTED": 1
+    },
+    "Expression": {
+      "GOAL_NOT_REACHED": 603,
+      "GOAL_UNSUPPORTED": 59,
+      "VALUE_UNRESOLVED": 240,
+      "ANSWER_CORRECT": 80,
+      "ANSWER_INCORRECT": 1,
+      "ANSWER_UNSUPPORTED": 4
+    },
+    "FocalLength": {
+      "ANSWER_CORRECT": 21,
+      "GOAL_NOT_REACHED": 36,
+      "VALUE_UNRESOLVED": 7,
+      "GOAL_UNSUPPORTED": 1
+    },
+    "Inclination": {
+      "GOAL_UNSUPPORTED": 13
+    },
+    "Intercept": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "Length": {
+      "GOAL_NOT_REACHED": 28,
+      "VALUE_UNRESOLVED": 21,
+      "ANSWER_CORRECT": 26,
+      "GOAL_UNSUPPORTED": 85
+    },
+    "LineSegmentOf": {
+      "GOAL_UNSUPPORTED": 11
+    },
+    "Locus": {
+      "GOAL_UNSUPPORTED": 5
+    },
+    "LocusEquation": {
+      "GOAL_UNSUPPORTED": 165
+    },
+    "Max": {
+      "GOAL_UNSUPPORTED": 172
+    },
+    "Min": {
+      "GOAL_UNSUPPORTED": 398
+    },
+    "MinorAxis": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "NumIntersection": {
+      "GOAL_UNSUPPORTED": 7
+    },
+    "OTHER": {
+      "GOAL_UNSUPPORTED": 32
+    },
+    "OneOf": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "Perimeter": {
+      "GOAL_NOT_REACHED": 62,
+      "ANSWER_CORRECT": 2,
+      "ANSWER_UNSUPPORTED": 1
+    },
+    "R": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "Radius": {
+      "GOAL_NOT_REACHED": 4,
+      "GOAL_UNSUPPORTED": 11
+    },
+    "Range": {
+      "GOAL_UNSUPPORTED": 441
+    },
+    "S": {
+      "GOAL_UNSUPPORTED": 2
+    },
+    "Sin": {
+      "GOAL_UNSUPPORTED": 10
+    },
+    "Slope": {
+      "GOAL_NOT_REACHED": 37,
+      "GOAL_UNSUPPORTED": 49,
+      "VALUE_UNRESOLVED": 1
+    },
+    "Tan": {
+      "GOAL_UNSUPPORTED": 8
+    },
+    "VectorOf": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "XCoordinate": {
+      "VALUE_UNRESOLVED": 18,
+      "GOAL_NOT_REACHED": 7,
+      "GOAL_UNSUPPORTED": 5,
+      "ANSWER_CORRECT": 5
+    },
+    "YCoordinate": {
+      "GOAL_NOT_REACHED": 2,
+      "VALUE_UNRESOLVED": 6,
+      "ANSWER_CORRECT": 1,
+      "GOAL_UNSUPPORTED": 1
+    },
+    "a": {
+      "GOAL_NOT_REACHED": 109,
+      "GOAL_UNSUPPORTED": 13,
+      "VALUE_UNRESOLVED": 2,
+      "ANSWER_CORRECT": 1
+    },
+    "b": {
+      "GOAL_NOT_REACHED": 35,
+      "GOAL_UNSUPPORTED": 9
+    },
+    "c": {
+      "GOAL_NOT_REACHED": 3,
+      "GOAL_UNSUPPORTED": 1
+    },
+    "d": {
+      "GOAL_UNSUPPORTED": 5
+    },
+    "e": {
+      "GOAL_NOT_REACHED": 36,
+      "VALUE_UNRESOLVED": 5,
+      "ANSWER_CORRECT": 10,
+      "GOAL_UNSUPPORTED": 5
+    },
+    "k": {
+      "GOAL_UNSUPPORTED": 116
+    },
+    "lambda": {
+      "GOAL_UNSUPPORTED": 19
+    },
+    "m": {
+      "GOAL_UNSUPPORTED": 193
+    },
+    "n": {
+      "GOAL_UNSUPPORTED": 14
+    },
+    "p": {
+      "GOAL_NOT_REACHED": 159,
+      "ANSWER_CORRECT": 3,
+      "GOAL_UNSUPPORTED": 4
+    },
+    "r": {
+      "GOAL_UNSUPPORTED": 7
+    },
+    "sqrt": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "t": {
+      "GOAL_UNSUPPORTED": 12
+    },
+    "x": {
+      "GOAL_UNSUPPORTED": 10
+    },
+    "y": {
+      "GOAL_UNSUPPORTED": 7
+    },
+    "yA": {
+      "GOAL_UNSUPPORTED": 1
+    },
+    "ym": {
+      "GOAL_UNSUPPORTED": 1
+    }
+  },
+  "unparsed_fact_atoms": 3531,
+  "adapter_errors": 78,
+  "trajectory_rows": 597,
+  "selector_trajectory_rows": 204
+}

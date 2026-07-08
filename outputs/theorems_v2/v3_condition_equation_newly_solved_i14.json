@@ -1,0 +1,145 @@
+[
+  {
+    "id": 807,
+    "sequence": [
+      5,
+      11,
+      12,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": false
+  },
+  {
+    "id": 1600,
+    "sequence": [
+      3,
+      11,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 1651,
+    "sequence": [
+      5,
+      12
+    ],
+    "previous_status": "VALUE_UNRESOLVED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 2109,
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 3816,
+    "sequence": [
+      6,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 3864,
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 4553,
+    "sequence": [
+      6,
+      12,
+      21
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 4708,
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 5318,
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 5481,
+    "sequence": [
+      6,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 5538,
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 6298,
+    "sequence": [
+      6,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  },
+  {
+    "id": 7117,
+    "sequence": [
+      5,
+      21,
+      13
+    ],
+    "previous_status": "GOAL_NOT_REACHED",
+    "current_status": "ANSWER_CORRECT",
+    "selector_usable": true
+  }
+]

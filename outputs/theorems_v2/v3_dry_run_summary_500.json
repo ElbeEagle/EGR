@@ -1,0 +1,66 @@
+{
+  "rows_with_models": 500,
+  "changed_observed_rows": 35,
+  "changed_executable_rows": 35,
+  "operation_counts": {
+    "insert_verified_dependency": 40,
+    "replace_misaligned_model": 35,
+    "remove_adjacent_duplicate": 2
+  },
+  "replacement_pairs": {
+    "3->4": 6,
+    "7->10": 4,
+    "5->6": 2,
+    "7->9": 15,
+    "7->8": 3,
+    "14->15": 4,
+    "19->20": 1
+  },
+  "semantic_flag_counts": {
+    "63:likely_semantic_drift": 23,
+    "70:legacy_semantics_unverified": 1,
+    "64:likely_semantic_drift": 2,
+    "79:likely_semantic_drift": 6,
+    "68:likely_semantic_drift": 29,
+    "69:likely_semantic_drift": 6,
+    "77:likely_semantic_drift": 8,
+    "68:legacy_semantics_unverified": 6,
+    "63:legacy_semantics_unverified": 2,
+    "71:likely_semantic_drift": 1
+  },
+  "quality_candidates": {
+    "C": 387,
+    "B": 9,
+    "D": 70,
+    "A": 34
+  },
+  "fully_replayable_rows": {
+    "executable": 43,
+    "original": 28,
+    "observed": 34
+  },
+  "status_counts": {
+    "original": {
+      "NO_MATCH": 1301,
+      "APPLIED": 359,
+      "SPECIFICATION_ONLY": 84,
+      "AMBIGUOUS_BINDING": 8
+    },
+    "observed": {
+      "NO_MATCH": 1252,
+      "APPLIED": 406,
+      "SPECIFICATION_ONLY": 84,
+      "AMBIGUOUS_BINDING": 8
+    },
+    "executable": {
+      "NO_MATCH": 1223,
+      "APPLIED": 475,
+      "SPECIFICATION_ONLY": 84,
+      "AMBIGUOUS_BINDING": 8
+    }
+  },
+  "unparsed_fact_atoms": 389,
+  "adapter_errors": 7,
+  "source_rows": 7757,
+  "input": "C:\\GitHub\\EGR\\data\\train_with_models_v2.json"
+}

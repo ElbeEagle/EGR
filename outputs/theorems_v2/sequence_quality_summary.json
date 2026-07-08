@@ -1,0 +1,55 @@
+{
+  "input": "C:\\GitHub\\EGR\\data\\train_with_models_v3_candidate.json",
+  "dataset_rows": 7757,
+  "sequence_field": "models_v3_observed",
+  "assisted_apply": true,
+  "max_support_steps": 12,
+  "exclusions": {
+    "empty_sequence": 2398,
+    "empty_process": 4
+  },
+  "evaluated_sequence_rows": 5355,
+  "execution_success": {
+    "rows": 996,
+    "denominator": 5355,
+    "rate": 0.18599439775910365
+  },
+  "final_answer_correct": {
+    "rows": 316,
+    "denominator": 5355,
+    "rate": 0.059010270774976656
+  },
+  "newly_answer_correct_after_replay": {
+    "rows": 316,
+    "denominator": 5355,
+    "rate": 0.059010270774976656
+  },
+  "execution_and_answer_correct": {
+    "rows": 290,
+    "denominator": 5355,
+    "rate": 0.05415499533146592
+  },
+  "answer_correct_given_execution_success": {
+    "rows": 290,
+    "denominator": 996,
+    "rate": 0.29116465863453816
+  },
+  "answer_accuracy_when_evaluable": {
+    "rows": 316,
+    "denominator": 319,
+    "rate": 0.9905956112852664
+  },
+  "goal_statuses": {
+    "GOAL_UNSUPPORTED": 2248,
+    "VALUE_UNRESOLVED": 904,
+    "ANSWER_CORRECT": 316,
+    "GOAL_NOT_REACHED": 1839,
+    "ANSWER_UNSUPPORTED": 45,
+    "ANSWER_INCORRECT": 3
+  },
+  "first_failure_statuses": {
+    "NO_MATCH": 4148,
+    "SPECIFICATION_ONLY": 160,
+    "AMBIGUOUS_BINDING": 51
+  }
+}
