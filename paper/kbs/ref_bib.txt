@@ -1,0 +1,330 @@
+@inproceedings{hendrycks2021math,
+  title = {Measuring Mathematical Problem Solving With the {MATH} Dataset},
+  author = {Hendrycks, Dan and Burns, Collin and Kadavath, Saurav and Arora, Akul and Basart, Steven and Tang, Eric and Song, Dawn and Steinhardt, Jacob},
+  booktitle = {Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks},
+  volume = {1},
+  year = {2021},
+  publisher = {Curran Associates, Inc.},
+  url = {https://datasets-benchmarks-proceedings.neurips.cc/paper/2021/hash/be83ab3ecd0db773eb2dc1b0a17836a1-Abstract-round2.html}
+}
+
+@inproceedings{wei2022chain,
+  title = {Chain-of-Thought Prompting Elicits Reasoning in Large Language Models},
+  author = {Wei, Jason and Wang, Xuezhi and Schuurmans, Dale and Bosma, Maarten and Ichter, Brian and Xia, Fei and Chi, Ed H. and Le, Quoc V. and Zhou, Denny},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume = {35},
+  pages = {24824--24837},
+  year = {2022},
+  publisher = {Curran Associates, Inc.},
+  url = {https://proceedings.neurips.cc/paper_files/paper/2022/hash/9d5609613524ecf4f15af0f7b31abca4-Abstract-Conference.html}
+}
+
+@inproceedings{wang2023selfconsistency,
+  title = {Self-Consistency Improves Chain of Thought Reasoning in Language Models},
+  author = {Wang, Xuezhi and Wei, Jason and Schuurmans, Dale and Le, Quoc V. and Chi, Ed H. and Narang, Sharan and Chowdhery, Aakanksha and Zhou, Denny},
+  booktitle = {The Eleventh International Conference on Learning Representations},
+  year = {2023},
+  url = {https://openreview.net/forum?id=1PL1NIMMrw}
+}
+
+@inproceedings{yao2023tree,
+  title = {Tree of Thoughts: Deliberate Problem Solving with Large Language Models},
+  author = {Yao, Shunyu and Yu, Dian and Zhao, Jeffrey and Shafran, Izhak and Griffiths, Thomas L. and Cao, Yuan and Narasimhan, Karthik},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume = {36},
+  pages = {11809--11822},
+  year = {2023},
+  publisher = {Curran Associates, Inc.},
+  url = {https://proceedings.neurips.cc/paper_files/paper/2023/hash/271db9922b8d1f4dd7aaef84ed5ac703-Abstract-Conference.html}
+}
+
+@inproceedings{lightman2023lets,
+  title = {Let's Verify Step by Step},
+  author = {Lightman, Hunter and Kosaraju, Vineet and Burda, Yuri and Edwards, Harrison and Baker, Bowen and Lee, Teddy and Leike, Jan and Schulman, John and Sutskever, Ilya and Cobbe, Karl},
+  booktitle = {The Twelfth International Conference on Learning Representations},
+  year = {2024},
+  url = {https://proceedings.iclr.cc/paper_files/paper/2024/hash/aca97732e30bcf1303bc22ac3924fd16-Abstract-Conference.html}
+}
+
+@inproceedings{math_posttraining,
+  title = {{MetaMath}: Bootstrap Your Own Mathematical Questions for Large Language Models},
+  author = {Yu, Longhui and Jiang, Weisen and Shi, Han and Yu, Jincheng and Liu, Zhengying and Zhang, Yu and Kwok, James T. and Li, Zhenguo and Weller, Adrian and Liu, Weiyang},
+  booktitle = {The Twelfth International Conference on Learning Representations},
+  year = {2024},
+  url = {https://proceedings.iclr.cc/paper_files/paper/2024/hash/c400474e8a36d0812fdee52739288b12-Abstract-Conference.html}
+}
+
+@inproceedings{comat,
+  title = {{CoMAT}: Chain of Mathematically Annotated Thought Improves Mathematical Reasoning},
+  author = {Leang, Joshua Ong Jun and Gema, Aryo Pradipta and Cohen, Shay B.},
+  booktitle = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing},
+  pages = {20245--20274},
+  year = {2025},
+  address = {Suzhou, China},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2025.emnlp-main.1024},
+  url = {https://aclanthology.org/2025.emnlp-main.1024/}
+}
+
+@inproceedings{step_guided_reasoning,
+  title = {Step Guided Reasoning: Improving Mathematical Reasoning Using Guidance Generation and Step Reasoning},
+  author = {Cao, Lang and Zou, Yingtian and Peng, Chao and Chen, Renhong and Ning, Wu and Li, Yitong},
+  booktitle = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing},
+  pages = {21101--21118},
+  year = {2025},
+  address = {Suzhou, China},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2025.emnlp-main.1068},
+  url = {https://aclanthology.org/2025.emnlp-main.1068/}
+}
+
+@inproceedings{stepco,
+  title = {Enhancing Mathematical Reasoning in {LLMs} by Stepwise Correction},
+  author = {Wu, Zhenyu and Zeng, Qingkai and Zhang, Zhihan and Tan, Zhaoxuan and Shen, Chao and Jiang, Meng},
+  booktitle = {Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  pages = {21602--21623},
+  year = {2025},
+  address = {Vienna, Austria},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2025.acl-long.1048},
+  url = {https://aclanthology.org/2025.acl-long.1048/}
+}
+
+@inproceedings{cogmath,
+  title = {{CogMath}: Assessing {LLMs}' Authentic Mathematical Ability from a Human Cognitive Perspective},
+  author = {Liu, Jiayu and Huang, Zhenya and Dai, Wei and Cheng, Cheng and Wu, Jinze and Sha, Jing and Li, Song and Liu, Qi and Wang, Shijin and Chen, Enhong},
+  booktitle = {Proceedings of the 42nd International Conference on Machine Learning},
+  series = {Proceedings of Machine Learning Research},
+  volume = {267},
+  pages = {38692--38707},
+  year = {2025},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v267/liu25ab.html}
+}
+
+@inproceedings{error_classification,
+  title = {Error Classification of Large Language Models on Math Word Problems: A Dynamically Adaptive Framework},
+  author = {Yin, Zhangyue and Sun, Yuhong and Huang, Xuanjing and Qiu, Xipeng and Zhao, Hui},
+  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2025},
+  pages = {338--365},
+  year = {2025},
+  address = {Suzhou, China},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2025.findings-emnlp.20},
+  url = {https://aclanthology.org/2025.findings-emnlp.20/}
+}
+
+@inproceedings{gao2023pal,
+  title = {{PAL}: Program-Aided Language Models},
+  author = {Gao, Luyu and Madaan, Aman and Zhou, Shuyan and Alon, Uri and Liu, Pengfei and Yang, Yiming and Callan, Jamie and Neubig, Graham},
+  booktitle = {Proceedings of the 40th International Conference on Machine Learning},
+  series = {Proceedings of Machine Learning Research},
+  volume = {202},
+  pages = {10764--10799},
+  year = {2023},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v202/gao23f.html}
+}
+
+@article{chen2023programofthoughts,
+  title = {Program of Thoughts Prompting: Disentangling Computation from Reasoning for Numerical Reasoning Tasks},
+  author = {Chen, Wenhu and Ma, Xueguang and Wang, Xinyi and Cohen, William W.},
+  journal = {Transactions on Machine Learning Research},
+  year = {2023},
+  url = {https://openreview.net/forum?id=YfZ4ZPt8zd}
+}
+
+@inproceedings{mathsensei,
+  title = {{MATHSENSEI}: A Tool-Augmented Large Language Model for Mathematical Reasoning},
+  author = {Das, Debrup and Banerjee, Debopriyo and Aditya, Somak and Kulkarni, Ashish},
+  booktitle = {Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers)},
+  pages = {942--966},
+  year = {2024},
+  address = {Mexico City, Mexico},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2024.naacl-long.54},
+  url = {https://aclanthology.org/2024.naacl-long.54/}
+}
+
+@inproceedings{multitool_math,
+  title = {Diverse Multi-Tool Aggregation with Large Language Models for Enhanced Math Reasoning},
+  author = {Yao, Bohan and Yadav, Vikas},
+  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2025},
+  pages = {25264--25282},
+  year = {2025},
+  address = {Suzhou, China},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2025.findings-emnlp.1377},
+  url = {https://aclanthology.org/2025.findings-emnlp.1377/}
+}
+
+@article{garcez2019neuralsymbolic,
+  title = {Neural-Symbolic Computing: An Effective Methodology for Principled Integration of Machine Learning and Reasoning},
+  author = {d'Avila Garcez, Artur and Gori, Marco and Lamb, Luis C. and Serafini, Luciano and Spranger, Michael and Tran, Son N.},
+  journal = {Journal of Applied Logics},
+  volume = {6},
+  number = {4},
+  pages = {611--631},
+  year = {2019},
+  url = {https://openaccess.city.ac.uk/id/eprint/22984/}
+}
+
+@inproceedings{pan2023logiclm,
+  title = {Logic-{LM}: Empowering Large Language Models with Symbolic Solvers for Faithful Logical Reasoning},
+  author = {Pan, Liangming and Albalak, Alon and Wang, Xinyi and Wang, William},
+  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2023},
+  pages = {3806--3824},
+  year = {2023},
+  address = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2023.findings-emnlp.248},
+  url = {https://aclanthology.org/2023.findings-emnlp.248/}
+}
+
+@inproceedings{symcode,
+  title = {{SymCode}: A Neurosymbolic Approach to Mathematical Reasoning via Verifiable Code Generation},
+  author = {Bagheri Nezhad, Sina and Li, Yao and Agrawal, Ameeta},
+  booktitle = {Findings of the Association for Computational Linguistics: EACL 2026},
+  pages = {1489--1503},
+  year = {2026},
+  address = {Rabat, Morocco},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2026.findings-eacl.76},
+  url = {https://aclanthology.org/2026.findings-eacl.76/}
+}
+
+@misc{neuroprolog,
+  title = {{NeuroProlog}: Multi-Task Fine-Tuning for Neurosymbolic Mathematical Reasoning via the Cocktail Effect},
+  author = {Zunjare, Pratibha and Hsiao, Michael},
+  year = {2026},
+  eprint = {2603.02504},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.AI},
+  doi = {10.48550/arXiv.2603.02504},
+  url = {https://arxiv.org/abs/2603.02504}
+}
+
+@misc{intermediate_languages,
+  title = {Intermediate Languages Matter: Formal Languages and {LLMs} Affect Neurosymbolic Reasoning},
+  author = {Beiser, Alexander and Penz, David and Musliu, Nysret},
+  year = {2025},
+  eprint = {2509.04083},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.AI},
+  doi = {10.48550/arXiv.2509.04083},
+  url = {https://arxiv.org/abs/2509.04083}
+}
+
+@inproceedings{bansal2019holist,
+  title = {{HOList}: An Environment for Machine Learning of Higher Order Logic Theorem Proving},
+  author = {Bansal, Kshitij and Loos, Sarah and Rabe, Markus and Szegedy, Christian and Wilcox, Stewart},
+  booktitle = {Proceedings of the 36th International Conference on Machine Learning},
+  series = {Proceedings of Machine Learning Research},
+  volume = {97},
+  pages = {454--463},
+  year = {2019},
+  publisher = {PMLR},
+  url = {https://proceedings.mlr.press/v97/bansal19a.html}
+}
+
+@misc{polu2020generative,
+  title = {Generative Language Modeling for Automated Theorem Proving},
+  author = {Polu, Stanislas and Sutskever, Ilya},
+  year = {2020},
+  eprint = {2009.03393},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.LG},
+  doi = {10.48550/arXiv.2009.03393},
+  url = {https://arxiv.org/abs/2009.03393}
+}
+
+@article{yang2023leandojo,
+  title = {{LeanDojo}: Theorem Proving with Retrieval-Augmented Language Models},
+  author = {Yang, Kaiyu and Swope, Aidan and Gu, Alex and Chalamala, Rahul and Song, Peiyang and Yu, Shixing and Godil, Saad and Prenger, Ryan J. and Anandkumar, Animashree},
+  journal = {Advances in Neural Information Processing Systems},
+  volume = {36},
+  pages = {21573--21612},
+  year = {2023},
+  url = {https://proceedings.neurips.cc/paper_files/paper/2023/hash/4441469427094f8873d0fecb0c4e1cee-Abstract-Datasets_and_Benchmarks.html}
+}
+
+@inproceedings{lu2021intergps,
+  title = {Inter-{GPS}: Interpretable Geometry Problem Solving with Formal Language and Symbolic Reasoning},
+  author = {Lu, Pan and Gong, Ran and Jiang, Shibiao and Qiu, Liang and Huang, Siyuan and Liang, Xiaodan and Zhu, Song-Chun},
+  booktitle = {Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)},
+  pages = {6774--6786},
+  year = {2021},
+  address = {Online},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2021.acl-long.528},
+  url = {https://aclanthology.org/2021.acl-long.528/}
+}
+
+@article{trinh2024alphageometry,
+  title = {Solving Olympiad Geometry without Human Demonstrations},
+  author = {Trinh, Trieu H. and Wu, Yuhuai and Le, Quoc V. and He, He and Luong, Thang},
+  journal = {Nature},
+  volume = {625},
+  number = {7995},
+  pages = {476--482},
+  year = {2024},
+  doi = {10.1038/s41586-023-06747-5},
+  url = {https://www.nature.com/articles/s41586-023-06747-5}
+}
+
+@article{alphageometry2,
+  title = {Gold-Medalist Performance in Solving Olympiad Geometry with {AlphaGeometry2}},
+  author = {Chervonyi, Yuri and Trinh, Trieu H. and Olšák, Miroslav and Yang, Xiaomeng and Nguyen, Hoang H. and Menegali, Marcelo and Jung, Junehyuk and Kim, Junsu and Verma, Vikas and Le, Quoc V. and Luong, Thang},
+  journal = {Journal of Machine Learning Research},
+  volume = {26},
+  number = {241},
+  pages = {1--39},
+  year = {2025},
+  url = {https://jmlr.org/papers/v26/25-1654.html}
+}
+
+@misc{llm_uncertainty,
+  title = {The Unreasonable Effectiveness of Entropy Minimization in {LLM} Reasoning},
+  author = {Agarwal, Shivam and Zhang, Zimin and Yuan, Lifan and Han, Jiawei and Peng, Hao},
+  year = {2025},
+  eprint = {2505.15134},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.LG},
+  doi = {10.48550/arXiv.2505.15134},
+  url = {https://arxiv.org/abs/2505.15134}
+}
+
+@article{yu2022_relationcentric,
+  title = {A Relation-Centric Algorithm for Solving Text-Diagram Function Problems},
+  author = {Yu, Xinguo and Sun, Huihui and Sun, Chao},
+  journal = {Journal of King Saud University -- Computer and Information Sciences},
+  volume = {34},
+  number = {10},
+  pages = {8972--8984},
+  year = {2022},
+  doi = {10.1016/j.jksuci.2022.08.023},
+  url = {https://www.sciencedirect.com/science/article/pii/S131915782200297X}
+}
+
+@article{udfsolver,
+  title = {{UDfSolver}: Uniform Representation and Decoupled Inference Strategy for Text-Diagram Function Problems Solving},
+  author = {Xiong, Feng and Yu, Xinguo and Huang, Litian and Yu, Dian},
+  journal = {Expert Systems with Applications},
+  volume = {331},
+  pages = {133229},
+  year = {2026},
+  doi = {10.1016/j.eswa.2026.133229},
+  url = {https://www.sciencedirect.com/science/article/pii/S095741742602138X}
+}
+
+@inproceedings{conic10k,
+  title = {{Conic10K}: A Challenging Math Problem Understanding and Reasoning Dataset},
+  author = {Wu, Haoyi and Hui, Wenyang and Chen, Yezeng and Wu, Weiqi and Tu, Kewei and Zhou, Yi},
+  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2023},
+  pages = {6444--6458},
+  year = {2023},
+  address = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  doi = {10.18653/v1/2023.findings-emnlp.427},
+  url = {https://aclanthology.org/2023.findings-emnlp.427/}
+}

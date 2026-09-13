@@ -1,0 +1,787 @@
+% Working KBS manuscript body.
+% Citation keys beginning with  require replacement after a verified BibTeX export.
+% Quantitative placeholders must be replaced only after the corresponding protocol is frozen.
+
+\begin{abstract}
+Reliable mathematical problem solving requires a solver to choose an appropriate mathematical principle, apply it to the correct objects, carry out the resulting symbolic computation, and determine when the current information is sufficient to answer the query. These decisions are difficult to inspect when an entire solution is generated as free-form text. We study them in conic-section problems, where a finite body of geometric knowledge gives rise to state-dependent theorem use, exact algebraic transformations, and multiple valid solution paths. We present the Entropy-Guided Reasoner (EGR), a standalone neuro-symbolic solver that represents a solution as a sequence of executable state transitions. EGR maintains exact mathematical facts in a symbolic state and derives a query-conditioned abstract state for neural prediction. At each step, a Selector ranks high-level reasoning models, a Grounder binds a selected RM to concrete mathematical objects, and a symbolic Applicator executes a program of reusable operations after checking its preconditions. Training uses sets of verified actions obtained from executable solution graphs, rather than requiring reproduction of one annotated action order. EGR further introduces Residual State Entropy (RSE), a goal-conditioned negative-log reachability potential that reflects both the work remaining and the difficulty of reaching a successful terminal state. RSE is used to rank successor states and, together with a structural answer-readiness test, to control termination. On the frozen conic-section test set, EGR obtains TBD final-answer accuracy and TBD verified-solution rate; the corresponding gains over the strongest standalone baseline are TBD and TBD. Process-level evaluation further reports TBD for valid-action ranking, grounded execution, and RSE-guided control. A secondary study examines whether the same reasoning-model guidance and symbolic execution interfaces can improve different large language models. The empirical conclusions are confined to conic-section solving, while the state-transition formulation provides a reusable design for structured mathematical domains.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Mathematical problem solving is a sequential use of knowledge. A solver must retain what is already known, select a mathematical relation that is useful under those conditions, instantiate the relation with the correct objects, perform the required computation, and decide whether another reasoning step is necessary. A final answer alone does not reveal whether these intermediate decisions were mathematically justified. This distinction matters for reliable automatic solving because the same answer can follow from a valid derivation, an accidental cancellation, or an unsupported guess. It also matters for diagnosis: an incorrect answer may originate from an unsuitable principle, an invalid object binding, a symbolic error, or premature termination.
+
+Recent large language models (LLMs) have improved mathematical performance through mathematical fine-tuning, chain-of-thought prompting, self-consistency, process supervision, and inference-time search~\cite{hendrycks2021math,wei2022chain,wang2023selfconsistency,yao2023tree,lightman2023lets}. These methods establish the value of intermediate reasoning, but the intermediate unit is usually a token sequence or a textual thought. Its mathematical preconditions and its effect on the current problem state therefore remain implicit. Program-aided methods transfer calculations to interpreters, and formal systems verify proof steps~\cite{gao2023pal,chen2023programofthoughts,yang2023leandojo}. Yet a problem-solving system still needs to decide which item of mathematical knowledge should be used now, which objects it concerns, how it changes the available facts, and whether the resulting state is close enough to the requested answer.
+
+Conic-section problems make these requirements visible in a controlled setting. Their objects, including ellipses, hyperbolas, parabolas, circles, focal points, directrices, tangents, and asymptotes, have precise mathematical definitions. The relevant body of domain knowledge is finite, but its possible combinations are not. A problem may first require a curve to be put into standard form, then require its parameters to be recovered, and only then permit a relation involving eccentricity or a focus to be applied. Other questions combine an analytic-geometry relation with a discriminant, a distance constraint, or an optimization condition. Thus, an operation that is relevant to the topic may still be inapplicable in the current state. The exact same facts can also support different next steps when several derivations are valid. Finally, completion depends on the query: a state sufficient for finding an eccentricity may be insufficient for finding a tangent equation. These properties make conic sections a suitable setting for studying knowledge selection, symbolic application, path multiplicity, and progress control within one task.
+
+The central premise of this work is that these problems should be represented by their evolving mathematical states. Instead of mapping a problem directly to a generated derivation and answer, we write solving as
+\begin{equation}
+S^{\mathrm{sem}}_0
+\xrightarrow{a_0}
+S^{\mathrm{sem}}_1
+\xrightarrow{a_1}
+\cdots
+\xrightarrow{a_{T-1}}
+S^{\mathrm{sem}}_T
+\xrightarrow{\mathrm{Extract}}
+\hat y,
+\label{eq:intro_transition}
+\end{equation}
+where each $a_t$ is an instantiated mathematical action and each accepted arrow is a verified symbolic transition. This representation separates three responsibilities. A learned policy chooses which high-level mathematical relation to consider. A symbolic procedure determines whether it can be applied and computes its exact effect. A progress controller decides whether the successor should be explored further and whether the query can already be answered. A human-written solution can seed this process, but it is treated as one reference derivation rather than the only correct order of actions.
+
+We develop this premise as EGR, an executable and progress-aware neuro-symbolic solver for conic-section problems. EGR first represents the same reasoning state through two coordinated interfaces. The symbolic state stores exact objects, equations, relations, constraints, and derived facts. The abstract state is a query-conditioned representation used by learned components. EGR then organizes domain knowledge into 80 high-level reasoning models (RMs). In this paper, an RM is a mathematical schema, rather than a neural network. It declares its preconditions, the roles that must be bound to state objects, a program composed of shared symbolic operations, and the postconditions of a valid application. The Selector ranks RM identifiers, the Grounder constructs concrete bindings, and the Applicator performs the resulting transition transactionally. This division lets neural prediction address a combinatorial decision while symbolic computation retains mathematical precision.
+
+Two further design choices connect local decisions with complete solutions. First, EGR learns from a verified solution graph. For a given state, the positive supervision is the set of currently verified RMs that are executable and retain at least one successful continuation. Alternative actions that have not been resolved within the construction budget remain unknown instead of being declared wrong. This supervision matches the fact that a conic problem may admit several correct derivations or several commutative action orders. Second, EGR measures remaining difficulty with Residual State Entropy (RSE). RSE is defined from the probability mass of successful completion paths under a stated reference policy and path cost. It becomes smaller when short successful continuations are easier to reach. This quantity is distinct from the entropy of the Selector's next-action distribution and from normalized remaining steps. EGR uses the estimated RSE to compare successor states and combines a low-RSE condition with a structural answer-readiness predicate for termination.
+
+The empirical study is designed around the same decomposition. The primary evaluation concerns the standalone solver and reports final-answer accuracy together with verified-solution rate, transition validity, grounding success, valid-action ranking, stopping errors, and computation cost. Controlled ablations compare unique-label and set-supervised selection, the original 28-dimensional state and the structured query-conditioned state, several progress proxies and formal RSE, and different uses of RSE for ranking and stopping. The secondary evaluation exposes RM guidance and grounded symbolic execution to LLMs under matched inputs and budgets. It asks whether EGR's intermediate capabilities remain useful when the surrounding reasoner is changed, rather than making an LLM part of the definition of EGR.
+
+This study makes four connected contributions. It first formulates conic-section solving as query-conditioned selection and execution of high-level mathematical actions over explicit states, with multiple verified paths included in the task definition. It then develops an executable architecture in which dual state representations, RM selection, constrained grounding, shared symbolic operations, and transactional application have distinct and auditable roles. It further defines RSE as a goal-conditioned measure of residual solving difficulty and incorporates it into successor ranking and termination. Finally, it establishes an evaluation protocol that joins answer correctness with process validity and tests EGR both as an independent solver and, separately, as a source of structured support for LLM reasoning. The implemented knowledge and empirical findings concern conic sections; extending the architecture to another domain requires a corresponding state schema, RM library, Grounder, and verifier.
+
+The remainder of the paper develops this argument in the order needed to assess it. Section~\ref{sec:related_work} locates EGR among generative, executable, formal, and knowledge-based approaches. Section~\ref{sec:formulation} defines the task, actions, solution graphs, RSE, and success conditions. Section~\ref{sec:method} presents the complete solver. Section~\ref{sec:data_experiments} describes the internal reconstruction of executable supervision and the experimental protocol. Sections~\ref{sec:standalone_results} and~\ref{sec:rse_analysis} evaluate the standalone system and the RSE mechanism. Section~\ref{sec:llm_augmentation} reports the LLM extension, followed by discussion and conclusions.
+
+\section{Related work}
+\label{sec:related_work}
+
+\subsection{Generated mathematical reasoning and process supervision}
+
+Mathematical reasoning with LLMs is commonly represented as a generated sequence. Chain-of-thought prompting makes intermediate text explicit, self-consistency aggregates several sampled sequences, and tree-based methods search over alternative thoughts~\cite{wei2022chain,wang2023selfconsistency,yao2023tree}. Math-specific data and post-training further improve the quality of these sequences~\cite{hendrycks2021math,math_posttraining}. More structured variants, such as mathematically annotated thought and guided step generation, reduce some ambiguity in free-form reasoning~\cite{comat,step_guided_reasoning}. Together, these studies show that intermediate reasoning units improve both learning and inference.
+
+Process supervision and stepwise verification address a related limitation of answer-only evaluation. Process reward models, step correction, error classification, and cognitively structured evaluation show that a correct endpoint is too coarse to describe the quality of a derivation~\cite{lightman2023lets,stepco,cogmath,error_classification}. Their evidence motivates local supervision and failure attribution. EGR adopts this process-level view but changes the object being supervised. Its intermediate unit is not a sentence whose correctness must be inferred after generation. It is a bound RM whose preconditions, symbolic effect, and postconditions are evaluated against an explicit mathematical state. This makes selection, applicability, execution, continuation, and extraction separately observable.
+
+\subsection{Program-aided and neuro-symbolic execution}
+
+Program-aided language models and Program of Thoughts separate parts of mathematical reasoning from exact computation by generating code for an interpreter~\cite{gao2023pal,chen2023programofthoughts}. Tool-augmented systems extend this idea with symbolic algebra, retrieval, numerical solvers, or several coordinated tools~\cite{mathsensei,multitool_math}. These systems demonstrate that external execution can reduce arithmetic and algebraic errors. Their program or tool call is usually produced for a particular input, whereas EGR selects from a domain knowledge library whose actions have stable mathematical roles across problems. The RM library also records how each action reads and changes a persistent state, which permits local applicability checks and graph-based supervision.
+
+Neuro-symbolic reasoning similarly combines learned proposals with formal representations or symbolic solvers~\cite{garcez2019neuralsymbolic,pan2023logiclm,symcode,neuroprolog}. Logic-LM translates a problem into a symbolic formulation for a solver, while code- and logic-based systems use executable intermediates to constrain the final result. Work on intermediate languages further shows that the representation connecting neural and symbolic components materially affects reasoning quality~\cite{intermediate_languages}. EGR follows the same broad division of labor but places it inside a recurrent solution process. The neural component ranks a high-level domain action from the current state, and the symbolic component instantiates and executes that action before a new decision is made. The dual state is therefore an interface between prediction and execution, not an auxiliary feature vector attached to a one-shot solver.
+
+\subsection{Formal action selection and geometry reasoning}
+
+Formal theorem proving offers the clearest examples of state-conditioned mathematical action selection. Learned premise retrieval and tactic generation operate on proof states, and every accepted tactic is checked by a formal environment~\cite{bansal2019holist,polu2020generative,yang2023leandojo}. EGR borrows the principle that a learned proposal should be evaluated through an executable transition. Its objective is different from general proof synthesis. A conic-section problem asks for a value, equation, coordinate, range, or other answer, and its solution often interleaves domain relations with algebraic computation. The terminal contract must consequently include both a valid transition trace and a query-resolving answer.
+
+Neuro-symbolic geometry systems combine learned guidance with formal deduction and search. Inter-GPS formalizes geometry problems for symbolic solving, while AlphaGeometry and its successors couple a language model with a deduction engine to construct Euclidean proofs~\cite{lu2021intergps,trinh2024alphageometry,alphageometry2}. These systems establish geometry as a productive setting for neural guidance over formal states. Conic-section problems add a complementary analytic-geometry setting. The main difficulty is not only discovering an auxiliary construction or proof step, but also maintaining exact equations, recovering curve parameters, binding the correct geometric objects, and executing algebraic transformations that depend on the current query. EGR is designed around this mixture of finite domain knowledge and exact symbolic computation.
+
+\subsection{Progress estimation and reasoning control}
+
+Search-based reasoning methods use value estimates, verifier scores, or outcome rewards to prioritize partial derivations. Selector entropy and token entropy measure uncertainty about a local prediction, while process and outcome verifiers estimate the quality of a generated step or trajectory~\cite{yao2023tree,lightman2023lets,llm_uncertainty}. These signals can guide sampling, pruning, or answer selection. They do not, by themselves, define how much goal-conditioned solving burden remains in an executable mathematical state.
+
+EGR separates local choice uncertainty from residual difficulty. The entropy of $p(M_i\mid S,q)$ describes how concentrated the Selector is over the next RM identifiers. RSE instead aggregates the discounted probability mass of successful executable paths from the state. It reflects remaining path cost, branching, and the accessibility of success under a stated reference policy. Normalized remaining steps, shortest graph distance, heuristic completeness, Selector entropy, and learned value scores are therefore treated as comparison signals. This separation allows progress estimation to be tested through successor ordering and termination, rather than being inferred from next-action confidence alone.
+
+\subsection{Knowledge-based mathematical problem solving}
+
+Knowledge-based solvers represent mathematical concepts and relations explicitly, then apply domain procedures to transform them. Earlier relation-centric work on arithmetic and text-diagram function problems shows the value of separating problem representation from symbolic inference and of organizing reusable mathematical knowledge into model libraries~\cite{yu2022_relationcentric,udfsolver}. EGR continues this line at a different reasoning granularity. Its research object is an evolving conic state, and its primary learned decision is which high-level RM should be applied next. Grounding, symbolic execution, and progress control are all defined relative to that state.
+
+This position distinguishes EGR from three nearby formulations. It is more constrained than arbitrary program generation because its actions belong to a typed domain library. It is more iterative than one-shot translation to an external solver because every accepted action creates the state for the next decision. It is more answer-oriented than general theorem proving because termination and extraction are defined by a query. These distinctions lead directly to the formal task developed next.
+
+\section{Problem formulation}
+\label{sec:formulation}
+
+\subsection{Task and scope}
+
+Let a conic-section problem be
+\begin{equation}
+x=(F,q),
+\label{eq:problem}
+\end{equation}
+where $F$ is a finite collection of normalized facts and constraints and $q$ is a query. Facts may describe curve equations, points, lines, parameters, geometric relations, algebraic conditions, and admissible domains. The query identifies the mathematical object to be returned, such as a value, equation, coordinate, length, area, range, or extremum. The present task begins after the problem statement has been mapped to $F$ and $q$. This isolates structured representation and multi-step reasoning from upstream language or diagram perception.
+
+The solver returns an answer $\hat y$ and an execution trace
+\begin{equation}
+\tau=(S^{\mathrm{sem}}_0,a_0,S^{\mathrm{sem}}_1,\ldots,
+a_{T-1},S^{\mathrm{sem}}_T).
+\label{eq:trace}
+\end{equation}
+The answer is judged by mathematical equivalence to the reference answer $y^\star$. The trace is judged independently by the validity of every transition. This division makes final-answer correctness necessary for end-to-end success without using the answer to choose test-time actions.
+
+Throughout the paper, we use the ellipse
+\begin{equation}
+\frac{x^2}{25}+\frac{y^2}{9}=1
+\label{eq:running_ellipse}
+\end{equation}
+with the query ``find the eccentricity'' as a running example. It is intentionally simple enough to display each representation. The initial facts contain the equation and the queried property, but do not yet contain the major and minor semi-axes, the focal distance, or the eccentricity.
+
+\subsection{Reasoning state}
+
+At step $t$, EGR maintains a semantic state and a control context,
+\begin{equation}
+S_t=(S_t^{\mathrm{sem}},C_t).
+\label{eq:controller_state}
+\end{equation}
+The semantic state contains only mathematical content that is currently established: typed objects, equations, parameter values, relations, constraints, derived facts, the query, and unresolved subgoals. The control context records how the search reached that state, including attempted actions, accepted actions, bindings, failure codes, state hashes, accumulated cost, and backtracking information. Separating these parts preserves a stable mathematical meaning for $S_t^{\mathrm{sem}}$ even when two searches reach it through different histories.
+
+The same semantic state is exposed through two coordinated representations. The symbolic state stores exact expressions and supports executable operations. The abstract state is a learned view
+\begin{equation}
+S_t^{\mathrm{abs}}
+=\phi(S_t^{\mathrm{sem}},q,\bar C_t),
+\label{eq:abstract_state}
+\end{equation}
+where $\bar C_t$ is a limited control summary that may include recent failed actions, repeated-state indicators, and accumulated cost. Query conditioning is required because the usefulness of a fact depends on what the problem asks. The abstract state may encode entities, relations, constraints, available parameters, unresolved subgoals, and readiness indicators. It is not required to contain the exact algebra needed for execution; that information remains in the symbolic state.
+
+\subsection{Reasoning models, bindings, and transitions}
+
+Let
+\begin{equation}
+\mathcal M=\{M_1,\ldots,M_K\}, \qquad K=80,
+\label{eq:rm_library}
+\end{equation}
+be the conic-section reasoning-model library. We use reasoning model (RM) for a high-level domain schema with a stable mathematical meaning. Learned predictors are referred to by their component names. An RM is defined as
+\begin{equation}
+M_i=(\operatorname{pre}_i,
+     \operatorname{ground}_i,
+     \operatorname{program}_i,
+     \operatorname{post}_i).
+\label{eq:rm_contract}
+\end{equation}
+The precondition specifies the object types, known relations, and constraints required by the mathematical principle. The grounding specification declares formal roles that must be matched to concrete objects or expressions. The program is a deterministic composition of reusable symbolic operations. The postcondition states what must hold after successful execution.
+
+An RM identifier is not executable until its roles are bound. A bound action is
+\begin{equation}
+a_t=(M_i,\theta_t),
+\label{eq:bound_action}
+\end{equation}
+where $\theta_t$ maps the formal roles of $M_i$ to curves, points, lines, variables, or expressions in $S_t^{\mathrm{sem}}$. The Selector predicts $M_i$; the Grounder constructs $\theta_t$. This separation prevents the action classifier from having to enumerate every possible object assignment.
+
+The symbolic transition is a partial function
+\begin{equation}
+T:S_t^{\mathrm{sem}}\times a_t
+\longrightarrow
+(S_{t+1}^{\mathrm{sem}},\Delta_t,r_t),
+\label{eq:transition}
+\end{equation}
+where $\Delta_t$ is the explicit state change and $r_t$ is a structured execution record. The transition is accepted only if the binding satisfies the precondition, every primitive operation succeeds, the delta is consistent and non-redundant, and the successor satisfies the postcondition. A failed action leaves the source state unchanged. A transition that reproduces only existing facts is recorded as a no-op and is not counted as progress.
+
+\subsection{Multiple valid paths and action-set supervision}
+
+A human solution often describes one useful derivation, but its sentence order need not equal the executable dependency order. Moreover, several derivations may be correct. We therefore define a solution graph
+\begin{equation}
+G_x=(V_x,E_x),
+\label{eq:solution_graph}
+\end{equation}
+whose vertices are canonical semantic states and whose directed edges are verified bound actions. A terminal vertex resolves $q$ and produces an answer equivalent to $y^\star$ under offline checking. Commutative actions and alternative continuations may create several paths or a partial order within the same graph.
+
+For a state $S$ and query $q$, the verified valid-action set is
+\begin{equation}
+\mathcal A^+(S,q)=
+\left\{
+(M_i,\theta):
+T(S,(M_i,\theta))\ \text{is valid and its successor has a
+verified successful continuation}
+\right\}.
+\label{eq:positive_bound_actions}
+\end{equation}
+The Selector is supervised by the projection of this set onto RM identifiers,
+\begin{equation}
+\mathcal M^+(S,q)=
+\{M_i:\exists\theta,(M_i,\theta)\in\mathcal A^+(S,q)\}.
+\label{eq:positive_rm_set}
+\end{equation}
+These sets describe actions verified within a finite construction budget. An alternative for which neither success nor failure has been established receives an unknown label and is excluded from the classification loss. Thus, graph incompleteness does not turn every undiscovered derivation into a negative example.
+
+\subsection{Residual state entropy}
+
+The number of remaining steps gives one account of progress, but it does not describe how difficult those steps are to find. Two states may be equally distant from a solution while differing greatly in the number of executable branches and in the probability that a basic policy follows a successful branch. RSE combines these aspects by measuring the discounted reachability of successful completion.
+
+Let $\Pi^+(S,q)$ be the set of verified executable trajectories that begin at $S$ and terminate with a correct answer to $q$. Let $\pi_0$ be a reference policy over currently executable high-level RMs, let $C(\tau)$ be the cost of trajectory $\tau$, and let $\beta\geq 0$ determine the cost penalty. We define the successful path mass
+\begin{equation}
+Z_\beta(S,q)=
+\sum_{\tau\in\Pi^+(S,q)}
+P_{\pi_0}(\tau\mid S,q)
+\exp[-\beta C(\tau)]
+\label{eq:path_mass}
+\end{equation}
+and the Residual State Entropy
+\begin{equation}
+H_{\mathrm{RSE}}(S,q)
+=-\log\left(Z_\beta(S,q)+\varepsilon\right).
+\label{eq:rse}
+\end{equation}
+Its full specification is written as
+\begin{equation}
+H_{\mathrm{RSE}}
+(S,q\mid\mathcal M,\pi_0,B,c),
+\label{eq:rse_conditioning}
+\end{equation}
+where $\mathcal M$ is the RM library, $B$ is the path-search budget, and $c$ defines action cost. The first implementation uses a maximum-entropy reference policy over executable RM identifiers and unit RM cost. Other cost definitions, such as primitive count or measured runtime, can be evaluated without changing the definition.
+
+Equation~\ref{eq:rse} has a direct interpretation. Short successful paths, numerous successful alternatives, and high reachability under $\pi_0$ increase $Z_\beta$ and reduce RSE. Long paths, distracting branches, or scarce successful continuations reduce $Z_\beta$ and increase RSE. The RSE reduction produced by a bound action is
+\begin{equation}
+\Delta H(S,a)
+=H_{\mathrm{RSE}}(S,q)
+-H_{\mathrm{RSE}}(S',q),
+\qquad
+S'=\operatorname{Succ}(T(S,a)).
+\label{eq:rse_reduction}
+\end{equation}
+RSE is therefore a goal- and solver-conditioned potential. It is neither a Shannon entropy over the contents of a state nor the entropy of the Selector's action distribution. The reference answer is used only while constructing successful paths and evaluating their terminal vertices. At test time, the RSE estimator receives the current state and query, not $y^\star$.
+
+\subsection{Termination and end-to-end success}
+
+Low residual difficulty is informative but does not by itself guarantee that the query can be answered. EGR therefore defines $\operatorname{AnswerReady}(S,q)$ as a structural predicate. It is true when the requested object or an equivalent expression can be derived from facts already present in the state without another substantive RM transition. The normal stopping rule is
+\begin{equation}
+\operatorname{Stop}(S_t,q)=
+\mathbb I\left[
+\widehat H_{\mathrm{RSE}}(S_t,q)\leq\epsilon_H
+\land
+\operatorname{AnswerReady}(S_t,q)
+\right].
+\label{eq:stopping}
+\end{equation}
+Maximum depth, repeated-state detection, and no-progress detection are safety exits. They produce an unresolved outcome rather than a successful terminal state.
+
+The read-only extractor locates the answer supported by a terminal state, normalizes its representation, and checks it against the state's own constraints. It does not introduce a new geometric relation or solve a missing subsystem. Offline evaluation then applies a symbolic equivalence comparator to $\hat y$ and $y^\star$. A verified solution satisfies three conditions: every accepted transition is valid, the terminal state resolves the query, and the extracted answer is mathematically equivalent to the reference answer. This is the hard end-to-end success criterion used in the experiments.
+
+\section{EGR method}
+\label{sec:method}
+
+\subsection{Method overview}
+
+The formulation above leads to a closed reasoning loop. The initial facts and query are first converted into a symbolic state. A query-conditioned abstract state is then derived from it. The Selector ranks high-level RMs, after which the Grounder enumerates concrete bindings for the most promising identifiers. The Applicator simulates each bound action, rejecting applications that fail their preconditions, produce a conflict, or leave the mathematical state unchanged. EGR estimates the RSE of the valid successor states and ranks them by learned action preference, RSE reduction, and execution cost. The highest-ranked successor is committed, while a bounded frontier retains alternatives for limited backtracking. The loop ends only when the state is answer-ready and its predicted RSE is below the stopping threshold.
+
+\begin{figure*}[t]
+\centering
+\fbox{\parbox{0.94\textwidth}{
+Figure placeholder. The final figure should show the complete standalone path:
+normalized facts and query $\rightarrow$ symbolic and abstract states
+$\rightarrow$ Selector $\rightarrow$ Grounder $\rightarrow$ transactional Applicator
+$\rightarrow$ successor-state RSE and ranking $\rightarrow$ AnswerReady and extraction.
+The symbolic state should remain on the main horizontal path, while the abstract
+state should appear as a derived neural interface.
+}}
+\caption{Overview of EGR. Learned components choose high-level mathematical knowledge and estimate residual difficulty; symbolic components bind and execute that knowledge over an exact state.}
+\label{fig:egr_overview}
+\end{figure*}
+
+\subsection{Query-conditioned dual state}
+
+The two state interfaces address different computational needs. Exact conic reasoning requires equations, domains, and geometric relations to remain available in symbolic form. RM selection, by contrast, benefits from a compact representation that exposes which objects and relations are present and which part of the query remains unresolved. Collapsing both roles into one vector would discard information required for execution. Passing an unstructured symbolic store directly to the Selector would make learning sensitive to irrelevant expression forms and object order.
+
+The symbolic state is organized around typed entities and attributed relations. Its main fields are summarized in Table~\ref{tab:state_contents}. Expressions are kept in canonical form when possible, and every derived fact stores provenance to the RM, binding, and primitive trace that produced it. A canonical semantic hash is computed from mathematical content, independent of search history. The hash supports cycle detection and merges equivalent vertices when solution graphs are constructed.
+
+\begin{table}[t]
+\centering
+\caption{Principal contents of the semantic and control parts of an EGR state.}
+\label{tab:state_contents}
+\begin{tabular}{p{0.25\columnwidth}p{0.65\columnwidth}}
+\hline
+Part & Contents \\
+\hline
+Objects & Curves, points, lines, variables, parameters, and expressions \\
+Relations & Incidence, focus, directrix, tangent, asymptote, distance, and algebraic relations \\
+Constraints & Domains, inequalities, nonzero conditions, curve-type conditions, and branch conditions \\
+Query status & Target object, available dependencies, and unresolved subgoals \\
+Provenance & Source facts, producing RM, binding, and primitive trace \\
+Control context & Attempts, failures, hashes, cost, depth, and backtracking information \\
+\hline
+\end{tabular}
+\end{table}
+
+The abstract state is constructed from the same objects and relations together with the query. Let $\mathcal O_t$, $\mathcal R_t$, and $\mathcal K_t$ denote the state objects, typed relations, and constraints. The neural representation has the general form
+\begin{equation}
+h_t=\operatorname{Enc}_{\omega}
+(\mathcal O_t,\mathcal R_t,\mathcal K_t,q,\bar C_t),
+\qquad
+S_t^{\mathrm{abs}}=\operatorname{Pool}(h_t,q).
+\label{eq:state_encoder}
+\end{equation}
+The encoder preserves object and relation types, indicates which RM preconditions are partially or fully supported, and marks query-relevant dependencies. It also includes a limited history summary for avoiding repeated failed applications. The concrete encoder architecture, hidden dimension, and pooling function are fixed on the development set and will be reported after the implementation configuration is frozen. The original handcrafted 28-dimensional vector is retained as a baseline rather than defining the final state interface.
+
+After every accepted transition, EGR updates the symbolic state first and rebuilds the abstract state from the committed successor. This direction of dependence is important: the learned view follows mathematical execution, so a neural prediction cannot silently alter the exact state.
+
+\subsection{Reasoning-model library and shared symbolic operations}
+
+The RM library provides the action vocabulary of the solver. Its 80 identifiers represent high-level mathematical intentions, such as recovering canonical parameters, applying a focal relation, deriving a tangent condition, or reducing the query to a solvable algebraic constraint. They are not implemented as 80 unrelated pieces of algebra. RMs reuse a smaller set of symbolic primitives for expression normalization, substitution, equation solving, equivalence checking, coordinate construction, distance computation, discriminants, domain filtering, and constraint propagation.
+
+Table~\ref{tab:rm_taxonomy} gives the functional organization of the library. The final version will report the number of RMs and tested bindings in each category. This organization separates mathematical meaning from computation: an RM states why an operation is relevant in a conic solution, while its primitive program states how the local symbolic transformation is carried out.
+
+\begin{table*}[t]
+\centering
+\caption{Functional organization of the 80 conic-section RMs. Category counts and conformance statistics will be inserted after the library audit is frozen.}
+\label{tab:rm_taxonomy}
+\begin{tabular}{p{0.22\textwidth}p{0.46\textwidth}p{0.20\textwidth}}
+\hline
+Category & Mathematical role & Representative shared operations \\
+\hline
+Curve recognition and normalization & Identify a conic and convert an equation to a supported canonical form & expand, collect, complete square, normalize equation \\
+Parameter recovery & Recover axes, center, vertex, focal parameters, or coefficients & bind coefficient, solve local equation, enforce domain \\
+Focus, directrix, and eccentricity & Apply defining relations among $a$, $b$, $c$, $p$, focus, directrix, and eccentricity & substitute, square-root normalization, equivalence check \\
+Tangents, chords, and asymptotes & Construct line conditions and intersection constraints & line construction, discriminant, root relation \\
+Coordinate and vector relations & Transform point, midpoint, slope, and vector conditions & coordinate substitution, vector operation \\
+Distance, length, and area & Convert geometric measurements into exact expressions & distance, norm, determinant, area formula \\
+Algebra and discriminants & Solve local polynomial systems and preserve admissible branches & eliminate, factor, solve, branch filter \\
+Range, optimization, and query reduction & Derive bounds, extrema, or a query-ready expression & inequality propagation, monotonicity, simplify target \\
+\hline
+Total & 80 high-level RMs & Shared typed primitive library \\
+\hline
+\end{tabular}
+\end{table*}
+
+Each primitive has typed inputs, a deterministic local output, explicit failure conditions, and an equivalence or consistency check when appropriate. A primitive is not allowed to consume the complete problem and return the final answer. This locality ensures that the RM trace continues to explain which mathematical relation advanced the solution. Reuse also gives a practical correctness advantage: improvements to expression normalization or constraint filtering apply to every RM that invokes the primitive.
+
+Before entering the library, every RM passes conformance tests for applicable, inapplicable, boundary, repeated, and conflicting states. The library audit reports precondition coverage, binding coverage, successful nonempty deltas, idempotence or no-op handling, and postcondition satisfaction. These tests establish the executable meaning of the action space before learned selection is evaluated.
+
+\subsection{Set-supervised RM selection}
+
+The Selector answers one question: which high-level RM should be considered next under the current state and query? It does not predict a binding or an answer. From the abstract state in Equation~\ref{eq:state_encoder}, it produces
+\begin{equation}
+p_{\theta}(M_i\mid S_t^{\mathrm{abs}},q)
+=\operatorname{softmax}_i
+(g_{\theta}(S_t^{\mathrm{abs}},q)).
+\label{eq:selector}
+\end{equation}
+The output layer contains the 80 RM identifiers. At inference time, the top-$k$ identifiers are passed to the Grounder, where symbolic constraints determine whether any binding is executable.
+
+A unique-label objective is unsuitable when several RMs preserve successful continuations. Let $\mathcal M^+(S_t,q)$ be the verified positive set defined in Equation~\ref{eq:positive_rm_set}. The basic set-supervised loss is
+\begin{equation}
+\mathcal L_{\mathrm{set}}
+=-\sum_{(S_t,q)\in\mathcal D_{\mathrm{sel}}}
+\log
+\sum_{M_i\in\mathcal M^+(S_t,q)}
+p_{\theta}(M_i\mid S_t^{\mathrm{abs}},q).
+\label{eq:set_loss}
+\end{equation}
+This objective rewards probability assigned to any verified RM that can begin a successful continuation. Unknown actions are masked. When the graph contains reliable path-cost differences, a secondary cost-aware term can prefer lower-cost positive actions without making the human reference order the sole target. The unique-label cross-entropy objective remains an ablation, using the next action on one reference path.
+
+The Selector is evaluated against the same set semantics used for training. A prediction is valid when at least one of its top-$k$ identifiers belongs to $\mathcal M^+(S,q)$. This criterion avoids penalizing a correct alternative merely because it differs from the textbook order.
+
+\subsection{Constrained grounding}
+
+An RM becomes executable only after its formal roles have been mapped to state objects. The Grounder first retrieves candidates by type. It then applies equality, incidence, curve-membership, domain, and availability constraints declared by the RM. For an RM involving an ellipse and its semi-axes, for example, candidate bindings must refer to an ellipse already represented in the state and to parameters whose association with that curve is established or can be locally recovered by the RM program.
+
+For selected $M_i$, grounding returns an ordered candidate set
+\begin{equation}
+\Theta_i(S)=
+\{\theta_i^{(1)},\ldots,\theta_i^{(m)}\}.
+\label{eq:grounding_set}
+\end{equation}
+Bindings that violate a symbolic constraint are removed before execution. Remaining candidates are ordered by precondition coverage, query relevance, and a deterministic canonical tie-breaker. The Grounder initially uses this constraint-based ordering with a bounded number of alternatives. When the first binding fails during transactional application, EGR can try the next binding without asking the Selector to predict the same RM again. This design covers the common case while retaining a clear extension point for a learned grounding ranker.
+
+Grounding success is reported separately from RM selection. This distinction is necessary because a correct RM identifier can still be applied to the wrong curve, point, or expression. The execution trace stores the chosen binding and the evidence that satisfied each precondition.
+
+\subsection{Transactional symbolic application}
+
+The Applicator converts a bound action into a verified state transition. It begins by cloning the semantic state and checking the RM preconditions under the proposed binding. It then executes the primitive program in order, recording each local input and output. The resulting facts are assembled as a delta, checked for consistency with the source state, and validated by the postcondition. Only after all checks pass is the delta committed.
+
+The structured result has one of five statuses:
+\begin{equation}
+\operatorname{status}(r_t)\in
+\{\mathrm{applied},\mathrm{inapplicable},\mathrm{failed},
+\mathrm{no\_op},\mathrm{conflict}\}.
+\label{eq:transition_status}
+\end{equation}
+An applied result contains the RM identifier, binding, precondition evidence, source and successor hashes, state delta, postcondition evidence, and primitive trace. Inapplicable indicates that a required mathematical condition is absent or false. Failed denotes an execution error without a committed change. No-op identifies a redundant derivation, and conflict marks a proposed fact that is inconsistent with the state. These statuses support phase-specific error analysis without exposing implementation exception messages as mathematical explanations.
+
+Transactionality establishes three invariants. Failed applications do not modify mathematical truth. Accepted applications produce a nonempty, provenance-linked delta. Equivalent successor states receive the same semantic hash even if they were reached by different action orders. The controller may later decide that a valid transition has little query relevance, but mathematical validity is settled before that ranking decision.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.88\columnwidth}{
+Figure placeholder. Show one RM as precondition $\rightarrow$ role binding
+$\rightarrow$ shared primitive program $\rightarrow$ state delta
+$\rightarrow$ postcondition, together with the five possible transition statuses.
+}}
+\caption{Anatomy of one grounded RM application.}
+\label{fig:transition_anatomy}
+\end{figure}
+
+\subsection{Learning and using RSE}
+
+The formal RSE target is computed on the frozen solution graph. For each graph vertex, successful terminal paths within budget $B$ contribute to Equation~\ref{eq:path_mass}. The first reference policy is uniform over executable RM identifiers, and the first cost is the number of accepted RM transitions. These choices make the target reproducible and allow path multiplicity and branching to affect the result. Targets derived from graph regions whose completion status is unresolved are stored as intervals or masked unknowns rather than exact labels.
+
+The RSE estimator receives the query-conditioned abstract state and predicts
+\begin{equation}
+\widehat H_{\mathrm{RSE}}(S_t,q)
+=h_{\psi}(S_t^{\mathrm{abs}},q).
+\label{eq:rse_estimator}
+\end{equation}
+It is trained on graph-derived targets with a masked regression loss,
+\begin{equation}
+\mathcal L_{\mathrm{RSE}}
+=\sum_j w_j\,
+\ell\left(
+h_{\psi}(S_j^{\mathrm{abs}},q_j),
+H_{\mathrm{RSE}}^{\star}(S_j,q_j)
+\right),
+\label{eq:rse_loss}
+\end{equation}
+where $w_j=0$ for unresolved targets and may otherwise reflect target confidence. The implementation will specify $\ell$, target clipping, and all graph parameters after development-set selection. A separate AnswerReady classifier or deterministic predicate is trained or configured from structural terminal labels; it is not folded into the RSE target.
+
+For a valid bound action $a$ with successor $S'$, EGR assigns
+\begin{equation}
+J(a\mid S,q)
+=\log p_{\theta}(M(a)\mid S^{\mathrm{abs}},q)
++\lambda_H
+\left[
+\widehat H_{\mathrm{RSE}}(S,q)
+-\widehat H_{\mathrm{RSE}}(S',q)
+\right]
+-\lambda_c c(a)
+-\lambda_r R(a,S),
+\label{eq:action_score}
+\end{equation}
+where $R(a,S)$ penalizes repeated or recently failed configurations. The first term expresses the learned preference for the RM, the second favors estimated progress, and the third makes computation cost explicit. Only actions already accepted as mathematically valid by the Applicator receive this score. The controller keeps a bounded frontier ordered by $J$ and backtracks when a selected branch becomes unresolved.
+
+Several comparisons are required to establish what the estimator learns. Remaining reference steps and shortest graph distance measure work but not branching. Heuristic state completeness depends on manually assigned weights. Selector entropy describes the ambiguity of the next RM. A conventional learned value can estimate eventual success without preserving the path-mass interpretation. The experiments compare all of these signals in target prediction, successor ordering, stopping, and end-to-end solving. A depth-feature removal and depth-shuffling test checks whether RSE has collapsed to a simple position counter.
+
+\subsection{Answer readiness and terminal extraction}
+
+The stopping mechanism asks whether another substantive mathematical relation is needed. AnswerReady examines the query dependencies in the symbolic state. For a value query, the target expression must be ground or reducible by normalization alone. For an equation query, all required coefficients and domain conditions must be present. For a coordinate or range query, the corresponding objects and admissibility constraints must be determined. These checks are query-specific but use the same principle: the answer must already be supported by the state.
+
+When Equation~\ref{eq:stopping} holds, the extractor reads the target object, normalizes equivalent forms, and validates it against internal constraints. Permitted operations include canonical simplification, ordering of solution sets, and removal of branches already excluded by the state. Introducing a missing focal relation, solving an unresolved multi-equation system, or selecting a new RM is outside the extractor's role. This boundary ensures that the reported trace contains every substantive reasoning operation.
+
+\subsection{End-to-end procedure}
+
+Algorithm~\ref{alg:egr} summarizes the standalone solver. The frontier permits limited exploration while retaining one common state-transition contract for greedy and non-greedy configurations. All exits record a reason, so normal terminal extraction can be distinguished from depth, repetition, no-progress, and exhausted-frontier failures.
+
+\begin{algorithm}[t]
+\caption{Standalone EGR solving procedure}
+\label{alg:egr}
+\begin{algorithmic}[1]
+\REQUIRE Normalized facts $F$, query $q$, RM library $\mathcal M$, budget $B$
+\ENSURE Predicted answer $\hat y$ and executable trace $\tau$, or an unresolved outcome
+\STATE Build $S_0^{\mathrm{sem}}$ from $(F,q)$ and initialize $C_0$
+\STATE Insert $(S_0,C_0)$ into a bounded frontier $\mathcal Q$
+\WHILE{$\mathcal Q$ is not empty and the budget is not exhausted}
+    \STATE Remove the highest-ranked state $(S_t,C_t)$ from $\mathcal Q$
+    \STATE Construct $S_t^{\mathrm{abs}}=\phi(S_t^{\mathrm{sem}},q,\bar C_t)$
+    \IF{$\widehat H_{\mathrm{RSE}}(S_t,q)\leq\epsilon_H$ and $\operatorname{AnswerReady}(S_t,q)$}
+        \STATE $\hat y\leftarrow\operatorname{Extract}(S_t^{\mathrm{sem}},q)$
+        \RETURN $(\hat y,\tau_t)$
+    \ENDIF
+    \STATE Rank RM identifiers using $p_{\theta}(M_i\mid S_t^{\mathrm{abs}},q)$
+    \STATE Ground the top-$k$ RMs to obtain candidate bound actions
+    \STATE Apply each candidate transactionally and retain valid productive successors
+    \STATE Score retained actions using Equation~\ref{eq:action_score}
+    \STATE Add non-repeated successors and their traces to $\mathcal Q$
+    \STATE Record all rejected applications and failure categories in $C_t$
+\ENDWHILE
+\RETURN unresolved with the recorded safety or search-exhaustion reason
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Running example}
+
+For Equation~\ref{eq:running_ellipse}, the initial symbolic state contains an equation object $E$, the fact that $E$ has canonical ellipse form, and the query target $e(E)$. The first useful RM recovers canonical parameters. The Grounder binds its curve role to $E$ and its denominator roles to $25$ and $9$. After normalization and domain checks, the Applicator adds
+\begin{equation}
+a^2(E)=25,\qquad b^2(E)=9,\qquad a(E)=5,\qquad b(E)=3.
+\label{eq:example_delta_1}
+\end{equation}
+The abstract state is rebuilt, and the query is now closer to a direct eccentricity relation.
+
+One continuation applies the focal-parameter relation
+\begin{equation}
+c^2=a^2-b^2,
+\end{equation}
+which adds $c(E)=4$. A subsequent eccentricity RM adds $e(E)=c(E)/a(E)=4/5$. Another continuation applies the equivalent relation
+\begin{equation}
+e^2=1-\frac{b^2}{a^2}
+\end{equation}
+directly after Equation~\ref{eq:example_delta_1} and obtains the same positive value. Both paths are executable and answer the query. Their intermediate RM identifiers differ, so a unique next-action label would incorrectly reject one path. The solution graph preserves both, while the path cost allows the controller to express a preference if one is shorter.
+
+Along either successful path, the graph-derived RSE approaches zero as the answer becomes directly supported. The exact learned values are not assumed to be monotonically decreasing at every step; the ranking experiment tests how often productive successors have lower predicted RSE. At the final state, AnswerReady verifies that $e(E)$ is present and admissible, after which the extractor returns $4/5$ without invoking a new solver. Figure~\ref{fig:solution_graph_example} will show the two continuations, an inapplicable tangent action, the associated state deltas, and the RSE estimates used by the controller.
+
+\begin{figure*}[t]
+\centering
+\fbox{\parbox{0.94\textwidth}{
+Figure placeholder. Start from the ellipse in Equation~\ref{eq:running_ellipse}.
+Show the shared parameter-recovery transition, two verified continuations to
+$e=4/5$, one rejected action, dependencies between facts, and predicted RSE at
+each state. Distinguish reference-path preference from the verified positive set.
+}}
+\caption{Running example as a multi-path solution graph.}
+\label{fig:solution_graph_example}
+\end{figure*}
+
+\section{Data construction and experimental design}
+\label{sec:data_experiments}
+
+\subsection{Source corpus and reasoning scope}
+
+We use the conic-section problem records available in the Conic10K-derived corpus~\cite{conic10k}. Each record contains a Chinese problem statement, normalized fact expressions, normalized query expressions, answer expressions, a human-written solution, and, when available, a sequence of RM identifiers derived from that solution. The current source file contains 7,757 problem records. Of these, 5,359 contain a nonempty weak RM sequence, giving 20,226 RM occurrences and 79 distinct observed identifiers from the 80-ID universe. These counts describe the source annotations, not verified executable transitions.
+
+The records cover ellipses, hyperbolas, parabolas, circles, and related analytic-geometry configurations. Queries include values, equations, coordinates, distances, lengths, areas, ranges, and optimization targets. The final version will report the distribution by curve family, query type, solution depth, and RM frequency after the problem-level split and reconstruction are frozen.
+
+\begin{table}[t]
+\centering
+\caption{Source and derived data statistics. Derived counts remain placeholders until solution-graph reconstruction is frozen.}
+\label{tab:data_statistics}
+\begin{tabular}{lr}
+\hline
+Statistic & Count \\
+\hline
+Source problem records & 7,757 \\
+Records with nonempty weak RM sequences & 5,359 \\
+Weak RM occurrences & 20,226 \\
+Distinct RM identifiers observed & 79 \\
+RMs in the library & 80 \\
+Verified transitions & TBD \\
+Verified solution graphs & TBD \\
+States with more than one verified positive RM & TBD \\
+Unknown action-state pairs & TBD \\
+Train / development / test problems & TBD / TBD / TBD \\
+\hline
+\end{tabular}
+\end{table}
+
+The primary task evaluates reasoning from normalized facts and queries. All primary standalone methods therefore receive the same mathematical information. LLM baselines receive a faithful textual serialization of these fields, optionally accompanied by the original statement when this does not add privileged information. Raw language or diagram parsing is outside the main comparison and may be reported as a separate diagnostic.
+
+\subsection{Why the existing sequences are weak supervision}
+
+The `models' field was derived from natural-language solutions. Such a solution explains a derivation for a reader, but its clauses may state a consequence before its algebraic dependency, combine several operations in one sentence, omit routine transformations, or mention a relation after it has already been used. The resulting identifier sequence is therefore evidence that certain RMs are relevant to the solution, but it is not automatically an executable action order. Training a next-action classifier directly on this order can associate an RM with a state in which its preconditions are not yet satisfied.
+
+A second issue is path multiplicity. The written solution records one rationale even when several RMs can be applied next, several bindings are possible, or independent facts can be derived in either order. A hard label treats unobserved but correct alternatives as classification errors. This would make the Selector imitate editorial order rather than learn which actions preserve solvability.
+
+\subsection{Executable reconstruction and solution graphs}
+
+We convert the source annotations into an internal executable layer in four stages. First, RM identifiers and mathematical phrases in the written solution provide candidate actions and partial dependency evidence. Second, each candidate is grounded and executed from a reconstructed symbolic state. A missing, inapplicable, failed, conflicting, or no-op action ends that candidate suffix; later labels are never attached to an unchanged state. Third, read and write dependencies are used to reorder actions that were linguistically presented out of executable order. Commutativity checks identify actions whose order can be exchanged without changing the canonical successor. Fourth, bounded alternative-action search tests other applicable RMs and retains an alternative only when its successor has a verified continuation to a correct terminal answer.
+
+States with the same canonical mathematical content are merged to form $G_x$. Every stored edge contains the problem identifier, split, source provenance, RM identifier, binding, precondition evidence, source hash, state delta, successor hash, primitive trace, postcondition evidence, status, label status, and verifier version. Human-written paths retain a soft provenance marker, which can be used for analysis or cost preferences, but the verified graph determines the positive action set.
+
+Each candidate action receives one of three supervision states. A verified positive action is executable and has a verified successful continuation. A verified negative action is proven inapplicable, conflicting, failed, or contained in an explored dead end under the stated graph conditions. An unknown action has not been resolved within the construction budget and is masked during training. Every edge and terminal vertex is checked automatically. Conflict, no-op, reordered, multi-binding, and multi-path cases are additionally sampled for manual review under an audit plan fixed before production reconstruction.
+
+The derived layer supports the Selector, Grounder evaluation, RSE targets, AnswerReady labels, and trajectory analysis. It is treated as internal training and evaluation infrastructure. The paper's data contribution is the executable annotation procedure and its role in the method, rather than a claim of a new public benchmark.
+
+\subsection{Splits and training views}
+
+The corpus is divided at the problem level before intermediate states are generated. All states, bindings, alternative paths, and terminal forms derived from one problem remain in the same split. This prevents a selector or RSE estimator from seeing a neighboring state from a test trajectory during training. The development set is used for encoder choice, candidate depth, frontier size, score weights, RSE threshold, and all stopping decisions. The test set remains frozen until these choices are complete.
+
+Four task-specific views are derived from the graphs. Selector examples contain the abstract state, query, verified positive RM set, verified negative set, and unknown mask. Grounder examples contain an RM, state objects, candidate bindings, and verified binding outcomes. RSE examples contain graph parameters, target value or interval, confidence mask, and relevant structural features. Terminal examples contain AnswerReady labels, query dependencies, and normalized extractable answers. Each view preserves a reference to the original problem and graph version.
+
+Gold answers have two offline roles: identifying successful terminal vertices during graph construction and scoring extracted answers during evaluation. They are absent from the Selector, Grounder, Applicator ranking, RSE estimator, stopping rule, and extractor inputs at test time.
+
+\subsection{Evaluation questions}
+
+The evaluation follows the causal structure of the method. The first question is whether the complete standalone EGR loop improves final-answer accuracy and verified-solution rate under the structured conic task. The second asks whether set supervision and the query-conditioned state improve RM ranking relative to a unique reference label and the original 28-dimensional representation. The third asks whether the Grounder and Applicator convert selected RMs into valid, productive transitions. The fourth examines whether RSE predicts graph-derived residual difficulty, orders successors, and supports better stopping than simpler progress signals. The fifth isolates the contribution and computational cost of each component. A final extension asks whether RM guidance and grounded execution improve LLM reasoning under matched inputs and budgets.
+
+\subsection{Baselines and ablations}
+
+The standalone comparison begins with a rule-priority or uniform executable search that uses the same RM library and Applicator without learned ranking. The learned baselines include a 28-dimensional unique-label Selector, a 28-dimensional set-supervised Selector, and a structured query-conditioned set-supervised Selector. Controller variants include EGR without RSE, EGR with RSE only for successor ranking, EGR with RSE only for termination, and full EGR. Where a comparable external symbolic or neuro-symbolic solver can receive the same normalized facts and query, it is evaluated under the same answer comparator and resource budget.
+
+Component ablations remove or replace one causal mechanism at a time. The state ablation substitutes the handcrafted 28-dimensional vector for the structured state. The supervision ablation replaces Equation~\ref{eq:set_loss} with unique-label cross-entropy. The grounding ablation uses the first type-compatible binding without symbolic ranking. The execution ablation reports unverified Selector output as a diagnostic but is not counted as a verified solver. RSE is compared with normalized remaining steps, shortest solution-graph distance, heuristic completeness, Selector entropy, and a conventional learned value. Search ablations vary top-$k$, frontier size, backtracking, repetition control, and action cost.
+
+The LLM extension uses at least two model families and four controlled conditions: direct reasoning, RM candidates supplied by EGR, grounded symbolic execution supplied on request, and the complete EGR trace or controller interface. A fifth diagnostic lets an LLM propose an RM while EGR verifies and executes it. Model version, prompt, temperature, token limit, exemplars, and tool budget are fixed within each family.
+
+\subsection{Metrics}
+
+Final-answer accuracy is the primary task metric. Mathematical equivalence is determined by the common answer comparator under relevant domain constraints. Verified-solution rate is the fraction of problems for which every accepted transition passes its postcondition, the terminal state resolves the query, and the answer is correct. Reporting both metrics distinguishes a correct endpoint from a fully executable solution. Unresolved, invalid-output, and phase-specific failure rates complete the end-to-end account.
+
+RM selection is measured by Valid@$k$, the mean rank of the first verified positive RM, coverage over RM identifiers, calibration, and performance on long-tail RMs. Grounding is measured by correct-binding success and mean candidates evaluated before a valid binding. Application is measured by transition-validity, postcondition-satisfaction, conflict, no-op, and primitive-failure rates. These metrics are stratified by curve family, query type, graph depth, path multiplicity, and initial RSE.
+
+RSE estimation is evaluated by error against graph-derived targets, rank correlation, and calibration of $\exp(-\widehat H_{\mathrm{RSE}})$ against empirical discounted success mass. Its control value is measured by positive-versus-negative successor ordering, realized RSE reduction on rollouts, premature-stop rate, over-reasoning rate, AnswerReady precision and recall, verified solution rate, and execution cost. Depth-removal and shuffled-depth tests measure shortcut dependence.
+
+Efficiency metrics include accepted RM steps, attempted bound actions, primitive operations, backtracks, peak frontier size, token use in LLM conditions, and wall-clock time. We report sample counts, confidence intervals, and the pre-specified statistical comparison for each main metric. Every run stores per-problem traces and aggregate files under a dataset, method, split, and run identifier hierarchy.
+
+\subsection{Implementation and reproducibility}
+
+The final manuscript will report the structured-state encoder, all dimensions, optimization settings, random seeds, top-$k$, grounding limit, frontier size, budget $B$, cost function, $\beta$, $\varepsilon$, score weights, and stopping threshold. It will also identify the exact RM and primitive-library versions, graph-construction configuration, verifier version, source split manifest, answer comparator, code revision, and learned checkpoints. Trainable comparisons will be repeated over TBD seeds, while symbolic components will be replayed deterministically. Any correction to labels, metadata, or answer equivalence will trigger regeneration of the derived views and all affected reports.
+
+\section{Standalone results}
+\label{sec:standalone_results}
+
+\subsection{End-to-end conic-section solving}
+
+Table~\ref{tab:standalone_main} reports final-answer accuracy and verified-solution rate under the frozen structured-input protocol. Full EGR obtains TBD answer accuracy and TBD verified-solution rate. The strongest standalone baseline obtains TBD and TBD, giving absolute differences of TBD and TBD with confidence intervals of TBD and TBD. The unresolved and invalid-transition rates are TBD and TBD for full EGR. The result paragraph will be completed only after the per-problem traces and aggregate report have passed the frozen evaluation audit.
+
+\begin{table*}[t]
+\centering
+\caption{Standalone conic-section solving. FA is final-answer accuracy, VS is verified-solution rate, TV is transition validity, UR is unresolved rate, and Time is mean runtime per problem.}
+\label{tab:standalone_main}
+\begin{tabular}{lccccc}
+\hline
+Method & FA & VS & TV & UR & Time \\
+\hline
+Uniform executable search & TBD & TBD & TBD & TBD & TBD \\
+28D unique-label Selector & TBD & TBD & TBD & TBD & TBD \\
+28D set-supervised Selector & TBD & TBD & TBD & TBD & TBD \\
+Structured set-supervised Selector, no RSE & TBD & TBD & TBD & TBD & TBD \\
+EGR, RSE ranking only & TBD & TBD & TBD & TBD & TBD \\
+EGR, RSE termination only & TBD & TBD & TBD & TBD & TBD \\
+Full EGR & TBD & TBD & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table*}
+
+The main result will be interpreted through both endpoint and process measures. A gain in answer accuracy accompanied by unchanged or lower transition validity would indicate that the solver reaches more answers without establishing a stronger executable process. A gain in verified-solution rate would support the intended mechanism more directly. The final text will therefore relate Table~\ref{tab:standalone_main} to the selection and execution results below instead of attributing all differences to the complete architecture at once.
+
+\subsection{RM selection, grounding, and application}
+
+Table~\ref{tab:component_results} evaluates the three decisions that precede an accepted state change. The structured set-supervised Selector reaches Valid@1 of TBD, compared with TBD for the 28D unique-label baseline. Valid@3, Valid@5, mean positive rank, and expected calibration error are TBD, TBD, TBD, and TBD. The multi-path subset contains TBD states and shows a difference of TBD between set and unique-label supervision. Results for rare RMs and states with several legal actions will be reported separately.
+
+Given a verified positive RM, the Grounder finds a valid binding in TBD of cases and evaluates TBD candidates on average. The Applicator accepts TBD of correctly bound actions, while the conflict, no-op, and primitive-failure rates are TBD, TBD, and TBD. These measurements identify whether end-to-end failures arise before or after a mathematically appropriate RM has been selected.
+
+\begin{table*}[t]
+\centering
+\caption{RM selection and executable transition results. V@$k$ denotes Valid@$k$, MPR is mean positive rank, GS is grounding success, and TV is transition validity.}
+\label{tab:component_results}
+\begin{tabular}{lccccccc}
+\hline
+Variant & V@1 & V@3 & V@5 & MPR & GS & TV & No-op \\
+\hline
+28D unique-label Selector & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
+28D set-supervised Selector & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
+Structured unique-label Selector & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
+Structured set-supervised Selector & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
+Full EGR with grounding and application & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table*}
+
+\subsection{Component contribution and efficiency}
+
+Table~\ref{tab:ablation} isolates the mechanisms used by full EGR. The change caused by replacing the structured state with the 28D vector is TBD for answer accuracy and TBD for Valid@1. Replacing set supervision with a unique label changes these metrics by TBD and TBD. Removing constrained grounding changes the valid-binding and conflict rates by TBD and TBD. RSE ranking and RSE termination produce changes of TBD and TBD in verified-solution rate, with computation changes of TBD and TBD. Limited backtracking changes coverage by TBD at a cost of TBD additional bound-action trials.
+
+\begin{table*}[t]
+\centering
+\caption{Ablation and efficiency analysis. BA is attempted bound actions, BT is backtracks, and PC is primitive-operation cost.}
+\label{tab:ablation}
+\begin{tabular}{lcccccc}
+\hline
+Variant & Answer acc. & Verified sol. & V@1 & BA & BT & PC \\
+\hline
+Full EGR & TBD & TBD & TBD & TBD & TBD & TBD \\
+28D state & TBD & TBD & TBD & TBD & TBD & TBD \\
+Unique-label supervision & TBD & TBD & TBD & TBD & TBD & TBD \\
+First type-compatible binding & TBD & TBD & TBD & TBD & TBD & TBD \\
+Without RSE ranking & TBD & TBD & TBD & TBD & TBD & TBD \\
+Without RSE termination & TBD & TBD & TBD & TBD & TBD & TBD \\
+Without limited backtracking & TBD & TBD & TBD & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table*}
+
+\subsection{Heterogeneity and failure analysis}
+
+Results will be stratified by ellipse, hyperbola, parabola, and circle; by query family; by verified graph depth; by unique-path and multi-path states; by RM frequency; and by initial RSE. This analysis will determine whether the aggregate result is concentrated in common parameter-substitution questions or persists in problems that combine geometric and algebraic relations. Each stratum will report its sample size and confidence interval.
+
+Unsuccessful cases are assigned to the first phase that prevents a verified solution: state construction, RM selection, grounding, precondition failure, primitive execution, conflict or no-op, search exhaustion, premature stopping, over-reasoning, answer readiness, extraction, or answer equivalence. Table~\ref{tab:failure_analysis} reserves the final taxonomy. Representative traces will be selected from frequent categories rather than from isolated errors.
+
+\begin{table}[t]
+\centering
+\caption{Failure attribution for full EGR. Counts and percentages will be filled from frozen traces.}
+\label{tab:failure_analysis}
+\begin{tabular}{lrr}
+\hline
+First blocking phase & Count & Percentage \\
+\hline
+State construction & TBD & TBD \\
+RM selection & TBD & TBD \\
+Grounding & TBD & TBD \\
+Symbolic application & TBD & TBD \\
+Search or continuation & TBD & TBD \\
+Answer readiness or extraction & TBD & TBD \\
+Answer inequivalence & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Residual state entropy analysis}
+\label{sec:rse_analysis}
+
+\subsection{Agreement with graph-derived residual difficulty}
+
+Table~\ref{tab:rse_quality} compares RSE with remaining reference steps, shortest graph distance, heuristic completeness, Selector entropy, and a learned success value. The RSE estimator has a target error of TBD, Spearman correlation of TBD, and discounted-mass calibration error of TBD. Corresponding values for the strongest progress proxy are TBD, TBD, and TBD. Performance with depth features removed is TBD, and the shuffled-depth diagnostic changes the target correlation by TBD. These results will determine whether the estimator captures graph structure beyond a simple depth cue.
+
+\begin{table*}[t]
+\centering
+\caption{Quality of residual-difficulty estimates. Target error and rank correlation are computed where graph-derived targets are resolved. SO is successor-ordering accuracy.}
+\label{tab:rse_quality}
+\begin{tabular}{lccccc}
+\hline
+Signal & Target error & Rank corr. & Calibration & SO & Stop error \\
+\hline
+Normalized remaining steps & TBD & TBD & TBD & TBD & TBD \\
+Shortest graph distance & TBD & TBD & TBD & TBD & TBD \\
+Heuristic completeness & TBD & TBD & TBD & TBD & TBD \\
+Selector entropy & TBD & TBD & TBD & TBD & TBD \\
+Learned success value & TBD & TBD & TBD & TBD & TBD \\
+RSE & TBD & TBD & TBD & TBD & TBD \\
+RSE without depth features & TBD & TBD & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table*}
+
+\subsection{Successor ranking and stopping}
+
+The successor-ordering test forms pairs from the same source state. One successor begins a verified successful continuation; the other is a verified dead end, a higher-cost successful continuation, or a valid but nonproductive branch. RSE orders TBD of positive-negative pairs and TBD of lower-higher-cost positive pairs correctly. Adding RSE reduction to the Selector score changes verified-solution rate by TBD and mean primitive cost by TBD. The final analysis will report whether these changes remain after controlling for the Selector probability of the associated RM.
+
+Stopping is evaluated with four controllers: fixed depth, AnswerReady alone, RSE threshold alone, and the conjunction in Equation~\ref{eq:stopping}. Their premature-stop rates are TBD, TBD, TBD, and TBD, while their over-reasoning rates are TBD, TBD, TBD, and TBD. RSE alone may identify a state with little reachable work but no extractable answer; AnswerReady alone may accept a superficially present yet underconstrained target. The joint rule is intended to require both low residual burden and structural support. The final claim will follow the measured balance between these error types.
+
+\subsection{Trajectory behavior}
+
+Figure~\ref{fig:rse_trajectories} will plot predicted and graph-derived RSE along verified, failed, alternative, and perturbed trajectories. For the running ellipse, both successful branches should end at the same answer-ready state even if their intermediate values differ. A path that applies a tangent RM before any tangent object or tangent query is present should be rejected by the Applicator rather than assigned artificial progress. A valid but longer detour may remain in the graph with a higher path cost. These distinctions show how mathematical validity, action preference, and residual difficulty play different roles.
+
+\begin{figure*}[t]
+\centering
+\fbox{\parbox{0.94\textwidth}{
+Figure placeholder. Plot graph-derived and predicted RSE for successful reference,
+successful alternative, failed, and perturbed trajectories. Include confidence
+bands or instance counts and mark accepted, rejected, and terminal transitions.
+}}
+\caption{RSE along executable and perturbed solution trajectories.}
+\label{fig:rse_trajectories}
+\end{figure*}
+
+\section{LLM augmentation}
+\label{sec:llm_augmentation}
+
+\subsection{Controlled interfaces}
+
+The standalone solver is the primary method. The LLM study tests whether two of its internal capabilities transfer to a different reasoner. In the RM-guidance condition, the LLM receives a canonical serialization of the current state and the top-$k$ RM candidates with short mathematical descriptions. In the grounded-execution condition, the LLM proposes an RM and optional object references; EGR resolves the binding, checks applicability, and returns either a verified successor state or a structured rejection. In the full-interface condition, EGR also supplies the maintained state, RSE-based ordering, and termination signal. The LLM remains responsible for the natural-language explanation and final response format.
+
+All conditions use the same normalized facts, query, answer format, and overall budget. No reference RM sequence, solution graph, or gold answer is shown. Prompts, responses, RM proposals, bindings, tool returns, parsing failures, and token counts are stored for audit. A direct LLM condition and an LLM-proposes/EGR-verifies diagnostic separate the effects of guidance and execution.
+
+\subsection{Results and mechanism analysis}
+
+Table~\ref{tab:llm_results} will report results for TBD LLM families. Direct reasoning obtains TBD answer accuracy and TBD executable-step rate. RM guidance changes these values by TBD and TBD; grounded execution changes them by TBD and TBD; the full interface changes them by TBD and TBD. Correction, harm, adoption, ignore, and misuse rates will show whether the interface produces consistent repairs or changes outputs without a reliable benefit. Costs will be reported in tokens, tool calls, symbolic operations, and wall-clock time.
+
+\begin{table*}[t]
+\centering
+\caption{Controlled LLM augmentation. ES is executable-step rate, Corr. is correction rate, and Adopt. is the proportion of supplied EGR guidance that is used correctly.}
+\label{tab:llm_results}
+\begin{tabular}{llcccccc}
+\hline
+LLM & Condition & Answer acc. & ES & Corr. & Harm & Adopt. & Cost \\
+\hline
+TBD & Direct reasoning & TBD & TBD & -- & -- & -- & TBD \\
+TBD & RM guidance & TBD & TBD & TBD & TBD & TBD & TBD \\
+TBD & Grounded execution & TBD & TBD & TBD & TBD & TBD & TBD \\
+TBD & Full EGR interface & TBD & TBD & TBD & TBD & TBD & TBD \\
+TBD & Propose and verify & TBD & TBD & TBD & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table*}
+
+The mechanism analysis separates theorem-choice errors from execution errors. A corrected selection case requires the supplied RM set to contain a verified positive action and the LLM to adopt it. A corrected execution case requires the direct response to contain an invalid symbolic step that the grounded interface replaces with a valid transition. A harmful case records whether the LLM ignored correct guidance, misread a rejection, or followed an EGR error. Gains will also be stratified by initial RSE, graph depth, path multiplicity, and query family. This analysis keeps the extension tied to the capabilities established in the standalone sections.
+
+\section{Discussion and limitations}
+\label{sec:discussion}
+
+\subsection{What the state-transition formulation changes}
+
+EGR treats mathematical knowledge use as the central decision of conic solving. This changes the unit of prediction from a word, a complete answer, or an unconstrained thought to a high-level mathematical schema whose application has an explicit before and after state. The benefit is structural. Selection can be learned from complex states, while applicability and computation can be checked independently. When a solution fails, the trace shows whether the chosen RM was unsuitable, the binding was wrong, the primitive program failed, the search did not continue, or the terminal answer was unsupported.
+
+This formulation also changes the role of a human solution. The written rationale remains valuable because it identifies relevant knowledge and a coherent derivation. It no longer defines all alternatives as incorrect. Executable verification converts it into a reference path, dependency information permits safe reordering, and bounded search identifies additional successful continuations. Set supervision then aligns the learning target with the mathematical question: which actions can advance a solution from this state?
+
+\subsection{Interpretation of RSE}
+
+RSE formalizes a common but under-specified part of problem solving: judging how much difficult reasoning remains before the query can be resolved. Its path-mass definition includes both work and accessibility. A state with one short, obvious continuation can have lower RSE than a state at the same graph distance whose executable branches mostly lead away from success. A state with several independent successful continuations can also be easier under the reference policy than one with a single narrow path.
+
+The quantity is conditional on the solver. Changing the RM library, reference policy, budget, or cost changes the accessible paths and therefore changes RSE. This dependence is useful because it makes the measure operational, but it also sets its interpretation. RSE is not a claim about human cognitive entropy, intrinsic mathematical difficulty, or answer confidence. It describes residual difficulty for a specified executable system. The experiments must consequently report all conditioning choices and compare the formal graph target with simpler, less structured proxies.
+
+\subsection{Limitations and transfer boundary}
+
+The action library determines what EGR can express. An absent or incorrectly specified RM can block every otherwise valid path. Conformance testing reduces implementation errors but does not prove that the 80 RMs cover every conic derivation. The Grounder's deterministic constraints and limited backtracking may also miss difficult bindings, especially when several geometrically similar objects occur in one state. A learned binding ranker may become useful after these cases are measured.
+
+Solution graphs are finite reconstructions rather than exhaustive enumerations of mathematical creativity. Positive edges are verified, but the absence of an edge does not prove that no valid action exists. Unknown masking and target intervals make this incompleteness explicit. RSE estimates inherit the selected graph budget and verifier coverage, and their reliability should be reported by graph region and target confidence.
+
+The primary input is a structured set of facts and a query. This choice permits a focused study of reasoning, but a complete educational or general-purpose system would also need reliable interpretation of natural language and diagrams. Such perception errors should be evaluated separately before they are combined with the reasoning errors studied here.
+
+Finally, the empirical evidence is conic-specific. The architecture can be transferred when another mathematical domain admits typed states, a finite or retrievable action library, executable local transformations, and verifiable terminal answers. The domain state schema, RM definitions, Grounder, symbolic primitives, and graph-construction verifier must then be rebuilt. The reusable contribution is the coordination pattern and its formal control objective, while domain coverage remains a substantive part of each implementation.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This paper formulates conic-section problem solving as a sequence of query-conditioned, executable uses of mathematical knowledge. EGR represents exact facts in a symbolic state and exposes a structured abstract view for learned prediction. Its Selector ranks high-level RMs, its Grounder binds them to concrete objects, and its Applicator executes shared symbolic operations under explicit preconditions and postconditions. Verified solution graphs support multiple correct paths and set-valued supervision. RSE connects these local transitions to the discounted reachability of a successful terminal state, while AnswerReady keeps progress estimation separate from answer extraction.
+
+Under the frozen evaluation, full EGR obtains TBD final-answer accuracy, TBD verified-solution rate, and TBD improvement in process validity or efficiency over the strongest standalone comparison. The RSE analysis reports TBD evidence for successor ranking and stopping, and the secondary LLM study reports TBD changes under RM guidance and grounded execution. These results will determine the final strength of the empirical claims; the mathematical formulation and evaluation boundaries remain unchanged by the numerical outcome.
+
+The study shows how a knowledge-based solver can combine learned action choice with exact symbolic state change without reducing the task to either fixed rule order or free-form generation. Within conic sections, this provides a common account of representation, mathematical action, execution, progress, termination, and answer verification. The same account offers a concrete starting point for other structured mathematical domains once their knowledge and execution contracts are defined.
