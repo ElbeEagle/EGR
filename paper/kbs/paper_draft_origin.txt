@@ -1,34 +1,40 @@
-\title [mode = title]{Conic-section Problem Solving}
+
 
 \begin{abstract}
-Automated mathematical problem solving is a foundational technology for intelligent education systems and knowledge-based reasoning. Among various mathematical domains, conic-section problem (CSP) solving represents a critical yet challenging task. Solving conic-section problems require coordinating geometric properties, curve equations, parameter extraction, and nonlinear algebraic transformations. Unlike algebraic problems, conic-section problems lack a general algorithmic solver, while algebraic elimination frequently leads to severe symbolic explosion. To address these challenges, we propose the Entropy-Guided Reasoner (EGR), a knowledge-based neuro-symbolic framework for solving conic-section problems. EGR formalizes the solving process as a sequential decision-making process over evolving problem states. To realize this, EGR maintains a dual-layer state representation that couples an exact symbolic state for deterministic mathematical execution with an abstract state for neural prediction. Domain knowledge is organized into a reasoning-model pool containing 80 formal schemas, where each reasoning model encapsulates an applicability precondition and a deterministic symbolic transition function. At each reasoning step, a neural selector predicts candidate reasoning models, and a symbolic applicator executes deterministic transitions over the symbolic state. Furthermore, EGR introduces a learned state-entropy mechanism to quantify the residual solving burden of intermediate states, guiding candidate transition ranking through information gain and regulating process termination. Experimental evaluations on a benchmark of 10k conic-section problems demonstrate that EGR achieves superior solving accuracy and process interpretability compared with baseline approaches.
+Reliable mathematical problem solving requires a solver to choose an appropriate mathematical principle, apply it to the correct objects, carry out the resulting symbolic computation, and determine when the current information is sufficient to answer the query. These decisions are difficult to inspect when an entire solution is generated as free-form text. We study them in conic-section problems, where a finite body of geometric knowledge gives rise to state-dependent theorem use, exact algebraic transformations, and multiple valid solution paths. We present the Entropy-Guided Reasoner (EGR), a standalone neuro-symbolic solver that represents a solution as a sequence of executable state transitions. EGR maintains exact mathematical facts in a symbolic state and derives a query-conditioned abstract state for neural prediction. At each step, a Selector ranks high-level reasoning models, a Grounder binds a selected RM to concrete mathematical objects, and a symbolic Applicator executes a program of reusable operations after checking its preconditions. Training uses sets of verified actions obtained from executable solution graphs, rather than requiring reproduction of one annotated action order. EGR further introduces Residual State Entropy (RSE), a goal-conditioned negative-log reachability potential that reflects both the work remaining and the difficulty of reaching a successful terminal state. RSE is used to rank successor states and, together with a structural answer-readiness test, to control termination. On the frozen conic-section test set, EGR obtains TBD final-answer accuracy and TBD verified-solution rate; the corresponding gains over the strongest standalone baseline are TBD and TBD. Process-level evaluation further reports TBD for valid-action ranking, grounded execution, and RSE-guided control. A secondary study examines whether the same reasoning-model guidance and symbolic execution interfaces can improve different large language models. The empirical conclusions are confined to conic-section solving, while the state-transition formulation provides a reusable design for structured mathematical domains.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
 
-Automated mathematical problem solving is a foundational capability for intelligent education systems, requiring solvers to produce both exact answers and tutorable derivation procedures~\cite{yu2022func-relation,lu_radarmath_2021}. In secondary and higher mathematics education, analytic geometry serves as a pivotal subject that bridges visual geometric intuition with rigorous algebraic computation. Within analytic geometry, conic-section problem solving represents an essential yet challenging research topic. Conic-section problems investigate standard quadratic curves, including ellipses, hyperbolas, parabolas, and circles, along with their associated geometric components such as focal points, directrices, tangents, and asymptotes. Developing specialized and reliable algorithms for conic-section problem solving is therefore crucial for advancing domain-specific knowledge reasoning.
+Mathematical problem solving is a sequential use of knowledge. A solver must retain what is already known, select a mathematical relation that is useful under those conditions, instantiate the relation with the correct objects, perform the required computation, and decide whether another reasoning step is necessary. A final answer alone does not reveal whether these intermediate decisions were mathematically justified. This distinction matters for reliable automatic solving because the same answer can follow from a valid derivation, an accidental cancellation, or an unsupported guess. It also matters for diagnosis: an incorrect answer may originate from an unsuitable principle, an invalid object binding, a symbolic error, or premature termination.
 
-Unlike elementary algebraic problems or Euclidean geometry proofs, conic-section problems possess unique mathematical characteristics that make automated solving particularly difficult. First, unlike linear equation systems that can be resolved via standard Gaussian elimination, conic-section problems lack a general closed-form algorithmic solver. Direct unguided algebraic elimination across nonlinear quadratic equations frequently leads to severe symbolic combinatorial explosion. Second, conic-section problem solving requires an intricate interleaving of geometric relational properties and exact algebraic transformations. A typical problem requires putting an equation into standard form, extracting intrinsic parameters ($a, b, c, p$), and applying focal or coordinate relations before formulating solvable algebraic constraints. Third, mathematical operations in this domain are strictly state-dependent. A domain theorem cannot be applied until its prerequisite geometric entities and parameter values have been established in the current state. Consequently, solving a problem requires a solver to determine which mathematical principle to invoke at each step based on the evolving problem condition.
+Recent large language models (LLMs) have improved mathematical performance through mathematical fine-tuning, chain-of-thought prompting, self-consistency, process supervision, and inference-time search~\cite{hendrycks2021math,wei2022chain,wang2023selfconsistency,yao2023tree,lightman2023lets}. These methods establish the value of intermediate reasoning, but the intermediate unit is usually a token sequence or a textual thought. Its mathematical preconditions and its effect on the current problem state therefore remain implicit. Program-aided methods transfer calculations to interpreters, and formal systems verify proof steps~\cite{gao2023pal,chen2023programofthoughts,yang2023leandojo}. Yet a problem-solving system still needs to decide which item of mathematical knowledge should be used now, which objects it concerns, how it changes the available facts, and whether the resulting state is close enough to the requested answer.
 
-Existing automated solving methods remain inadequate for conic-section problems. Traditional relation-centric and rule-based solvers have achieved notable success in arithmetic word problems and elementary function problems~\cite{yu2023implicit,xiong2026udfsolver}. However, these methods are primarily designed for explicit algebraic or functional relations and cannot handle the nonlinear parameter couplings and geometric configurations of conic curves. Computer algebra systems (CAS) offer powerful symbolic computation routines, but they cannot autonomously decide which high-level geometric theorems to apply in a multi-step derivation~\cite{meurer2017sympy}. Meanwhile, deep learning models and large language models (LLMs) attempt to generate solutions as sequential text tokens~\cite{hendrycks2021math,wei2022chain}. However, their generated derivations often suffer from invalid parameter bindings, ungrounded theorem applications, and algebraic hallucinations due to the absence of explicit state tracking and precondition verification.
+Conic-section problems make these requirements visible in a controlled setting. Their objects, including ellipses, hyperbolas, parabolas, circles, focal points, directrices, tangents, and asymptotes, have precise mathematical definitions. The relevant body of domain knowledge is finite, but its possible combinations are not. A problem may first require a curve to be put into standard form, then require its parameters to be recovered, and only then permit a relation involving eccentricity or a focus to be applied. Other questions combine an analytic-geometry relation with a discriminant, a distance constraint, or an optimization condition. Thus, an operation that is relevant to the topic may still be inapplicable in the current state. The exact same facts can also support different next steps when several derivations are valid. Finally, completion depends on the query: a state sufficient for finding an eccentricity may be insufficient for finding a tangent equation. These properties make conic sections a suitable setting for studying knowledge selection, symbolic application, path multiplicity, and progress control within one task.
 
-To address these challenges, this paper formulates conic-section problem solving as a sequential multi-step decision-making process over evolving reasoning states. At each step, the core decision is to predict the next applicable reasoning model based on the accumulated facts and query condition. We formalize this process as an explicit state-transition sequence:
+The central premise of this work is that these problems should be represented by their evolving mathematical states. Instead of mapping a problem directly to a generated derivation and answer, we write solving as
 \begin{equation}
-S_0 \xrightarrow{M_0} S_1 \xrightarrow{M_1} \cdots \xrightarrow{M_{T-1}} S_T \xrightarrow{\mathrm{Extract}} \hat{a},
+S^{\mathrm{sem}}_0
+\xrightarrow{a_0}
+S^{\mathrm{sem}}_1
+\xrightarrow{a_1}
+\cdots
+\xrightarrow{a_{T-1}}
+S^{\mathrm{sem}}_T
+\xrightarrow{\mathrm{Extract}}
+\hat y,
 \label{eq:intro_transition}
 \end{equation}
-where $S_t$ denotes the structured reasoning state at step $t$, $M_t$ represents the selected reasoning model, and $\hat{a}$ is the extracted answer. This formulation separates the high-level policy decision of what principle to apply from the deterministic symbolic execution of how the state is updated.
+where each $a_t$ is an instantiated mathematical action and each accepted arrow is a verified symbolic transition. This representation separates three responsibilities. A learned policy chooses which high-level mathematical relation to consider. A symbolic procedure determines whether it can be applied and computes its exact effect. A progress controller decides whether the successor should be explored further and whether the query can already be answered. A human-written solution can seed this process, but it is treated as one reference derivation rather than the only correct order of actions.
 
-We instantiate this paradigm into the Entropy-Guided Reasoner (EGR), a knowledge-based neuro-symbolic framework. EGR introduces a dual-layer state representation: an exact symbolic state preserves equations, parameters, and geometric relations for symbolic execution, while an abstract state provides compact feature vectors for neural prediction. Domain knowledge is organized into a reasoning-model pool containing 80 formal schemas. In this framework, each reasoning model is a formal mathematical schema rather than a parameterized neural network. At each step, a neural selector ranks candidate reasoning models, and a symbolic applicator checks applicability and executes deterministic state transitions. To guide the sequential search, EGR introduces a learned state-entropy estimator that measures the residual solving burden of intermediate states. By evaluating the information gain of candidate transitions, EGR prioritizes progress-producing steps and terminates neural prediction when the state is answer-ready.
+We develop this premise as EGR, an executable and progress-aware neuro-symbolic solver for conic-section problems. EGR first represents the same reasoning state through two coordinated interfaces. The symbolic state stores exact objects, equations, relations, constraints, and derived facts. The abstract state is a query-conditioned representation used by learned components. EGR then organizes domain knowledge into 80 high-level reasoning models (RMs). In this paper, an RM is a mathematical schema, rather than a neural network. It declares its preconditions, the roles that must be bound to state objects, a program composed of shared symbolic operations, and the postconditions of a valid application. The Selector ranks RM identifiers, the Grounder constructs concrete bindings, and the Applicator performs the resulting transition transactionally. This division lets neural prediction address a combinatorial decision while symbolic computation retains mathematical precision.
 
-The primary contributions of this paper are summarized as follows:
-\begin{enumerate}
-\item We formalize conic-section problem solving as a state-conditioned sequential decision process, replacing unconstrained generation with explicit reasoning-model transitions.
-\item We construct a dual-layer state architecture coupled with a domain library of 80 formal reasoning models, achieving an effective synergy between neural model selection and symbolic execution.
-\item We develop an entropy-guided progress control mechanism that estimates residual solving burden, ranks candidate transitions through information gain, and determines adaptive termination.
-\item We conduct comprehensive experiments on a benchmark of conic-section problems, demonstrating that EGR achieves superior solving accuracy and reasoning interpretability compared with baseline approaches.
-\end{enumerate}
+Two further design choices connect local decisions with complete solutions. First, EGR learns from a verified solution graph. For a given state, the positive supervision is the set of currently verified RMs that are executable and retain at least one successful continuation. Alternative actions that have not been resolved within the construction budget remain unknown instead of being declared wrong. This supervision matches the fact that a conic problem may admit several correct derivations or several commutative action orders. Second, EGR measures remaining difficulty with Residual State Entropy (RSE). RSE is defined from the probability mass of successful completion paths under a stated reference policy and path cost. It becomes smaller when short successful continuations are easier to reach. This quantity is distinct from the entropy of the Selector's next-action distribution and from normalized remaining steps. EGR uses the estimated RSE to compare successor states and combines a low-RSE condition with a structural answer-readiness predicate for termination.
+
+The empirical study is designed around the same decomposition. The primary evaluation concerns the standalone solver and reports final-answer accuracy together with verified-solution rate, transition validity, grounding success, valid-action ranking, stopping errors, and computation cost. Controlled ablations compare unique-label and set-supervised selection, the original 28-dimensional state and the structured query-conditioned state, several progress proxies and formal RSE, and different uses of RSE for ranking and stopping. The secondary evaluation exposes RM guidance and grounded symbolic execution to LLMs under matched inputs and budgets. It asks whether EGR's intermediate capabilities remain useful when the surrounding reasoner is changed, rather than making an LLM part of the definition of EGR.
+
+This study makes four connected contributions. It first formulates conic-section solving as query-conditioned selection and execution of high-level mathematical actions over explicit states, with multiple verified paths included in the task definition. It then develops an executable architecture in which dual state representations, RM selection, constrained grounding, shared symbolic operations, and transactional application have distinct and auditable roles. It further defines RSE as a goal-conditioned measure of residual solving difficulty and incorporates it into successor ranking and termination. Finally, it establishes an evaluation protocol that joins answer correctness with process validity and tests EGR both as an independent solver and, separately, as a source of structured support for LLM reasoning. The implemented knowledge and empirical findings concern conic sections; extending the architecture to another domain requires a corresponding state schema, RM library, Grounder, and verifier.
 
 The remainder of the paper develops this argument in the order needed to assess it. Section~\ref{sec:related_work} locates EGR among generative, executable, formal, and knowledge-based approaches. Section~\ref{sec:formulation} defines the task, actions, solution graphs, RSE, and success conditions. Section~\ref{sec:method} presents the complete solver. Section~\ref{sec:data_experiments} describes the internal reconstruction of executable supervision and the experimental protocol. Sections~\ref{sec:standalone_results} and~\ref{sec:rse_analysis} evaluate the standalone system and the RSE mechanism. Section~\ref{sec:llm_augmentation} reports the LLM extension, followed by discussion and conclusions.
 
@@ -65,106 +71,162 @@ Knowledge-based solvers represent mathematical concepts and relations explicitly
 
 This position distinguishes EGR from three nearby formulations. It is more constrained than arbitrary program generation because its actions belong to a typed domain library. It is more iterative than one-shot translation to an external solver because every accepted action creates the state for the next decision. It is more answer-oriented than general theorem proving because termination and extraction are defined by a query. These distinctions lead directly to the formal task developed next.
 
+\section{Problem formulation}
+\label{sec:formulation}
 
-\section{Problem Formulation}
-\label{sec:problem_formulation}
-\subsection{Problem Statement and Scope}
-Let a conic-section problem be formally defined as a tuple:
+\subsection{Task and scope}
+
+Let a conic-section problem be
 \begin{equation}
-x = (F, q),
+x=(F,q),
 \label{eq:problem}
 \end{equation}
-where $F$ is a finite set of normalized facts, equations, and geometric constraints, and $q$ denotes the target query. Facts in $F$ describe curves, points, lines, algebraic equations, geometric relations, parameter domains, and coordinate constraints. The query $q$ specifies the target mathematical object to be evaluated, such as a numerical value, an algebraic equation, a coordinate pair, a distance, or an extremum. The input $x$ is obtained after the problem statement has been converted into normalized facts and queries, isolating knowledge-based multi-step reasoning from raw linguistic or visual parsing.
-The solver takes $x$ as input and produces a predicted answer $\hat{a}$ along with an executable transition trace:
+where $F$ is a finite collection of normalized facts and constraints and $q$ is a query. Facts may describe curve equations, points, lines, parameters, geometric relations, algebraic conditions, and admissible domains. The query identifies the mathematical object to be returned, such as a value, equation, coordinate, length, area, range, or extremum. The present task begins after the problem statement has been mapped to $F$ and $q$. This isolates structured representation and multi-step reasoning from upstream language or diagram perception.
+
+The solver returns an answer $\hat y$ and an execution trace
 \begin{equation}
-\tau = (S_0, M_0, S_1, \dots, M_{T-1}, S_T).
+\tau=(S^{\mathrm{sem}}_0,a_0,S^{\mathrm{sem}}_1,\ldots,
+a_{T-1},S^{\mathrm{sem}}_T).
 \label{eq:trace}
 \end{equation}
-The predicted answer $\hat{a}$ is evaluated against the reference answer $a^\star$ via symbolic equivalence, while the trace $\tau$ is evaluated by verifying the validity of every state transition.
-Throughout this paper, we adopt the standard ellipse problem
+The answer is judged by mathematical equivalence to the reference answer $y^\star$. The trace is judged independently by the validity of every transition. This division makes final-answer correctness necessary for end-to-end success without using the answer to choose test-time actions.
+
+Throughout the paper, we use the ellipse
 \begin{equation}
-\frac{x^2}{25} + \frac{y^2}{9} = 1, \quad q = \text{``find the eccentricity''}
+\frac{x^2}{25}+\frac{y^2}{9}=1
 \label{eq:running_ellipse}
 \end{equation}
-as a running example. The initial facts specify the curve equation and the query target, whereas intrinsic parameters ($a, b, c$) and eccentricity ($e$) must be derived sequentially.
-\subsection{Domain Characteristics and Observations}
-To design an effective solving algorithm, we analyze the fundamental mathematical properties of conic-section problems.
-\newtheorem{observation}{Observation}
-\begin{observation}[Characteristics of Conic-Section Problems]
-Conic-section problems exhibit three fundamental domain properties:
-\begin{enumerate}
-\item \textbf{Hierarchical Entity-Parameter Coupling:} Geometric entities (e.g., focal points, directrices, asymptotes) and algebraic equations are coupled through underlying parameters (e.g., $a, b, c, p$). These parameters cannot be directly observed from raw equations without canonical normalization and parameter extraction.
-\item \textbf{State-Dependent Precondition Dependencies:} Domain theorems cannot be applied arbitrarily. An algebraic or geometric relation is executable only when its specific prerequisite objects and constraints are already established in the current state.
-\item \textbf{Nonlinear Algebraic Complexity:} Geometric relations frequently translate into nonlinear quadratic systems, which lack closed-form algebraic solutions and easily cause symbolic explosion during direct elimination.
-\end{enumerate}
-\end{observation}
-These characteristics necessitate an explicit state representation, constrained reasoning-model selection, and progress-aware execution control.
-\subsection{Reasoning State Representation}
-\begin{definition}[Reasoning State]
-A reasoning state $S_t$ is the structured intermediate condition of the problem after $t$ reasoning steps. It encapsulates all mathematical information currently established for further inference, including derived facts, unresolved constraints, the query target, and reasoning history.
-\end{definition}
-In our framework, the reasoning state is maintained through a dual-layer representation:
+with the query ``find the eccentricity'' as a running example. It is intentionally simple enough to display each representation. The initial facts contain the equation and the queried property, but do not yet contain the major and minor semi-axes, the focal distance, or the eccentricity.
+
+\subsection{Reasoning state}
+
+At step $t$, EGR maintains a semantic state and a control context,
 \begin{equation}
-S_t = \left(S_t^{\mathrm{sym}}, S_t^{\mathrm{abs}}\right),
-\label{eq:dual_state}
+S_t=(S_t^{\mathrm{sem}},C_t).
+\label{eq:controller_state}
 \end{equation}
-where $S_t^{\mathrm{sym}}$ represents the exact symbolic state, and $S_t^{\mathrm{abs}}$ represents the compact abstract state.
-The symbolic state $S_t^{\mathrm{sym}}$ stores exact equations, geometric entities, parameter values, algebraic constraints, the query target, and the sequence of previously applied reasoning models. It provides the formal environment for verifying model preconditions and executing exact symbolic transformations. The abstract state is a fixed-dimensional projection derived from the symbolic state:
+The semantic state contains only mathematical content that is currently established: typed objects, equations, parameter values, relations, constraints, derived facts, the query, and unresolved subgoals. The control context records how the search reached that state, including attempted actions, accepted actions, bindings, failure codes, state hashes, accumulated cost, and backtracking information. Separating these parts preserves a stable mathematical meaning for $S_t^{\mathrm{sem}}$ even when two searches reach it through different histories.
+
+The same semantic state is exposed through two coordinated representations. The symbolic state stores exact expressions and supports executable operations. The abstract state is a learned view
 \begin{equation}
-S_t^{\mathrm{abs}} = \phi\left(S_t^{\mathrm{sym}}, q, t\right) \in \mathbb{R}^d,
+S_t^{\mathrm{abs}}
+=\phi(S_t^{\mathrm{sem}},q,\bar C_t),
 \label{eq:abstract_state}
 \end{equation}
-where $\phi$ maps the symbolic content into structural numerical features. The abstract state encodes curve types, query types, available parameters, established relations, and reasoning depth, supplying compact inputs for neural prediction.
-\subsection{Reasoning-Model Pool}
-\begin{definition}[Reasoning Model]
-A reasoning model (RM) is a formal mathematical schema representing an executable domain operation. Let $\mathcal{M} = \{M_1, M_2, \dots, M_K\}$ denote the reasoning-model pool containing $K = 80$ models. Each reasoning model $M_i$ is formalized as a pair:
-\begin{equation}
-M_i = (\operatorname{pre}_i, \operatorname{trans}_i),
-\label{eq:model_definition}
-\end{equation}
-where $\operatorname{pre}_i\left(S_t^{\mathrm{sym}}\right) \in \{0, 1\}$ is an applicability predicate specifying the required preconditions, and $\operatorname{trans}_i\left(S_t^{\mathrm{sym}}\right)$ is a deterministic symbolic transition function.
-\end{definition}
-An RM is a formal mathematical schema rather than a parameterized neural network. The reasoning-model pool covers standard operations in analytic geometry, including canonical parameter extraction, focal relation application, tangent and asymptote derivation, and algebraic constraint simplification.
-\subsection{State Transition}
-\begin{definition}[State Transition]
-A state transition is the executable update produced by applying a reasoning model to a valid symbolic state. A transition induced by $M_i$ is valid if and only if:
-\begin{equation}
-\operatorname{pre}_i\left(S_t^{\mathrm{sym}}\right) = 1.
-\label{eq:precondition_check}
-\end{equation}
-Upon validation, the successor symbolic state is deterministically computed as:
-\begin{equation}
-S_{t+1}^{\mathrm{sym}} = \operatorname{trans}_i\left(S_t^{\mathrm{sym}}\right).
-\label{eq:symbolic_transition}
-\end{equation}
-\end{definition}
-This mechanism strictly separates model selection from model execution: a reasoning model is predicted by a neural selector, but the mathematical state changes only through an executable symbolic transition. After each transition, the abstract state is reconstructed as $S_{t+1}^{\mathrm{abs}} = \phi(S_{t+1}^{\mathrm{sym}}, q, t + 1)$.
-\subsection{State Entropy and Information Gain}
-\begin{definition}[State Entropy and Information Gain]
-State entropy $H_\psi(S_t) \in [0, 1]$ is a learned scalar that estimates the residual solving burden of the current state $S_t$, where larger values indicate a greater distance from the solution. For an applicable candidate model $M_i$ that yields a candidate successor $\widetilde{S}_{t+1}^{(i)}$, the information gain is defined as the expected reduction in state entropy:
-\begin{equation}
-\operatorname{IG}\left(M_i, S_t\right) = H_\psi(S_t) - H_\psi\left(\widetilde{S}_{t+1}^{(i)}\right).
-\label{eq:information_gain}
-\end{equation}
-\end{definition}
-Information gain quantifies the reasoning progress delivered by applying model $M_i$, favoring transitions that advance the state toward resolving the query.
-\subsection{Termination Condition and Problem Solving}
-\begin{definition}[Conic-Section Problem Solving]
-Given a problem $x = (F, q)$ and the reasoning-model pool $\mathcal{M}$, conic-section problem solving requires finding a finite sequence of reasoning models $\tau = (M_0, M_1, \dots, M_{T-1})$ such that the system starts from $S_0 = \operatorname{Construct}(F, q)$, satisfies $\operatorname{pre}_{M_t}(S_t^{\mathrm{sym}}) = 1$ at each step, and terminates at an answer-ready terminal state $S_T$.
-\end{definition}
-Neural reasoning model prediction terminates when the stopping condition is satisfied:
-\begin{equation}
-\operatorname{Stop}\left(S_t, q\right) = \mathbf{1} \left[ H_\psi(S_t) \le \epsilon_H \;\wedge\; \operatorname{AnswerReady}\left(S_t^{\mathrm{sym}}, q\right) \right],
-\label{eq:stop_condition}
-\end{equation}
-where $\epsilon_H$ is a predefined entropy threshold, and $\operatorname{AnswerReady}(S_t^{\mathrm{sym}}, q)$ is a structural predicate confirming that the queried mathematical quantity is directly extractable from $S_t^{\mathrm{sym}}$.
-Once terminated, the final answer is obtained via exact extraction:
-\begin{equation}
-\hat{a} = \operatorname{Extract}\left(S_T^{\mathrm{sym}}, q\right).
-\label{eq:answer_extract}
-\end{equation}
-A solution is verified if all intermediate transitions are symbolically valid and $\hat{a}$ is mathematically equivalent to reference answer $a^\star$.
+where $\bar C_t$ is a limited control summary that may include recent failed actions, repeated-state indicators, and accumulated cost. Query conditioning is required because the usefulness of a fact depends on what the problem asks. The abstract state may encode entities, relations, constraints, available parameters, unresolved subgoals, and readiness indicators. It is not required to contain the exact algebra needed for execution; that information remains in the symbolic state.
 
+\subsection{Reasoning models, bindings, and transitions}
+
+Let
+\begin{equation}
+\mathcal M=\{M_1,\ldots,M_K\}, \qquad K=80,
+\label{eq:rm_library}
+\end{equation}
+be the conic-section reasoning-model library. We use reasoning model (RM) for a high-level domain schema with a stable mathematical meaning. Learned predictors are referred to by their component names. An RM is defined as
+\begin{equation}
+M_i=(\operatorname{pre}_i,
+     \operatorname{ground}_i,
+     \operatorname{program}_i,
+     \operatorname{post}_i).
+\label{eq:rm_contract}
+\end{equation}
+The precondition specifies the object types, known relations, and constraints required by the mathematical principle. The grounding specification declares formal roles that must be matched to concrete objects or expressions. The program is a deterministic composition of reusable symbolic operations. The postcondition states what must hold after successful execution.
+
+An RM identifier is not executable until its roles are bound. A bound action is
+\begin{equation}
+a_t=(M_i,\theta_t),
+\label{eq:bound_action}
+\end{equation}
+where $\theta_t$ maps the formal roles of $M_i$ to curves, points, lines, variables, or expressions in $S_t^{\mathrm{sem}}$. The Selector predicts $M_i$; the Grounder constructs $\theta_t$. This separation prevents the action classifier from having to enumerate every possible object assignment.
+
+The symbolic transition is a partial function
+\begin{equation}
+T:S_t^{\mathrm{sem}}\times a_t
+\longrightarrow
+(S_{t+1}^{\mathrm{sem}},\Delta_t,r_t),
+\label{eq:transition}
+\end{equation}
+where $\Delta_t$ is the explicit state change and $r_t$ is a structured execution record. The transition is accepted only if the binding satisfies the precondition, every primitive operation succeeds, the delta is consistent and non-redundant, and the successor satisfies the postcondition. A failed action leaves the source state unchanged. A transition that reproduces only existing facts is recorded as a no-op and is not counted as progress.
+
+\subsection{Multiple valid paths and action-set supervision}
+
+A human solution often describes one useful derivation, but its sentence order need not equal the executable dependency order. Moreover, several derivations may be correct. We therefore define a solution graph
+\begin{equation}
+G_x=(V_x,E_x),
+\label{eq:solution_graph}
+\end{equation}
+whose vertices are canonical semantic states and whose directed edges are verified bound actions. A terminal vertex resolves $q$ and produces an answer equivalent to $y^\star$ under offline checking. Commutative actions and alternative continuations may create several paths or a partial order within the same graph.
+
+For a state $S$ and query $q$, the verified valid-action set is
+\begin{equation}
+\mathcal A^+(S,q)=
+\left\{
+(M_i,\theta):
+T(S,(M_i,\theta))\ \text{is valid and its successor has a
+verified successful continuation}
+\right\}.
+\label{eq:positive_bound_actions}
+\end{equation}
+The Selector is supervised by the projection of this set onto RM identifiers,
+\begin{equation}
+\mathcal M^+(S,q)=
+\{M_i:\exists\theta,(M_i,\theta)\in\mathcal A^+(S,q)\}.
+\label{eq:positive_rm_set}
+\end{equation}
+These sets describe actions verified within a finite construction budget. An alternative for which neither success nor failure has been established receives an unknown label and is excluded from the classification loss. Thus, graph incompleteness does not turn every undiscovered derivation into a negative example.
+
+\subsection{Residual state entropy}
+
+The number of remaining steps gives one account of progress, but it does not describe how difficult those steps are to find. Two states may be equally distant from a solution while differing greatly in the number of executable branches and in the probability that a basic policy follows a successful branch. RSE combines these aspects by measuring the discounted reachability of successful completion.
+
+Let $\Pi^+(S,q)$ be the set of verified executable trajectories that begin at $S$ and terminate with a correct answer to $q$. Let $\pi_0$ be a reference policy over currently executable high-level RMs, let $C(\tau)$ be the cost of trajectory $\tau$, and let $\beta\geq 0$ determine the cost penalty. We define the successful path mass
+\begin{equation}
+Z_\beta(S,q)=
+\sum_{\tau\in\Pi^+(S,q)}
+P_{\pi_0}(\tau\mid S,q)
+\exp[-\beta C(\tau)]
+\label{eq:path_mass}
+\end{equation}
+and the Residual State Entropy
+\begin{equation}
+H_{\mathrm{RSE}}(S,q)
+=-\log\left(Z_\beta(S,q)+\varepsilon\right).
+\label{eq:rse}
+\end{equation}
+Its full specification is written as
+\begin{equation}
+H_{\mathrm{RSE}}
+(S,q\mid\mathcal M,\pi_0,B,c),
+\label{eq:rse_conditioning}
+\end{equation}
+where $\mathcal M$ is the RM library, $B$ is the path-search budget, and $c$ defines action cost. The first implementation uses a maximum-entropy reference policy over executable RM identifiers and unit RM cost. Other cost definitions, such as primitive count or measured runtime, can be evaluated without changing the definition.
+
+Equation~\ref{eq:rse} has a direct interpretation. Short successful paths, numerous successful alternatives, and high reachability under $\pi_0$ increase $Z_\beta$ and reduce RSE. Long paths, distracting branches, or scarce successful continuations reduce $Z_\beta$ and increase RSE. The RSE reduction produced by a bound action is
+\begin{equation}
+\Delta H(S,a)
+=H_{\mathrm{RSE}}(S,q)
+-H_{\mathrm{RSE}}(S',q),
+\qquad
+S'=\operatorname{Succ}(T(S,a)).
+\label{eq:rse_reduction}
+\end{equation}
+RSE is therefore a goal- and solver-conditioned potential. It is neither a Shannon entropy over the contents of a state nor the entropy of the Selector's action distribution. The reference answer is used only while constructing successful paths and evaluating their terminal vertices. At test time, the RSE estimator receives the current state and query, not $y^\star$.
+
+\subsection{Termination and end-to-end success}
+
+Low residual difficulty is informative but does not by itself guarantee that the query can be answered. EGR therefore defines $\operatorname{AnswerReady}(S,q)$ as a structural predicate. It is true when the requested object or an equivalent expression can be derived from facts already present in the state without another substantive RM transition. The normal stopping rule is
+\begin{equation}
+\operatorname{Stop}(S_t,q)=
+\mathbb I\left[
+\widehat H_{\mathrm{RSE}}(S_t,q)\leq\epsilon_H
+\land
+\operatorname{AnswerReady}(S_t,q)
+\right].
+\label{eq:stopping}
+\end{equation}
+Maximum depth, repeated-state detection, and no-progress detection are safety exits. They produce an unresolved outcome rather than a successful terminal state.
+
+The read-only extractor locates the answer supported by a terminal state, normalizes its representation, and checks it against the state's own constraints. It does not introduce a new geometric relation or solve a missing subsystem. Offline evaluation then applies a symbolic equivalence comparator to $\hat y$ and $y^\star$. A verified solution satisfies three conditions: every accepted transition is valid, the terminal state resolves the query, and the extracted answer is mathematically equivalent to the reference answer. This is the hard end-to-end success criterion used in the experiments.
 
 \section{EGR method}
 \label{sec:method}
