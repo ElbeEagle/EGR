@@ -34,6 +34,50 @@ class HyperbolaParameterRelation(TheoremModel):
             chinese_name="双曲线参数关系"
         )
     
+    def propose_bound(self, state, action):
+        import sympy as sp
+        from src.solver.transition_primitives import (
+            TransitionError, instantiate_shared_focus, finite_real_solutions,
+        )
+        from src.theorems.bound_application import Proposal, check_binding, bound_parameters
+
+        if action.mode != 'constrain_shared_focus':
+            raise TransitionError('inapplicable', 'Bound RM12 currently supports shared-focus mode only')
+        fact = check_binding(state, action)
+        a_sq, b_sq = bound_parameters(state, action.curve, fact.fact_id)
+        bound_parameters(state, action.peer_curve, action.peer_equation_id)
+        peer_key = (action.peer_curve, 'c_sq')
+        if peer_key not in state.properties:
+            raise TransitionError('inapplicable', 'Missing peer focal parameter; apply RM11 first')
+        c_sq, relation_operation = instantiate_shared_focus(
+            state.relations[action.relation_id], action.curve, action.peer_curve,
+            state.frames[action.curve], state.frames[action.peer_curve], state.properties[peer_key],
+        )
+        equation = sp.cancel(c_sq - a_sq - b_sq)
+        operations = [relation_operation, {'operation': 'hyperbola_parameter_relation',
+                                           'curve': action.curve, 'expression': equation}]
+        reads = (fact.fact_id, action.peer_equation_id, action.relation_id,
+                 f'frame:{action.curve}', f'frame:{action.peer_curve}',
+                 f'property:{action.curve}:a_sq', f'property:{action.curve}:b_sq',
+                 f'property:{action.peer_curve}:a_sq', f'property:{action.peer_curve}:b_sq',
+                 f'property:{action.peer_curve}:c_sq', *state.constraints.keys())
+        values, candidates = {}, ()
+        if state.query in state.values:
+            if sp.simplify(equation.subs(state.values)) != 0:
+                raise TransitionError('conflict', 'Known value violates shared-focus relation')
+        else:
+            candidates = finite_real_solutions(
+                equation.subs(state.values), state.query,
+                [c.subs(state.values) for c in state.constraints.values()], trace=operations)
+            operations.append({'operation': 'solve_and_filter', 'target': state.query,
+                               'candidates': candidates})
+            if not candidates:
+                raise TransitionError('conflict', 'No shared-focus solution satisfies conditions')
+            if len(candidates) == 1:
+                values[state.query] = candidates[0]
+        return Proposal(properties={(action.curve, 'c_sq'): c_sq}, values=values,
+                        read_facts=reads, operations=operations, candidates=candidates)
+
     def can_apply(self, state) -> bool:
         """
         检查是否可应用

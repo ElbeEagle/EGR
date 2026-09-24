@@ -82,19 +82,57 @@ def require(condition, constraints=(), message="Precondition not satisfied"):
         raise TransitionError('inapplicable' if valid is False else 'undetermined', message)
 
 
-def hyperbola_parameters(expression, x, y, constraints):
+def centered_denominators(expression, x, y):
     try:
         poly = sp.Poly(expression, x, y)
     except sp.PolynomialError as exc:
         raise TransitionError('inapplicable', 'Curve is not polynomial in x,y') from exc
     if set(poly.monoms()) != {(2, 0), (0, 2), (0, 0)}:
-        raise TransitionError('inapplicable', 'Only centered axis-aligned standard hyperbolas supported')
+        raise TransitionError('inapplicable', 'Only centered axis-aligned conics supported')
     constant = poly.coeff_monomial(1)
     a_sq = sp.cancel(-constant / poly.coeff_monomial(x**2))
-    b_sq = sp.cancel(constant / poly.coeff_monomial(y**2))
+    y_denom = sp.cancel(-constant / poly.coeff_monomial(y**2))
+    return a_sq, y_denom
+
+
+def hyperbola_parameters(expression, x, y, constraints):
+    a_sq, y_denom = centered_denominators(expression, x, y)
+    b_sq = -y_denom
     require(a_sq > 0, constraints, 'Positive x-axis semi-axis square not established')
     require(b_sq > 0, constraints, 'Positive conjugate semi-axis square not established')
     return a_sq, b_sq
+
+
+def ellipse_parameters(expression, x, y, constraints):
+    a_sq, b_sq = centered_denominators(expression, x, y)
+    require(b_sq > 0, constraints, 'Positive minor semi-axis square not established')
+    require(a_sq > b_sq, constraints, 'Ellipse x-axis orientation not established')
+    return a_sq, b_sq
+
+
+def ensure_consistent(constraints):
+    """Reject established contradictions; unknown multivariate consistency stays unknown."""
+    if any(sp.simplify(c) is sp.false for c in constraints):
+        raise TransitionError('conflict', 'Contradictory constraints')
+    symbols = set().union(*(c.free_symbols for c in constraints))
+    if len(symbols) == 1:
+        try:
+            impossible = sp.reduce_inequalities(constraints, list(symbols)) is sp.false
+        except (NotImplementedError, ValueError, TypeError):
+            impossible = False
+        if impossible:
+            raise TransitionError('conflict', 'Contradictory constraints')
+
+
+def instantiate_shared_focus(relation, target, peer, target_frame, peer_frame, peer_c_sq):
+    """Instantiate a given focus-set equality, without deriving either curve's c²."""
+    if set(relation.curves) != {target, peer} or target == peer:
+        raise TransitionError('inapplicable', 'Focus relation endpoints do not match binding')
+    if target_frame.center != peer_frame.center or target_frame.axis != peer_frame.axis:
+        raise TransitionError('inapplicable', 'Shared-focus mode requires matching centers and axes')
+    return peer_c_sq, {'operation': 'instantiate_shared_focus', 'relation': relation.fact_id,
+                       'target': target, 'peer': peer, 'center': target_frame.center,
+                       'axis': target_frame.axis, 'c_sq': peer_c_sq}
 
 
 def line_slope(expression, x, y, constraints):

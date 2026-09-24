@@ -7,8 +7,8 @@
 以题目状态和推理模型的状态转换完成圆锥曲线求解：双层状态 → 模型选择与对象绑定 → 模型应用／公共符号操作 → 新状态 → 答案。
 
 - **已有基础**：旧状态构造、定理库、选择器训练、推理／搜索、符号求解与评估模块均有代码；不代表全库数学正确性或端到端质量已验证。
-- **独立验证**：新绑定接口已跑通 ID 2 的 RM5→RM21 反向约束链，得到 m=5；固定动作顺序，不是自主选择模型。
-- **尚未接入**：新状态与旧状态没有自动双向同步；新应用器尚未接入旧求解器、轨迹构建器和选择器。其他代表案例目前是数学／规格案例。
+- **独立验证**：新绑定接口已跑通 ID 2 的 RM5→RM21（m=5）及 ID 9 的 RM3→RM11→RM5→RM12（t=9）；固定动作顺序，不是自主选择模型。
+- **尚未接入**：新状态与旧状态没有自动双向同步；新应用器尚未接入旧求解器、轨迹构建器和选择器。其余三个代表案例目前是数学／规格案例。
 - **当前方向**：分批完善 80 个模型的执行契约、共享操作与可信轨迹，再训练选择器。Entropy／求解进度机制和 LLM 实验后置。
 
 ## 代码导航
@@ -32,15 +32,18 @@
 
 | 文件 | 主要职责 |
 | --- | --- |
-| [transition_state.py](../src/state/transition_state.py) | 显式初态、对象所属方程、约束、属性、赋值与来源 |
-| [transition_primitives.py](../src/solver/transition_primitives.py) | 受限解析、双曲线标准形式、斜率、一元实根及条件筛选 |
+| [transition_state.py](../src/state/transition_state.py) | 显式初态、对象所属方程、共焦点关系、几何框架、约束、属性、赋值与来源 |
+| [transition_primitives.py](../src/solver/transition_primitives.py) | 受限解析、椭圆／双曲线标准形式、共焦点实例化、斜率、实根与条件检查 |
 | [bound_application.py](../src/theorems/bound_application.py) | 动作绑定、候选变化、冲突检查、原子提交、受限回代及执行记录 |
-| [model_005.py](../src/theorems/models/model_005.py)、[model_021.py](../src/theorems/models/model_021.py) | 原模型类新增 `propose_bound`；旧 `can_apply/apply` 保留 |
-| [bound_slice.py](../src/reasoning/bound_slice.py) | 固定 RM5→RM21 入口与诊断 trace 输出 |
+| `model_003.py`、`model_011.py`、`model_012.py`（`src/theorems/models/`） | 新增椭圆参数、椭圆 c²、共焦点参数约束的绑定模式 |
+| [model_005.py](../src/theorems/models/model_005.py)、[model_021.py](../src/theorems/models/model_021.py) | 原模型类新增 `propose_bound`；RM5 可记录类型推导条件，旧接口保留 |
+| [bound_slice.py](../src/reasoning/bound_slice.py) | 两条固定链、指定动作回放与 v2 诊断 trace 输出 |
 | [test_bound_transition_slice.py](../tests/test_bound_transition_slice.py) | 真实题、绑定隔离、重复执行、多解、条件不足、冲突与回滚测试 |
 
+新增测试：[test_bound_shared_focus.py](../tests/test_bound_shared_focus.py)，覆盖 ID 9 及多曲线关系边界。
+
 运行：`python3 -m src.reasoning.bound_slice --problem-id 2`。
-详细结果及限制见[实现记录](../docs/开发规格/07_RM5_RM21实现记录.md)；诊断 trace 尚不是最终训练 schema。
+详细结果及限制见[实现记录](../docs/开发规格/07_RM5_RM21实现记录.md)；诊断 trace 尚不是最终训练 schema。ID 9 的命令、证据及限制见[共焦点实现记录](../docs/开发规格/08_ID9共焦点实现记录.md)。
 
 ## 数据与设计依据
 
@@ -52,7 +55,7 @@
 
 ## 后续顺序与维护
 
-1. 建议以 ID 9 的 RM3/RM11/RM12 扩展多曲线关系实例化，继续按小批真实案例检验接口。
+1. ID 9 已验证多曲线共焦点绑定；下一批建议补 RM21 正向及 RM11/RM12 普通参数关系模式，再按案例扩展其他模型族。
 2. 分批覆盖全部 80 个模型，抽提公共运算；同时形成可回放轨迹，处理弱标注顺序问题。
 3. 统一状态初始化、轨迹构建与求解入口，再开展选择器训练和系统评估；Entropy、LLM 工作另行安排。
 

@@ -34,6 +34,24 @@ class EllipseEquationStandardX(TheoremModel):
             chinese_name="椭圆标准方程(焦点在x轴)"
         )
     
+    def propose_bound(self, state, action):
+        from src.solver.transition_primitives import TransitionError, ellipse_parameters
+        from src.state.transition_state import CurveFrame
+        from src.theorems.bound_application import Proposal, check_binding
+
+        if action.mode != 'extract_parameters':
+            raise TransitionError('inapplicable', 'Unsupported RM3 mode')
+        fact = check_binding(state, action)
+        a_sq, b_sq = ellipse_parameters(fact.expression, state.symbols['x'], state.symbols['y'],
+                                         list(state.constraints.values()))
+        return Proposal(
+            properties={(action.curve, 'a_sq'): a_sq, (action.curve, 'b_sq'): b_sq},
+            frames={action.curve: CurveFrame(fact.fact_id)},
+            read_facts=(fact.fact_id, f'entity:{action.curve}', *state.constraints.keys()),
+            operations=[{'operation': 'standard_ellipse_x', 'equation': fact.fact_id,
+                         'a_sq': a_sq, 'b_sq': b_sq}],
+        )
+
     def can_apply(self, state) -> bool:
         """
         检查是否可应用（放宽条件）

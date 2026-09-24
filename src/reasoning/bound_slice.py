@@ -1,4 +1,4 @@
-"""Explicit RM5 -> inverse RM21 slice; not a learned or general solver."""
+"""Explicit asymptote/shared-focus replay slices; not a learned or general solver."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -29,9 +29,31 @@ def solve_asymptote_slice(facts: str, query: str) -> SliceResult:
         return SliceResult('undetermined', state, diagnostic='Slice requires one bound curve/asymptote pair')
     inverse = actions[0]
     extract = BoundAction(5, 'extract_parameters', inverse.curve, inverse.equation_id)
+    return replay_actions(state, (extract, inverse))
+
+
+def solve_shared_focus_slice(facts: str, query: str) -> SliceResult:
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    actions = enumerate_actions(state, 12)
+    if len(actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Slice requires one hyperbola/ellipse focus binding')
+    shared = actions[0]
+    return replay_actions(state, (
+        BoundAction(3, 'extract_parameters', shared.peer_curve, shared.peer_equation_id),
+        BoundAction(11, 'derive_c_sq', shared.peer_curve, shared.peer_equation_id),
+        BoundAction(5, 'extract_parameters', shared.curve, shared.equation_id),
+        shared,
+    ))
+
+
+def replay_actions(state: TransitionState, actions) -> SliceResult:
+    """Run an explicit diagnostic action sequence; retain unsuccessful attempts too."""
     applicator = BoundApplicator()
     result = SliceResult('unresolved', state)
-    for action in (extract, inverse):
+    for action in actions:
         transition = applicator.apply(state, action)
         result.transitions.append(transition)
         if transition.status not in ('applied', 'no_op'):
@@ -50,10 +72,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
-    result = solve_asymptote_slice(problem['fact_expressions'], problem['query_expressions'])
+    solve = solve_shared_focus_slice if args.mode == 'shared-focus' else solve_asymptote_slice
+    result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
         if isinstance(value, dict):
@@ -64,7 +88,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v1',
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v2', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

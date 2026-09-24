@@ -1,0 +1,274 @@
+{
+  "schema_version": "bound-slice-v2",
+  "mode": "shared-focus",
+  "problem_id": 9,
+  "status": "solved",
+  "facts": "G: Hyperbola;Expression(G) = (x^2/7 - y^2/t = 1);t: Real;H: Ellipse;Expression(H) = (x^2/25 + y^2/9 = 1);Focus(G) = Focus(H)",
+  "query": "t",
+  "answer": "9",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 3,
+        "mode": "extract_parameters",
+        "curve": "H",
+        "equation_id": "f4",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('H', 'a_sq')": "25",
+          "('H', 'b_sq')": "9"
+        },
+        "values": {},
+        "frames": {
+          "H": {
+            "equation_id": "f4",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x"
+          }
+        }
+      },
+      "read_facts": [
+        "f4",
+        "entity:H",
+        "f1:domain:0",
+        "f1:domain:1",
+        "f4:domain:0",
+        "f4:domain:1"
+      ],
+      "operations": [
+        {
+          "operation": "standard_ellipse_x",
+          "equation": "f4",
+          "a_sq": "25",
+          "b_sq": "9"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 11,
+        "mode": "derive_c_sq",
+        "curve": "H",
+        "equation_id": "f4",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {
+          "('H', 'c_sq')": "16"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "f4",
+        "frame:H",
+        "property:H:a_sq",
+        "property:H:b_sq",
+        "f1:domain:0",
+        "f1:domain:1",
+        "f4:domain:0",
+        "f4:domain:1"
+      ],
+      "operations": [
+        {
+          "operation": "ellipse_parameter_relation",
+          "curve": "H",
+          "a_sq": "25",
+          "b_sq": "9",
+          "c_sq": "16"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 5,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null
+      },
+      "before_revision": 2,
+      "after_revision": 3,
+      "delta": {
+        "properties": {
+          "('G', 'a_sq')": "7",
+          "('G', 'b_sq')": "t"
+        },
+        "values": {},
+        "constraints": {
+          "derived:f1:b_sq_positive": "t > 0"
+        },
+        "frames": {
+          "G": {
+            "equation_id": "f1",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x"
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "entity:G",
+        "f1:domain:0",
+        "f1:domain:1",
+        "f4:domain:0",
+        "f4:domain:1"
+      ],
+      "operations": [
+        {
+          "operation": "standard_hyperbola_x",
+          "equation": "f1",
+          "a_sq": "7",
+          "b_sq": "t"
+        },
+        {
+          "operation": "derive_type_condition",
+          "curve": "G",
+          "type": "Hyperbola",
+          "equation": "f1",
+          "condition_id": "derived:f1:b_sq_positive",
+          "condition": "t > 0"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 12,
+        "mode": "constrain_shared_focus",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": "f5",
+        "peer_curve": "H",
+        "peer_equation_id": "f4"
+      },
+      "before_revision": 3,
+      "after_revision": 4,
+      "delta": {
+        "properties": {
+          "('G', 'b_sq')": "9",
+          "('G', 'c_sq')": "16"
+        },
+        "values": {
+          "t": "9"
+        }
+      },
+      "read_facts": [
+        "f1",
+        "f4",
+        "f5",
+        "frame:G",
+        "frame:H",
+        "property:G:a_sq",
+        "property:G:b_sq",
+        "property:H:a_sq",
+        "property:H:b_sq",
+        "property:H:c_sq",
+        "f1:domain:0",
+        "f1:domain:1",
+        "f4:domain:0",
+        "f4:domain:1",
+        "derived:f1:b_sq_positive"
+      ],
+      "operations": [
+        {
+          "operation": "instantiate_shared_focus",
+          "relation": "f5",
+          "target": "G",
+          "peer": "H",
+          "center": [
+            "0",
+            "0"
+          ],
+          "axis": "x",
+          "c_sq": "16"
+        },
+        {
+          "operation": "hyperbola_parameter_relation",
+          "curve": "G",
+          "expression": "9 - t"
+        },
+        {
+          "operation": "real_roots",
+          "roots": [
+            "9"
+          ]
+        },
+        {
+          "operation": "check_root",
+          "root": "9",
+          "conditions": [
+            "True",
+            "True",
+            "True",
+            "True",
+            "True"
+          ],
+          "residual": "0",
+          "checks": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "operation": "solve_and_filter",
+          "target": "t",
+          "candidates": [
+            "9"
+          ]
+        },
+        {
+          "operation": "restricted_substitution",
+          "property": [
+            "G",
+            "b_sq"
+          ],
+          "before": "t",
+          "after": "9",
+          "substitution": {
+            "t": "9"
+          }
+        }
+      ],
+      "candidates": [
+        "9"
+      ],
+      "diagnostic": ""
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-"""Object-scoped state for the RM5/RM21 migration slice."""
+"""Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -20,6 +20,20 @@ class EquationFact:
     source: str
 
 
+@dataclass(frozen=True)
+class FocusEquality:
+    fact_id: str
+    curves: tuple[str, str]
+    source: str
+
+
+@dataclass(frozen=True)
+class CurveFrame:
+    equation_id: str
+    center: tuple[sp.Expr, sp.Expr] = (sp.S.Zero, sp.S.Zero)
+    axis: str = 'x'
+
+
 @dataclass
 class TransitionState:
     entities: dict[str, str]
@@ -32,6 +46,8 @@ class TransitionState:
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
     history: list = field(default_factory=list)
     revision: int = 0
+    relations: dict[str, FocusEquality] = field(default_factory=dict)
+    frames: dict[str, CurveFrame] = field(default_factory=dict)
 
     @classmethod
     def from_facts(cls, facts: str, query: str) -> 'TransitionState':
@@ -53,6 +69,15 @@ class TransitionState:
         for index, part in enumerate(parts):
             fact_id = f'f{index}'
             if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Number|Real)', part):
+                continue
+            focus = re.fullmatch(r'Focus\(([A-Za-z]\w*)\)\s*=\s*Focus\(([A-Za-z]\w*)\)', part)
+            if focus:
+                curves = focus.groups()
+                if any(entities.get(c) not in ('Hyperbola', 'Ellipse') for c in curves):
+                    raise ValueError('Focus relation requires declared curves')
+                if curves[0] == curves[1]:
+                    raise ValueError('Focus relation requires two distinct curves')
+                state.relations[fact_id] = FocusEquality(fact_id, curves, part)
                 continue
             equation = re.fullmatch(r'Expression\((.+)\)\s*=\s*\((.+)\)', part)
             if equation:
@@ -87,7 +112,8 @@ class TransitionState:
     def abstract(self, curve: str) -> AbstractState:
         """Compatibility view only; object-scoped neural encoding is still pending."""
         return AbstractState(
-            curve_type=CurveType.HYPERBOLA if self.entities.get(curve) == 'Hyperbola' else CurveType.UNKNOWN,
+            curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE}.get(
+                self.entities.get(curve), CurveType.UNKNOWN),
             query_type=QueryType.VALUE,
             has_equation=any(f.owner == curve and f.role == 'curve' for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),

@@ -35,21 +35,37 @@ class HyperbolaEquationStandardX(TheoremModel):
         )
     
     def propose_bound(self, state, action):
-        from src.solver.transition_primitives import TransitionError, hyperbola_parameters
+        from src.solver.transition_primitives import (
+            TransitionError, centered_denominators, require, truth,
+        )
+        from src.state.transition_state import CurveFrame
         from src.theorems.bound_application import Proposal, check_binding
 
         if action.mode != 'extract_parameters':
             raise TransitionError('inapplicable', 'Unsupported RM5 mode')
         fact = check_binding(state, action)
-        a_sq, b_sq = hyperbola_parameters(
-            fact.expression, state.symbols['x'], state.symbols['y'],
-            list(state.constraints.values()),
-        )
+        constraints = list(state.constraints.values())
+        a_sq, y_denom = centered_denominators(fact.expression, state.symbols['x'], state.symbols['y'])
+        b_sq = -y_denom
+        # With positive x denominator, the declared Hyperbola type forces y's
+        # denominator negative. Record this consequence instead of assuming it.
+        require(a_sq > 0, constraints, 'Positive x-axis semi-axis square not established')
+        sign = truth(b_sq > 0, constraints)
+        if sign is False:
+            raise TransitionError('inapplicable', 'Equation contradicts the declared hyperbola type')
+        condition_id = f'derived:{fact.fact_id}:b_sq_positive'
+        derived = {condition_id: b_sq > 0} if sign is None else {}
+        operations = [{'operation': 'standard_hyperbola_x', 'equation': fact.fact_id,
+                       'a_sq': a_sq, 'b_sq': b_sq}]
+        if derived:
+            operations.append({'operation': 'derive_type_condition', 'curve': action.curve,
+                               'type': 'Hyperbola', 'equation': fact.fact_id,
+                               'condition_id': condition_id, 'condition': b_sq > 0})
         return Proposal(
             properties={(action.curve, 'a_sq'): a_sq, (action.curve, 'b_sq'): b_sq},
-            read_facts=(fact.fact_id, *state.constraints.keys()),
-            operations=[{'operation': 'standard_hyperbola_x', 'equation': fact.fact_id,
-                         'a_sq': a_sq, 'b_sq': b_sq}],
+            read_facts=(fact.fact_id, f'entity:{action.curve}', *state.constraints.keys()),
+            operations=operations, constraints=derived,
+            frames={action.curve: CurveFrame(fact.fact_id)},
         )
 
     def can_apply(self, state) -> bool:

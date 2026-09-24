@@ -128,8 +128,8 @@ def test_wrong_axis_or_shifted_curve_not_silently_accepted(equation):
     assert app.apply(state, forward).status == 'inapplicable' and state == before
 
 
-def test_unknown_parameter_sign_is_not_assumed():
-    state, app, forward, _ = setup_state(FACTS.replace('m>0;', '').replace('y^2/m^2', 'y^2/m'))
+def test_unknown_axis_is_not_assumed():
+    state, app, forward, _ = setup_state(FACTS.replace('m>0;', '').replace('x^2/4', 'x^2/m'))
     before = deepcopy(state)
     assert app.apply(state, forward).status == 'undetermined' and state == before
 

@@ -403,3 +403,10 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **范围**：仅上述三份文档及本日志，不修改运行时代码、数据或模型定义。
 - **验证**：关键签名已对照代码；本地链接、API 最小示例、旧日志前缀保留检查及 `git diff --check` 通过。`python3 -m pytest -q tests/test_bound_transition_slice.py`：25 passed。
 - **下一步**：按实现地图分批扩展；每批只更新受影响条目，避免重复维护完整功能清单。
+
+## 2026-09-24｜ID 9 多曲线共焦点绑定执行
+
+- **变更**：复用绑定／事务机制，新增共焦点关系与曲线框架、可追溯的类型条件；RM3→RM11→RM5→RM12 求得 t=9。关系实例化作为公共操作，由 RM12 显式调用。
+- **文件**：更新 `src/state/transition_state.py`、`src/solver/transition_primitives.py`、`src/theorems/bound_application.py`、`models/model_003/005/011/012.py`（位于 `src/theorems/`）、`src/reasoning/bound_slice.py`；新增 `tests/test_bound_shared_focus.py`，调整旧绑定测试；同步 API、实现地图及规格，保存 v2 trace。
+- **验证**：两条绑定链与相关旧接口回归合计 113 passed。命令、证据和范围见[ID 9 实现记录](docs/开发规格/08_ID9共焦点实现记录.md)。
+- **限制／下一步**：仅原点中心、x 轴的标准椭圆—双曲线共焦点固定链，未接入旧求解器／选择器。下一批建议补 RM21 正向和 RM11/RM12 普通参数关系模式；再按案例扩展。

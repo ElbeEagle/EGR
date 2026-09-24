@@ -34,6 +34,25 @@ class EllipseParameterRelation(TheoremModel):
             chinese_name="椭圆参数关系"
         )
     
+    def propose_bound(self, state, action):
+        import sympy as sp
+        from src.solver.transition_primitives import TransitionError
+        from src.theorems.bound_application import Proposal, check_binding, bound_parameters
+
+        if action.mode != 'derive_c_sq':
+            raise TransitionError('inapplicable', 'Unsupported RM11 mode')
+        fact = check_binding(state, action)
+        a_sq, b_sq = bound_parameters(state, action.curve, fact.fact_id)
+        c_sq = sp.simplify(a_sq - b_sq)
+        return Proposal(
+            properties={(action.curve, 'c_sq'): c_sq},
+            read_facts=(fact.fact_id, f'frame:{action.curve}',
+                        f'property:{action.curve}:a_sq', f'property:{action.curve}:b_sq',
+                        *state.constraints.keys()),
+            operations=[{'operation': 'ellipse_parameter_relation', 'curve': action.curve,
+                         'a_sq': a_sq, 'b_sq': b_sq, 'c_sq': c_sq}],
+        )
+
     def can_apply(self, state) -> bool:
         """
         检查是否可应用（放宽条件）
