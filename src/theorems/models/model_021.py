@@ -37,12 +37,45 @@ class HyperbolaAsymptote(TheoremModel):
     def propose_bound(self, state, action):
         import sympy as sp
         from src.solver.transition_primitives import (
-            TransitionError, finite_real_solutions, hyperbola_parameters, line_slope,
+            TransitionError, finite_real_solutions, hyperbola_parameters, line_slope, truth,
         )
-        from src.theorems.bound_application import Proposal, check_binding
+        from src.theorems.bound_application import Proposal, check_binding, bound_parameters
+        from src.state.transition_state import EquationFact
+
+        if action.mode == 'derive_asymptotes':
+            fact = check_binding(state, action)
+            a_sq, b_sq = bound_parameters(state, action.curve, fact.fact_id)
+            slope = sp.sqrt(sp.cancel(b_sq/a_sq))
+            given_lines = [f for f in state.equations.values()
+                           if f.owner == action.curve and f.role == 'asymptote'
+                           and not f.fact_id.startswith('derived:')]
+            for line in given_lines:
+                known_slope = line_slope(line.expression, state.symbols['x'], state.symbols['y'],
+                                         list(state.constraints.values()))
+                compatible = truth(sp.Eq((known_slope**2-b_sq/a_sq).subs(state.values), 0),
+                                   list(state.constraints.values()))
+                if compatible is not True:
+                    raise TransitionError('conflict' if compatible is False else 'undetermined',
+                                          'Given asymptote compatibility is not established')
+            equations = {}
+            for i, sign in enumerate((1, -1)):
+                key = f'derived:{action.curve}:asymptote:{i}'
+                expression = state.symbols['y'] - sign*slope*state.symbols['x']
+                equations[key] = EquationFact(key, action.curve, 'asymptote', expression,
+                                               f'RM21({fact.fact_id})')
+            return Proposal(
+                equations=equations,
+                read_facts=(fact.fact_id, f'frame:{action.curve}',
+                            f'property:{action.curve}:a_sq', f'property:{action.curve}:b_sq',
+                            *state.constraints.keys(), *(line.fact_id for line in given_lines)),
+                operations=[{'operation': 'derive_asymptotes', 'curve': action.curve,
+                             'slope_magnitude': slope, 'equations': tuple(equations)}],
+            )
 
         if action.mode != 'constrain_parameters':
-            raise TransitionError('inapplicable', 'Bound slice supports inverse RM21 only')
+            raise TransitionError('inapplicable', 'Unsupported RM21 mode')
+        if not isinstance(state.query, sp.Symbol):
+            raise TransitionError('inapplicable', 'Inverse RM21 requires a scalar query')
         fact = check_binding(state, action)
         line = state.equations[action.line_equation_id]
         a_key, b_key = (action.curve, 'a_sq'), (action.curve, 'b_sq')

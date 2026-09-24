@@ -41,8 +41,13 @@ class HyperbolaParameterRelation(TheoremModel):
         )
         from src.theorems.bound_application import Proposal, check_binding, bound_parameters
 
+        from src.theorems.parameter_proposals import PARAMETER_MODES, parameter_proposal
+        if action.mode in PARAMETER_MODES:
+            return parameter_proposal(state, action)
         if action.mode != 'constrain_shared_focus':
-            raise TransitionError('inapplicable', 'Bound RM12 currently supports shared-focus mode only')
+            raise TransitionError('inapplicable', 'Unsupported RM12 mode')
+        if not isinstance(state.query, sp.Symbol):
+            raise TransitionError('inapplicable', 'Shared-focus parameter solving requires a scalar query')
         fact = check_binding(state, action)
         a_sq, b_sq = bound_parameters(state, action.curve, fact.fact_id)
         bound_parameters(state, action.peer_curve, action.peer_equation_id)

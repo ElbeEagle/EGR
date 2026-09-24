@@ -28,6 +28,11 @@ class FocusEquality:
 
 
 @dataclass(frozen=True)
+class AsymptoteQuery:
+    curve: str
+
+
+@dataclass(frozen=True)
 class CurveFrame:
     equation_id: str
     center: tuple[sp.Expr, sp.Expr] = (sp.S.Zero, sp.S.Zero)
@@ -40,7 +45,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: sp.Symbol
+    query: sp.Symbol | AsymptoteQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -63,9 +68,14 @@ class TransitionState:
         symbols = {name: sp.Symbol(name, real=True) for name in ('x', 'y')}
         symbols.update({name: sp.Symbol(name, real=True) for name, kind in entities.items()
                         if kind in ('Number', 'Real')})
-        if query not in symbols or query in ('x', 'y'):
+        asymptote_query = re.fullmatch(r'Expression\(Asymptote\(([A-Za-z]\w*)\)\)', query)
+        if asymptote_query and entities.get(asymptote_query.group(1)) == 'Hyperbola':
+            target = AsymptoteQuery(asymptote_query.group(1))
+        elif query in symbols and query not in ('x', 'y'):
+            target = symbols[query]
+        else:
             raise ValueError('Slice requires a declared scalar query')
-        state = cls(entities, symbols, {}, {}, symbols[query])
+        state = cls(entities, symbols, {}, {}, target)
         for index, part in enumerate(parts):
             fact_id = f'f{index}'
             if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Number|Real)', part):
@@ -114,14 +124,21 @@ class TransitionState:
         return AbstractState(
             curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE}.get(
                 self.entities.get(curve), CurveType.UNKNOWN),
-            query_type=QueryType.VALUE,
+            query_type=QueryType.EQUATION if isinstance(self.query, AsymptoteQuery) else QueryType.VALUE,
             has_equation=any(f.owner == curve and f.role == 'curve' for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),
             has_parameters={key for owner, key in self.properties if owner == curve},
             reasoning_depth=len(self.history),
-            completeness_score=float(self.query in self.values),
+            completeness_score=float(self.extract_answer() is not None),
         )
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, AsymptoteQuery):
+            # Only a model-produced pair certifies completeness, not one given line.
+            facts = [self.equations.get(f'derived:{self.query.curve}:asymptote:{i}') for i in (0, 1)]
+            if all(f is not None and f.owner == self.query.curve and f.role == 'asymptote'
+                   for f in facts):
+                return tuple(f.expression for f in facts)
+            return None
         return self.values.get(self.query)

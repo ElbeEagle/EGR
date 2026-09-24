@@ -410,3 +410,10 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：更新 `src/state/transition_state.py`、`src/solver/transition_primitives.py`、`src/theorems/bound_application.py`、`models/model_003/005/011/012.py`（位于 `src/theorems/`）、`src/reasoning/bound_slice.py`；新增 `tests/test_bound_shared_focus.py`，调整旧绑定测试；同步 API、实现地图及规格，保存 v2 trace。
 - **验证**：两条绑定链与相关旧接口回归合计 113 passed。命令、证据和范围见[ID 9 实现记录](docs/开发规格/08_ID9共焦点实现记录.md)。
 - **限制／下一步**：仅原点中心、x 轴的标准椭圆—双曲线共焦点固定链，未接入旧求解器／选择器。下一批建议补 RM21 正向和 RM11/RM12 普通参数关系模式；再按案例扩展。
+
+## 2026-09-24｜RM21 正向及 RM11/RM12 普通参数模式
+
+- **变更**：RM11/RM12 共用参数提案，支持任意两个平方参数求第三个及三项表达式约束求标量；RM21 正向生成两条渐近线。应用器支持派生方程的原子提交与受限回代，查询读取完整方程对。
+- **文件**：新增 `src/theorems/parameter_proposals.py`、`tests/test_bound_parameter_modes.py`；更新状态、应用器、RM11/12/21、固定链入口及接口／实现地图／开发规格，保存 ID 65 v3 trace。
+- **验证**：本批 32 项测试；相关回归共 145 passed。真实题 ID 65、200、353 正向链通过，ID 2、ID 9 原链保持通过。命令及完整边界见[实现记录](docs/开发规格/09_参数关系与渐近线正向实现记录.md)。
+- **限制／下一步**：参数模式消费已有平方参数事实，未扩展全部文本解析；渐近线正向仍限原点中心、x 轴。下一批建议补 y 轴 RM4/RM6；仍不接入选择器训练。

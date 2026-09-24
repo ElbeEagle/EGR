@@ -1,0 +1,119 @@
+{
+  "schema_version": "bound-slice-v3",
+  "mode": "asymptote-forward",
+  "problem_id": 65,
+  "status": "solved",
+  "facts": "G: Hyperbola;Expression(G) = (x^2/9 - y^2/16 = 1)",
+  "query": "Expression(Asymptote(G))",
+  "answer": [
+    "-4*x/3 + y",
+    "4*x/3 + y"
+  ],
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 5,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'a_sq')": "9",
+          "('G', 'b_sq')": "16"
+        },
+        "values": {},
+        "frames": {
+          "G": {
+            "equation_id": "f1",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x"
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "entity:G",
+        "f1:domain:0",
+        "f1:domain:1"
+      ],
+      "operations": [
+        {
+          "operation": "standard_hyperbola_x",
+          "equation": "f1",
+          "a_sq": "9",
+          "b_sq": "16"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 21,
+        "mode": "derive_asymptotes",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {},
+        "values": {},
+        "equations": {
+          "derived:G:asymptote:0": {
+            "fact_id": "derived:G:asymptote:0",
+            "owner": "G",
+            "role": "asymptote",
+            "expression": "-4*x/3 + y",
+            "source": "RM21(f1)"
+          },
+          "derived:G:asymptote:1": {
+            "fact_id": "derived:G:asymptote:1",
+            "owner": "G",
+            "role": "asymptote",
+            "expression": "4*x/3 + y",
+            "source": "RM21(f1)"
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "frame:G",
+        "property:G:a_sq",
+        "property:G:b_sq",
+        "f1:domain:0",
+        "f1:domain:1"
+      ],
+      "operations": [
+        {
+          "operation": "derive_asymptotes",
+          "curve": "G",
+          "slope_magnitude": "4/3",
+          "equations": [
+            "derived:G:asymptote:0",
+            "derived:G:asymptote:1"
+          ]
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}

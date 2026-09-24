@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from src.state.transition_state import TransitionState
+from src.state.transition_state import TransitionState, AsymptoteQuery
 from src.theorems.bound_application import BoundAction, BoundApplicator, enumerate_actions
 
 
@@ -24,7 +24,7 @@ def solve_asymptote_slice(facts: str, query: str) -> SliceResult:
         state = TransitionState.from_facts(facts, query)
     except (ValueError, SyntaxError) as exc:
         return SliceResult('failed', diagnostic=str(exc))
-    actions = enumerate_actions(state, 21)
+    actions = enumerate_actions(state, 21, mode='constrain_parameters')
     if len(actions) != 1:
         return SliceResult('undetermined', state, diagnostic='Slice requires one bound curve/asymptote pair')
     inverse = actions[0]
@@ -37,7 +37,7 @@ def solve_shared_focus_slice(facts: str, query: str) -> SliceResult:
         state = TransitionState.from_facts(facts, query)
     except (ValueError, SyntaxError) as exc:
         return SliceResult('failed', diagnostic=str(exc))
-    actions = enumerate_actions(state, 12)
+    actions = enumerate_actions(state, 12, mode='constrain_shared_focus')
     if len(actions) != 1:
         return SliceResult('undetermined', state, diagnostic='Slice requires one hyperbola/ellipse focus binding')
     shared = actions[0]
@@ -47,6 +47,22 @@ def solve_shared_focus_slice(facts: str, query: str) -> SliceResult:
         BoundAction(5, 'extract_parameters', shared.curve, shared.equation_id),
         shared,
     ))
+
+
+def solve_forward_asymptote_slice(facts: str, query: str) -> SliceResult:
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, AsymptoteQuery):
+        return SliceResult('inapplicable', state, diagnostic='Forward slice requires an asymptote-set query')
+    actions = [a for a in enumerate_actions(state, 21, 'derive_asymptotes')
+               if a.curve == state.query.curve]
+    if len(actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Query requires one bound curve equation')
+    forward = actions[0]
+    return replay_actions(state, (BoundAction(5, 'extract_parameters', forward.curve,
+                                             forward.equation_id), forward))
 
 
 def replay_actions(state: TransitionState, actions) -> SliceResult:
@@ -72,11 +88,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
-    solve = solve_shared_focus_slice if args.mode == 'shared-focus' else solve_asymptote_slice
+    solve = {'asymptote': solve_asymptote_slice, 'shared-focus': solve_shared_focus_slice,
+             'asymptote-forward': solve_forward_asymptote_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
@@ -88,7 +105,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v2', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v3', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,
