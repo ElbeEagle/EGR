@@ -389,3 +389,17 @@ Value成功率: 93.0%  ← v1: 90.1%
 ---
 
 
+## 2026-09-23｜RM5→RM21 绑定执行小闭环
+
+- **变更**：ID 2 固定执行 RM5→RM21，求得 m=5；加入对象／方程绑定、前提与实根筛选、事务提交、来源记录和受限回代。重复动作不新增状态，失败／多解不误提交。
+- **新增文件**：`src/state/transition_state.py`、`src/solver/transition_primitives.py`、`src/theorems/bound_application.py`、`src/reasoning/bound_slice.py`、`tests/test_bound_transition_slice.py`。
+- **更新文件**：`src/theorems/base_model.py`、`src/theorems/models/model_005.py`、`model_021.py`；同步开发规格，并保存诊断 trace。
+- **验证**：当批记录为 79 passed（25 项新测试及 54 项相关回归）；命令、证据和范围见[实现记录](docs/开发规格/07_RM5_RM21实现记录.md)。不作为全系统准确率。
+- **限制／下一步**：尚未接入旧求解器、轨迹构建器和选择器；RM21 新接口仅实现反向模式。建议下一批以 ID 9 检验多曲线关系，再分批扩展模型和轨迹。
+
+## 2026-09-24｜整理开发导航与维护约定
+
+- **变更**：重写 [实现地图](doc/project_structure.md) 与 [关键接口](doc/api_reference.md)，区分前期原型、新绑定切片和后续计划；新增根目录 [AGENTS.md](AGENTS.md)，约定开发前回顾及开发后同步维护。旧开发记录原样保留，历史指标不作为当前结果。
+- **范围**：仅上述三份文档及本日志，不修改运行时代码、数据或模型定义。
+- **验证**：关键签名已对照代码；本地链接、API 最小示例、旧日志前缀保留检查及 `git diff --check` 通过。`python3 -m pytest -q tests/test_bound_transition_slice.py`：25 passed。
+- **下一步**：按实现地图分批扩展；每批只更新受影响条目，避免重复维护完整功能清单。
