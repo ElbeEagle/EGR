@@ -34,6 +34,49 @@ class HyperbolaAsymptote(TheoremModel):
             chinese_name="双曲线渐近线"
         )
     
+    def propose_bound(self, state, action):
+        import sympy as sp
+        from src.solver.transition_primitives import (
+            TransitionError, finite_real_solutions, hyperbola_parameters, line_slope,
+        )
+        from src.theorems.bound_application import Proposal, check_binding
+
+        if action.mode != 'constrain_parameters':
+            raise TransitionError('inapplicable', 'Bound slice supports inverse RM21 only')
+        fact = check_binding(state, action)
+        line = state.equations[action.line_equation_id]
+        a_key, b_key = (action.curve, 'a_sq'), (action.curve, 'b_sq')
+        if a_key not in state.properties or b_key not in state.properties:
+            raise TransitionError('inapplicable', 'Missing RM5 parameter facts')
+        x, y = state.symbols['x'], state.symbols['y']
+        constraints = list(state.constraints.values())
+        # Verify that stored properties still match the explicitly bound equation.
+        a_sq, b_sq = hyperbola_parameters(fact.expression, x, y, constraints)
+        for key, expected in ((a_key, a_sq), (b_key, b_sq)):
+            if sp.simplify((state.properties[key]-expected).subs(state.values)) != 0:
+                raise TransitionError('conflict', 'Parameters do not match bound equation')
+        slope = line_slope(line.expression, x, y, constraints)
+        relation = sp.cancel(slope**2 - b_sq/a_sq)
+        reads = (fact.fact_id, line.fact_id, *state.constraints.keys(),
+                 f'property:{action.curve}:a_sq', f'property:{action.curve}:b_sq')
+        operations = [{'operation': 'line_slope', 'equation': line.fact_id, 'result': slope},
+                      {'operation': 'asymptote_constraint', 'expression': relation}]
+        if state.query in state.values:
+            if sp.simplify(relation.subs(state.values)) != 0:
+                raise TransitionError('conflict', 'Known answer violates asymptote relation')
+            return Proposal(read_facts=reads, operations=operations)
+        candidates = finite_real_solutions(relation.subs(state.values), state.query,
+                                          [c.subs(state.values) for c in constraints], trace=operations)
+        operations.append({'operation': 'solve_and_filter', 'target': state.query,
+                           'candidates': candidates})
+        if not candidates:
+            raise TransitionError('conflict', 'No real solution satisfies the constraints')
+        if len(candidates) != 1:
+            # Expose all candidates without committing one arbitrary branch.
+            return Proposal(read_facts=reads, operations=operations, candidates=candidates)
+        return Proposal(values={state.query: candidates[0]}, read_facts=reads,
+                        operations=operations, candidates=candidates)
+
     def can_apply(self, state) -> bool:
         """
         检查是否可应用

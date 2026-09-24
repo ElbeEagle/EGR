@@ -1,0 +1,148 @@
+{
+  "schema_version": "bound-slice-v1",
+  "problem_id": 2,
+  "status": "solved",
+  "facts": "G: Hyperbola;m: Number;m>0;Expression(G) = (x^2/4 - y^2/m^2 = 1);Expression(OneOf(Asymptote(G))) = (5*x - 2*y = 0)",
+  "query": "m",
+  "answer": "5",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 5,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f3",
+        "line_equation_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'a_sq')": "4",
+          "('G', 'b_sq')": "m**2"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "f3",
+        "f2",
+        "f3:domain:0",
+        "f3:domain:1"
+      ],
+      "operations": [
+        {
+          "operation": "standard_hyperbola_x",
+          "equation": "f3",
+          "a_sq": "4",
+          "b_sq": "m**2"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 21,
+        "mode": "constrain_parameters",
+        "curve": "G",
+        "equation_id": "f3",
+        "line_equation_id": "f4"
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {
+          "('G', 'b_sq')": "25"
+        },
+        "values": {
+          "m": "5"
+        }
+      },
+      "read_facts": [
+        "f3",
+        "f4",
+        "f2",
+        "f3:domain:0",
+        "f3:domain:1",
+        "property:G:a_sq",
+        "property:G:b_sq"
+      ],
+      "operations": [
+        {
+          "operation": "line_slope",
+          "equation": "f4",
+          "result": "5/2"
+        },
+        {
+          "operation": "asymptote_constraint",
+          "expression": "25/4 - m**2/4"
+        },
+        {
+          "operation": "real_roots",
+          "roots": [
+            "-5",
+            "5"
+          ]
+        },
+        {
+          "operation": "check_root",
+          "root": "-5",
+          "conditions": [
+            "False",
+            "True",
+            "True"
+          ],
+          "residual": "0",
+          "checks": [
+            false,
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "operation": "check_root",
+          "root": "5",
+          "conditions": [
+            "True",
+            "True",
+            "True"
+          ],
+          "residual": "0",
+          "checks": [
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "operation": "solve_and_filter",
+          "target": "m",
+          "candidates": [
+            "5"
+          ]
+        },
+        {
+          "operation": "restricted_substitution",
+          "property": [
+            "G",
+            "b_sq"
+          ],
+          "before": "m**2",
+          "after": "25",
+          "substitution": {
+            "m": "5"
+          }
+        }
+      ],
+      "candidates": [
+        "5"
+      ],
+      "diagnostic": ""
+    }
+  ]
+}

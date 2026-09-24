@@ -34,6 +34,24 @@ class HyperbolaEquationStandardX(TheoremModel):
             chinese_name="双曲线标准方程(焦点在x轴)"
         )
     
+    def propose_bound(self, state, action):
+        from src.solver.transition_primitives import TransitionError, hyperbola_parameters
+        from src.theorems.bound_application import Proposal, check_binding
+
+        if action.mode != 'extract_parameters':
+            raise TransitionError('inapplicable', 'Unsupported RM5 mode')
+        fact = check_binding(state, action)
+        a_sq, b_sq = hyperbola_parameters(
+            fact.expression, state.symbols['x'], state.symbols['y'],
+            list(state.constraints.values()),
+        )
+        return Proposal(
+            properties={(action.curve, 'a_sq'): a_sq, (action.curve, 'b_sq'): b_sq},
+            read_facts=(fact.fact_id, *state.constraints.keys()),
+            operations=[{'operation': 'standard_hyperbola_x', 'equation': fact.fact_id,
+                         'a_sq': a_sq, 'b_sq': b_sq}],
+        )
+
     def can_apply(self, state) -> bool:
         """
         检查是否可应用

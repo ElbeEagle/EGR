@@ -70,6 +70,10 @@ class TheoremModel(ABC):
         """
         pass
     
+    def propose_bound(self, state, action):
+        """Migration interface: produce a delta without mutating the input state."""
+        raise NotImplementedError(f"Model {self.model_id} has no bound implementation")
+
     def __repr__(self) -> str:
         """友好的字符串表示"""
         return f"TheoremModel(id={self.model_id}, name={self.name})"
