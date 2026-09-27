@@ -33,6 +33,10 @@ class ParabolaEquationStandardLeft(TheoremModel):
             chinese_name="抛物线标准方程(开口向左)"
         )
     
+    def propose_bound(self, state, action):
+        from src.theorems.parabola_proposals import standard_parabola_proposal
+        return standard_parabola_proposal(state, action)
+
     def can_apply(self, state) -> bool:
         """
         检查是否可应用

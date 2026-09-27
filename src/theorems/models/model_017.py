@@ -33,6 +33,10 @@ class ParabolaFocalRadius(TheoremModel):
             chinese_name="抛物线焦半径"
         )
     
+    def propose_bound(self, state, action):
+        from src.theorems.parabola_proposals import focal_radius_proposal
+        return focal_radius_proposal(state, action)
+
     def can_apply(self, state) -> bool:
         """
         检查是否可应用

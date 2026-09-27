@@ -33,10 +33,33 @@ class AsymptoteQuery:
 
 
 @dataclass(frozen=True)
+class PointCoordinates:
+    fact_id: str
+    point: str
+    xy: tuple[sp.Expr, sp.Expr]
+    source: str
+
+
+@dataclass(frozen=True)
+class PointOnCurve:
+    fact_id: str
+    point: str
+    curve: str
+    source: str
+
+
+@dataclass(frozen=True)
+class FocalDistanceQuery:
+    point: str
+    curve: str
+
+
+@dataclass(frozen=True)
 class CurveFrame:
     equation_id: str
     center: tuple[sp.Expr, sp.Expr] = (sp.S.Zero, sp.S.Zero)
     axis: str = 'x'
+    direction: str | None = None
 
 
 @dataclass
@@ -45,7 +68,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: sp.Symbol | AsymptoteQuery
+    query: sp.Symbol | AsymptoteQuery | FocalDistanceQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -53,13 +76,15 @@ class TransitionState:
     revision: int = 0
     relations: dict[str, FocusEquality] = field(default_factory=dict)
     frames: dict[str, CurveFrame] = field(default_factory=dict)
+    coordinates: dict[str, PointCoordinates] = field(default_factory=dict)
+    incidences: dict[str, PointOnCurve] = field(default_factory=dict)
 
     @classmethod
     def from_facts(cls, facts: str, query: str) -> 'TransitionState':
         parts = [p.strip() for p in facts.split(';') if p.strip()]
         entities = {}
         for part in parts:
-            declaration = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Number|Real)', part)
+            declaration = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Point|Number|Real)', part)
             if declaration:
                 name, kind = declaration.groups()
                 if name in ('x', 'y') or name in entities:
@@ -69,16 +94,37 @@ class TransitionState:
         symbols.update({name: sp.Symbol(name, real=True) for name, kind in entities.items()
                         if kind in ('Number', 'Real')})
         asymptote_query = re.fullmatch(r'Expression\(Asymptote\(([A-Za-z]\w*)\)\)', query)
-        if asymptote_query and entities.get(asymptote_query.group(1)) == 'Hyperbola':
+        focal_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*Focus\(([A-Za-z]\w*)\)\s*\)', query)
+        if focal_query and entities.get(focal_query.group(1)) == 'Point' and entities.get(focal_query.group(2)) == 'Parabola':
+            target = FocalDistanceQuery(*focal_query.groups())
+        elif asymptote_query and entities.get(asymptote_query.group(1)) == 'Hyperbola':
             target = AsymptoteQuery(asymptote_query.group(1))
         elif query in symbols and query not in ('x', 'y'):
             target = symbols[query]
         else:
-            raise ValueError('Slice requires a declared scalar query')
+            raise ValueError('Unsupported or undeclared query target')
         state = cls(entities, symbols, {}, {}, target)
         for index, part in enumerate(parts):
             fact_id = f'f{index}'
-            if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Number|Real)', part):
+            if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Point|Number|Real)', part):
+                continue
+            coordinate = re.fullmatch(r'Coordinate\(([A-Za-z]\w*)\)\s*=\s*\(([^,]+),([^,]+)\)', part)
+            if coordinate:
+                point, x_text, y_text = coordinate.groups()
+                if entities.get(point) != 'Point' or point in state.coordinates:
+                    raise ValueError('Undeclared point or duplicate coordinate fact')
+                px, gx = parse_expression(x_text, symbols)
+                py, gy = parse_expression(y_text, symbols)
+                state.coordinates[point] = PointCoordinates(fact_id, point, (px, py), part)
+                for i, guard in enumerate(gx + gy):
+                    state.constraints[f'{fact_id}:domain:{i}'] = guard
+                continue
+            incidence = re.fullmatch(r'PointOnCurve\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)', part)
+            if incidence:
+                point, curve = incidence.groups()
+                if entities.get(point) != 'Point' or entities.get(curve) not in ('Ellipse', 'Hyperbola', 'Parabola'):
+                    raise ValueError('Invalid point/curve incidence')
+                state.incidences[fact_id] = PointOnCurve(fact_id, point, curve, part)
                 continue
             focus = re.fullmatch(r'Focus\(([A-Za-z]\w*)\)\s*=\s*Focus\(([A-Za-z]\w*)\)', part)
             if focus:
@@ -95,7 +141,7 @@ class TransitionState:
                 asymptote = re.fullmatch(r'OneOf\(Asymptote\(([A-Za-z]\w*)\)\)', owner)
                 role = 'asymptote' if asymptote else 'curve'
                 owner = asymptote.group(1) if asymptote else owner
-                if entities.get(owner) not in ('Hyperbola', 'Ellipse'):
+                if entities.get(owner) not in ('Hyperbola', 'Ellipse', 'Parabola'):
                     raise ValueError('Equation owner is not a declared curve')
                 lhs, separator, rhs = text.partition('=')
                 if not separator or '=' in rhs:
@@ -122,9 +168,10 @@ class TransitionState:
     def abstract(self, curve: str) -> AbstractState:
         """Compatibility view only; object-scoped neural encoding is still pending."""
         return AbstractState(
-            curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE}.get(
+            curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE, 'Parabola': CurveType.PARABOLA}.get(
                 self.entities.get(curve), CurveType.UNKNOWN),
-            query_type=QueryType.EQUATION if isinstance(self.query, AsymptoteQuery) else QueryType.VALUE,
+            query_type=(QueryType.EQUATION if isinstance(self.query, AsymptoteQuery) else
+                        QueryType.DISTANCE if isinstance(self.query, FocalDistanceQuery) else QueryType.VALUE),
             has_equation=any(f.owner == curve and f.role == 'curve' for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),
             has_parameters={key for owner, key in self.properties if owner == curve},
@@ -141,4 +188,6 @@ class TransitionState:
                    for f in facts):
                 return tuple(f.expression for f in facts)
             return None
+        if isinstance(self.query, FocalDistanceQuery):
+            return self.properties.get((self.query.curve, f'focal_radius:{self.query.point}'))
         return self.values.get(self.query)

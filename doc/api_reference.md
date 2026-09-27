@@ -1,21 +1,22 @@
 # 关键接口参考
 
-更新：2026-09-24。本页描述当前可调用接口；完整设计见[开发规格](../docs/开发规格/02_状态表示与应用器接口.md)，模块导航见[实现地图](project_structure.md)。新绑定执行接口与旧流程并存，不可直接混用两套状态。
+更新：2026-09-27。本页描述当前可调用接口；完整设计见[开发规格](../docs/开发规格/02_状态表示与应用器接口.md)，模块导航见[实现地图](project_structure.md)。新绑定执行接口与旧流程并存，不可直接混用两套状态。
 
 ## 新绑定执行接口：当前开发入口
 
 | 接口（导入路径） | 输入与输出／职责 |
 | --- | --- |
-| `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与标量／渐近线集合查询 → 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
-| `BoundAction`（`src.theorems.bound_application`） | `model_id, mode, curve`；`equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id`；明确模型、应用方式和所属对象／方程 |
-| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM3/4/5/6/11/12/21；可按模式过滤；不保证候选已满足所有数学前提 |
-| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM3/4/5/6/11/12/21 提供有限模式实现 |
+| `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与标量／渐近线集合／抛物线焦点距离查询 → 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
+| `BoundAction`（`src.theorems.bound_application`） | `model_id, mode, curve`；`equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
+| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM3–12、RM17、RM21；可按模式过滤；不保证候选已满足所有数学前提 |
+| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM3–12、RM17、RM21 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
-| `state.extract_answer()` | 读取标量赋值或模型生成的两条渐近线表达式（各自等于零），未确定返回 `None`；不在此求解 |
+| `state.extract_answer()` | 读取标量赋值或模型生成的两条渐近线表达式（各自等于零），或 RM17 已提交的焦半径；未确定返回 `None`，不在此求解 |
 | `solve_asymptote_slice(facts, query)`（`src.reasoning.bound_slice`） | 固定 RM5/RM6→RM21，返回 `SliceResult(status, state, transitions, diagnostic)`，通过 `.answer` 读取答案 |
 | `solve_shared_focus_slice(facts, query)`（同上） | 固定 RM3/RM4→RM11→RM5/RM6→RM12；要求唯一椭圆—双曲线共焦点绑定，返回 `SliceResult` |
 | `solve_forward_asymptote_slice(facts, query)`（同上） | 固定 RM5/RM6→RM21 正向，按渐近线查询对象绑定，返回 `SliceResult` |
+| `solve_parabola_focal_slice(facts, query)`（同上） | 唯一点—曲线—方程绑定，预检 RM7–10 参数恢复方向，再回放所选标准模型→RM17 |
 | `replay_actions(state, actions)`（同上） | 指定动作诊断回放；保留失败尝试，首个失败处停止，不是选择器 |
 
 ### 状态与结果约定
@@ -23,8 +24,10 @@
 - `EquationFact`：`fact_id / owner / role / expression / source`，表达式按左侧减右侧等于零保存。
 - `TransitionState`：`entities / symbols / equations / constraints / query` 为题目信息；`properties[(对象, 属性)]` 保存对象属性，`values[Symbol]` 保存标量赋值；另有 `provenance / history / revision`。
 - `AsymptoteQuery(curve)`：由 `Expression(Asymptote(G))` 解析；只读取已生成的完整方程对，题目给出的一条渐近线不算完整答案。
+- `PointCoordinates` 与 `PointOnCurve`：显式坐标／点归属事实，分别保存于 `coordinates[point]`、`incidences[fact_id]`；初态只解析，不代入求参数。
+- `FocalDistanceQuery(point, curve)`：由 `Distance(A, Focus(G))` 解析；只读 `properties[(G, focal_radius:A)]`。
 - `FocusEquality`：关系事实 ID、两个曲线名称和原表达；`state.relations` 保存给定关系，不在初态自动实例化。
-- `CurveFrame`：绑定的方程 ID、中心和轴向；`state.frames` 由标准模型生成，当前支持原点中心、`axis=x/y`；a² 始终对应长半轴／实半轴平方。
+- `CurveFrame`：绑定的方程 ID、中心和轴向；`state.frames` 由标准模型生成，当前支持原点中心、`axis=x/y`；a² 始终对应长半轴／实半轴平方。抛物线用原点顶点框架，另记 `direction=right/left/up/down`，不把顶点解释为对称中心。
 - `Proposal`：`properties / values / constraints / frames / equations / read_facts / operations / candidates`。模型提出变化，提交由应用器统一完成。
 - `TransitionResult`：状态、绑定动作、前后版本、`delta`、读取事实 ID、操作、候选解和诊断。只有成功提交进入 `state.history`；失败尝试需由调用方保留返回结果。
 
@@ -44,6 +47,8 @@
 
 | 模型／模式 | 前提 → 输出 |
 | --- | --- |
+| RM7–10 `extract_parameters / recover_from_point` | 标准式 v²=2pu；可从已知系数提取，或绑定数值坐标点实例化归属、恢复唯一参数后确认方向；提交 p、focus_x/y 和框架，不生成准线 |
+| RM17 `focal_radius` | 已有抛物线参数／焦点／方向及同一曲线上的数值点 → u+p/2，提交对象所属焦半径 |
 | RM3/RM4 `extract_parameters` | 对应 x/y 轴标准椭圆且 a²>b²>0 可判定 → 对象参数、中心和轴向 |
 | RM11/RM12 `derive_a_sq / derive_b_sq / derive_c_sq` | 同一曲线任意另两个平方参数 → 目标平方参数；检查三者正值及已有事实一致性 |
 | RM11/RM12 `constrain_parameters` | 同一曲线 a²、b²、c² 的三个表达式 → 利用参数恒等式求标量查询，筛选正值条件；多解不提交 |
@@ -52,7 +57,7 @@
 | RM21 `derive_asymptotes` | 已有双曲线参数与标准框架 → 两条对象所属渐近线方程，不推导 c 或离心率 |
 | RM21 `constrain_parameters` | RM5/RM6 属性、同一曲线的已知渐近线及条件 → 渐近线斜率约束、实根筛选、唯一标量赋值 |
 
-当前解析只覆盖切片需要的声明、算术、等式、比较条件、已知渐近线和 `Focus(G)=Focus(H)`；查询支持已声明标量和上述渐近线集合。参数求解限至多二次的一元实多项式。ID 2 缺少 m>0 时保留 ±5，不默认取正根。各固定链要求相应绑定唯一；尚无多分支搜索或通用超时。共焦点模式仍限原有椭圆—双曲线组合。
+当前解析只覆盖切片需要的声明、算术、等式、比较条件、已知渐近线和 `Focus(G)=Focus(H)`；另支持 `Parabola`、`Point` 声明、`Coordinate(A)`、`PointOnCurve(A,G)` 和上述焦点距离查询。参数求解限至多二次的一元实多项式。ID 2 缺少 m>0 时保留 ±5，不默认取正根。各固定链要求相应绑定唯一；尚无多分支搜索或通用超时。共焦点模式仍限原有椭圆—双曲线组合。
 
 普通参数模式消费已有 `properties[(curve, a_sq/b_sq/c_sq)]`；本批未扩展自然语言长度事实的解析。无曲线方程时可仅绑定对象；若存在方程，必须显式绑定并具有已建立的标准框架。公式为椭圆 a²=b²+c²、双曲线 c²=a²+b²；目标未能证明为正时返回未确定，零／负值拒绝。渐近线正反向支持原点中心、x/y 轴焦向；斜率平方分别为 b²/a² 和 a²/b²；重复提交按稳定派生方程 ID 去重，不承诺全局等价方程合并。
 
@@ -70,6 +75,8 @@ assert result.status == "solved" and result.answer == 5
 ```
 
 固定链通过 `select_standard_action` 在副本上检查两个方向的标准模式，只在唯一可用时回放正式动作；预检不提交状态，不读取 `models` 或答案。它是固定链内的方向判定，不是学习型选择器；预检失败目前仅返回诊断，不生成训练步骤。
+
+抛物线恢复复用原有一元实根筛选，但不以候选方向过滤根：先按给定事实求参数，唯一解确定后才检查开口与 p>0；多根不选分支。坐标需能归约为有限实数，多未知系数、原点导致参数不定、平移／旋转暂不支持。RM17 重验点归属和标准属性；答案读取不调用 RM2/RM29 或一般距离公式。
 
 ## 旧流程：复用和迁移参考
 
@@ -92,9 +99,9 @@ assert result.status == "solved" and result.answer == 5
 
 扩展模型时，在原模型类增加绑定模式，复用 `transition_primitives.py` 中的公共计算；RM3–6 共用 `src/theorems/standard_proposals.py`；RM11/RM12 共用 `src/theorems/parameter_proposals.py` 构造参数提案，通过 `Proposal` 交给应用器；不要为每个模型另建状态或提交逻辑。跨曲线关系已实现上述有限共焦点模式；其他关系、分支状态及统一训练 schema 仍需按规格逐批实现。
 
-快速检查：`python3 -m pytest -q tests/test_bound_transition_slice.py tests/test_bound_shared_focus.py tests/test_bound_parameter_modes.py tests/test_bound_y_axis.py`。
+快速检查：`python3 -m pytest -q tests/test_bound_transition_slice.py tests/test_bound_shared_focus.py tests/test_bound_parameter_modes.py tests/test_bound_y_axis.py tests/test_bound_parabola.py`。
 
-ID 9 回放：`python3 -m src.reasoning.bound_slice --mode shared-focus --problem-id 9`。正向回放：`python3 -m src.reasoning.bound_slice --mode asymptote-forward --problem-id 65`。y 轴案例将 `--problem-id` 改为 `380`。当前 CLI 输出 `bound-slice-v3`（新增派生方程 delta 与方程对答案）；旧 v1/v2 trace 保留为历史证据。
+ID 9 回放：`python3 -m src.reasoning.bound_slice --mode shared-focus --problem-id 9`。正向回放：`python3 -m src.reasoning.bound_slice --mode asymptote-forward --problem-id 65`。y 轴案例将 `--problem-id` 改为 `380`。ID 5：`python3 -m src.reasoning.bound_slice --mode parabola-focal --problem-id 5`。当前 CLI 输出 `bound-slice-v4`（新增点／坐标绑定和框架方向）；旧 v1–v3 trace 保留为历史证据。
 涉及旧符号／模型兼容时，追加 `tests/test_theorem_missing_models.py`、`tests/test_solver_symbolic.py`、`tests/test_answer_extractor_symbolic_solver.py`；涉及评估口径时追加 `tests/test_evaluation_protocol.py`。
 
 仅在签名、行为或适用范围变化时更新本页；测试数量和批次结果写入开发记录。

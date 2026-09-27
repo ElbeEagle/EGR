@@ -1,10 +1,10 @@
 """Explicit asymptote/shared-focus replay slices; not a learned or general solver."""
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from copy import deepcopy
 
-from src.state.transition_state import TransitionState, AsymptoteQuery
+from src.state.transition_state import TransitionState, AsymptoteQuery, FocalDistanceQuery
 from src.theorems.bound_application import BoundAction, BoundApplicator, enumerate_actions
 from src.solver.transition_primitives import TransitionError
 
@@ -96,6 +96,33 @@ def solve_forward_asymptote_slice(facts: str, query: str) -> SliceResult:
     return replay_actions(state, (extract, forward))
 
 
+def solve_parabola_focal_slice(facts: str, query: str) -> SliceResult:
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, FocalDistanceQuery):
+        return SliceResult('inapplicable', state, diagnostic='Requires a point-to-parabola-focus query')
+    radius_actions = [a for a in enumerate_actions(state, 17)
+                      if a.point == state.query.point and a.curve == state.query.curve]
+    if len(radius_actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Requires one point/curve/equation binding')
+    radius = radius_actions[0]
+    app = BoundApplicator()
+    probes = [app.apply(deepcopy(state), replace(radius, model_id=mid, mode='recover_from_point'))
+              for mid in (7, 8, 9, 10)]
+    accepted = [p.action for p in probes if p.status in ('applied', 'no_op')]
+    if len(accepted) == 1:
+        return replay_actions(state, (accepted[0], radius))
+    if accepted:
+        return SliceResult('undetermined', state, diagnostic='Multiple opening modes remain admissible')
+    for status in ('conflict', 'undetermined', 'failed', 'inapplicable'):
+        failed = next((p for p in probes if p.status == status), None)
+        if failed:
+            return SliceResult(status, state, transitions=[failed], diagnostic=failed.diagnostic)
+    return SliceResult('inapplicable', state)
+
+
 def replay_actions(state: TransitionState, actions) -> SliceResult:
     """Run an explicit diagnostic action sequence; retain unsuccessful attempts too."""
     applicator = BoundApplicator()
@@ -119,12 +146,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
     solve = {'asymptote': solve_asymptote_slice, 'shared-focus': solve_shared_focus_slice,
-             'asymptote-forward': solve_forward_asymptote_slice}[args.mode]
+             'asymptote-forward': solve_forward_asymptote_slice,
+             'parabola-focal': solve_parabola_focal_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
@@ -136,7 +164,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v3', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v4', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

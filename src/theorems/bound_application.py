@@ -22,6 +22,8 @@ class BoundAction:
     relation_id: str | None = None
     peer_curve: str | None = None
     peer_equation_id: str | None = None
+    point: str | None = None
+    coordinate_id: str | None = None
 
 
 @dataclass
@@ -51,6 +53,7 @@ class TransitionResult:
 
 def check_binding(state, action):
     expected = {3: 'Ellipse', 4: 'Ellipse', 11: 'Ellipse', 5: 'Hyperbola', 6: 'Hyperbola', 12: 'Hyperbola', 21: 'Hyperbola'}
+    expected.update({mid: 'Parabola' for mid in (7, 8, 9, 10, 17)})
     if action.model_id not in expected or state.entities.get(action.curve) != expected[action.model_id]:
         raise TransitionError('inapplicable', 'Unsupported model or curve type binding')
     fact = state.equations.get(action.equation_id)
@@ -62,6 +65,12 @@ def check_binding(state, action):
         return None  # Intrinsic parameter relations do not require an axis or equation.
     if fact is None or fact.owner != action.curve or fact.role != 'curve':
         raise TransitionError('inapplicable', 'Curve equation binding mismatch')
+    if action.model_id == 17 or (action.model_id in (7, 8, 9, 10) and action.mode == 'recover_from_point'):
+        incidence = state.incidences.get(action.relation_id)
+        coordinate = state.coordinates.get(action.point)
+        if (incidence is None or incidence.point != action.point or incidence.curve != action.curve
+                or coordinate is None or coordinate.fact_id != action.coordinate_id):
+            raise TransitionError('inapplicable', 'Point coordinate/incidence binding mismatch')
     if action.model_id == 21 and action.mode == 'constrain_parameters':
         line = state.equations.get(action.line_equation_id)
         if line is None or line.owner != action.curve or line.role != 'asymptote':
@@ -103,6 +112,20 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id in (7, 8, 9, 10, 17):
+        actions = []
+        for fact in state.equations.values():
+            if fact.role != 'curve' or state.entities.get(fact.owner) != 'Parabola':
+                continue
+            if model_id != 17:
+                actions.append(BoundAction(model_id, 'extract_parameters', fact.owner, fact.fact_id))
+            for incidence in state.incidences.values():
+                coordinate = state.coordinates.get(incidence.point)
+                if incidence.curve == fact.owner and coordinate:
+                    actions.append(BoundAction(model_id, 'focal_radius' if model_id == 17 else 'recover_from_point',
+                                               fact.owner, fact.fact_id, relation_id=incidence.fact_id,
+                                               point=incidence.point, coordinate_id=coordinate.fact_id))
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id not in (3, 4, 5, 6, 11, 12, 21):
         return []
     actions = []

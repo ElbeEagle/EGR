@@ -1,14 +1,14 @@
 # 当前实现地图
 
-更新：2026-09-24。开发前先读本文，再按任务阅读[关键接口](api_reference.md)、[开发记录](../dev_record.md)及[开发规格](../docs/开发规格/README.md)。本文记录当前代码事实，规格中的设计不自动视为已实现。
+更新：2026-09-27。开发前先读本文，再按任务阅读[关键接口](api_reference.md)、[开发记录](../dev_record.md)及[开发规格](../docs/开发规格/README.md)。本文记录当前代码事实，规格中的设计不自动视为已实现。
 
 ## 目标与当前阶段
 
 以题目状态和推理模型的状态转换完成圆锥曲线求解：双层状态 → 模型选择与对象绑定 → 模型应用／公共符号操作 → 新状态 → 答案。
 
 - **已有基础**：旧状态构造、定理库、选择器训练、推理／搜索、符号求解与评估模块均有代码；不代表全库数学正确性或端到端质量已验证。
-- **独立验证**：新绑定接口已跑通 ID 2 的 RM5→RM21（m=5）及 ID 9 的 RM3→RM11→RM5→RM12（t=9）；另已验证 ID 65/200/353/380/549 的正向渐近线链；ID 1516 仅验证椭圆参数子链；均为固定动作顺序，不是自主选择模型。
-- **尚未接入**：新状态与旧状态没有自动双向同步；新应用器尚未接入旧求解器、轨迹构建器和选择器。其余三个代表案例目前是数学／规格案例。
+- **独立验证**：新绑定接口已跑通 ID 2 的 RM5→RM21（m=5）及 ID 9 的 RM3→RM11→RM5→RM12（t=9）；另已验证 ID 65/200/353/380/549 的正向渐近线链；ID 1516 仅验证椭圆参数子链；ID 5 的标准模型→RM17 已得到 5/4；均为固定链与模式预检，不是自主选择模型。
+- **尚未接入**：新状态与旧状态没有自动双向同步；新应用器尚未接入旧求解器、轨迹构建器和选择器。ID 51、56 仍为数学／规格案例。
 - **当前方向**：分批完善 80 个模型的执行契约、共享操作与可信轨迹，再训练选择器。Entropy／求解进度机制和 LLM 实验后置。
 
 ## 代码导航
@@ -35,14 +35,15 @@
 | [transition_state.py](../src/state/transition_state.py) | 显式初态、对象所属方程、共焦点关系、几何框架、约束、属性、赋值与来源 |
 | [transition_primitives.py](../src/solver/transition_primitives.py) | 受限解析、椭圆／双曲线标准形式、共焦点实例化、斜率、实根与条件检查 |
 | [standard_proposals.py](../src/theorems/standard_proposals.py) | RM3/4/5/6 共用标准参数提取、轴向框架和类型条件 |
+| [parabola_operations.py](../src/solver/parabola_operations.py)、[parabola_proposals.py](../src/theorems/parabola_proposals.py) | 点代入、抛物线标准参数恢复、方向确认与焦半径；供 RM7–10/17 调用 |
 | [parameter_proposals.py](../src/theorems/parameter_proposals.py) | RM11/RM12 共用的普通参数关系提案及正值／一致性检查 |
 | [bound_application.py](../src/theorems/bound_application.py) | 动作绑定、候选变化、冲突检查、原子提交、受限回代及执行记录 |
 | `model_003.py`、`model_011.py`、`model_012.py`（`src/theorems/models/`） | 椭圆参数、普通参数关系及共焦点约束；RM11/RM12 共用 `parameter_proposals.py` |
 | [model_005.py](../src/theorems/models/model_005.py)、[model_021.py](../src/theorems/models/model_021.py) | 原模型类新增 `propose_bound`；RM5 记录类型条件；RM21 支持渐近线正／反向模式，旧接口保留 |
-| [bound_slice.py](../src/reasoning/bound_slice.py) | 三类固定链，按可确认方向选 RM3/4 或 RM5/6；指定回放及 v3 trace |
+| [bound_slice.py](../src/reasoning/bound_slice.py) | 四类固定链；标准方向／恢复模式预检、指定回放及 v4 trace |
 | [test_bound_transition_slice.py](../tests/test_bound_transition_slice.py) | 真实题、绑定隔离、重复执行、多解、条件不足、冲突与回滚测试 |
 
-新增测试：[test_bound_y_axis.py](../tests/test_bound_y_axis.py) 覆盖 y 轴标准模型、关系和渐近线；[test_bound_parameter_modes.py](../tests/test_bound_parameter_modes.py) 覆盖普通参数关系和正向渐近线；[test_bound_shared_focus.py](../tests/test_bound_shared_focus.py)，覆盖 ID 9 及多曲线关系边界。
+新增测试：[test_bound_parabola.py](../tests/test_bound_parabola.py) 覆盖 ID 5 与四向抛物线；[test_bound_y_axis.py](../tests/test_bound_y_axis.py) 覆盖 y 轴标准模型、关系和渐近线；[test_bound_parameter_modes.py](../tests/test_bound_parameter_modes.py) 覆盖普通参数关系和正向渐近线；[test_bound_shared_focus.py](../tests/test_bound_shared_focus.py)，覆盖 ID 9 及多曲线关系边界。
 
 运行：`python3 -m src.reasoning.bound_slice --problem-id 2`。
 详细结果及限制见[实现记录](../docs/开发规格/07_RM5_RM21实现记录.md)；诊断 trace 尚不是最终训练 schema。ID 9 的命令、证据及限制见[共焦点实现记录](../docs/开发规格/08_ID9共焦点实现记录.md)。
@@ -57,7 +58,7 @@
 
 ## 后续顺序与维护
 
-1. RM4/RM6 与 y 轴框架、渐近线及参数关系已验证，见[本批记录](../docs/开发规格/10_Y轴标准模型实现记录.md)。下一批建议回到 ID 5，扩展抛物线标准模型及点归属参数恢复；先明确其模式与查询边界。
+1. RM4/RM6 与 y 轴框架、渐近线及参数关系已验证，见[本批记录](../docs/开发规格/10_Y轴标准模型实现记录.md)。ID 5 已完成标准参数恢复与焦半径闭环，见[记录](../docs/开发规格/11_ID5抛物线实现记录.md)。下一批建议补 RM29 准线及点到直线距离，为定义路径提供独立验证。
 2. 分批覆盖全部 80 个模型，抽提公共运算；同时形成可回放轨迹，处理弱标注顺序问题。
 3. 统一状态初始化、轨迹构建与求解入口，再开展选择器训练和系统评估；Entropy、LLM 工作另行安排。
 
