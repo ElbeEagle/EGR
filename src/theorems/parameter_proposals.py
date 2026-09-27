@@ -2,10 +2,9 @@
 import sympy as sp
 
 from src.solver.transition_primitives import (
-    TransitionError, centered_denominators, finite_real_solutions, truth,
+    TransitionError, axis_denominators, finite_real_solutions, truth,
 )
-from src.state.transition_state import CurveFrame
-from .bound_application import Proposal, check_binding
+from .bound_application import Proposal, check_binding, bound_axis
 
 
 PARAMETER_MODES = ('derive_a_sq', 'derive_b_sq', 'derive_c_sq', 'constrain_parameters')
@@ -23,10 +22,9 @@ def parameter_proposal(state, action):
     # An equation-bound action must consume the frame established by a standard
     # model; intrinsic object-only actions can also use other upstream facts.
     if fact is not None:
-        if state.frames.get(curve) != CurveFrame(fact.fact_id):
-            raise TransitionError('inapplicable', 'Missing matching standard-curve frame')
-        x_sq, y_sq = centered_denominators(fact.expression, state.symbols['x'], state.symbols['y'])
-        expected = {'a_sq': x_sq, 'b_sq': y_sq if kind == 'Ellipse' else -y_sq}
+        axis = bound_axis(state, curve, fact.fact_id)
+        focal, transverse = axis_denominators(fact.expression, state.symbols['x'], state.symbols['y'], axis)
+        expected = {'a_sq': focal, 'b_sq': transverse if kind == 'Ellipse' else -transverse}
         for key in ('a_sq', 'b_sq'):
             if key in known and sp.simplify(known[key] - expected[key].subs(state.values)) != 0:
                 raise TransitionError('conflict', 'Parameter does not match bound equation')

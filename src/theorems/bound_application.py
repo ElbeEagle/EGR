@@ -50,7 +50,7 @@ class TransitionResult:
 
 
 def check_binding(state, action):
-    expected = {3: 'Ellipse', 11: 'Ellipse', 5: 'Hyperbola', 12: 'Hyperbola', 21: 'Hyperbola'}
+    expected = {3: 'Ellipse', 4: 'Ellipse', 11: 'Ellipse', 5: 'Hyperbola', 6: 'Hyperbola', 12: 'Hyperbola', 21: 'Hyperbola'}
     if action.model_id not in expected or state.entities.get(action.curve) != expected[action.model_id]:
         raise TransitionError('inapplicable', 'Unsupported model or curve type binding')
     fact = state.equations.get(action.equation_id)
@@ -77,6 +77,14 @@ def check_binding(state, action):
     return fact
 
 
+def bound_axis(state, curve, equation_id):
+    frame = state.frames.get(curve)
+    if (frame is None or frame.equation_id != equation_id or frame.axis not in ('x', 'y')
+            or frame.center != (sp.S.Zero, sp.S.Zero)):
+        raise TransitionError('inapplicable', 'Missing matching centered x/y frame')
+    return frame.axis
+
+
 def bound_parameters(state, curve, equation_id):
     """Require prior standard-model facts and verify their equation/frame binding."""
     fact = state.equations[equation_id]
@@ -84,11 +92,10 @@ def bound_parameters(state, curve, equation_id):
         raise TransitionError('inapplicable', 'Parameter equation binding mismatch')
     if curve not in state.frames or any((curve, k) not in state.properties for k in ('a_sq', 'b_sq')):
         raise TransitionError('inapplicable', 'Missing standard-model parameters or frame')
-    if state.frames[curve] != CurveFrame(equation_id):
-        raise TransitionError('inapplicable', 'Frame does not match the centered x-axis equation')
+    axis = bound_axis(state, curve, equation_id)
     operation = ellipse_parameters if state.entities[curve] == 'Ellipse' else hyperbola_parameters
     expected = operation(fact.expression, state.symbols['x'], state.symbols['y'],
-                         list(state.constraints.values()))
+                         list(state.constraints.values()), axis)
     for key, value in zip(('a_sq', 'b_sq'), expected):
         if sp.simplify((state.properties[curve, key] - value).subs(state.values)) != 0:
             raise TransitionError('conflict', 'Parameters do not match bound equation')
@@ -96,16 +103,16 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
-    if model_id not in (3, 5, 11, 12, 21):
+    if model_id not in (3, 4, 5, 6, 11, 12, 21):
         return []
     actions = []
     for fact in state.equations.values():
-        kind = 'Ellipse' if model_id in (3, 11) else 'Hyperbola'
+        kind = 'Ellipse' if model_id in (3, 4, 11) else 'Hyperbola'
         if fact.role != 'curve' or state.entities.get(fact.owner) != kind:
             continue
-        if model_id in (3, 5, 11):
-            mode = 'derive_c_sq' if model_id == 11 else 'extract_parameters'
-            actions.append(BoundAction(model_id, mode, fact.owner, fact.fact_id))
+        if model_id in (3, 4, 5, 6, 11):
+            action_mode = 'derive_c_sq' if model_id == 11 else 'extract_parameters'
+            actions.append(BoundAction(model_id, action_mode, fact.owner, fact.fact_id))
         elif model_id == 12:
             for relation in state.relations.values():
                 if fact.owner not in relation.curves:

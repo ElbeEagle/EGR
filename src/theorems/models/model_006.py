@@ -33,6 +33,10 @@ class HyperbolaEquationStandardY(TheoremModel):
             chinese_name="双曲线标准方程(焦点在y轴)"
         )
     
+    def propose_bound(self, state, action):
+        from src.theorems.standard_proposals import standard_proposal
+        return standard_proposal(state, action, axis='y')
+
     def can_apply(self, state) -> bool:
         """
         检查是否可应用

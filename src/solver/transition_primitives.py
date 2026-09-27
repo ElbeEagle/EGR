@@ -95,19 +95,32 @@ def centered_denominators(expression, x, y):
     return a_sq, y_denom
 
 
-def hyperbola_parameters(expression, x, y, constraints):
-    a_sq, y_denom = centered_denominators(expression, x, y)
-    b_sq = -y_denom
-    require(a_sq > 0, constraints, 'Positive x-axis semi-axis square not established')
+def axis_denominators(expression, x, y, axis):
+    if axis not in ('x', 'y'):
+        raise TransitionError('inapplicable', 'Only x/y focal axes supported')
+    denominators = centered_denominators(expression, x, y)
+    return denominators if axis == 'x' else denominators[::-1]
+
+
+def hyperbola_parameters(expression, x, y, constraints, axis='x'):
+    a_sq, transverse = axis_denominators(expression, x, y, axis)
+    b_sq = -transverse
+    require(a_sq > 0, constraints, 'Positive focal-axis semi-axis square not established')
     require(b_sq > 0, constraints, 'Positive conjugate semi-axis square not established')
     return a_sq, b_sq
 
 
-def ellipse_parameters(expression, x, y, constraints):
-    a_sq, b_sq = centered_denominators(expression, x, y)
+def ellipse_parameters(expression, x, y, constraints, axis='x'):
+    a_sq, b_sq = axis_denominators(expression, x, y, axis)
     require(b_sq > 0, constraints, 'Positive minor semi-axis square not established')
-    require(a_sq > b_sq, constraints, 'Ellipse x-axis orientation not established')
+    require(a_sq > b_sq, constraints, 'Ellipse focal-axis orientation not established')
     return a_sq, b_sq
+
+
+def asymptote_slope_squared(a_sq, b_sq, axis):
+    if axis not in ('x', 'y'):
+        raise TransitionError('inapplicable', 'Only x/y focal axes supported')
+    return sp.cancel(b_sq/a_sq if axis == 'x' else a_sq/b_sq)
 
 
 def ensure_consistent(constraints):

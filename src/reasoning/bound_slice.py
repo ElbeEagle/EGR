@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from copy import deepcopy
 
 from src.state.transition_state import TransitionState, AsymptoteQuery
 from src.theorems.bound_application import BoundAction, BoundApplicator, enumerate_actions
+from src.solver.transition_primitives import TransitionError
 
 
 @dataclass
@@ -19,6 +21,24 @@ class SliceResult:
         return self.state.extract_answer() if self.state else None
 
 
+def select_standard_action(state, curve, equation_id):
+    """Preflight the two axis-specific modes on copies; never commit a guessed axis."""
+    model_ids = (3, 4) if state.entities[curve] == 'Ellipse' else (5, 6)
+    app = BoundApplicator()
+    probes = [app.apply(deepcopy(state), BoundAction(mid, 'extract_parameters', curve, equation_id))
+              for mid in model_ids]
+    accepted = [p.action for p in probes if p.status in ('applied', 'no_op')]
+    if len(accepted) == 1:
+        return accepted[0]
+    if accepted:
+        raise TransitionError('undetermined', 'More than one standard axis remains admissible')
+    for status in ('conflict', 'undetermined', 'failed', 'inapplicable'):
+        failure = next((p for p in probes if p.status == status), None)
+        if failure:
+            raise TransitionError(status, failure.diagnostic)
+    raise TransitionError('inapplicable', 'No standard curve mode applies')
+
+
 def solve_asymptote_slice(facts: str, query: str) -> SliceResult:
     try:
         state = TransitionState.from_facts(facts, query)
@@ -28,7 +48,10 @@ def solve_asymptote_slice(facts: str, query: str) -> SliceResult:
     if len(actions) != 1:
         return SliceResult('undetermined', state, diagnostic='Slice requires one bound curve/asymptote pair')
     inverse = actions[0]
-    extract = BoundAction(5, 'extract_parameters', inverse.curve, inverse.equation_id)
+    try:
+        extract = select_standard_action(state, inverse.curve, inverse.equation_id)
+    except TransitionError as exc:
+        return SliceResult(exc.status, state, diagnostic=str(exc))
     return replay_actions(state, (extract, inverse))
 
 
@@ -41,10 +64,15 @@ def solve_shared_focus_slice(facts: str, query: str) -> SliceResult:
     if len(actions) != 1:
         return SliceResult('undetermined', state, diagnostic='Slice requires one hyperbola/ellipse focus binding')
     shared = actions[0]
+    try:
+        ellipse = select_standard_action(state, shared.peer_curve, shared.peer_equation_id)
+        hyperbola = select_standard_action(state, shared.curve, shared.equation_id)
+    except TransitionError as exc:
+        return SliceResult(exc.status, state, diagnostic=str(exc))
     return replay_actions(state, (
-        BoundAction(3, 'extract_parameters', shared.peer_curve, shared.peer_equation_id),
+        ellipse,
         BoundAction(11, 'derive_c_sq', shared.peer_curve, shared.peer_equation_id),
-        BoundAction(5, 'extract_parameters', shared.curve, shared.equation_id),
+        hyperbola,
         shared,
     ))
 
@@ -61,8 +89,11 @@ def solve_forward_asymptote_slice(facts: str, query: str) -> SliceResult:
     if len(actions) != 1:
         return SliceResult('undetermined', state, diagnostic='Query requires one bound curve equation')
     forward = actions[0]
-    return replay_actions(state, (BoundAction(5, 'extract_parameters', forward.curve,
-                                             forward.equation_id), forward))
+    try:
+        extract = select_standard_action(state, forward.curve, forward.equation_id)
+    except TransitionError as exc:
+        return SliceResult(exc.status, state, diagnostic=str(exc))
+    return replay_actions(state, (extract, forward))
 
 
 def replay_actions(state: TransitionState, actions) -> SliceResult:

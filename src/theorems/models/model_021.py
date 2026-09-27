@@ -37,7 +37,7 @@ class HyperbolaAsymptote(TheoremModel):
     def propose_bound(self, state, action):
         import sympy as sp
         from src.solver.transition_primitives import (
-            TransitionError, finite_real_solutions, hyperbola_parameters, line_slope, truth,
+            TransitionError, finite_real_solutions, line_slope, truth, asymptote_slope_squared,
         )
         from src.theorems.bound_application import Proposal, check_binding, bound_parameters
         from src.state.transition_state import EquationFact
@@ -45,14 +45,16 @@ class HyperbolaAsymptote(TheoremModel):
         if action.mode == 'derive_asymptotes':
             fact = check_binding(state, action)
             a_sq, b_sq = bound_parameters(state, action.curve, fact.fact_id)
-            slope = sp.sqrt(sp.cancel(b_sq/a_sq))
+            axis = state.frames[action.curve].axis
+            slope_sq = asymptote_slope_squared(a_sq, b_sq, axis)
+            slope = sp.sqrt(slope_sq)
             given_lines = [f for f in state.equations.values()
                            if f.owner == action.curve and f.role == 'asymptote'
                            and not f.fact_id.startswith('derived:')]
             for line in given_lines:
                 known_slope = line_slope(line.expression, state.symbols['x'], state.symbols['y'],
                                          list(state.constraints.values()))
-                compatible = truth(sp.Eq((known_slope**2-b_sq/a_sq).subs(state.values), 0),
+                compatible = truth(sp.Eq((known_slope**2-slope_sq).subs(state.values), 0),
                                    list(state.constraints.values()))
                 if compatible is not True:
                     raise TransitionError('conflict' if compatible is False else 'undetermined',
@@ -69,7 +71,7 @@ class HyperbolaAsymptote(TheoremModel):
                             f'property:{action.curve}:a_sq', f'property:{action.curve}:b_sq',
                             *state.constraints.keys(), *(line.fact_id for line in given_lines)),
                 operations=[{'operation': 'derive_asymptotes', 'curve': action.curve,
-                             'slope_magnitude': slope, 'equations': tuple(equations)}],
+                             'axis': axis, 'slope_magnitude': slope, 'equations': tuple(equations)}],
             )
 
         if action.mode != 'constrain_parameters':
@@ -80,20 +82,17 @@ class HyperbolaAsymptote(TheoremModel):
         line = state.equations[action.line_equation_id]
         a_key, b_key = (action.curve, 'a_sq'), (action.curve, 'b_sq')
         if a_key not in state.properties or b_key not in state.properties:
-            raise TransitionError('inapplicable', 'Missing RM5 parameter facts')
+            raise TransitionError('inapplicable', 'Missing standard-model parameter facts')
         x, y = state.symbols['x'], state.symbols['y']
         constraints = list(state.constraints.values())
-        # Verify that stored properties still match the explicitly bound equation.
-        a_sq, b_sq = hyperbola_parameters(fact.expression, x, y, constraints)
-        for key, expected in ((a_key, a_sq), (b_key, b_sq)):
-            if sp.simplify((state.properties[key]-expected).subs(state.values)) != 0:
-                raise TransitionError('conflict', 'Parameters do not match bound equation')
+        a_sq, b_sq = bound_parameters(state, action.curve, fact.fact_id)
+        axis = state.frames[action.curve].axis
         slope = line_slope(line.expression, x, y, constraints)
-        relation = sp.cancel(slope**2 - b_sq/a_sq)
-        reads = (fact.fact_id, line.fact_id, *state.constraints.keys(),
+        relation = sp.cancel(slope**2 - asymptote_slope_squared(a_sq, b_sq, axis))
+        reads = (fact.fact_id, line.fact_id, f'frame:{action.curve}', *state.constraints.keys(),
                  f'property:{action.curve}:a_sq', f'property:{action.curve}:b_sq')
         operations = [{'operation': 'line_slope', 'equation': line.fact_id, 'result': slope},
-                      {'operation': 'asymptote_constraint', 'expression': relation}]
+                      {'operation': 'asymptote_constraint', 'axis': axis, 'expression': relation}]
         if state.query in state.values:
             if sp.simplify(relation.subs(state.values)) != 0:
                 raise TransitionError('conflict', 'Known answer violates asymptote relation')
