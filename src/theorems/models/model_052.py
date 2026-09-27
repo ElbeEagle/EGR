@@ -28,6 +28,10 @@ class PointToLineDistance(TheoremModel):
     输出: d = |3×1 + 4×2 - 5| / √(9+16) = 6/5
     """
     
+    def propose_bound(self, state, action):
+        from ..parabola_proposals import point_line_distance_proposal
+        return point_line_distance_proposal(state, action)
+
     def __init__(self):
         super().__init__(
             model_id=52,

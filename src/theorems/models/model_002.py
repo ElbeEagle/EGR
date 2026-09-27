@@ -24,6 +24,10 @@ class ParabolaDefinition(TheoremModel):
     对于抛物线上的点P，添加关系 Distance(P, Focus) = Distance(P, Directrix)
     """
     
+    def propose_bound(self, state, action):
+        from ..parabola_proposals import definition_proposal
+        return definition_proposal(state, action)
+
     def __init__(self):
         super().__init__(
             model_id=2,

@@ -96,7 +96,7 @@ def solve_forward_asymptote_slice(facts: str, query: str) -> SliceResult:
     return replay_actions(state, (extract, forward))
 
 
-def solve_parabola_focal_slice(facts: str, query: str) -> SliceResult:
+def solve_parabola_focal_slice(facts: str, query: str, *, definition=False) -> SliceResult:
     try:
         state = TransitionState.from_facts(facts, query)
     except (ValueError, SyntaxError) as exc:
@@ -113,6 +113,15 @@ def solve_parabola_focal_slice(facts: str, query: str) -> SliceResult:
               for mid in (7, 8, 9, 10)]
     accepted = [p.action for p in probes if p.status in ('applied', 'no_op')]
     if len(accepted) == 1:
+        if definition:
+            line_id = f'derived:{radius.curve}:directrix'
+            return replay_actions(state, (
+                accepted[0],
+                BoundAction(29, 'derive_directrix', radius.curve, radius.equation_id),
+                replace(radius, model_id=52, mode='point_line_distance', line_equation_id=line_id,
+                        relation_id=None),
+                replace(radius, model_id=2, mode='focal_from_directrix', line_equation_id=line_id),
+            ))
         return replay_actions(state, (accepted[0], radius))
     if accepted:
         return SliceResult('undetermined', state, diagnostic='Multiple opening modes remain admissible')
@@ -121,6 +130,10 @@ def solve_parabola_focal_slice(facts: str, query: str) -> SliceResult:
         if failed:
             return SliceResult(status, state, transitions=[failed], diagnostic=failed.diagnostic)
     return SliceResult('inapplicable', state)
+
+
+def solve_parabola_definition_slice(facts: str, query: str) -> SliceResult:
+    return solve_parabola_focal_slice(facts, query, definition=True)
 
 
 def replay_actions(state: TransitionState, actions) -> SliceResult:
@@ -146,13 +159,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
     solve = {'asymptote': solve_asymptote_slice, 'shared-focus': solve_shared_focus_slice,
              'asymptote-forward': solve_forward_asymptote_slice,
-             'parabola-focal': solve_parabola_focal_slice}[args.mode]
+             'parabola-focal': solve_parabola_focal_slice,
+             'parabola-definition': solve_parabola_definition_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):

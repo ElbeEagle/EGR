@@ -53,7 +53,7 @@ class TransitionResult:
 
 def check_binding(state, action):
     expected = {3: 'Ellipse', 4: 'Ellipse', 11: 'Ellipse', 5: 'Hyperbola', 6: 'Hyperbola', 12: 'Hyperbola', 21: 'Hyperbola'}
-    expected.update({mid: 'Parabola' for mid in (7, 8, 9, 10, 17)})
+    expected.update({mid: 'Parabola' for mid in (2, 7, 8, 9, 10, 17, 29, 52)})
     if action.model_id not in expected or state.entities.get(action.curve) != expected[action.model_id]:
         raise TransitionError('inapplicable', 'Unsupported model or curve type binding')
     fact = state.equations.get(action.equation_id)
@@ -65,12 +65,18 @@ def check_binding(state, action):
         return None  # Intrinsic parameter relations do not require an axis or equation.
     if fact is None or fact.owner != action.curve or fact.role != 'curve':
         raise TransitionError('inapplicable', 'Curve equation binding mismatch')
-    if action.model_id == 17 or (action.model_id in (7, 8, 9, 10) and action.mode == 'recover_from_point'):
+    if action.model_id in (2, 17) or (action.model_id in (7, 8, 9, 10) and action.mode == 'recover_from_point'):
         incidence = state.incidences.get(action.relation_id)
         coordinate = state.coordinates.get(action.point)
         if (incidence is None or incidence.point != action.point or incidence.curve != action.curve
                 or coordinate is None or coordinate.fact_id != action.coordinate_id):
             raise TransitionError('inapplicable', 'Point coordinate/incidence binding mismatch')
+    if action.model_id in (2, 52):
+        line = state.equations.get(action.line_equation_id)
+        coordinate = state.coordinates.get(action.point)
+        if (line is None or line.owner != action.curve or line.role != 'directrix'
+                or coordinate is None or coordinate.fact_id != action.coordinate_id):
+            raise TransitionError('inapplicable', 'Point/directrix binding mismatch')
     if action.model_id == 21 and action.mode == 'constrain_parameters':
         line = state.equations.get(action.line_equation_id)
         if line is None or line.owner != action.curve or line.role != 'asymptote':
@@ -112,6 +118,27 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id in (2, 29, 52):
+        actions = []
+        for fact in state.equations.values():
+            if fact.role != 'curve' or state.entities.get(fact.owner) != 'Parabola':
+                continue
+            if model_id == 29:
+                actions.append(BoundAction(29, 'derive_directrix', fact.owner, fact.fact_id))
+                continue
+            for line in state.equations.values():
+                if line.owner != fact.owner or line.role != 'directrix':
+                    continue
+                for point, coordinate in state.coordinates.items():
+                    base = BoundAction(model_id, 'point_line_distance' if model_id == 52 else 'focal_from_directrix',
+                                       fact.owner, fact.fact_id, line.fact_id,
+                                       point=point, coordinate_id=coordinate.fact_id)
+                    if model_id == 52:
+                        actions.append(base)
+                    else:
+                        actions.extend(replace(base, relation_id=inc.fact_id) for inc in state.incidences.values()
+                                       if inc.point == point and inc.curve == fact.owner)
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id in (7, 8, 9, 10, 17):
         actions = []
         for fact in state.equations.values():
@@ -243,7 +270,7 @@ class BoundApplicator:
             changed_frames = {k: v for k, v in frames.items() if k not in state.frames}
             equations = dict(state.equations)
             for key, fact in proposal.equations.items():
-                if key != fact.fact_id or fact.owner != action.curve or fact.role != 'asymptote':
+                if key != fact.fact_id or fact.owner != action.curve or fact.role not in ('asymptote', 'directrix'):
                     raise TransitionError('inapplicable', 'Invalid derived equation binding')
                 normalized = replace(fact, expression=sp.simplify(fact.expression.subs(values)))
                 if key in equations:

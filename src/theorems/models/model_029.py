@@ -24,6 +24,10 @@ class ParabolaDirectrix(TheoremModel):
     输出: 准线: x = -1
     """
     
+    def propose_bound(self, state, action):
+        from ..parabola_proposals import directrix_proposal
+        return directrix_proposal(state, action)
+
     def __init__(self):
         super().__init__(
             model_id=29,

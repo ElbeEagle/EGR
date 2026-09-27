@@ -4,7 +4,8 @@ from src.solver.transition_primitives import TransitionError, finite_real_soluti
 from src.solver.parabola_operations import (
     DIRECTIONS, parabola_coefficient, substitute_point, parabola_geometry,
 )
-from src.state.transition_state import CurveFrame
+from src.state.transition_state import CurveFrame, EquationFact
+from src.solver.distance_operations import point_to_line_distance
 from .bound_application import Proposal, check_binding
 
 
@@ -59,21 +60,8 @@ def focal_radius_proposal(state, action):
     fact = check_binding(state, action)
     if action.mode != 'focal_radius':
         raise TransitionError('inapplicable', 'Unsupported RM17 mode')
-    frame = state.frames.get(action.curve)
-    if (frame is None or frame.equation_id != fact.fact_id or frame.center != (0, 0)
-            or frame.direction not in {d[2] for d in DIRECTIONS.values()}):
-        raise TransitionError('inapplicable', 'Missing standard-parabola frame')
-    axis, sign, _ = next(d for d in DIRECTIONS.values() if d[2] == frame.direction)
-    if frame.axis != axis:
-        raise TransitionError('conflict', 'Parabola axis and direction disagree')
+    frame, axis, sign, p, focus = bound_parabola(state, action, fact)
     x, y = state.symbols['x'], state.symbols['y']
-    coefficient = parabola_coefficient(fact.expression, x, y, axis, list(state.constraints.values())).subs(state.values)
-    p, focus = parabola_geometry(coefficient, axis, sign, list(state.constraints.values()))
-    for key, expected in (('p', p), ('focus_x', focus[0]), ('focus_y', focus[1])):
-        if (action.curve, key) not in state.properties:
-            raise TransitionError('inapplicable', 'Missing standard-parabola property')
-        if sp.simplify(state.properties[action.curve, key].subs(state.values)-expected) != 0:
-            raise TransitionError('conflict', 'Parabola property does not match bound equation')
     xy = tuple(v.subs(state.values) for v in state.coordinates[action.point].xy)
     residual = substitute_point(fact.expression.subs(state.values), x, y, xy)
     valid = truth(sp.Eq(residual, 0), list(state.constraints.values()))
@@ -91,3 +79,87 @@ def focal_radius_proposal(state, action):
                     operations=[{'operation': 'verify_point_incidence', 'residual': residual},
                                 {'operation': 'parabola_focal_radius', 'point': action.point,
                                  'direction': frame.direction, 'u': u, 'p': p, 'result': radius}])
+
+
+def bound_parabola(state, action, fact):
+    frame = state.frames.get(action.curve)
+    if (frame is None or frame.equation_id != fact.fact_id or frame.center != (0, 0)
+            or frame.direction not in {d[2] for d in DIRECTIONS.values()}):
+        raise TransitionError('inapplicable', 'Missing standard-parabola frame')
+    axis, sign, _ = next(d for d in DIRECTIONS.values() if d[2] == frame.direction)
+    if frame.axis != axis:
+        raise TransitionError('conflict', 'Parabola axis and direction disagree')
+    x, y = state.symbols['x'], state.symbols['y']
+    coefficient = parabola_coefficient(fact.expression, x, y, axis, list(state.constraints.values())).subs(state.values)
+    p, focus = parabola_geometry(coefficient, axis, sign, list(state.constraints.values()))
+    for key, expected in (('p', p), ('focus_x', focus[0]), ('focus_y', focus[1])):
+        if (action.curve, key) not in state.properties:
+            raise TransitionError('inapplicable', 'Missing standard-parabola property')
+        if sp.simplify(state.properties[action.curve, key].subs(state.values)-expected) != 0:
+            raise TransitionError('conflict', 'Parabola property does not match bound equation')
+    return frame, axis, sign, p, focus
+
+
+def parabola_reads(state, action):
+    return (action.equation_id, f'entity:{action.curve}', f'frame:{action.curve}',
+            *state.constraints.keys(), *(f'value:{s}' for s in state.values),
+            *(f'property:{action.curve}:{k}' for k in ('p', 'focus_x', 'focus_y')))
+
+
+def directrix_proposal(state, action):
+    fact = check_binding(state, action)
+    if action.mode != 'derive_directrix':
+        raise TransitionError('inapplicable', 'Unsupported RM29 mode')
+    frame, axis, sign, p, _ = bound_parabola(state, action, fact)
+    expression = state.symbols[axis] + sign*p/2
+    key = f'derived:{action.curve}:directrix'
+    return Proposal(equations={key: EquationFact(key, action.curve, 'directrix', expression, 'RM29')},
+                    read_facts=parabola_reads(state, action),
+                    operations=[{'operation': 'parabola_directrix', 'direction': frame.direction,
+                                 'p': p, 'equation': expression}])
+
+
+def point_line_distance_proposal(state, action):
+    check_binding(state, action)
+    if action.mode != 'point_line_distance':
+        raise TransitionError('inapplicable', 'Unsupported RM52 mode')
+    line = state.equations[action.line_equation_id]
+    xy = tuple(v.subs(state.values) for v in state.coordinates[action.point].xy)
+    distance = point_to_line_distance(line.expression.subs(state.values),
+                                      state.symbols['x'], state.symbols['y'], xy)
+    key = f'point_line_distance:{action.point}:{line.fact_id}'
+    return Proposal(properties={(action.curve, key): distance},
+                    read_facts=(line.fact_id, action.coordinate_id, *(f'value:{s}' for s in state.values)),
+                    operations=[{'operation': 'point_to_line_distance', 'point': action.point,
+                                 'line': line.fact_id, 'result': distance}])
+
+
+def definition_proposal(state, action):
+    fact = check_binding(state, action)
+    if action.mode != 'focal_from_directrix':
+        raise TransitionError('inapplicable', 'Unsupported RM2 mode')
+    _, axis, sign, p, _ = bound_parabola(state, action, fact)
+    line = state.equations[action.line_equation_id]
+    # Verify the bound line describes this parabola's directrix (including scaling).
+    x, y = state.symbols['x'], state.symbols['y']
+    expression = sp.expand(line.expression.subs(state.values))
+    coefficient = expression.coeff(state.symbols[axis])
+    if coefficient == 0 or sp.simplify(expression-coefficient*(state.symbols[axis]+sign*p/2)) != 0:
+        raise TransitionError('conflict', 'Directrix does not match bound parabola')
+    xy = tuple(v.subs(state.values) for v in state.coordinates[action.point].xy)
+    residual = substitute_point(fact.expression.subs(state.values), x, y, xy)
+    valid = truth(sp.Eq(residual, 0))
+    if valid is not True:
+        raise TransitionError('conflict' if valid is False else 'undetermined', 'Point incidence not verified')
+    key = f'point_line_distance:{action.point}:{line.fact_id}'
+    distance = state.properties.get((action.curve, key))
+    if distance is None:
+        raise TransitionError('inapplicable', 'Missing bound point-to-directrix distance')
+    if distance.is_real is not True or distance.is_finite is not True or truth(distance > 0) is not True:
+        raise TransitionError('undetermined', 'Positive finite directrix distance required')
+    return Proposal(properties={(action.curve, f'focal_radius:{action.point}'): distance},
+                    read_facts=(*parabola_reads(state, action), action.coordinate_id, action.relation_id,
+                                line.fact_id, f'property:{action.curve}:{key}'),
+                    operations=[{'operation': 'verify_point_incidence', 'residual': residual},
+                                {'operation': 'parabola_definition', 'point': action.point,
+                                 'line': line.fact_id, 'result': distance}])
