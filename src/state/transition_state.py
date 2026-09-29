@@ -55,6 +55,12 @@ class FocalDistanceQuery:
 
 
 @dataclass(frozen=True)
+class PointLineDistanceQuery:
+    point: str
+    line: str
+
+
+@dataclass(frozen=True)
 class CurveFrame:
     equation_id: str
     center: tuple[sp.Expr, sp.Expr] = (sp.S.Zero, sp.S.Zero)
@@ -68,7 +74,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: sp.Symbol | AsymptoteQuery | FocalDistanceQuery
+    query: sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -84,7 +90,7 @@ class TransitionState:
         parts = [p.strip() for p in facts.split(';') if p.strip()]
         entities = {}
         for part in parts:
-            declaration = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Point|Number|Real)', part)
+            declaration = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Number|Real)', part)
             if declaration:
                 name, kind = declaration.groups()
                 if name in ('x', 'y') or name in entities:
@@ -95,7 +101,10 @@ class TransitionState:
                         if kind in ('Number', 'Real')})
         asymptote_query = re.fullmatch(r'Expression\(Asymptote\(([A-Za-z]\w*)\)\)', query)
         focal_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*Focus\(([A-Za-z]\w*)\)\s*\)', query)
-        if focal_query and entities.get(focal_query.group(1)) == 'Point' and entities.get(focal_query.group(2)) == 'Parabola':
+        line_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)', query)
+        if line_query and entities.get(line_query.group(1)) == 'Point' and entities.get(line_query.group(2)) == 'Line':
+            target = PointLineDistanceQuery(*line_query.groups())
+        elif focal_query and entities.get(focal_query.group(1)) == 'Point' and entities.get(focal_query.group(2)) == 'Parabola':
             target = FocalDistanceQuery(*focal_query.groups())
         elif asymptote_query and entities.get(asymptote_query.group(1)) == 'Hyperbola':
             target = AsymptoteQuery(asymptote_query.group(1))
@@ -106,7 +115,7 @@ class TransitionState:
         state = cls(entities, symbols, {}, {}, target)
         for index, part in enumerate(parts):
             fact_id = f'f{index}'
-            if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Point|Number|Real)', part):
+            if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Number|Real)', part):
                 continue
             coordinate = re.fullmatch(r'Coordinate\(([A-Za-z]\w*)\)\s*=\s*\(([^,]+),([^,]+)\)', part)
             if coordinate:
@@ -141,7 +150,9 @@ class TransitionState:
                 asymptote = re.fullmatch(r'OneOf\(Asymptote\(([A-Za-z]\w*)\)\)', owner)
                 role = 'asymptote' if asymptote else 'curve'
                 owner = asymptote.group(1) if asymptote else owner
-                if entities.get(owner) not in ('Hyperbola', 'Ellipse', 'Parabola'):
+                if not asymptote and entities.get(owner) == 'Line':
+                    role = 'line'
+                if entities.get(owner) not in ('Hyperbola', 'Ellipse', 'Parabola', 'Line') or (asymptote and entities.get(owner) != 'Hyperbola'):
                     raise ValueError('Equation owner is not a declared curve')
                 lhs, separator, rhs = text.partition('=')
                 if not separator or '=' in rhs:
@@ -171,8 +182,8 @@ class TransitionState:
             curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE, 'Parabola': CurveType.PARABOLA}.get(
                 self.entities.get(curve), CurveType.UNKNOWN),
             query_type=(QueryType.EQUATION if isinstance(self.query, AsymptoteQuery) else
-                        QueryType.DISTANCE if isinstance(self.query, FocalDistanceQuery) else QueryType.VALUE),
-            has_equation=any(f.owner == curve and f.role == 'curve' for f in self.equations.values()),
+                        QueryType.DISTANCE if isinstance(self.query, (FocalDistanceQuery, PointLineDistanceQuery)) else QueryType.VALUE),
+            has_equation=any(f.owner == curve and f.role in ('curve', 'line') for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),
             has_parameters={key for owner, key in self.properties if owner == curve},
             reasoning_depth=len(self.history),
@@ -188,6 +199,13 @@ class TransitionState:
                    for f in facts):
                 return tuple(f.expression for f in facts)
             return None
+        if isinstance(self.query, PointLineDistanceQuery):
+            lines = [f for f in self.equations.values()
+                     if f.owner == self.query.line and f.role == 'line']
+            if len(lines) != 1:
+                return None  # Do not silently choose among equations for the same line.
+            key = f'point_line_distance:{self.query.point}:{lines[0].fact_id}'
+            return self.properties.get((self.query.line, key))
         if isinstance(self.query, FocalDistanceQuery):
             return self.properties.get((self.query.curve, f'focal_radius:{self.query.point}'))
         return self.values.get(self.query)

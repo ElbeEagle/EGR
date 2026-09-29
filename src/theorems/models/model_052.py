@@ -29,7 +29,7 @@ class PointToLineDistance(TheoremModel):
     """
     
     def propose_bound(self, state, action):
-        from ..parabola_proposals import point_line_distance_proposal
+        from ..distance_proposals import point_line_distance_proposal
         return point_line_distance_proposal(state, action)
 
     def __init__(self):

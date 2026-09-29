@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 from copy import deepcopy
 
-from src.state.transition_state import TransitionState, AsymptoteQuery, FocalDistanceQuery
+from src.state.transition_state import TransitionState, AsymptoteQuery, FocalDistanceQuery, PointLineDistanceQuery
 from src.theorems.bound_application import BoundAction, BoundApplicator, enumerate_actions
 from src.solver.transition_primitives import TransitionError
 
@@ -136,6 +136,21 @@ def solve_parabola_definition_slice(facts: str, query: str) -> SliceResult:
     return solve_parabola_focal_slice(facts, query, definition=True)
 
 
+def solve_point_line_distance_slice(facts: str, query: str) -> SliceResult:
+    """One explicit RM52 step selected by the point/line query, not gold labels."""
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, PointLineDistanceQuery):
+        return SliceResult('inapplicable', state, diagnostic='Requires a point-to-line query')
+    actions = [a for a in enumerate_actions(state, 52, 'point_line_distance')
+               if a.line == state.query.line and a.point == state.query.point]
+    if len(actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Requires one coordinate/line equation binding')
+    return replay_actions(state, actions)
+
+
 def replay_actions(state: TransitionState, actions) -> SliceResult:
     """Run an explicit diagnostic action sequence; retain unsuccessful attempts too."""
     applicator = BoundApplicator()
@@ -159,14 +174,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
     solve = {'asymptote': solve_asymptote_slice, 'shared-focus': solve_shared_focus_slice,
              'asymptote-forward': solve_forward_asymptote_slice,
              'parabola-focal': solve_parabola_focal_slice,
-             'parabola-definition': solve_parabola_definition_slice}[args.mode]
+             'parabola-definition': solve_parabola_definition_slice,
+             'point-line-distance': solve_point_line_distance_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
@@ -178,7 +194,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v4', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v5', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

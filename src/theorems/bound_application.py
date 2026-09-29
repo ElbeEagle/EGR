@@ -16,7 +16,7 @@ from src.state.transition_state import TransitionState, CurveFrame, EquationFact
 class BoundAction:
     model_id: int
     mode: str
-    curve: str
+    curve: str | None = None
     equation_id: str | None = None
     line_equation_id: str | None = None
     relation_id: str | None = None
@@ -24,6 +24,7 @@ class BoundAction:
     peer_equation_id: str | None = None
     point: str | None = None
     coordinate_id: str | None = None
+    line: str | None = None
 
 
 @dataclass
@@ -52,6 +53,18 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 52 and action.line is not None:
+        line = state.equations.get(action.line_equation_id)
+        coordinate = state.coordinates.get(action.point)
+        if (action.curve is not None or action.equation_id is not None
+                or state.entities.get(action.line) != 'Line'
+                or line is None or line.owner != action.line or line.role != 'line'
+                or state.entities.get(action.point) != 'Point'
+                or coordinate is None or coordinate.fact_id != action.coordinate_id):
+            raise TransitionError('inapplicable', 'Point/independent line binding mismatch')
+        return line
+    if action.line is not None:
+        raise TransitionError('inapplicable', 'Independent line binding only supported by RM52')
     expected = {3: 'Ellipse', 4: 'Ellipse', 11: 'Ellipse', 5: 'Hyperbola', 6: 'Hyperbola', 12: 'Hyperbola', 21: 'Hyperbola'}
     expected.update({mid: 'Parabola' for mid in (2, 7, 8, 9, 10, 17, 29, 52)})
     if action.model_id not in expected or state.entities.get(action.curve) != expected[action.model_id]:
@@ -120,6 +133,13 @@ def bound_parameters(state, curve, equation_id):
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
     if model_id in (2, 29, 52):
         actions = []
+        if model_id == 52:
+            for line in state.equations.values():
+                if line.role == 'line' and state.entities.get(line.owner) == 'Line':
+                    actions.extend(BoundAction(52, 'point_line_distance', line=line.owner,
+                                               line_equation_id=line.fact_id, point=point,
+                                               coordinate_id=coordinate.fact_id)
+                                   for point, coordinate in state.coordinates.items())
         for fact in state.equations.values():
             if fact.role != 'curve' or state.entities.get(fact.owner) != 'Parabola':
                 continue

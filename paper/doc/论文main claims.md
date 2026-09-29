@@ -140,3 +140,24 @@ conic-section problem，是：同一个二次曲线对象同时带着几何角�
 geometry–algebra problem难在**图上没写明的构型**。主要解决“当前隐藏着什么几何构型，它允许建立什么方程”；
 
 conic-section problem难在**几何身份和代数表达式的依赖**。主要定位对象/概念的几何身份，它允许提取的具体参数代数式/方程”；
+
+
+
+
+
+
+
+| 中文                                  | 英文（首次全称 / 之后简称）                                  | 符号                                                     |
+| ------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------- |
+| 圆锥求解器                            | Conic-Solver                                                 | —                                                        |
+| 圆锥曲线问题                          | conic-section problem                                        | $x=(F,q)$                                                |
+| 状态–动作范式 / 状态                  | state-transform paradigm                                     | $S_t$                                                    |
+| 题目表示模型                          | problem representation model (RM)                            | —                                                        |
+| 符号层 / 抽象层                       | symbolic layer / abstract layer                              | $S_t^{\\mathrm{sym}}$ / $S_t^{\\mathrm{abs}}$            |
+| 抽象描述子 / 描述子集合               | abstract descriptor / descriptor set                         | $d$ / $\\mathcal{D}$                                     |
+| 推理模式 / <br />推理模式池           | reasoning pattern (RP) / RP pool                             | $P_i$ / $\\Lambda$（沿用 TDF 中 meta-model pool 的记号） |
+| 几何–代数对应（四种）                 | identity / relation-selection / realization / deficit projection | —                                                        |
+| 模式选择器 / 模式应用器               | pattern selector / pattern applicator                        | $p_\theta(P_i\mid S_t^{\mathrm{abs}})$                   |
+| 模式实例（RP 绑定到具体对象后的结果） | pattern instance                                             | —                                                        |
+| 共享符号原语                          | shared symbolic primitives                                   | —                                                        |
+| 可抽取答案状态 / 答案抽取             | answer-ready state / answer extraction                       | $S_T$ / $\\mathrm{Extract}$                              |

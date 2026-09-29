@@ -6,18 +6,19 @@
 
 | 接口（导入路径） | 输入与输出／职责 |
 | --- | --- |
-| `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与标量／渐近线集合／抛物线焦点距离查询 → 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
-| `BoundAction`（`src.theorems.bound_application`） | `model_id, mode, curve`；`equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
+| `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与标量／渐近线集合／抛物线焦点距离／点到独立直线查询 → 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
+| `BoundAction`（`src.theorems.bound_application`） | `model_id, mode`；曲线模式使用 `curve`，独立直线 RM52 使用 `line` 且 `curve/equation_id=None`；曲线模式的 `equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
 | `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–12、RM17、RM21、RM29、RM52；可按模式过滤；不保证候选已满足所有数学前提 |
 | `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–12、RM17、RM21、RM29、RM52 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
-| `state.extract_answer()` | 读取标量赋值或模型生成的两条渐近线表达式（各自等于零），或 RM17／RM2 已提交的焦半径；未确定返回 `None`，不在此求解 |
+| `state.extract_answer()` | 读取标量赋值或模型生成的两条渐近线表达式（各自等于零），或 RM17／RM2 已提交的焦半径、RM52 已提交的点到直线距离；未确定返回 `None`，不在此求解 |
 | `solve_asymptote_slice(facts, query)`（`src.reasoning.bound_slice`） | 固定 RM5/RM6→RM21，返回 `SliceResult(status, state, transitions, diagnostic)`，通过 `.answer` 读取答案 |
 | `solve_shared_focus_slice(facts, query)`（同上） | 固定 RM3/RM4→RM11→RM5/RM6→RM12；要求唯一椭圆—双曲线共焦点绑定，返回 `SliceResult` |
 | `solve_forward_asymptote_slice(facts, query)`（同上） | 固定 RM5/RM6→RM21 正向，按渐近线查询对象绑定，返回 `SliceResult` |
 | `solve_parabola_focal_slice(facts, query)`（同上） | 唯一点—曲线—方程绑定，预检 RM7–10 参数恢复方向，再回放所选标准模型→RM17 |
 | `solve_parabola_definition_slice(facts, query)`（同上） | 复用方向预检，固定标准模型→RM29→RM52→RM2；不调用 RM17 |
+| `solve_point_line_distance_slice(facts, query)`（同上） | 按独立点／直线查询过滤 RM52 候选，唯一绑定时执行一步；缺失或多方程返回 undetermined |
 | `replay_actions(state, actions)`（同上） | 指定动作诊断回放；保留失败尝试，首个失败处停止，不是选择器 |
 
 ### 状态与结果约定
@@ -27,6 +28,7 @@
 - `AsymptoteQuery(curve)`：由 `Expression(Asymptote(G))` 解析；只读取已生成的完整方程对，题目给出的一条渐近线不算完整答案。
 - `PointCoordinates` 与 `PointOnCurve`：显式坐标／点归属事实，分别保存于 `coordinates[point]`、`incidences[fact_id]`；初态只解析，不代入求参数。
 - `FocalDistanceQuery(point, curve)`：由 `Distance(A, Focus(G))` 解析；只读 `properties[(G, focal_radius:A)]`。
+- `PointLineDistanceQuery(point, line)`：由 `Distance(A, l)` 解析，要求 Point／Line 类型；直线的方程 role 为 `line`。只读唯一所属方程对应的距离属性，多方程不任意选取。
 - `FocusEquality`：关系事实 ID、两个曲线名称和原表达；`state.relations` 保存给定关系，不在初态自动实例化。
 - `CurveFrame`：绑定的方程 ID、中心和轴向；`state.frames` 由标准模型生成，当前支持原点中心、`axis=x/y`；a² 始终对应长半轴／实半轴平方。抛物线用原点顶点框架，另记 `direction=right/left/up/down`，不把顶点解释为对称中心。
 - `Proposal`：`properties / values / constraints / frames / equations / read_facts / operations / candidates`。模型提出变化，提交由应用器统一完成。
@@ -50,7 +52,7 @@
 | --- | --- |
 | RM7–10 `extract_parameters / recover_from_point` | 标准式 v²=2pu；可从已知系数提取，或绑定数值坐标点实例化归属、恢复唯一参数后确认方向；提交 p、focus_x/y 和框架，不生成准线 |
 | RM29 `derive_directrix` | 已有且与方程匹配的 p／焦点／方向 → `derived:{curve}:directrix` 方程，role 为 directrix |
-| RM52 `point_line_distance` | 显式绑定数值点与同曲线所属准线 → `properties[(curve, point_line_distance:{point}:{line_id})]`；无需点归属 |
+| RM52 `point_line_distance` | 显式绑定数值点与独立直线或同曲线所属准线 → `properties[(owner, point_line_distance:{point}:{line_id})]`；owner 分别为 line 或 curve，无需点归属 |
 | RM2 `focal_from_directrix` | 核验标准框架、准线匹配及点归属，读取已有点到准线距离 → focal_radius；不重新计算距离 |
 | RM17 `focal_radius` | 已有抛物线参数／焦点／方向及同一曲线上的数值点 → u+p/2，提交对象所属焦半径 |
 | RM3/RM4 `extract_parameters` | 对应 x/y 轴标准椭圆且 a²>b²>0 可判定 → 对象参数、中心和轴向 |
@@ -105,13 +107,27 @@ assert result.status == "solved" and result.answer == 5
 
 快速检查：`python3 -m pytest -q tests/test_bound_transition_slice.py tests/test_bound_shared_focus.py tests/test_bound_parameter_modes.py tests/test_bound_y_axis.py tests/test_bound_parabola.py`。
 
-ID 9 回放：`python3 -m src.reasoning.bound_slice --mode shared-focus --problem-id 9`。正向回放：`python3 -m src.reasoning.bound_slice --mode asymptote-forward --problem-id 65`。y 轴案例将 `--problem-id` 改为 `380`。ID 5：`python3 -m src.reasoning.bound_slice --mode parabola-focal --problem-id 5`。当前 CLI 输出 `bound-slice-v4`（新增点／坐标绑定和框架方向）；旧 v1–v3 trace 保留为历史证据。
+ID 9 回放：`python3 -m src.reasoning.bound_slice --mode shared-focus --problem-id 9`。正向回放：`python3 -m src.reasoning.bound_slice --mode asymptote-forward --problem-id 65`。y 轴案例将 `--problem-id` 改为 `380`。ID 5：`python3 -m src.reasoning.bound_slice --mode parabola-focal --problem-id 5`。当前 CLI 输出 `bound-slice-v5`（新增独立 line 绑定）；旧 v1–v4 trace 保留为历史证据。
 涉及旧符号／模型兼容时，追加 `tests/test_theorem_missing_models.py`、`tests/test_solver_symbolic.py`、`tests/test_answer_extractor_symbolic_solver.py`；涉及评估口径时追加 `tests/test_evaluation_protocol.py`。
 
 仅在签名、行为或适用范围变化时更新本页；测试数量和批次结果写入开发记录。
 
 ### 准线与公共距离操作
 
-`src.solver.distance_operations.point_to_line_distance(expression, x, y, xy)` 计算一般 Ax+By+C=0 的精确距离，支持水平／竖直／斜线及零距离；目前系数和坐标必须为有限实数，拒绝非线性、退化或未定输入。RM52 的绑定入口本批仅支持对象所属准线，不代表通用直线事实解析已经接入。距离属性依赖不可绕过应用器随意改写；RM2 消费已提交事实，准线身份与点归属仍单独核验。
+`src.solver.distance_operations.point_to_line_distance(expression, x, y, xy)` 计算一般 Ax+By+C=0 的精确距离，支持水平／竖直／斜线及零距离；目前系数和坐标必须为有限实数，拒绝非线性、退化或未定输入。RM52 同时支持 `Line` 声明＋`Expression(l)=(...)` 的独立直线和对象所属准线。一般模式显式绑定 `line / line_equation_id / point / coordinate_id`；不要求抛物线或框架。距离属性依赖不可绕过应用器随意改写；RM2 消费已提交事实，准线身份与点归属仍单独核验。
 
-定义路径：`python3 -m src.reasoning.bound_slice --mode parabola-definition --problem-id 5`。数据结构不变，继续使用 v4 trace。测试增加 `tests/test_bound_parabola_definition.py`。
+定义路径：`python3 -m src.reasoning.bound_slice --mode parabola-definition --problem-id 5`。原定义路径的 v4 证据保留，新运行输出 v5。测试增加 `tests/test_bound_parabola_definition.py`。
+
+
+一般直线入口示例：
+
+```python
+from src.reasoning.bound_slice import solve_point_line_distance_slice
+r = solve_point_line_distance_slice(
+    "l: Line;Expression(l)=(y=-2);F: Point;Coordinate(F)=(0,2)",
+    "Distance(F, l)",
+)
+assert r.status == "solved" and r.answer == 4
+```
+
+RM52 提案统一位于 `src/theorems/distance_proposals.py`，沿用已有公共公式；新增测试 `tests/test_bound_line_distance.py`。仅支持显式命名点／直线距离，不自动解析焦点别名、准线别名、坐标轴、轨迹或距离范围。CLI `--mode point-line-distance` 要求数据记录本身符合该输入范围；本批真实案例是显式事实子案例，不能直接用原题查询冒充整题回放。

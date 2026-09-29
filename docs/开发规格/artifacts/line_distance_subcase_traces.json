@@ -1,0 +1,119 @@
+{
+  "schema_version": "bound-slice-v5",
+  "cases": [
+    {
+      "problem_id": 5882,
+      "validation_scope": "explicit-fact diagnostic, not original problem solution",
+      "original_facts": "l: Line;F: Point;P: Point;Coordinate(F) = (0, 2);Expression(l)=(y=-2);Distance(P,F)=Distance(P,l)",
+      "original_query": "LocusEquation(P)",
+      "selected_facts": [
+        "l: Line",
+        "F: Point",
+        "Coordinate(F) = (0, 2)",
+        "Expression(l)=(y=-2)"
+      ],
+      "diagnostic_query": "Distance(F, l)",
+      "status": "solved",
+      "answer": "4",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 52,
+            "mode": "point_line_distance",
+            "curve": null,
+            "equation_id": null,
+            "line_equation_id": "f3",
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": "F",
+            "coordinate_id": "f2",
+            "line": "l"
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('l', 'point_line_distance:F:f3')": "4"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "f3",
+            "f2",
+            "entity:l",
+            "entity:F"
+          ],
+          "operations": [
+            {
+              "operation": "point_to_line_distance",
+              "point": "F",
+              "line": "f3",
+              "result": "4"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ]
+    },
+    {
+      "problem_id": 1253,
+      "validation_scope": "explicit-fact diagnostic, not original problem solution",
+      "original_facts": "l: Line;F: Point;M:Point;Coordinate(F) = (4, 0);Expression(l)=(x+6=0);Distance(M,F)+2=Distance(M,l)",
+      "original_query": "LocusEquation(M)",
+      "selected_facts": [
+        "l: Line",
+        "F: Point",
+        "Coordinate(F) = (4, 0)",
+        "Expression(l)=(x+6=0)"
+      ],
+      "diagnostic_query": "Distance(F, l)",
+      "status": "solved",
+      "answer": "10",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 52,
+            "mode": "point_line_distance",
+            "curve": null,
+            "equation_id": null,
+            "line_equation_id": "f3",
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": "F",
+            "coordinate_id": "f2",
+            "line": "l"
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('l', 'point_line_distance:F:f3')": "10"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "f3",
+            "f2",
+            "entity:l",
+            "entity:F"
+          ],
+          "operations": [
+            {
+              "operation": "point_to_line_distance",
+              "point": "F",
+              "line": "f3",
+              "result": "10"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ]
+    }
+  ]
+}

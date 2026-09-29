@@ -5,7 +5,6 @@ from src.solver.parabola_operations import (
     DIRECTIONS, parabola_coefficient, substitute_point, parabola_geometry,
 )
 from src.state.transition_state import CurveFrame, EquationFact
-from src.solver.distance_operations import point_to_line_distance
 from .bound_application import Proposal, check_binding
 
 
@@ -117,21 +116,6 @@ def directrix_proposal(state, action):
                     read_facts=parabola_reads(state, action),
                     operations=[{'operation': 'parabola_directrix', 'direction': frame.direction,
                                  'p': p, 'equation': expression}])
-
-
-def point_line_distance_proposal(state, action):
-    check_binding(state, action)
-    if action.mode != 'point_line_distance':
-        raise TransitionError('inapplicable', 'Unsupported RM52 mode')
-    line = state.equations[action.line_equation_id]
-    xy = tuple(v.subs(state.values) for v in state.coordinates[action.point].xy)
-    distance = point_to_line_distance(line.expression.subs(state.values),
-                                      state.symbols['x'], state.symbols['y'], xy)
-    key = f'point_line_distance:{action.point}:{line.fact_id}'
-    return Proposal(properties={(action.curve, key): distance},
-                    read_facts=(line.fact_id, action.coordinate_id, *(f'value:{s}' for s in state.values)),
-                    operations=[{'operation': 'point_to_line_distance', 'point': action.point,
-                                 'line': line.fact_id, 'result': distance}])
 
 
 def definition_proposal(state, action):

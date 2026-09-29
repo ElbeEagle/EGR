@@ -439,3 +439,11 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 `src/solver/distance_operations.py`、`tests/test_bound_parabola_definition.py`；更新抛物线提案、绑定应用器、RM2/29/52、回放入口及 API／实现地图／规格，保存独立 v4 trace。
 - **验证**：新增 23 项测试，相关回归 227 passed；真实 CLI 回放成功。详见[实现记录](docs/开发规格/12_ID5定义路径实现记录.md)。
 - **限制／下一步**：公共距离支持一般数值直线，绑定入口暂限抛物线准线；下一批建议扩展真实一般直线案例和距离查询。未接入选择器／旧求解器。
+
+
+## 2026-09-27｜RM52 独立直线绑定与距离查询
+
+- **变更**：解析独立 Line 与点到直线查询；BoundAction 增加 line，RM52 复用通用距离提案，保留准线兼容；新增单步回放，trace 升为 v5。
+- **文件**：新增 distance_proposals.py、test_bound_line_distance.py；更新 transition_state.py、bound_application.py、parabola_proposals.py、model_052.py、bound_slice.py 及接口／实现地图／规格和诊断轨迹。
+- **验证**：新增 24 项，相关回归 251 passed；ID 5882/1253 显式事实投影距离为 4／10，仅诊断，不计原题求解。详见[实现记录](docs/开发规格/13_一般直线距离实现记录.md)。
+- **限制／下一步**：仍限数值点到显式直线距离；建议下一批通过 ID 3723 衔接准线别名与 RM29 输出，继续暂缓选择器训练。

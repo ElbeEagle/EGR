@@ -35,13 +35,14 @@
 | [transition_state.py](../src/state/transition_state.py) | 显式初态、对象所属方程、共焦点关系、几何框架、约束、属性、赋值与来源 |
 | [transition_primitives.py](../src/solver/transition_primitives.py) | 受限解析、椭圆／双曲线标准形式、共焦点实例化、斜率、实根与条件检查 |
 | [standard_proposals.py](../src/theorems/standard_proposals.py) | RM3/4/5/6 共用标准参数提取、轴向框架和类型条件 |
-| [parabola_operations.py](../src/solver/parabola_operations.py)、[parabola_proposals.py](../src/theorems/parabola_proposals.py) | 点代入、抛物线标准参数恢复、方向确认与焦半径；及准线／定义提案，供 RM2/7–10/17/29/52 调用 |
+| [parabola_operations.py](../src/solver/parabola_operations.py)、[parabola_proposals.py](../src/theorems/parabola_proposals.py) | 点代入、抛物线标准参数恢复、方向确认与焦半径；及准线／定义提案，供 RM2/7–10/17/29 调用 |
 | [distance_operations.py](../src/solver/distance_operations.py) | 一般点到直线精确距离；RM52 调用，数值输入边界与定义路径由 `tests/test_bound_parabola_definition.py` 验证 |
+| [distance_proposals.py](../src/theorems/distance_proposals.py) | RM52 共用独立直线／准线距离提案；`test_bound_line_distance.py` 覆盖解析、查询隔离及真实事实子案例 |
 | [parameter_proposals.py](../src/theorems/parameter_proposals.py) | RM11/RM12 共用的普通参数关系提案及正值／一致性检查 |
 | [bound_application.py](../src/theorems/bound_application.py) | 动作绑定、候选变化、冲突检查、原子提交、受限回代及执行记录 |
 | `model_003.py`、`model_011.py`、`model_012.py`（`src/theorems/models/`） | 椭圆参数、普通参数关系及共焦点约束；RM11/RM12 共用 `parameter_proposals.py` |
 | [model_005.py](../src/theorems/models/model_005.py)、[model_021.py](../src/theorems/models/model_021.py) | 原模型类新增 `propose_bound`；RM5 记录类型条件；RM21 支持渐近线正／反向模式，旧接口保留 |
-| [bound_slice.py](../src/reasoning/bound_slice.py) | 五类固定链；标准方向／恢复模式预检、指定回放及 v4 trace |
+| [bound_slice.py](../src/reasoning/bound_slice.py) | 六类固定链／单步回放；标准方向预检、点到独立直线距离及 v5 trace |
 | [test_bound_transition_slice.py](../tests/test_bound_transition_slice.py) | 真实题、绑定隔离、重复执行、多解、条件不足、冲突与回滚测试 |
 
 新增测试：[test_bound_parabola.py](../tests/test_bound_parabola.py) 覆盖 ID 5 与四向抛物线；[test_bound_y_axis.py](../tests/test_bound_y_axis.py) 覆盖 y 轴标准模型、关系和渐近线；[test_bound_parameter_modes.py](../tests/test_bound_parameter_modes.py) 覆盖普通参数关系和正向渐近线；[test_bound_shared_focus.py](../tests/test_bound_shared_focus.py)，覆盖 ID 9 及多曲线关系边界。
@@ -59,7 +60,7 @@
 
 ## 后续顺序与维护
 
-1. RM4/RM6 与 y 轴框架、渐近线及参数关系已验证，见[本批记录](../docs/开发规格/10_Y轴标准模型实现记录.md)。ID 5 已完成标准参数恢复与焦半径闭环，见[记录](../docs/开发规格/11_ID5抛物线实现记录.md)。定义路径已完成，见[记录](../docs/开发规格/12_ID5定义路径实现记录.md)。下一批建议从真实直线题扩展 RM52 的一般直线绑定和距离查询。
+1. RM4/RM6 与 y 轴框架、渐近线及参数关系已验证，见[本批记录](../docs/开发规格/10_Y轴标准模型实现记录.md)。ID 5 已完成标准参数恢复与焦半径闭环，见[记录](../docs/开发规格/11_ID5抛物线实现记录.md)。定义路径已完成，见[记录](../docs/开发规格/12_ID5定义路径实现记录.md)。RM52 已支持独立直线绑定／距离查询；ID 5882/1253 仅验证显式事实子案例，见[记录](../docs/开发规格/13_一般直线距离实现记录.md)。下一批建议以 ID 3723 的准线别名衔接完整距离查询。
 2. 分批覆盖全部 80 个模型，抽提公共运算；同时形成可回放轨迹，处理弱标注顺序问题。
 3. 统一状态初始化、轨迹构建与求解入口，再开展选择器训练和系统评估；Entropy、LLM 工作另行安排。
 
