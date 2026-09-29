@@ -58,7 +58,8 @@ def check_binding(state, action):
         coordinate = state.coordinates.get(action.point)
         if (action.curve is not None or action.equation_id is not None
                 or state.entities.get(action.line) != 'Line'
-                or line is None or line.owner != action.line or line.role != 'line'
+                or line is None
+                or (line, action.relation_id) not in state.line_bindings(action.line)
                 or state.entities.get(action.point) != 'Point'
                 or coordinate is None or coordinate.fact_id != action.coordinate_id):
             raise TransitionError('inapplicable', 'Point/independent line binding mismatch')
@@ -134,11 +135,13 @@ def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = 
     if model_id in (2, 29, 52):
         actions = []
         if model_id == 52:
-            for line in state.equations.values():
-                if line.role == 'line' and state.entities.get(line.owner) == 'Line':
-                    actions.extend(BoundAction(52, 'point_line_distance', line=line.owner,
+            for name, kind in state.entities.items():
+                if kind != 'Line':
+                    continue
+                for line, alias_id in state.line_bindings(name):
+                    actions.extend(BoundAction(52, 'point_line_distance', line=name,
                                                line_equation_id=line.fact_id, point=point,
-                                               coordinate_id=coordinate.fact_id)
+                                               coordinate_id=coordinate.fact_id, relation_id=alias_id)
                                    for point, coordinate in state.coordinates.items())
         for fact in state.equations.values():
             if fact.role != 'curve' or state.entities.get(fact.owner) != 'Parabola':

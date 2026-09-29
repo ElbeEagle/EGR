@@ -151,6 +151,41 @@ def solve_point_line_distance_slice(facts: str, query: str) -> SliceResult:
     return replay_actions(state, actions)
 
 
+def solve_directrix_alias_distance_slice(facts: str, query: str) -> SliceResult:
+    """Fixed standard-parabola -> RM29 -> RM52 replay for a named directrix."""
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, PointLineDistanceQuery):
+        return SliceResult('inapplicable', state, diagnostic='Requires a named point/line distance query')
+    aliases = [a for a in state.directrix_aliases.values() if a.line == state.query.line]
+    if len(aliases) != 1 or any(f.owner == state.query.line and f.role == 'line' for f in state.equations.values()):
+        return SliceResult('undetermined', state, diagnostic='Requires one alias without additional line equations')
+    alias = aliases[0]
+    equations = [f for f in state.equations.values() if f.owner == alias.curve and f.role == 'curve']
+    coordinate = state.coordinates.get(state.query.point)
+    if len(equations) != 1 or coordinate is None:
+        return SliceResult('undetermined', state, diagnostic='Requires one curve equation and point coordinates')
+    app = BoundApplicator()
+    probes = [app.apply(deepcopy(state), BoundAction(mid, 'extract_parameters', alias.curve, equations[0].fact_id))
+              for mid in (7, 8, 9, 10)]
+    accepted = [p.action for p in probes if p.status in ('applied', 'no_op')]
+    if len(accepted) != 1:
+        if accepted:
+            return SliceResult('undetermined', state, diagnostic='Ambiguous standard direction')
+        failure = next(p for status in ('conflict', 'undetermined', 'failed', 'inapplicable')
+                       for p in probes if p.status == status)
+        return SliceResult(failure.status, state, transitions=[failure], diagnostic=failure.diagnostic)
+    return replay_actions(state, (
+        accepted[0],
+        BoundAction(29, 'derive_directrix', alias.curve, equations[0].fact_id),
+        BoundAction(52, 'point_line_distance', line=alias.line,
+                    line_equation_id=f'derived:{alias.curve}:directrix', relation_id=alias.fact_id,
+                    point=state.query.point, coordinate_id=coordinate.fact_id),
+    ))
+
+
 def replay_actions(state: TransitionState, actions) -> SliceResult:
     """Run an explicit diagnostic action sequence; retain unsuccessful attempts too."""
     applicator = BoundApplicator()
@@ -174,7 +209,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -182,7 +217,8 @@ if __name__ == '__main__':
              'asymptote-forward': solve_forward_asymptote_slice,
              'parabola-focal': solve_parabola_focal_slice,
              'parabola-definition': solve_parabola_definition_slice,
-             'point-line-distance': solve_point_line_distance_slice}[args.mode]
+             'point-line-distance': solve_point_line_distance_slice,
+             'directrix-alias-distance': solve_directrix_alias_distance_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):

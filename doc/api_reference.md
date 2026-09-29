@@ -1,6 +1,6 @@
 # 关键接口参考
 
-更新：2026-09-27。本页描述当前可调用接口；完整设计见[开发规格](../docs/开发规格/02_状态表示与应用器接口.md)，模块导航见[实现地图](project_structure.md)。新绑定执行接口与旧流程并存，不可直接混用两套状态。
+更新：2026-09-29。本页描述当前可调用接口；完整设计见[开发规格](../docs/开发规格/02_状态表示与应用器接口.md)，模块导航见[实现地图](project_structure.md)。新绑定执行接口与旧流程并存，不可直接混用两套状态。
 
 ## 新绑定执行接口：当前开发入口
 
@@ -19,6 +19,7 @@
 | `solve_parabola_focal_slice(facts, query)`（同上） | 唯一点—曲线—方程绑定，预检 RM7–10 参数恢复方向，再回放所选标准模型→RM17 |
 | `solve_parabola_definition_slice(facts, query)`（同上） | 复用方向预检，固定标准模型→RM29→RM52→RM2；不调用 RM17 |
 | `solve_point_line_distance_slice(facts, query)`（同上） | 按独立点／直线查询过滤 RM52 候选，唯一绑定时执行一步；缺失或多方程返回 undetermined |
+| `solve_directrix_alias_distance_slice(facts, query)`（同上） | 原始准线别名查询，预检标准方向后固定 RM7–10→RM29→RM52 |
 | `replay_actions(state, actions)`（同上） | 指定动作诊断回放；保留失败尝试，首个失败处停止，不是选择器 |
 
 ### 状态与结果约定
@@ -130,4 +131,13 @@ r = solve_point_line_distance_slice(
 assert r.status == "solved" and r.answer == 4
 ```
 
-RM52 提案统一位于 `src/theorems/distance_proposals.py`，沿用已有公共公式；新增测试 `tests/test_bound_line_distance.py`。仅支持显式命名点／直线距离，不自动解析焦点别名、准线别名、坐标轴、轨迹或距离范围。CLI `--mode point-line-distance` 要求数据记录本身符合该输入范围；本批真实案例是显式事实子案例，不能直接用原题查询冒充整题回放。
+RM52 提案统一位于 `src/theorems/distance_proposals.py`，沿用已有公共公式；新增测试 `tests/test_bound_line_distance.py`。仅支持显式命名点／直线距离，支持下述抛物线准线别名，不自动解析焦点别名、坐标轴、轨迹或距离范围。CLI `--mode point-line-distance` 要求数据记录本身符合该输入范围；本批真实案例是显式事实子案例，不能直接用原题查询冒充整题回放。
+
+
+### 抛物线准线别名
+
+`DirectrixAlias(fact_id, curve, line, source)` 存于 `state.directrix_aliases`，解析 `Directrix(G)=l`，要求 G 为 Parabola、l 为 Line；初态不计算准线。`state.line_bindings(line)` 只解析对象身份，返回 `(EquationFact, alias_fact_id或None)`；准线别名必须已有 RM29 的 `derived:{curve}:directrix`。不复制方程，也不改变其 owner／role。
+
+RM52 命名准线动作使用 `line=l`、`line_equation_id=derived:G:directrix`、`relation_id=别名事实ID`，仍令 curve/equation_id 为空；别名关系与方程均记入读取来源。距离存于 l 所属属性；查询只读。重复别名、多曲线共用一个别名、别名同时带独立方程暂不合并，固定链返回 undetermined，直接绑定不适用。
+
+原题回放：`python3 -m src.reasoning.bound_slice --mode directrix-alias-distance --problem-id 3723`。沿用 v5 动作字段，新增 alias 解析操作；测试 `tests/test_bound_directrix_alias.py`。命名准线身份解析与 RM52 距离计算共用原有入口，专用固定链负责显式执行标准模型及 RM29 前置步骤。

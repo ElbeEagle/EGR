@@ -28,6 +28,14 @@ class FocusEquality:
 
 
 @dataclass(frozen=True)
+class DirectrixAlias:
+    fact_id: str
+    curve: str
+    line: str
+    source: str
+
+
+@dataclass(frozen=True)
 class AsymptoteQuery:
     curve: str
 
@@ -85,6 +93,22 @@ class TransitionState:
     coordinates: dict[str, PointCoordinates] = field(default_factory=dict)
     incidences: dict[str, PointOnCurve] = field(default_factory=dict)
 
+    directrix_aliases: dict[str, DirectrixAlias] = field(default_factory=dict)
+
+    def line_bindings(self, line: str):
+        """Resolve identity only; never derive equations or reconcile alternatives."""
+        explicit = [f for f in self.equations.values() if f.owner == line and f.role == 'line']
+        aliases = [a for a in self.directrix_aliases.values() if a.line == line]
+        if not aliases:
+            return [(f, None) for f in explicit]
+        if len(aliases) != 1 or explicit:
+            return []
+        alias = aliases[0]
+        fact = self.equations.get(f'derived:{alias.curve}:directrix')
+        if fact is None or fact.owner != alias.curve or fact.role != 'directrix':
+            return []
+        return [(fact, alias.fact_id)]
+
     @classmethod
     def from_facts(cls, facts: str, query: str) -> 'TransitionState':
         parts = [p.strip() for p in facts.split(';') if p.strip()]
@@ -134,6 +158,13 @@ class TransitionState:
                 if entities.get(point) != 'Point' or entities.get(curve) not in ('Ellipse', 'Hyperbola', 'Parabola'):
                     raise ValueError('Invalid point/curve incidence')
                 state.incidences[fact_id] = PointOnCurve(fact_id, point, curve, part)
+                continue
+            directrix = re.fullmatch(r'Directrix\(\s*([A-Za-z]\w*)\s*\)\s*=\s*([A-Za-z]\w*)', part)
+            if directrix:
+                curve, line = directrix.groups()
+                if entities.get(curve) != 'Parabola' or entities.get(line) != 'Line':
+                    raise ValueError('Directrix alias requires declared Parabola and Line')
+                state.directrix_aliases[fact_id] = DirectrixAlias(fact_id, curve, line, part)
                 continue
             focus = re.fullmatch(r'Focus\(([A-Za-z]\w*)\)\s*=\s*Focus\(([A-Za-z]\w*)\)', part)
             if focus:
@@ -200,8 +231,7 @@ class TransitionState:
                 return tuple(f.expression for f in facts)
             return None
         if isinstance(self.query, PointLineDistanceQuery):
-            lines = [f for f in self.equations.values()
-                     if f.owner == self.query.line and f.role == 'line']
+            lines = [f for f, _ in self.line_bindings(self.query.line)]
             if len(lines) != 1:
                 return None  # Do not silently choose among equations for the same line.
             key = f'point_line_distance:{self.query.point}:{lines[0].fact_id}'

@@ -447,3 +447,11 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 distance_proposals.py、test_bound_line_distance.py；更新 transition_state.py、bound_application.py、parabola_proposals.py、model_052.py、bound_slice.py 及接口／实现地图／规格和诊断轨迹。
 - **验证**：新增 24 项，相关回归 251 passed；ID 5882/1253 显式事实投影距离为 4／10，仅诊断，不计原题求解。详见[实现记录](docs/开发规格/13_一般直线距离实现记录.md)。
 - **限制／下一步**：仍限数值点到显式直线距离；建议下一批通过 ID 3723 衔接准线别名与 RM29 输出，继续暂缓选择器训练。
+
+
+## 2026-09-29｜ID 3723 准线别名原题闭环
+
+- **变更**：增加 DirectrixAlias 与共用身份解析；RM52 绑定并记录别名事实和 RM29 准线输出，查询只读。原题 RM9→RM29→RM52 得到 65/16，不改写输入或复制方程。
+- **文件**：更新 transition_state.py、bound_application.py、distance_proposals.py、bound_slice.py；新增 test_bound_directrix_alias.py，同步 API／实现地图／规格及 ID 3723 v5 轨迹。
+- **验证**：新增 16 项，相关回归 267 passed；原始 CLI 回放成功，见[实现记录](docs/开发规格/14_ID3723准线别名实现记录.md)。
+- **限制／下一步**：多重别名和别名附加独立方程暂不合并；下一批建议明确焦点别名坐标实例化（ID 946／1793），继续复用距离链。
