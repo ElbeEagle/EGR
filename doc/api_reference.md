@@ -108,7 +108,7 @@ assert result.status == "solved" and result.answer == 5
 
 快速检查：`python3 -m pytest -q tests/test_bound_transition_slice.py tests/test_bound_shared_focus.py tests/test_bound_parameter_modes.py tests/test_bound_y_axis.py tests/test_bound_parabola.py`。
 
-ID 9 回放：`python3 -m src.reasoning.bound_slice --mode shared-focus --problem-id 9`。正向回放：`python3 -m src.reasoning.bound_slice --mode asymptote-forward --problem-id 65`。y 轴案例将 `--problem-id` 改为 `380`。ID 5：`python3 -m src.reasoning.bound_slice --mode parabola-focal --problem-id 5`。当前 CLI 输出 `bound-slice-v6`（新增 coordinates 增量）；旧 v1–v5 trace 保留为历史证据。
+ID 9 回放：`python3 -m src.reasoning.bound_slice --mode shared-focus --problem-id 9`。正向回放：`python3 -m src.reasoning.bound_slice --mode asymptote-forward --problem-id 65`。y 轴案例将 `--problem-id` 改为 `380`。ID 5：`python3 -m src.reasoning.bound_slice --mode parabola-focal --problem-id 5`。当前 CLI 输出 `bound-slice-v7`（新增 point_role 属性点绑定）；旧 v1–v6 trace 保留为历史证据。
 涉及旧符号／模型兼容时，追加 `tests/test_theorem_missing_models.py`、`tests/test_solver_symbolic.py`、`tests/test_answer_extractor_symbolic_solver.py`；涉及评估口径时追加 `tests/test_evaluation_protocol.py`。
 
 仅在签名、行为或适用范围变化时更新本页；测试数量和批次结果写入开发记录。
@@ -160,4 +160,15 @@ RM7–10 在提取／恢复标准参数的同一次提案中，针对所绑定�
 
 `enumerate_actions(state,72,'recover_from_point')` 枚举直线／点／归属绑定。动作使用 line、line_equation_id、point、coordinate_id、relation_id，curve/equation_id 为空。RM72 提案位于 `src/theorems/line_proposals.py`，由 y=kx+b 与点斜式的一致性恢复一个参数，同时提交 slope/intercept。y 系数须非零可证明；水平线可用，竖直线不支持；多根不提交，条件不足 undetermined，无解 conflict。
 
-应用器保留与当前赋值无关的未定条件，但涉及赋值的约束必须验证，已为假的约束一律拒绝。既有 RM7 点恢复与公共数值代入／实根筛选复用。原题 `Distance(Focus(G),H)` 尚未支持；本批接口只用于参数子链。正向 RM72 旧接口保留，未新增正向绑定实现。
+应用器保留与当前赋值无关的未定条件，但涉及赋值的约束必须验证，已为假的约束一律拒绝。既有 RM7 点恢复与公共数值代入／实根筛选复用。参数恢复接口可独立用于子链，原题现已由下述焦点到直线入口接通。正向 RM72 旧接口保留，未新增正向绑定实现。
+
+
+### 焦点属性到独立直线距离
+
+`FocusLineDistanceQuery(curve,line)` 解析 `Distance(Focus(G),H)`，要求 Parabola／Line；初态不计算焦点或参数。查询只读取 `properties[(H, focus_line_distance:G:{line_equation_id})]`，直线方程缺失或不唯一时返回 None。
+
+RM52 新增 `focus_line_distance` 模式，BoundAction 使用 `point_role='focus'`、curve/equation_id、line/line_equation_id；point/coordinate_id/relation_id 留空，不生成命名点。枚举是结构候选；执行须已有匹配曲线方程的框架、p 与 focus_x/y，复用 bound_parabola 校验。只代入已有 values 后调用公共距离公式，缺失参数不求解。来源包含焦点属性、框架、曲线和直线方程以及标量值。
+
+`solve_intersection_focus_distance_slice(facts,query)` 固定选择唯一共享已知点，预检标准方向，回放 RM7–10 recover_from_point→RM72 recover_from_point→RM52；不是学习型选择器，不读 models/process/答案。原始 ID 7260 命令：`python3 -m src.reasoning.bound_slice --mode intersection-focus-distance --problem-id 7260`。
+
+本模式限抛物线焦点与独立 Line 方程；公共距离支持竖直线，但固定链的 RM72 恢复仍限非竖直线。测试 `tests/test_bound_focus_line_distance.py`。既有命名点／别名路径保持兼容。

@@ -32,6 +32,6 @@
 - `doc/api_reference.md`：仅更新变化的接口、行为与适用范围，避免复制源码和进度统计。
 - `dev_record.md`：保留旧记录，追加日期、变更、文件、验证及剩余限制(简要说明)；长说明链接到对应规格／实现记录。
 - `docs/开发规格/`：仅在职责、设计或案例变化时更新。文档应简短，避免多处重复同一份功能清单。
-- 回复默认中文，给出简短摘要、改动文件和验证结果。代码任务附 <=72 字符的 commit summary，以及包含 Current date、What done/changed、Effect、Which files added/updated、Next step work 的 commit description；生成说明不等于自动提交。
+- 回复默认中文，给出简短摘要、改动文件和验证结果。代码任务附 <=72 字符的 commit summary，以及包含 Current date、What done/changed(说明新增或修改的核心功能/函数)、Effect(能实现之前不能实现的哪些功能、效果)、Which files added/updated、Next step work 的 commit description；生成说明不等于自动提交。
 
 

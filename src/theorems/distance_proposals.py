@@ -6,6 +6,8 @@ from .bound_application import Proposal, check_binding
 
 def point_line_distance_proposal(state, action):
     check_binding(state, action)
+    if action.mode == 'focus_line_distance' and action.point_role == 'focus':
+        return focus_line_distance_proposal(state, action)
     if action.mode != 'point_line_distance':
         raise TransitionError('inapplicable', 'Unsupported RM52 mode')
     line = state.equations[action.line_equation_id]
@@ -24,3 +26,22 @@ def point_line_distance_proposal(state, action):
                                  'line': line.fact_id, 'result': distance}])
 
 
+
+
+def focus_line_distance_proposal(state, action):
+    # Verify existing attributes against the bound equation; never produce missing ones here.
+    from .parabola_proposals import bound_parabola, parabola_reads
+    fact = check_binding(state, action)
+    bound_parabola(state, action, fact)
+    xy = tuple(state.properties[action.curve, key].subs(state.values) for key in ('focus_x', 'focus_y'))
+    line = state.equations[action.line_equation_id]
+    expression = line.expression.subs(state.values)
+    distance = point_to_line_distance(expression, state.symbols['x'], state.symbols['y'], xy)
+    key = f'focus_line_distance:{action.curve}:{line.fact_id}'
+    return Proposal(properties={(action.line, key): distance},
+                    read_facts=(*parabola_reads(state, action), line.fact_id, f'entity:{action.line}'),
+                    operations=[{'operation': 'read_focus_properties', 'curve': action.curve, 'xy': xy},
+                                {'operation': 'substitute_known_line_parameters', 'line': line.fact_id,
+                                 'expression': expression, 'values': dict(state.values)},
+                                {'operation': 'point_to_line_distance', 'point_role': 'focus',
+                                 'curve': action.curve, 'line': line.fact_id, 'result': distance}])

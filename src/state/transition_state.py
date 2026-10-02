@@ -71,6 +71,12 @@ class FocalDistanceQuery:
 
 
 @dataclass(frozen=True)
+class FocusLineDistanceQuery:
+    curve: str
+    line: str
+
+
+@dataclass(frozen=True)
 class PointLineDistanceQuery:
     point: str
     line: str
@@ -90,7 +96,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery
+    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -136,8 +142,11 @@ class TransitionState:
         asymptote_query = re.fullmatch(r'Expression\(Asymptote\(([A-Za-z]\w*)\)\)', query_text)
         focal_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*Focus\(([A-Za-z]\w*)\)\s*\)', query_text)
         line_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)', query_text)
+        focus_line_query = re.fullmatch(r'Distance\(\s*Focus\(\s*([A-Za-z]\w*)\s*\)\s*,\s*([A-Za-z]\w*)\s*\)', query_text)
         if query is None:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
+        elif focus_line_query and entities.get(focus_line_query.group(1)) == 'Parabola' and entities.get(focus_line_query.group(2)) == 'Line':
+            target = FocusLineDistanceQuery(*focus_line_query.groups())
         elif line_query and entities.get(line_query.group(1)) == 'Point' and entities.get(line_query.group(2)) == 'Line':
             target = PointLineDistanceQuery(*line_query.groups())
         elif focal_query and entities.get(focal_query.group(1)) == 'Point' and entities.get(focal_query.group(2)) == 'Parabola':
@@ -251,7 +260,7 @@ class TransitionState:
             curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE, 'Parabola': CurveType.PARABOLA}.get(
                 self.entities.get(curve), CurveType.UNKNOWN),
             query_type=(QueryType.EQUATION if isinstance(self.query, AsymptoteQuery) else
-                        QueryType.DISTANCE if isinstance(self.query, (FocalDistanceQuery, PointLineDistanceQuery)) else QueryType.VALUE),
+                        QueryType.DISTANCE if isinstance(self.query, (FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery)) else QueryType.VALUE),
             has_equation=any(f.owner == curve and f.role in ('curve', 'line') for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),
             has_parameters={key for owner, key in self.properties if owner == curve},
@@ -268,6 +277,12 @@ class TransitionState:
                    for f in facts):
                 return tuple(f.expression for f in facts)
             return None
+        if isinstance(self.query, FocusLineDistanceQuery):
+            lines = [f for f in self.equations.values() if f.owner == self.query.line and f.role == 'line']
+            if len(lines) != 1:
+                return None
+            return self.properties.get((self.query.line,
+                                        f'focus_line_distance:{self.query.curve}:{lines[0].fact_id}'))
         if isinstance(self.query, PointLineDistanceQuery):
             lines = [f for f, _ in self.line_bindings(self.query.line)]
             if len(lines) != 1:

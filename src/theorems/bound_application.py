@@ -25,6 +25,7 @@ class BoundAction:
     point: str | None = None
     coordinate_id: str | None = None
     line: str | None = None
+    point_role: str | None = None
 
 
 @dataclass
@@ -54,6 +55,17 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.point_role is not None:
+        curve = state.equations.get(action.equation_id)
+        line = state.equations.get(action.line_equation_id)
+        if (action.model_id != 52 or action.point_role != 'focus'
+                or action.mode != 'focus_line_distance'
+                or action.point is not None or action.coordinate_id is not None or action.relation_id is not None
+                or state.entities.get(action.curve) != 'Parabola' or state.entities.get(action.line) != 'Line'
+                or curve is None or curve.owner != action.curve or curve.role != 'curve'
+                or line is None or line.owner != action.line or line.role != 'line'):
+            raise TransitionError('inapplicable', 'Focus/line binding mismatch')
+        return curve
     if action.model_id == 72:
         fact = state.equations.get(action.line_equation_id)
         coordinate = state.coordinates.get(action.point)
@@ -185,6 +197,14 @@ def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = 
                     else:
                         actions.extend(replace(base, relation_id=inc.fact_id) for inc in state.incidences.values()
                                        if inc.point == point and inc.curve == fact.owner)
+        if model_id == 52:
+            for curve in state.equations.values():
+                if curve.role != 'curve' or state.entities.get(curve.owner) != 'Parabola':
+                    continue
+                for line in state.equations.values():
+                    if line.role == 'line' and state.entities.get(line.owner) == 'Line':
+                        actions.append(BoundAction(52, 'focus_line_distance', curve.owner, curve.fact_id,
+                                                   line.fact_id, line=line.owner, point_role='focus'))
         return [a for a in actions if mode is None or a.mode == mode]
     if model_id in (7, 8, 9, 10, 17):
         actions = []

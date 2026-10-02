@@ -74,6 +74,7 @@ def test_witnesses_are_fact_scoped_and_typed():
         TransitionState.from_facts(facts.replace('Intersection(H, G)','Intersection(H, H)'),None)
 
 
-def test_original_query_still_not_implemented():
+def test_original_query_has_no_answer_before_execution():
     r=original()
-    with pytest.raises(ValueError):TransitionState.from_facts(r['fact_expressions'],r['query_expressions'])
+    state = TransitionState.from_facts(r['fact_expressions'],r['query_expressions'])
+    assert state.extract_answer() is None and not state.values
