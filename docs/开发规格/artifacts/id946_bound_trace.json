@@ -1,0 +1,186 @@
+{
+  "schema_version": "bound-slice-v6",
+  "mode": "directrix-alias-distance",
+  "problem_id": 946,
+  "status": "solved",
+  "facts": "G: Parabola;F: Point;l: Line;Expression(G) = (y = 4*x^2);Focus(G) = F;Directrix(G) = l",
+  "query": "Distance(F, l)",
+  "answer": "1/8",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 9,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f3",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'p')": "1/8",
+          "('G', 'focus_x')": "0",
+          "('G', 'focus_y')": "1/16"
+        },
+        "values": {},
+        "frames": {
+          "G": {
+            "equation_id": "f3",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "y",
+            "direction": "up"
+          }
+        },
+        "coordinates": {
+          "F": {
+            "fact_id": "derived:G:focus:F",
+            "point": "F",
+            "xy": [
+              "0",
+              "1/16"
+            ],
+            "source": "RM9"
+          }
+        }
+      },
+      "read_facts": [
+        "f3",
+        "entity:G",
+        "f4",
+        "entity:F"
+      ],
+      "operations": [
+        {
+          "operation": "standard_parabola",
+          "direction": "up",
+          "coefficient": "1/4",
+          "p": "1/8",
+          "focus": [
+            "0",
+            "1/16"
+          ]
+        },
+        {
+          "operation": "instantiate_focus_alias",
+          "relation": "f4",
+          "curve": "G",
+          "point": "F",
+          "xy": [
+            "0",
+            "1/16"
+          ]
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 29,
+        "mode": "derive_directrix",
+        "curve": "G",
+        "equation_id": "f3",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {},
+        "values": {},
+        "equations": {
+          "derived:G:directrix": {
+            "fact_id": "derived:G:directrix",
+            "owner": "G",
+            "role": "directrix",
+            "expression": "y + 1/16",
+            "source": "RM29"
+          }
+        }
+      },
+      "read_facts": [
+        "f3",
+        "entity:G",
+        "frame:G",
+        "property:G:p",
+        "property:G:focus_x",
+        "property:G:focus_y"
+      ],
+      "operations": [
+        {
+          "operation": "parabola_directrix",
+          "direction": "up",
+          "p": "1/8",
+          "equation": "y + 1/16"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 52,
+        "mode": "point_line_distance",
+        "curve": null,
+        "equation_id": null,
+        "line_equation_id": "derived:G:directrix",
+        "relation_id": "f5",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": "F",
+        "coordinate_id": "derived:G:focus:F",
+        "line": "l"
+      },
+      "before_revision": 2,
+      "after_revision": 3,
+      "delta": {
+        "properties": {
+          "('l', 'point_line_distance:F:derived:G:directrix')": "1/8"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "derived:G:directrix",
+        "derived:G:focus:F",
+        "f5",
+        "entity:l",
+        "entity:F"
+      ],
+      "operations": [
+        {
+          "operation": "resolve_directrix_alias",
+          "relation": "f5",
+          "line": "l",
+          "equation": "derived:G:directrix"
+        },
+        {
+          "operation": "point_to_line_distance",
+          "point": "F",
+          "line": "derived:G:directrix",
+          "result": "1/8"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}

@@ -4,7 +4,7 @@ from src.solver.transition_primitives import TransitionError, finite_real_soluti
 from src.solver.parabola_operations import (
     DIRECTIONS, parabola_coefficient, substitute_point, parabola_geometry,
 )
-from src.state.transition_state import CurveFrame, EquationFact
+from src.state.transition_state import CurveFrame, EquationFact, PointCoordinates
 from .bound_application import Proposal, check_binding
 
 
@@ -49,9 +49,22 @@ def standard_parabola_proposal(state, action):
                                  [c.subs(values) for c in state.constraints.values()])
     operations.append({'operation': 'standard_parabola', 'direction': direction,
                        'coefficient': resolved, 'p': p, 'focus': focus})
+    coordinates = {}
+    for alias in state.focus_aliases.values():
+        if alias.curve != action.curve:
+            continue
+        if sum(a.point == alias.point for a in state.focus_aliases.values()) != 1:
+            raise TransitionError('undetermined', 'Multiple focus aliases for the same point')
+        reads.extend((alias.fact_id, f'entity:{alias.point}'))
+        if alias.point in state.coordinates:
+            reads.append(state.coordinates[alias.point].fact_id)
+        key = f'derived:{action.curve}:focus:{alias.point}'
+        coordinates[alias.point] = PointCoordinates(key, alias.point, focus, f'RM{action.model_id}')
+        operations.append({'operation': 'instantiate_focus_alias', 'relation': alias.fact_id,
+                           'curve': action.curve, 'point': alias.point, 'xy': focus})
     return Proposal(properties={(action.curve, 'p'): p, (action.curve, 'focus_x'): focus[0],
                                 (action.curve, 'focus_y'): focus[1]},
-                    values=assignments, candidates=candidates, read_facts=tuple(reads), operations=operations,
+                    coordinates=coordinates, values=assignments, candidates=candidates, read_facts=tuple(reads), operations=operations,
                     frames={action.curve: CurveFrame(fact.fact_id, axis=axis, direction=direction)})
 
 

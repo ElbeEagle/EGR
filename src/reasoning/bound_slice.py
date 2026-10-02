@@ -165,7 +165,9 @@ def solve_directrix_alias_distance_slice(facts: str, query: str) -> SliceResult:
     alias = aliases[0]
     equations = [f for f in state.equations.values() if f.owner == alias.curve and f.role == 'curve']
     coordinate = state.coordinates.get(state.query.point)
-    if len(equations) != 1 or coordinate is None:
+    focus_aliases = [a for a in state.focus_aliases.values()
+                     if a.point == state.query.point and a.curve == alias.curve]
+    if len(equations) != 1 or (coordinate is None and len(focus_aliases) != 1):
         return SliceResult('undetermined', state, diagnostic='Requires one curve equation and point coordinates')
     app = BoundApplicator()
     probes = [app.apply(deepcopy(state), BoundAction(mid, 'extract_parameters', alias.curve, equations[0].fact_id))
@@ -177,13 +179,21 @@ def solve_directrix_alias_distance_slice(facts: str, query: str) -> SliceResult:
         failure = next(p for status in ('conflict', 'undetermined', 'failed', 'inapplicable')
                        for p in probes if p.status == status)
         return SliceResult(failure.status, state, transitions=[failure], diagnostic=failure.diagnostic)
-    return replay_actions(state, (
-        accepted[0],
-        BoundAction(29, 'derive_directrix', alias.curve, equations[0].fact_id),
-        BoundAction(52, 'point_line_distance', line=alias.line,
-                    line_equation_id=f'derived:{alias.curve}:directrix', relation_id=alias.fact_id,
-                    point=state.query.point, coordinate_id=coordinate.fact_id),
+    prefix = replay_actions(state, (
+        accepted[0], BoundAction(29, 'derive_directrix', alias.curve, equations[0].fact_id),
     ))
+    if prefix.status not in ('solved', 'unresolved'):
+        return prefix
+    coordinate = state.coordinates.get(state.query.point)
+    if coordinate is None:
+        return SliceResult('undetermined', state, prefix.transitions, 'Missing committed point coordinates')
+    tail = replay_actions(state, (BoundAction(
+        52, 'point_line_distance', line=alias.line,
+        line_equation_id=f'derived:{alias.curve}:directrix', relation_id=alias.fact_id,
+        point=state.query.point, coordinate_id=coordinate.fact_id),))
+    tail.transitions = prefix.transitions + tail.transitions
+    return tail
+
 
 
 def replay_actions(state: TransitionState, actions) -> SliceResult:
@@ -230,7 +240,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v5', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v6', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

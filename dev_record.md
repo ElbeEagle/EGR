@@ -455,3 +455,11 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：更新 transition_state.py、bound_application.py、distance_proposals.py、bound_slice.py；新增 test_bound_directrix_alias.py，同步 API／实现地图／规格及 ID 3723 v5 轨迹。
 - **验证**：新增 16 项，相关回归 267 passed；原始 CLI 回放成功，见[实现记录](docs/开发规格/14_ID3723准线别名实现记录.md)。
 - **限制／下一步**：多重别名和别名附加独立方程暂不合并；下一批建议明确焦点别名坐标实例化（ID 946／1793），继续复用距离链。
+
+
+## 2026-09-29｜ID 946／1793 焦点别名坐标实例化
+
+- **变更**：FocusAlias 初态只记录身份；RM7–10 同步提出命名焦点坐标，应用器原子提交并记录来源。原准线固定链按提交后的坐标绑定 RM52，两道原题分别得到 1/8、1/4。
+- **文件**：更新 transition_state.py、parabola_proposals.py、bound_application.py、bound_slice.py；新增 test_bound_focus_alias.py，维护接口／实现地图／规格，保存两份 v6 轨迹。
+- **验证**：新增 15 项，相关回归 282 passed；已有坐标冲突整步回滚，来源与重复执行验证通过。详见[实现记录](docs/开发规格/15_焦点别名坐标实现记录.md)。
+- **限制／下一步**：限抛物线有限实数焦点坐标，同一点多别名暂不合并；建议下一批先明确 ID 7260 的交点参数恢复职责。

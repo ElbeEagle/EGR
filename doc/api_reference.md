@@ -27,12 +27,12 @@
 - `EquationFact`：`fact_id / owner / role / expression / source`，表达式按左侧减右侧等于零保存。
 - `TransitionState`：`entities / symbols / equations / constraints / query` 为题目信息；`properties[(对象, 属性)]` 保存对象属性，`values[Symbol]` 保存标量赋值；另有 `provenance / history / revision`。
 - `AsymptoteQuery(curve)`：由 `Expression(Asymptote(G))` 解析；只读取已生成的完整方程对，题目给出的一条渐近线不算完整答案。
-- `PointCoordinates` 与 `PointOnCurve`：显式坐标／点归属事实，分别保存于 `coordinates[point]`、`incidences[fact_id]`；初态只解析，不代入求参数。
+- `PointCoordinates` 与 `PointOnCurve`：给定或模型生成的坐标／显式点归属事实，分别保存于 `coordinates[point]`、`incidences[fact_id]`；初态只解析，不代入求参数。
 - `FocalDistanceQuery(point, curve)`：由 `Distance(A, Focus(G))` 解析；只读 `properties[(G, focal_radius:A)]`。
 - `PointLineDistanceQuery(point, line)`：由 `Distance(A, l)` 解析，要求 Point／Line 类型；直线的方程 role 为 `line`。只读唯一所属方程对应的距离属性，多方程不任意选取。
 - `FocusEquality`：关系事实 ID、两个曲线名称和原表达；`state.relations` 保存给定关系，不在初态自动实例化。
 - `CurveFrame`：绑定的方程 ID、中心和轴向；`state.frames` 由标准模型生成，当前支持原点中心、`axis=x/y`；a² 始终对应长半轴／实半轴平方。抛物线用原点顶点框架，另记 `direction=right/left/up/down`，不把顶点解释为对称中心。
-- `Proposal`：`properties / values / constraints / frames / equations / read_facts / operations / candidates`。模型提出变化，提交由应用器统一完成。
+- `Proposal`：`properties / values / constraints / frames / equations / coordinates / read_facts / operations / candidates`。模型提出变化，提交由应用器统一完成。
 - `TransitionResult`：状态、绑定动作、前后版本、`delta`、读取事实 ID、操作、候选解和诊断。只有成功提交进入 `state.history`；失败尝试需由调用方保留返回结果。
 
 | 转换状态 | 含义 |
@@ -108,7 +108,7 @@ assert result.status == "solved" and result.answer == 5
 
 快速检查：`python3 -m pytest -q tests/test_bound_transition_slice.py tests/test_bound_shared_focus.py tests/test_bound_parameter_modes.py tests/test_bound_y_axis.py tests/test_bound_parabola.py`。
 
-ID 9 回放：`python3 -m src.reasoning.bound_slice --mode shared-focus --problem-id 9`。正向回放：`python3 -m src.reasoning.bound_slice --mode asymptote-forward --problem-id 65`。y 轴案例将 `--problem-id` 改为 `380`。ID 5：`python3 -m src.reasoning.bound_slice --mode parabola-focal --problem-id 5`。当前 CLI 输出 `bound-slice-v5`（新增独立 line 绑定）；旧 v1–v4 trace 保留为历史证据。
+ID 9 回放：`python3 -m src.reasoning.bound_slice --mode shared-focus --problem-id 9`。正向回放：`python3 -m src.reasoning.bound_slice --mode asymptote-forward --problem-id 65`。y 轴案例将 `--problem-id` 改为 `380`。ID 5：`python3 -m src.reasoning.bound_slice --mode parabola-focal --problem-id 5`。当前 CLI 输出 `bound-slice-v6`（新增 coordinates 增量）；旧 v1–v5 trace 保留为历史证据。
 涉及旧符号／模型兼容时，追加 `tests/test_theorem_missing_models.py`、`tests/test_solver_symbolic.py`、`tests/test_answer_extractor_symbolic_solver.py`；涉及评估口径时追加 `tests/test_evaluation_protocol.py`。
 
 仅在签名、行为或适用范围变化时更新本页；测试数量和批次结果写入开发记录。
@@ -131,7 +131,7 @@ r = solve_point_line_distance_slice(
 assert r.status == "solved" and r.answer == 4
 ```
 
-RM52 提案统一位于 `src/theorems/distance_proposals.py`，沿用已有公共公式；新增测试 `tests/test_bound_line_distance.py`。仅支持显式命名点／直线距离，支持下述抛物线准线别名，不自动解析焦点别名、坐标轴、轨迹或距离范围。CLI `--mode point-line-distance` 要求数据记录本身符合该输入范围；本批真实案例是显式事实子案例，不能直接用原题查询冒充整题回放。
+RM52 提案统一位于 `src/theorems/distance_proposals.py`，沿用已有公共公式；新增测试 `tests/test_bound_line_distance.py`。仅支持显式命名点／直线距离，支持下述抛物线准线别名，支持下述抛物线焦点别名，不自动解析坐标轴、轨迹或距离范围。CLI `--mode point-line-distance` 要求数据记录本身符合该输入范围；本批真实案例是显式事实子案例，不能直接用原题查询冒充整题回放。
 
 
 ### 抛物线准线别名
@@ -140,4 +140,15 @@ RM52 提案统一位于 `src/theorems/distance_proposals.py`，沿用已有公�
 
 RM52 命名准线动作使用 `line=l`、`line_equation_id=derived:G:directrix`、`relation_id=别名事实ID`，仍令 curve/equation_id 为空；别名关系与方程均记入读取来源。距离存于 l 所属属性；查询只读。重复别名、多曲线共用一个别名、别名同时带独立方程暂不合并，固定链返回 undetermined，直接绑定不适用。
 
-原题回放：`python3 -m src.reasoning.bound_slice --mode directrix-alias-distance --problem-id 3723`。沿用 v5 动作字段，新增 alias 解析操作；测试 `tests/test_bound_directrix_alias.py`。命名准线身份解析与 RM52 距离计算共用原有入口，专用固定链负责显式执行标准模型及 RM29 前置步骤。
+原题回放：`python3 -m src.reasoning.bound_slice --mode directrix-alias-distance --problem-id 3723`。沿用已有动作字段，alias 解析操作和坐标增量见 v6；测试 `tests/test_bound_directrix_alias.py`。命名准线身份解析与 RM52 距离计算共用原有入口，专用固定链负责显式执行标准模型及 RM29 前置步骤。
+
+
+### 抛物线焦点坐标实例化
+
+`FocusAlias(fact_id, curve, point, source)` 存于 `state.focus_aliases`，解析 `Focus(G)=F`，限 Parabola／Point。初态不生成坐标；原有 `Focus(G)=Focus(H)` 共焦点关系保持独立。
+
+RM7–10 在提取／恢复标准参数的同一次提案中，针对所绑定曲线的显式焦点别名生成 `Proposal.coordinates[point]`，稳定 ID 为 `derived:{curve}:focus:{point}`，操作记为 `instantiate_focus_alias`。应用器校验别名、焦点属性及有限实数坐标，和所有其他增量一起提交；delta.coordinates 与 provenance 记录坐标来源（曲线方程、别名及 action）。已有相同坐标保留原 ID／source，不同坐标 conflict，符号未定坐标或同一点多个焦点声明 undetermined，均不提交。
+
+`solve_directrix_alias_distance_slice` 复用标准模型→RM29→RM52；坐标可以显式给定，也可由同一抛物线标准模型生成。RM52 在前两步成功后绑定实际坐标 ID，查询仍只读。不新增几何推导模型或将实例化单独计为选择器动作。
+
+回放 ID 946／1793：`python3 -m src.reasoning.bound_slice --mode directrix-alias-distance --problem-id 946`（另一题改为 1793）。测试：`tests/test_bound_focus_alias.py`。

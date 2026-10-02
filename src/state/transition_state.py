@@ -28,6 +28,14 @@ class FocusEquality:
 
 
 @dataclass(frozen=True)
+class FocusAlias:
+    fact_id: str
+    curve: str
+    point: str
+    source: str
+
+
+@dataclass(frozen=True)
 class DirectrixAlias:
     fact_id: str
     curve: str
@@ -93,6 +101,7 @@ class TransitionState:
     coordinates: dict[str, PointCoordinates] = field(default_factory=dict)
     incidences: dict[str, PointOnCurve] = field(default_factory=dict)
 
+    focus_aliases: dict[str, FocusAlias] = field(default_factory=dict)
     directrix_aliases: dict[str, DirectrixAlias] = field(default_factory=dict)
 
     def line_bindings(self, line: str):
@@ -165,6 +174,13 @@ class TransitionState:
                 if entities.get(curve) != 'Parabola' or entities.get(line) != 'Line':
                     raise ValueError('Directrix alias requires declared Parabola and Line')
                 state.directrix_aliases[fact_id] = DirectrixAlias(fact_id, curve, line, part)
+                continue
+            focus_alias = re.fullmatch(r'Focus\(\s*([A-Za-z]\w*)\s*\)\s*=\s*([A-Za-z]\w*)', part)
+            if focus_alias:
+                curve, point = focus_alias.groups()
+                if entities.get(curve) != 'Parabola' or entities.get(point) != 'Point':
+                    raise ValueError('Focus alias requires declared Parabola and Point')
+                state.focus_aliases[fact_id] = FocusAlias(fact_id, curve, point, part)
                 continue
             focus = re.fullmatch(r'Focus\(([A-Za-z]\w*)\)\s*=\s*Focus\(([A-Za-z]\w*)\)', part)
             if focus:

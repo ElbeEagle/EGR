@@ -9,7 +9,7 @@ import sympy as sp
 from src.solver.transition_primitives import (
     TransitionError, truth, ensure_consistent, ellipse_parameters, hyperbola_parameters,
 )
-from src.state.transition_state import TransitionState, CurveFrame, EquationFact
+from src.state.transition_state import TransitionState, CurveFrame, EquationFact, PointCoordinates
 
 
 @dataclass(frozen=True)
@@ -37,6 +37,7 @@ class Proposal:
     constraints: dict = field(default_factory=dict)
     frames: dict[str, CurveFrame] = field(default_factory=dict)
     equations: dict[str, EquationFact] = field(default_factory=dict)
+    coordinates: dict[str, PointCoordinates] = field(default_factory=dict)
 
 
 @dataclass
@@ -312,8 +313,30 @@ class BoundApplicator:
                                                   'equation': key, 'before': fact.expression,
                                                   'after': reduced, 'substitution': dict(values)})
                         equations[key] = replace(fact, expression=reduced)
+            coordinates = dict(state.coordinates)
+            for point, coordinate in proposal.coordinates.items():
+                aliases = [a for a in state.focus_aliases.values() if a.point == point]
+                if (action.model_id not in (7, 8, 9, 10) or len(aliases) != 1
+                        or aliases[0].curve != action.curve or aliases[0].fact_id not in proposal.read_facts
+                        or state.entities.get(point) != 'Point' or coordinate.point != point
+                        or coordinate.fact_id != f'derived:{action.curve}:focus:{point}'
+                        or len(coordinate.xy) != 2):
+                    raise TransitionError('inapplicable', 'Invalid focus coordinate proposal binding')
+                xy = tuple(sp.simplify(v.subs(values)) for v in coordinate.xy)
+                if any(v.free_symbols or v.is_real is not True or v.is_finite is not True for v in xy):
+                    raise TransitionError('undetermined', 'Focus coordinates require finite real numbers')
+                if any(properties.get((action.curve, k)) != v for k, v in zip(('focus_x', 'focus_y'), xy)):
+                    raise TransitionError('conflict', 'Coordinates do not match focus properties')
+                if point in coordinates:
+                    equal = [truth(sp.Eq(old.subs(values), new)) for old, new in zip(coordinates[point].xy, xy)]
+                    if not all(v is True for v in equal):
+                        raise TransitionError('conflict' if False in equal else 'undetermined',
+                                              'Existing point coordinates disagree with focus')
+                else:
+                    coordinates[point] = replace(coordinate, xy=xy)
+            changed_coordinates = {p: c for p, c in coordinates.items() if p not in state.coordinates}
             changed_equations = {k: v for k, v in equations.items() if state.equations.get(k) != v}
-            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations)):
+            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates)):
                 result.status = 'no_op'
                 return result
             result.delta = {'properties': changed_properties, 'values': changed_values}
@@ -323,6 +346,8 @@ class BoundApplicator:
                 result.delta['frames'] = changed_frames
             if changed_equations:
                 result.delta['equations'] = changed_equations
+            if changed_coordinates:
+                result.delta['coordinates'] = changed_coordinates
             result.status = 'applied'
             result.after_revision += 1
             provenance = dict(state.provenance)
@@ -338,6 +363,9 @@ class BoundApplicator:
             for key in changed_equations:
                 provenance[key] = tuple(dict.fromkeys(
                     (*provenance.get(key, ()), *proposal.read_facts, f'action:{result.after_revision}')))
+            for coordinate in changed_coordinates.values():
+                provenance[coordinate.fact_id] = (*proposal.read_facts, f'action:{result.after_revision}')
+            state.coordinates = coordinates
             state.properties, state.values, state.provenance = properties, values, provenance
             state.constraints, state.frames = constraints, frames
             state.equations = equations
