@@ -1,6 +1,6 @@
 # 关键接口参考
 
-更新：2026-09-29。本页描述当前可调用接口；完整设计见[开发规格](../docs/开发规格/02_状态表示与应用器接口.md)，模块导航见[实现地图](project_structure.md)。新绑定执行接口与旧流程并存，不可直接混用两套状态。
+更新：2026-10-02。本页描述当前可调用接口；完整设计见[开发规格](../docs/开发规格/02_状态表示与应用器接口.md)，模块导航见[实现地图](project_structure.md)。新绑定执行接口与旧流程并存，不可直接混用两套状态。
 
 ## 新绑定执行接口：当前开发入口
 
@@ -152,3 +152,12 @@ RM7–10 在提取／恢复标准参数的同一次提案中，针对所绑定�
 `solve_directrix_alias_distance_slice` 复用标准模型→RM29→RM52；坐标可以显式给定，也可由同一抛物线标准模型生成。RM52 在前两步成功后绑定实际坐标 ID，查询仍只读。不新增几何推导模型或将实例化单独计为选择器动作。
 
 回放 ID 946／1793：`python3 -m src.reasoning.bound_slice --mode directrix-alias-distance --problem-id 946`（另一题改为 1793）。测试：`tests/test_bound_focus_alias.py`。
+
+
+### RM72 参数恢复与交点事实（D5 已确认）
+
+`TransitionState.from_facts(facts, None)` 可创建无查询诊断初态，extract_answer 返回 None。新增 `Coordinate(OneOf(Intersection(H,G)))=(x0,y0)`，限 Line—Parabola：按原事实 ID 创建内部点 `@intersection:{fact_id}`，复用坐标及两项归属；不执行求参。PointOnCurve 现支持 Line。
+
+`enumerate_actions(state,72,'recover_from_point')` 枚举直线／点／归属绑定。动作使用 line、line_equation_id、point、coordinate_id、relation_id，curve/equation_id 为空。RM72 提案位于 `src/theorems/line_proposals.py`，由 y=kx+b 与点斜式的一致性恢复一个参数，同时提交 slope/intercept。y 系数须非零可证明；水平线可用，竖直线不支持；多根不提交，条件不足 undetermined，无解 conflict。
+
+应用器保留与当前赋值无关的未定条件，但涉及赋值的约束必须验证，已为假的约束一律拒绝。既有 RM7 点恢复与公共数值代入／实根筛选复用。原题 `Distance(Focus(G),H)` 尚未支持；本批接口只用于参数子链。正向 RM72 旧接口保留，未新增正向绑定实现。

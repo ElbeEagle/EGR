@@ -31,6 +31,10 @@
 
 12. [焦点别名坐标实现记录](15_焦点别名坐标实现记录.md)：标准模型职责、坐标原子提交及两道原题回放。
 
+13. [ID 7260 交点与参数恢复设计](16_ID7260交点与参数恢复设计.md)：D5 已确认，参数子链已实现，距离查询待接入。
+
+14. [ID 7260 参数子链实现记录](17_ID7260参数子链实现记录.md)：交点解析、RM72 与双顺序验证。
+
 ## 依据与口径
 
 | 来源 | 本批用途 | 边界 |
@@ -42,7 +46,7 @@
 | [train_with_models_v3.json](../../data/train_with_models_v3.json) | 5357 条记录中的 ID 2、5、9、51、56 | 按原始 `id` 定位，不使用数组下标 |
 | [SymbolicState](../../src/state/symbolic_state.py)、[TheoremModel](../../src/theorems/base_model.py) | 现有实现的迁移起点 | 旧接口保留；TheoremModel 已增加可选绑定接口 |
 
-v3 文件 SHA-256：`732c271ecfa1c93418dfd9deb93353f18653b3c84935ed4677a193da80c74297`。
+历史 v3 文件 SHA-256（用户后续修改 ID 7260 models 后不再代表当前文件）：`732c271ecfa1c93418dfd9deb93353f18653b3c84935ed4677a193da80c74297`。
 
 用户说明：`process` 到 `models` 的标注由 Claude Opus 辅助完成。保留其作为弱参考；仓库其他规则脚本不能据此被认定为这批标注的来源。
 

@@ -1,0 +1,341 @@
+{
+  "schema_version": "parameter-subchain-v1",
+  "problem_id": 7260,
+  "scope": "parameter subchains only, original distance query not implemented",
+  "facts": "H: Line;Expression(H) = (a*x + y - 4 = 0);a: Number;G: Parabola;Expression(G) = (y^2 = 2*(p*x));p: Number;p>0;Coordinate(OneOf(Intersection(H, G))) = (1, 2)",
+  "original_query": "Distance(Focus(G), H)",
+  "diagnostic_query": null,
+  "cases": [
+    {
+      "order": [
+        7,
+        72
+      ],
+      "values": {
+        "p": "2",
+        "a": "2"
+      },
+      "answer": null,
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 7,
+            "mode": "recover_from_point",
+            "curve": "G",
+            "equation_id": "f4",
+            "line_equation_id": null,
+            "relation_id": "f7:on:G",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": "@intersection:f7",
+            "coordinate_id": "f7",
+            "line": null
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('G', 'p')": "2",
+              "('G', 'focus_x')": "1",
+              "('G', 'focus_y')": "0"
+            },
+            "values": {
+              "p": "2"
+            },
+            "frames": {
+              "G": {
+                "equation_id": "f4",
+                "center": [
+                  "0",
+                  "0"
+                ],
+                "axis": "x",
+                "direction": "right"
+              }
+            }
+          },
+          "read_facts": [
+            "f4",
+            "entity:G",
+            "f6",
+            "f7",
+            "f7:on:G"
+          ],
+          "operations": [
+            {
+              "operation": "instantiate_point_incidence",
+              "point": "@intersection:f7",
+              "curve": "G",
+              "relation": "f7:on:G",
+              "coordinate": "f7",
+              "residual": "4 - 2*p"
+            },
+            {
+              "operation": "real_roots",
+              "roots": [
+                "2"
+              ]
+            },
+            {
+              "operation": "check_root",
+              "root": "2",
+              "conditions": [
+                "True"
+              ],
+              "residual": "0",
+              "checks": [
+                true,
+                true
+              ]
+            },
+            {
+              "operation": "standard_parabola",
+              "direction": "right",
+              "coefficient": "4",
+              "p": "2",
+              "focus": [
+                "1",
+                "0"
+              ]
+            }
+          ],
+          "candidates": [
+            "2"
+          ],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 72,
+            "mode": "recover_from_point",
+            "curve": null,
+            "equation_id": null,
+            "line_equation_id": "f1",
+            "relation_id": "f7:on:H",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": "@intersection:f7",
+            "coordinate_id": "f7",
+            "line": "H"
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('H', 'slope')": "-2",
+              "('H', 'intercept')": "4"
+            },
+            "values": {
+              "a": "2"
+            }
+          },
+          "read_facts": [
+            "f1",
+            "f7",
+            "f7:on:H",
+            "entity:H",
+            "f6",
+            "value:p"
+          ],
+          "operations": [
+            {
+              "operation": "line_point_slope_consistency",
+              "slope": "-a",
+              "intercept": "4",
+              "point": "@intersection:f7",
+              "residual": "a - 2"
+            },
+            {
+              "operation": "real_roots",
+              "roots": [
+                "2"
+              ]
+            },
+            {
+              "operation": "check_root",
+              "root": "2",
+              "conditions": [
+                "True"
+              ],
+              "residual": "0",
+              "checks": [
+                true,
+                true
+              ]
+            }
+          ],
+          "candidates": [
+            "2"
+          ],
+          "diagnostic": ""
+        }
+      ]
+    },
+    {
+      "order": [
+        72,
+        7
+      ],
+      "values": {
+        "a": "2",
+        "p": "2"
+      },
+      "answer": null,
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 72,
+            "mode": "recover_from_point",
+            "curve": null,
+            "equation_id": null,
+            "line_equation_id": "f1",
+            "relation_id": "f7:on:H",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": "@intersection:f7",
+            "coordinate_id": "f7",
+            "line": "H"
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('H', 'slope')": "-2",
+              "('H', 'intercept')": "4"
+            },
+            "values": {
+              "a": "2"
+            }
+          },
+          "read_facts": [
+            "f1",
+            "f7",
+            "f7:on:H",
+            "entity:H",
+            "f6"
+          ],
+          "operations": [
+            {
+              "operation": "line_point_slope_consistency",
+              "slope": "-a",
+              "intercept": "4",
+              "point": "@intersection:f7",
+              "residual": "a - 2"
+            },
+            {
+              "operation": "real_roots",
+              "roots": [
+                "2"
+              ]
+            },
+            {
+              "operation": "check_root",
+              "root": "2",
+              "conditions": [],
+              "residual": "0",
+              "checks": [
+                true
+              ]
+            }
+          ],
+          "candidates": [
+            "2"
+          ],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 7,
+            "mode": "recover_from_point",
+            "curve": "G",
+            "equation_id": "f4",
+            "line_equation_id": null,
+            "relation_id": "f7:on:G",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": "@intersection:f7",
+            "coordinate_id": "f7",
+            "line": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('G', 'p')": "2",
+              "('G', 'focus_x')": "1",
+              "('G', 'focus_y')": "0"
+            },
+            "values": {
+              "p": "2"
+            },
+            "frames": {
+              "G": {
+                "equation_id": "f4",
+                "center": [
+                  "0",
+                  "0"
+                ],
+                "axis": "x",
+                "direction": "right"
+              }
+            }
+          },
+          "read_facts": [
+            "f4",
+            "entity:G",
+            "f6",
+            "value:a",
+            "f7",
+            "f7:on:G"
+          ],
+          "operations": [
+            {
+              "operation": "instantiate_point_incidence",
+              "point": "@intersection:f7",
+              "curve": "G",
+              "relation": "f7:on:G",
+              "coordinate": "f7",
+              "residual": "4 - 2*p"
+            },
+            {
+              "operation": "real_roots",
+              "roots": [
+                "2"
+              ]
+            },
+            {
+              "operation": "check_root",
+              "root": "2",
+              "conditions": [
+                "True"
+              ],
+              "residual": "0",
+              "checks": [
+                true,
+                true
+              ]
+            },
+            {
+              "operation": "standard_parabola",
+              "direction": "right",
+              "coefficient": "4",
+              "p": "2",
+              "focus": [
+                "1",
+                "0"
+              ]
+            }
+          ],
+          "candidates": [
+            "2"
+          ],
+          "diagnostic": ""
+        }
+      ]
+    }
+  ]
+}

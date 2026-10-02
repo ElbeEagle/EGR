@@ -54,6 +54,17 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 72:
+        fact = state.equations.get(action.line_equation_id)
+        coordinate = state.coordinates.get(action.point)
+        incidence = state.incidences.get(action.relation_id)
+        if (action.curve is not None or action.equation_id is not None
+                or state.entities.get(action.line) != 'Line'
+                or fact is None or fact.owner != action.line or fact.role != 'line'
+                or coordinate is None or coordinate.fact_id != action.coordinate_id
+                or incidence is None or incidence.point != action.point or incidence.curve != action.line):
+            raise TransitionError('inapplicable', 'Line recovery binding mismatch')
+        return fact
     if action.model_id == 52 and action.line is not None:
         line = state.equations.get(action.line_equation_id)
         coordinate = state.coordinates.get(action.point)
@@ -133,6 +144,18 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id == 72:
+        actions = []
+        for fact in state.equations.values():
+            if fact.role != 'line' or state.entities.get(fact.owner) != 'Line':
+                continue
+            for inc in state.incidences.values():
+                coordinate = state.coordinates.get(inc.point)
+                if inc.curve == fact.owner and coordinate:
+                    actions.append(BoundAction(72, 'recover_from_point', line=fact.owner,
+                                               line_equation_id=fact.fact_id, point=inc.point,
+                                               coordinate_id=coordinate.fact_id, relation_id=inc.fact_id))
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id in (2, 29, 52):
         actions = []
         if model_id == 52:
@@ -263,7 +286,7 @@ class BoundApplicator:
                 valid = truth(condition.subs(values))
                 if valid is False:
                     raise TransitionError('conflict', 'Assignment violates a given/domain constraint')
-                if proposal.values and valid is None:
+                if proposal.values and valid is None and condition.free_symbols.intersection(proposal.values):
                     raise TransitionError('undetermined', 'Assignment has unresolved constraints')
             frames = dict(state.frames)
             for curve, frame in proposal.frames.items():

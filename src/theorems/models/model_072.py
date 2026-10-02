@@ -27,6 +27,10 @@ class LinePointSlopeForm(TheoremModel):
     输出: y - 2 = 3(x - 1), 即 y = 3x - 1
     """
     
+    def propose_bound(self, state, action):
+        from ..line_proposals import recover_line_from_point
+        return recover_line_from_point(state, action)
+
     def __init__(self):
         super().__init__(
             model_id=72,

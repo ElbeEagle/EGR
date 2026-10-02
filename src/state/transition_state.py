@@ -90,7 +90,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery
+    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -119,7 +119,7 @@ class TransitionState:
         return [(fact, alias.fact_id)]
 
     @classmethod
-    def from_facts(cls, facts: str, query: str) -> 'TransitionState':
+    def from_facts(cls, facts: str, query: str | None) -> 'TransitionState':
         parts = [p.strip() for p in facts.split(';') if p.strip()]
         entities = {}
         for part in parts:
@@ -132,10 +132,13 @@ class TransitionState:
         symbols = {name: sp.Symbol(name, real=True) for name in ('x', 'y')}
         symbols.update({name: sp.Symbol(name, real=True) for name, kind in entities.items()
                         if kind in ('Number', 'Real')})
-        asymptote_query = re.fullmatch(r'Expression\(Asymptote\(([A-Za-z]\w*)\)\)', query)
-        focal_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*Focus\(([A-Za-z]\w*)\)\s*\)', query)
-        line_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)', query)
-        if line_query and entities.get(line_query.group(1)) == 'Point' and entities.get(line_query.group(2)) == 'Line':
+        query_text = query if query is not None else ''
+        asymptote_query = re.fullmatch(r'Expression\(Asymptote\(([A-Za-z]\w*)\)\)', query_text)
+        focal_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*Focus\(([A-Za-z]\w*)\)\s*\)', query_text)
+        line_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)', query_text)
+        if query is None:
+            target = None  # Explicit facts-only diagnostic; not a solved problem.
+        elif line_query and entities.get(line_query.group(1)) == 'Point' and entities.get(line_query.group(2)) == 'Line':
             target = PointLineDistanceQuery(*line_query.groups())
         elif focal_query and entities.get(focal_query.group(1)) == 'Point' and entities.get(focal_query.group(2)) == 'Parabola':
             target = FocalDistanceQuery(*focal_query.groups())
@@ -149,6 +152,25 @@ class TransitionState:
         for index, part in enumerate(parts):
             fact_id = f'f{index}'
             if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Number|Real)', part):
+                continue
+            intersection = re.fullmatch(
+                r'Coordinate\(OneOf\(Intersection\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)\)\s*=\s*\(([^,]+),([^,]+)\)', part)
+            if intersection:
+                left, right, xt, yt = intersection.groups()
+                if sorted(entities.get(o, '') for o in (left, right)) != ['Line', 'Parabola']:
+                    raise ValueError('Known intersection requires a Line and Parabola')
+                # A fact-scoped witness is not a solution of an intersection equation.
+                point = f'@intersection:{fact_id}'
+                entities[point] = 'Point'
+                px, gx = parse_expression(xt, symbols)
+                py, gy = parse_expression(yt, symbols)
+                state.coordinates[point] = PointCoordinates(fact_id, point, (px, py), part)
+                for owner in (left, right):
+                    key = f'{fact_id}:on:{owner}'
+                    state.incidences[key] = PointOnCurve(key, point, owner, part)
+                    state.provenance[key] = (fact_id,)
+                for i, guard in enumerate(gx + gy):
+                    state.constraints[f'{fact_id}:domain:{i}'] = guard
                 continue
             coordinate = re.fullmatch(r'Coordinate\(([A-Za-z]\w*)\)\s*=\s*\(([^,]+),([^,]+)\)', part)
             if coordinate:
@@ -164,7 +186,7 @@ class TransitionState:
             incidence = re.fullmatch(r'PointOnCurve\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)', part)
             if incidence:
                 point, curve = incidence.groups()
-                if entities.get(point) != 'Point' or entities.get(curve) not in ('Ellipse', 'Hyperbola', 'Parabola'):
+                if entities.get(point) != 'Point' or entities.get(curve) not in ('Ellipse', 'Hyperbola', 'Parabola', 'Line'):
                     raise ValueError('Invalid point/curve incidence')
                 state.incidences[fact_id] = PointOnCurve(fact_id, point, curve, part)
                 continue
