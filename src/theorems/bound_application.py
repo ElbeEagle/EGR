@@ -55,6 +55,16 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 39:
+        fact = state.equations.get(action.equation_id)
+        point = state.coordinates.get(action.point)
+        if (state.entities.get(action.curve) != 'Parabola' or state.entities.get(action.point) != 'Point'
+                or fact is None or fact.owner != action.curve or fact.role != 'curve'
+                or point is None or point.fact_id != action.coordinate_id
+                or any(v is not None for v in (action.line, action.line_equation_id, action.relation_id,
+                                               action.point_role, action.peer_curve, action.peer_equation_id))):
+            raise TransitionError('inapplicable', 'Tangent point/curve binding mismatch')
+        return fact
     if action.model_id == 13:
         fact = state.equations.get(action.equation_id)
         if (state.entities.get(action.curve) not in ('Ellipse', 'Hyperbola')
@@ -165,6 +175,12 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id == 39:
+        actions = [BoundAction(39, 'derive_tangent', f.owner, f.fact_id,
+                               point=p, coordinate_id=c.fact_id)
+                   for f in state.equations.values() if f.role == 'curve'
+                   and state.entities.get(f.owner) == 'Parabola' for p, c in state.coordinates.items()]
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id == 13:
         actions = [BoundAction(13, 'derive_eccentricity', f.owner, f.fact_id)
                    for f in state.equations.values() if f.role == 'curve'
@@ -351,7 +367,9 @@ class BoundApplicator:
             changed_frames = {k: v for k, v in frames.items() if k not in state.frames}
             equations = dict(state.equations)
             for key, fact in proposal.equations.items():
-                if key != fact.fact_id or fact.owner != action.curve or fact.role not in ('asymptote', 'directrix'):
+                tangent = (action.model_id == 39 and fact.role == 'tangent'
+                           and key == f'derived:{action.curve}:tangent:{action.point}')
+                if key != fact.fact_id or fact.owner != action.curve or (fact.role not in ('asymptote', 'directrix') and not tangent):
                     raise TransitionError('inapplicable', 'Invalid derived equation binding')
                 normalized = replace(fact, expression=sp.simplify(fact.expression.subs(values)))
                 if key in equations:

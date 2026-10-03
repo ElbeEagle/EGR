@@ -8,7 +8,7 @@
 | --- | --- |
 | `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与标量／渐近线集合／抛物线焦点距离／点到独立直线查询 → 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
 | `BoundAction`（`src.theorems.bound_application`） | `model_id, mode`；曲线模式使用 `curve`，独立直线 RM52 使用 `line` 且 `curve/equation_id=None`；曲线模式的 `equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
-| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM52；可按模式过滤；不保证候选已满足所有数学前提 |
+| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM52、RM72；可按模式过滤；不保证候选已满足所有数学前提 |
 | `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM52 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
@@ -181,3 +181,14 @@ RM52 新增 `focus_line_distance` 模式，BoundAction 使用 `point_role='focus
 RM13 必须已有 a_sq、b_sq、c_sq 和匹配标准框架；复用 bound_parameters，检查有限实数、正值及参数恒等式后，仅提交 e=√(c²/a²)。缺 c² 返回 inapplicable，不暗中执行 RM11/12；冲突回滚，重复 no_op。首批限非圆标准椭圆／非退化双曲线、原点中心与 x/y 轴，符号值返回 undetermined，不处理范围和反向求参。
 
 `solve_eccentricity_slice(facts,query)` 固定执行标准模型→RM11/12 derive_c_sq→RM13；唯一方程及轴向预检，无模型预测。命令：`python3 -m src.reasoning.bound_slice --mode eccentricity --problem-id 5988`（其余 ID：7488、1586、4528）。动作 schema 不变，继续 v7 trace。实现 `eccentricity_proposals.py`，测试 `test_bound_eccentricity.py`。
+
+
+### RM39 抛物线切线
+
+`TangentQuery(point,curve)` 解析 `Expression(TangentOnPoint(H,G))`，要求 Point／Parabola；初始化不据此生成点归属。`enumerate_actions(state,39,'derive_tangent')` 枚举曲线方程与已知坐标的结构候选，绑定 curve/equation_id/point/coordinate_id；执行时验证点在曲线上。
+
+前提为已提交且匹配方程的标准框架、方向及有限数值 p，坐标须为有限实数。对 v²=2spu（s=±1），切线为 v₀v=sp(u+u₀)，覆盖四方向及顶点；不求参或推导其他曲线属性。点不在曲线上 conflict，缺前置标准属性 inapplicable，数值未定 undetermined；重复 no_op，冲突原子回滚。
+
+输出 `EquationFact` 的 ID 为 `derived:{curve}:tangent:{point}`、owner 为曲线、role 为 tangent；expression 表示左式减右式等于零，允许非零常数倍。查询只读该精确绑定的已提交方程；不创建命名 Line，暂未接入 RM52／交点运算。来源记录坐标、标准属性、方程及切点验证操作。
+
+`solve_parabola_tangent_slice(facts,query)` 预检唯一标准方向，固定回放 RM7–10→RM39，不使用参考答案／process／models。命令：`python3 -m src.reasoning.bound_slice --mode parabola-tangent --problem-id 2106`。继续使用 v7 trace；RM39 仅绑定接口可执行，旧 can_apply/apply 返回 False。实现与边界见[记录](../docs/开发规格/21_RM39抛物线切线实现记录.md)。

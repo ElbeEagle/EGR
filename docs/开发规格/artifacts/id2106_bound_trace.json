@@ -1,0 +1,126 @@
+{
+  "schema_version": "bound-slice-v7",
+  "mode": "parabola-tangent",
+  "problem_id": 2106,
+  "status": "solved",
+  "facts": "G: Parabola;Expression(G) = (y = x^2);H: Point;Coordinate(H) = (-1, 1)",
+  "query": "Expression(TangentOnPoint(H, G))",
+  "answer": "-x - y/2 - 1/2",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 9,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'p')": "1/2",
+          "('G', 'focus_x')": "0",
+          "('G', 'focus_y')": "1/4"
+        },
+        "values": {},
+        "frames": {
+          "G": {
+            "equation_id": "f1",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "y",
+            "direction": "up"
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "entity:G"
+      ],
+      "operations": [
+        {
+          "operation": "standard_parabola",
+          "direction": "up",
+          "coefficient": "1",
+          "p": "1/2",
+          "focus": [
+            "0",
+            "1/4"
+          ]
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 39,
+        "mode": "derive_tangent",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": "H",
+        "coordinate_id": "f3",
+        "line": null,
+        "point_role": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {},
+        "values": {},
+        "equations": {
+          "derived:G:tangent:H": {
+            "fact_id": "derived:G:tangent:H",
+            "owner": "G",
+            "role": "tangent",
+            "expression": "-x - y/2 - 1/2",
+            "source": "RM39"
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "entity:G",
+        "frame:G",
+        "property:G:p",
+        "property:G:focus_x",
+        "property:G:focus_y",
+        "f3",
+        "entity:H"
+      ],
+      "operations": [
+        {
+          "operation": "verify_tangent_point",
+          "residual": "0"
+        },
+        {
+          "operation": "parabola_tangent",
+          "axis": "y",
+          "sign": 1,
+          "p": "1/2",
+          "point": "H",
+          "equation": "-x - y/2 - 1/2"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}

@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 from copy import deepcopy
 
-from src.state.transition_state import TransitionState, AsymptoteQuery, FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery, EccentricityQuery
+from src.state.transition_state import TransitionState, AsymptoteQuery, FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery, EccentricityQuery, TangentQuery
 from src.theorems.bound_application import BoundAction, BoundApplicator, enumerate_actions
 from src.solver.transition_primitives import TransitionError
 
@@ -254,6 +254,29 @@ def solve_eccentricity_slice(facts: str, query: str) -> SliceResult:
                                  forward.curve, forward.equation_id), forward))
 
 
+def solve_parabola_tangent_slice(facts: str, query: str) -> SliceResult:
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, TangentQuery):
+        return SliceResult('inapplicable', state, diagnostic='Requires tangent equation query')
+    actions = [a for a in enumerate_actions(state, 39) if a.curve == state.query.curve and a.point == state.query.point]
+    if len(actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Requires one point/curve equation binding')
+    tangent = actions[0]
+    app = BoundApplicator()
+    probes = [app.apply(deepcopy(state), BoundAction(mid, 'extract_parameters', tangent.curve, tangent.equation_id))
+              for mid in (7, 8, 9, 10)]
+    accepted = [p.action for p in probes if p.status in ('applied', 'no_op')]
+    if len(accepted) == 1:
+        return replay_actions(state, (accepted[0], tangent))
+    if accepted:
+        return SliceResult('undetermined', state, diagnostic='Ambiguous standard direction')
+    failure = next(p for status in ('conflict', 'undetermined', 'failed', 'inapplicable') for p in probes if p.status == status)
+    return SliceResult(failure.status, state, [failure], failure.diagnostic)
+
+
 def replay_actions(state: TransitionState, actions) -> SliceResult:
     """Run an explicit diagnostic action sequence; retain unsuccessful attempts too."""
     applicator = BoundApplicator()
@@ -277,7 +300,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -288,7 +311,8 @@ if __name__ == '__main__':
              'point-line-distance': solve_point_line_distance_slice,
              'directrix-alias-distance': solve_directrix_alias_distance_slice,
              'intersection-focus-distance': solve_intersection_focus_distance_slice,
-             'eccentricity': solve_eccentricity_slice}[args.mode]
+             'eccentricity': solve_eccentricity_slice,
+             'parabola-tangent': solve_parabola_tangent_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):

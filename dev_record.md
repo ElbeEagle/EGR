@@ -503,3 +503,11 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 eccentricity_proposals.py、test_bound_eccentricity.py；更新状态、应用器、model_013.py、bound_slice.py、API／实现地图／规格；保存四份 v7 trace 与新的结构审计快照。
 - **验证**：新增20项，相关回归334 passed；四题结果 √3/2、√2/2、√5/2、2。见[记录](docs/开发规格/20_RM13正向离心率实现记录.md)。
 - **下一步**：先明确 RM39／ID2106 切线契约，暂不扩展离心率范围和反向模式。
+
+
+## 2026-10-03｜RM39 切点验证与 ID 2106 切线闭环
+
+- **变更**：明确四方向正确切线公式，新增 derive_tangent 与只读 TangentQuery；绑定实际点／曲线，执行时验证切点，原子提交派生切线及来源。固定 RM9→RM39 得到 y=−2x−1。
+- **文件**：新增 tangent_proposals.py、model_039.py、test_bound_parabola_tangent.py；更新状态、应用器、定理库与 bound_slice.py，同步 API／实现地图／规格，保存 id2106_bound_trace.json。
+- **验证**：新增 17 项、相关回归 351 passed；四方向与顶点使用独立梯度公式核验。见[实现记录](docs/开发规格/21_RM39抛物线切线实现记录.md)。
+- **限制／下一步**：仅标准抛物线已知数值切点；旧无绑定接口不执行，派生切线尚未接入 RM52／交点链。下一批先明确消元／根关联契约再分步推进。

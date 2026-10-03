@@ -55,6 +55,7 @@ class TheoremLibrary:
         from .models.model_027 import EllipseDirectrix
         from .models.model_029 import ParabolaDirectrix
         from .models.model_032 import EllipseFocalTrianglePerimeter
+        from .models.model_039 import ParabolaTangentLine
         from .models.model_038 import EllipseTangentLine
         from .models.model_041 import VietaTheorem
         from .models.model_042 import VietaTheoremSum
@@ -116,6 +117,7 @@ class TheoremLibrary:
         self.register_model(ParabolaDirectrix())
         self.register_model(EllipseFocalTrianglePerimeter())
         self.register_model(EllipseTangentLine())
+        self.register_model(ParabolaTangentLine())
         self.register_model(VietaTheorem())
         self.register_model(VietaTheoremSum())
         self.register_model(VietaTheoremProduct())
