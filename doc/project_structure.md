@@ -13,7 +13,7 @@
 
 ## 代码导航
 
-下列路径均相对仓库根目录；“旧流程”表示迁移前基础，不表示应删除。
+下列路径均相对仓库根目录；“旧流程”表示迁移前基础，不表示应删除。文件表说明模块用途；核心函数及数据结构的中文含义见 [API 参考](api_reference.md)。
 
 | 文件／目录 | 主要职责与状态 |
 | --- | --- |
@@ -30,23 +30,28 @@
 
 ### 当前绑定执行链的关键文件
 
+计算模块接收数学表达式并返回计算结果；提案模块组织一次模型应用，返回待提交的变化与来源；应用器检查并统一写入状态。数据结构保存信息，查询类型表达求解目标，二者自身不执行推导。
+
 | 文件 | 主要职责 |
 | --- | --- |
-| [transition_state.py](../src/state/transition_state.py) | 显式初态、对象所属方程、共焦点关系、准线／焦点别名、几何框架、约束、属性、赋值与来源 |
+| [transition_state.py](../src/state/transition_state.py) | 题目状态与事实定义：解析已给信息，保存对象、方程、关系、模型结果及来源；表示查询目标并读取已提交答案 |
 | [transition_primitives.py](../src/solver/transition_primitives.py) | 受限解析、椭圆／双曲线标准形式、共焦点实例化、斜率、实根与条件检查 |
-| [standard_proposals.py](../src/theorems/standard_proposals.py) | RM3/4/5/6 共用标准参数提取、轴向框架和类型条件 |
-| [parabola_operations.py](../src/solver/parabola_operations.py)、[parabola_proposals.py](../src/theorems/parabola_proposals.py) | 点代入、抛物线标准参数恢复、方向确认与焦半径；及焦点别名坐标实例化、准线／定义提案，供 RM2/7–10/17/29 调用 |
+| [standard_proposals.py](../src/theorems/standard_proposals.py) | 标准椭圆／双曲线参数提案：从绑定方程提取半轴平方、轴向及类型条件，供 RM3–6 使用 |
+| [parabola_operations.py](../src/solver/parabola_operations.py) | 抛物线公共计算：提取标准式系数、将数值点代入方程、由系数和方向计算 p 与焦点 |
+| [parabola_proposals.py](../src/theorems/parabola_proposals.py) | 抛物线模型提案：组织参数提取／点恢复、焦点坐标实例化、焦半径、准线及定义路径，供 RM2/7–10/17/29 使用 |
 | [distance_operations.py](../src/solver/distance_operations.py) | 一般点到直线精确距离；RM52 调用，数值输入边界与定义路径由 `tests/test_bound_parabola_definition.py` 验证 |
 | [distance_proposals.py](../src/theorems/distance_proposals.py) | RM52 共用命名点／焦点属性到直线的距离提案；`test_bound_line_distance.py` 覆盖解析、查询隔离及真实事实子案例 |
-| [line_proposals.py](../src/theorems/line_proposals.py) | RM72 受限点斜式一致性求参；交点参数子链见 `tests/test_bound_intersection_recovery.py` |
-| [eccentricity_proposals.py](../src/theorems/eccentricity_proposals.py) | RM13 正向模式，核验已有平方参数后提交 e；不补做参数关系推导 |
-| [intersection_operations.py](../src/solver/intersection_operations.py)、[intersection_proposals.py](../src/theorems/intersection_proposals.py) | RM78 数值直线代入消元与还原映射，提交独立 IntersectionReduction；根／弦长尚未接入 |
-| [tangent_proposals.py](../src/theorems/tangent_proposals.py)、[model_039.py](../src/theorems/models/model_039.py) | RM39 绑定切点验证与四方向切线提案；仅绑定执行，测试见 `test_bound_parabola_tangent.py` |
-| [parameter_proposals.py](../src/theorems/parameter_proposals.py) | RM11/RM12 共用的普通参数关系提案及正值／一致性检查 |
-| [bound_application.py](../src/theorems/bound_application.py) | 动作绑定、候选变化、冲突检查、原子提交（含模型生成的坐标）、受限回代及执行记录 |
+| [line_proposals.py](../src/theorems/line_proposals.py) | 直线参数恢复提案：利用已知点与直线方程的一致性求一个参数，并提出斜率／截距结果，供 RM72 使用 |
+| [eccentricity_proposals.py](../src/theorems/eccentricity_proposals.py) | 离心率计算提案：核验已有 a²、b²、c² 后计算 e，向 RM13 返回待提交属性与来源 |
+| [intersection_operations.py](../src/solver/intersection_operations.py) | 交点相关公共计算：当前将直线代入标准抛物线，返回一元方程和坐标还原映射；不求交点 |
+| [intersection_proposals.py](../src/theorems/intersection_proposals.py) | RM78 消元提案：核验曲线／直线绑定，调用代入计算，包装消元结果与来源供应用器提交 |
+| [tangent_proposals.py](../src/theorems/tangent_proposals.py) | 抛物线切线提案：验证给定点在曲线上，计算四方向切线方程并返回待提交结果，供 RM39 使用 |
+| [model_039.py](../src/theorems/models/model_039.py) | RM39 模型入口：将绑定应用转交切线提案函数；旧无绑定执行接口未实现 |
+| [parameter_proposals.py](../src/theorems/parameter_proposals.py) | 普通参数关系提案：利用椭圆／双曲线的 a²、b²、c² 关系补全参数或求标量，供 RM11/RM12 使用 |
+| [bound_application.py](../src/theorems/bound_application.py) | 绑定执行与状态提交：核验动作对象，调用模型提案，检查冲突并一次性提交全部变化，记录来源与执行结果 |
 | `model_003.py`、`model_011.py`、`model_012.py`（`src/theorems/models/`） | 椭圆参数、普通参数关系及共焦点约束；RM11/RM12 共用 `parameter_proposals.py` |
 | [model_005.py](../src/theorems/models/model_005.py)、[model_021.py](../src/theorems/models/model_021.py) | 原模型类新增 `propose_bound`；RM5 记录类型条件；RM21 支持渐近线正／反向模式，旧接口保留 |
-| [bound_slice.py](../src/reasoning/bound_slice.py) | 十类固定链／单步回放；标准方向预检、点到独立直线距离及 v7 trace |
+| [bound_slice.py](../src/reasoning/bound_slice.py) | 固定动作链诊断入口：预检标准方向、依次调用应用器并读取答案，返回结果与轨迹；不负责学习型模型选择 |
 | [test_bound_transition_slice.py](../tests/test_bound_transition_slice.py) | 真实题、绑定隔离、重复执行、多解、条件不足、冲突与回滚测试 |
 
 新增测试：[test_bound_parabola.py](../tests/test_bound_parabola.py) 覆盖 ID 5 与四向抛物线；[test_bound_y_axis.py](../tests/test_bound_y_axis.py) 覆盖 y 轴标准模型、关系和渐近线；[test_bound_parameter_modes.py](../tests/test_bound_parameter_modes.py) 覆盖普通参数关系和正向渐近线；[test_bound_shared_focus.py](../tests/test_bound_shared_focus.py)，覆盖 ID 9 及多曲线关系边界。
@@ -69,5 +74,6 @@
 1. RM4/RM6 与 y 轴框架、渐近线及参数关系已验证，见[本批记录](../docs/开发规格/10_Y轴标准模型实现记录.md)。ID 5 已完成标准参数恢复与焦半径闭环，见[记录](../docs/开发规格/11_ID5抛物线实现记录.md)。定义路径已完成，见[记录](../docs/开发规格/12_ID5定义路径实现记录.md)。RM52 已支持独立直线绑定／距离查询；ID 5882/1253 仅验证显式事实子案例，见[记录](../docs/开发规格/13_一般直线距离实现记录.md)。ID 3723 已完成原始查询闭环，见[记录](../docs/开发规格/14_ID3723准线别名实现记录.md)。ID 946/1793 焦点别名坐标实例化已验证，见[记录](../docs/开发规格/15_焦点别名坐标实现记录.md)。ID 7260 已完成[职责设计](../docs/开发规格/16_ID7260交点与参数恢复设计.md)，D5 已确认，交点事实及 RM7／RM72 参数子链已验证，见[记录](../docs/开发规格/17_ID7260参数子链实现记录.md)；Focus(G) 距离原始查询现已接通，见[记录](../docs/开发规格/18_ID7260焦点距离闭环.md)；全库选型已完成，下一批为 RM13 正向离心率与 ID 5988/7488/1586/4528，见[选型规格](../docs/开发规格/19_模型覆盖审计与下一组选型.md)；四题 RM13 原始查询已验证，见[实现记录](../docs/开发规格/20_RM13正向离心率实现记录.md)。RM39 切点验证、派生切线及 ID 2106 原始查询已验证，见[记录](../docs/开发规格/21_RM39抛物线切线实现记录.md)。ID 6347 的[消元与根关联契约](../docs/开发规格/22_ID6347消元与根关联契约.md)及 RM78 数值消元子步骤已完成；下一批实现 RM42/43 与实根对资格，再接 RM50／弦长查询；暂不扩展离心率范围或反向模式。
 2. 分批覆盖全部 80 个模型，抽提公共运算；同时形成可回放轨迹，处理弱标注顺序问题。
 3. 统一状态初始化、轨迹构建与求解入口，再开展选择器训练和系统评估；Entropy、LLM 工作另行安排。
+4. 历次详细案例与验证见[开发记录](../dev_record.md)及[规格导航](../docs/开发规格/README.md)。
 
 每次只更新受影响的模块行、接入状态和后续步骤；接口细节放 API 文档，变更经过放开发记录，避免重复维护三份功能清单。

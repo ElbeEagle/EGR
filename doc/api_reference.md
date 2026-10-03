@@ -6,13 +6,13 @@
 
 | 接口（导入路径） | 输入与输出／职责 |
 | --- | --- |
-| `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与标量／渐近线集合／抛物线焦点距离／点到独立直线查询 → 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
+| `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与已支持的查询（或 None）→ 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
 | `BoundAction`（`src.theorems.bound_application`） | `model_id, mode`；曲线模式使用 `curve`，独立直线 RM52 使用 `line` 且 `curve/equation_id=None`；曲线模式的 `equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
 | `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM52、RM72、RM78；可按模式过滤；不保证候选已满足所有数学前提 |
 | `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM39、RM52、RM72、RM78 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
-| `state.extract_answer()` | 读取标量赋值或模型生成的两条渐近线表达式（各自等于零），或 RM17／RM2 已提交的焦半径、RM52 已提交的点到直线距离；未确定返回 `None`，不在此求解 |
+| `state.extract_answer()` | 按查询类型读取已提交的标量、渐近线、焦半径、点／焦点到直线距离、离心率或切线方程；未确定返回 `None`，不在此推导 |
 | `solve_asymptote_slice(facts, query)`（`src.reasoning.bound_slice`） | 固定 RM5/RM6→RM21，返回 `SliceResult(status, state, transitions, diagnostic)`，通过 `.answer` 读取答案 |
 | `solve_shared_focus_slice(facts, query)`（同上） | 固定 RM3/RM4→RM11→RM5/RM6→RM12；要求唯一椭圆—双曲线共焦点绑定，返回 `SliceResult` |
 | `solve_forward_asymptote_slice(facts, query)`（同上） | 固定 RM5/RM6→RM21 正向，按渐近线查询对象绑定，返回 `SliceResult` |
@@ -22,18 +22,40 @@
 | `solve_directrix_alias_distance_slice(facts, query)`（同上） | 原始准线别名查询，预检标准方向后固定 RM7–10→RM29→RM52 |
 | `replay_actions(state, actions)`（同上） | 指定动作诊断回放；保留失败尝试，首个失败处停止，不是选择器 |
 
+### 核心函数的实际用途
+
+`*_proposal(s).py` 中的函数组织模型应用，返回 `Proposal`，由应用器统一提交。`bound` 表示已指定对象和方程，不表示数学上的“有界”。以下是近期新增／扩展的核心函数，不列内部辅助函数全集。
+
+| 定义（所在模块） | 具体操作与结果 |
+| --- | --- |
+| `instantiate_shared_focus`（`transition_primitives.py`） | 核验两曲线框架相容，将共焦点关系实例化为目标曲线的 c² 值及操作记录，供 RM12 使用 |
+| `standard_proposal`（`standard_proposals.py`） | 从标准椭圆／双曲线方程提取半轴平方、轴向及条件，返回 RM3–6 参数提案 |
+| `parameter_proposal`（`parameter_proposals.py`） | 利用 a²、b²、c² 恒等式计算缺失参数或求标量查询，返回 RM11/RM12 提案 |
+| `parabola_coefficient / substitute_point / parabola_geometry`（`parabola_operations.py`） | 分别提取抛物线标准系数、计算点代入残差、由系数和方向计算 p 与焦点；仅返回计算结果 |
+| `standard_parabola_proposal`（`parabola_proposals.py`） | 提取参数，或利用已知曲线上点恢复参数；提出 p、焦点、框架，以及有显式别名时的命名焦点坐标 |
+| `focal_radius_proposal / directrix_proposal / definition_proposal`（同上） | 分别组织 RM17 焦半径计算、RM29 准线方程计算、RM2 从既有准线距离读取焦半径的提案 |
+| `point_to_line_distance`（`distance_operations.py`） | 从数值点坐标和一般直线方程计算精确距离，供距离提案调用 |
+| `point_line_distance_proposal / focus_line_distance_proposal`（`distance_proposals.py`） | 分别读取命名点坐标／已提交焦点属性，调用距离公式并提出 RM52 距离属性 |
+| `recover_line_from_point`（`line_proposals.py`） | 用已知点满足直线方程这一条件恢复一个参数，提出 RM72 参数值及斜率／截距 |
+| `derive_eccentricity`（`eccentricity_proposals.py`） | 核验已有平方参数后计算 e=√(c²/a²)，返回 RM13 离心率属性提案 |
+| `derive_parabola_tangent`（`tangent_proposals.py`） | 核验已知点在抛物线上，用标准属性计算切线方程，返回 RM39 派生方程提案 |
+| `substitute_line_in_parabola`（`intersection_operations.py`） | 将直线改写并代入抛物线，返回一元方程及坐标还原映射，不求根 |
+| `substitute_bound_line`（`intersection_proposals.py`） | 核验指定曲线／直线，调用上述消元函数，返回含消元记录与来源的 RM78 提案 |
+
 ### 状态与结果约定
 
-- `EquationFact`：`fact_id / owner / role / expression / source`，表达式按左侧减右侧等于零保存。
-- `TransitionState`：`entities / symbols / equations / constraints / query` 为题目信息；`properties[(对象, 属性)]` 保存对象属性，`values[Symbol]` 保存标量赋值；另有 `provenance / history / revision`。
-- `AsymptoteQuery(curve)`：由 `Expression(Asymptote(G))` 解析；只读取已生成的完整方程对，题目给出的一条渐近线不算完整答案。
+以下类型均保存信息；计算、解析和提交由相应函数完成。查询类型只表示“要求什么”，答案统一由 `state.extract_answer()` 读取。
+
+- `EquationFact`（对象所属方程记录）：`fact_id / owner / role / expression / source`，表达式按左侧减右侧等于零保存。
+- `TransitionState`（题目及推理过程的当前状态）：`entities / symbols / equations / constraints / query` 为题目信息；`properties[(对象, 属性)]` 保存对象属性，`values[Symbol]` 保存标量赋值；另有 `provenance / history / revision`。
+- `AsymptoteQuery(curve)`（指定曲线的渐近线方程查询）：由 `Expression(Asymptote(G))` 解析；只读取已生成的完整方程对，题目给出的一条渐近线不算完整答案。
 - `PointCoordinates` 与 `PointOnCurve`：给定或模型生成的坐标／显式点归属事实，分别保存于 `coordinates[point]`、`incidences[fact_id]`；初态只解析，不代入求参数。
-- `FocalDistanceQuery(point, curve)`：由 `Distance(A, Focus(G))` 解析；只读 `properties[(G, focal_radius:A)]`。
-- `PointLineDistanceQuery(point, line)`：由 `Distance(A, l)` 解析，要求 Point／Line 类型；直线的方程 role 为 `line`。只读唯一所属方程对应的距离属性，多方程不任意选取。
-- `FocusEquality`：关系事实 ID、两个曲线名称和原表达；`state.relations` 保存给定关系，不在初态自动实例化。
-- `CurveFrame`：绑定的方程 ID、中心和轴向；`state.frames` 由标准模型生成，当前支持原点中心、`axis=x/y`；a² 始终对应长半轴／实半轴平方。抛物线用原点顶点框架，另记 `direction=right/left/up/down`，不把顶点解释为对称中心。
-- `Proposal`：`properties / values / constraints / frames / equations / coordinates / read_facts / operations / candidates`。模型提出变化，提交由应用器统一完成。
-- `TransitionResult`：状态、绑定动作、前后版本、`delta`、读取事实 ID、操作、候选解和诊断。只有成功提交进入 `state.history`；失败尝试需由调用方保留返回结果。
+- `FocalDistanceQuery(point, curve)`（指定点到曲线焦点的距离查询）：由 `Distance(A, Focus(G))` 解析；只读 `properties[(G, focal_radius:A)]`。
+- `PointLineDistanceQuery(point, line)`（指定点到指定直线的距离查询）：由 `Distance(A, l)` 解析，要求 Point／Line 类型；直线的方程 role 为 `line`。只读唯一所属方程对应的距离属性，多方程不任意选取。
+- `FocusEquality`（两曲线共焦点关系记录）：关系事实 ID、两个曲线名称和原表达；`state.relations` 保存给定关系，不在初态自动实例化。
+- `CurveFrame`（曲线方程的几何框架记录）：绑定的方程 ID、中心和轴向；`state.frames` 由标准模型生成，当前支持原点中心、`axis=x/y`；a² 始终对应长半轴／实半轴平方。抛物线用原点顶点框架，另记 `direction=right/left/up/down`，不把顶点解释为对称中心。
+- `Proposal`（待提交的状态更新提案）：保存 properties、values、constraints、frames、equations、coordinates、intersection_reductions 等变化及读取来源／操作。由模型生成，应用器统一校验提交。
+- `TransitionResult`（一次动作的执行结果记录）：状态、绑定动作、前后版本、`delta`、读取事实 ID、操作、候选解和诊断。只有成功提交进入 `state.history`；失败尝试需由调用方保留返回结果。
 
 | 转换状态 | 含义 |
 | --- | --- |
@@ -136,7 +158,7 @@ RM52 提案统一位于 `src/theorems/distance_proposals.py`，沿用已有公�
 
 ### 抛物线准线别名
 
-`DirectrixAlias(fact_id, curve, line, source)` 存于 `state.directrix_aliases`，解析 `Directrix(G)=l`，要求 G 为 Parabola、l 为 Line；初态不计算准线。`state.line_bindings(line)` 只解析对象身份，返回 `(EquationFact, alias_fact_id或None)`；准线别名必须已有 RM29 的 `derived:{curve}:directrix`。不复制方程，也不改变其 owner／role。
+`DirectrixAlias` 是准线与命名直线的身份关系记录，表示“曲线 G 的准线就是 l”，供直线绑定解析使用；不负责计算准线。`DirectrixAlias(fact_id, curve, line, source)` 存于 `state.directrix_aliases`，解析 `Directrix(G)=l`，要求 G 为 Parabola、l 为 Line；初态不计算准线。`state.line_bindings(line)` 只解析对象身份，返回 `(EquationFact, alias_fact_id或None)`；准线别名必须已有 RM29 的 `derived:{curve}:directrix`。不复制方程，也不改变其 owner／role。
 
 RM52 命名准线动作使用 `line=l`、`line_equation_id=derived:G:directrix`、`relation_id=别名事实ID`，仍令 curve/equation_id 为空；别名关系与方程均记入读取来源。距离存于 l 所属属性；查询只读。重复别名、多曲线共用一个别名、别名同时带独立方程暂不合并，固定链返回 undetermined，直接绑定不适用。
 
@@ -145,7 +167,7 @@ RM52 命名准线动作使用 `line=l`、`line_equation_id=derived:G:directrix`�
 
 ### 抛物线焦点坐标实例化
 
-`FocusAlias(fact_id, curve, point, source)` 存于 `state.focus_aliases`，解析 `Focus(G)=F`，限 Parabola／Point。初态不生成坐标；原有 `Focus(G)=Focus(H)` 共焦点关系保持独立。
+`FocusAlias` 是焦点与命名点的身份关系记录，表示“曲线 G 的焦点就是 F”，供标准模型生成 F 的坐标；记录本身不计算坐标。`FocusAlias(fact_id, curve, point, source)` 存于 `state.focus_aliases`，解析 `Focus(G)=F`，限 Parabola／Point。初态不生成坐标；原有 `Focus(G)=Focus(H)` 共焦点关系保持独立。
 
 RM7–10 在提取／恢复标准参数的同一次提案中，针对所绑定曲线的显式焦点别名生成 `Proposal.coordinates[point]`，稳定 ID 为 `derived:{curve}:focus:{point}`，操作记为 `instantiate_focus_alias`。应用器校验别名、焦点属性及有限实数坐标，和所有其他增量一起提交；delta.coordinates 与 provenance 记录坐标来源（曲线方程、别名及 action）。已有相同坐标保留原 ID／source，不同坐标 conflict，符号未定坐标或同一点多个焦点声明 undetermined，均不提交。
 
@@ -165,7 +187,7 @@ RM7–10 在提取／恢复标准参数的同一次提案中，针对所绑定�
 
 ### 焦点属性到独立直线距离
 
-`FocusLineDistanceQuery(curve,line)` 解析 `Distance(Focus(G),H)`，要求 Parabola／Line；初态不计算焦点或参数。查询只读取 `properties[(H, focus_line_distance:G:{line_equation_id})]`，直线方程缺失或不唯一时返回 None。
+`FocusLineDistanceQuery(curve,line)` 表示“求指定抛物线焦点到指定直线的距离”。状态解析器从 `Distance(Focus(G),H)` 创建该查询，要求 Parabola／Line；初态不计算焦点或参数。查询只读取 `properties[(H, focus_line_distance:G:{line_equation_id})]`，直线方程缺失或不唯一时返回 None。
 
 RM52 新增 `focus_line_distance` 模式，BoundAction 使用 `point_role='focus'`、curve/equation_id、line/line_equation_id；point/coordinate_id/relation_id 留空，不生成命名点。枚举是结构候选；执行须已有匹配曲线方程的框架、p 与 focus_x/y，复用 bound_parabola 校验。只代入已有 values 后调用公共距离公式，缺失参数不求解。来源包含焦点属性、框架、曲线和直线方程以及标量值。
 
@@ -176,7 +198,7 @@ RM52 新增 `focus_line_distance` 模式，BoundAction 使用 `point_role='focus
 
 ### RM13 正向离心率
 
-`EccentricityQuery(curve)` 解析 Ellipse／Hyperbola 的 `Eccentricity(G)`，只读 properties[(G,eccentricity)]。`enumerate_actions(state,13,'derive_eccentricity')` 产生曲线／方程绑定；其他点线绑定字段不适用。
+`EccentricityQuery(curve)` 是离心率查询记录，指定要求哪条椭圆／双曲线的离心率；状态解析器从 `Eccentricity(G)` 创建它，答案读取器只读 properties[(G,eccentricity)]，该类型本身不计算 e。`enumerate_actions(state,13,'derive_eccentricity')` 产生曲线／方程绑定；其他点线绑定字段不适用。
 
 RM13 必须已有 a_sq、b_sq、c_sq 和匹配标准框架；复用 bound_parameters，检查有限实数、正值及参数恒等式后，仅提交 e=√(c²/a²)。缺 c² 返回 inapplicable，不暗中执行 RM11/12；冲突回滚，重复 no_op。首批限非圆标准椭圆／非退化双曲线、原点中心与 x/y 轴，符号值返回 undetermined，不处理范围和反向求参。
 
@@ -185,7 +207,7 @@ RM13 必须已有 a_sq、b_sq、c_sq 和匹配标准框架；复用 bound_parame
 
 ### RM39 抛物线切线
 
-`TangentQuery(point,curve)` 解析 `Expression(TangentOnPoint(H,G))`，要求 Point／Parabola；初始化不据此生成点归属。`enumerate_actions(state,39,'derive_tangent')` 枚举曲线方程与已知坐标的结构候选，绑定 curve/equation_id/point/coordinate_id；执行时验证点在曲线上。
+`TangentQuery(point,curve)` 是切线方程查询记录，指定曲线和切点；状态解析器从 `Expression(TangentOnPoint(H,G))` 创建它，要求 Point／Parabola；初始化不据此生成点归属。`enumerate_actions(state,39,'derive_tangent')` 枚举曲线方程与已知坐标的结构候选，绑定 curve/equation_id/point/coordinate_id；执行时验证点在曲线上。
 
 前提为已提交且匹配方程的标准框架、方向及有限数值 p，坐标须为有限实数。对 v²=2spu（s=±1），切线为 v₀v=sp(u+u₀)，覆盖四方向及顶点；不求参或推导其他曲线属性。点不在曲线上 conflict，缺前置标准属性 inapplicable，数值未定 undetermined；重复 no_op，冲突原子回滚。
 
@@ -196,8 +218,8 @@ RM13 必须已有 a_sq、b_sq、c_sq 和匹配标准框架；复用 bound_parame
 
 ### RM78 直线代入消元（数值首批）
 
-`src.solver.intersection_operations.substitute_line_in_parabola(curve,line,x,y)` 返回 `LineSubstitution(variable,xy,polynomial)`；输入为等于零的表达式，限数值标准抛物线／独立仿射直线。优先 x=my+n，水平线改以 x 为变量；输出首一的一次或二次多项式和坐标还原映射，不求根、不判定两实交点。
+`src.solver.intersection_operations.substitute_line_in_parabola(curve,line,x,y)` 返回 `LineSubstitution(variable,xy,polynomial)`，这是公共计算的返回值结构，保存保留变量、坐标还原映射与一元多项式，尚不带题目对象或来源；输入为等于零的表达式，限数值标准抛物线／独立仿射直线。优先 x=my+n，水平线改以 x 为变量；输出首一的一次或二次多项式和坐标还原映射，不求根、不判定两实交点。
 
-`enumerate_actions(state,78,'substitute_line')` 使用 curve/equation_id/line/line_equation_id，其他字段留空。`IntersectionReduction` 保存两对象、两方程 ID、variable、xy、polynomial、source；稳定键为 `derived:intersection:{curve_equation_id}:{line_equation_id}`。`Proposal.intersection_reductions` 经应用器提交到 `state.intersection_reductions`，写入 delta 与 provenance，重复 no_op、冲突回滚。未定系数 undetermined，非标准／退化输入 inapplicable。无需先执行标准参数模型，不修改坐标／标量赋值。
+`enumerate_actions(state,78,'substitute_line')` 使用 curve/equation_id/line/line_equation_id，其他字段留空。`IntersectionReduction` 是交点消元结果记录，由 RM78 提案生成，供后续根关系／交点计算读取，定义本身不执行消元。它保存两对象、两方程 ID、variable、xy、polynomial、source；稳定键为 `derived:intersection:{curve_equation_id}:{line_equation_id}`。`Proposal.intersection_reductions` 经应用器提交到 `state.intersection_reductions`，写入 delta 与 provenance，重复 no_op、冲突回滚。未定系数 undetermined，非标准／退化输入 inapplicable。无需先执行标准参数模型，不修改坐标／标量赋值。
 
 本批使用 `TransitionState.from_facts(facts,None)` 作子步骤诊断，尚不解析 Length(InterceptChord(H,G))。根关系、交点资格、命名点关联、弦长及其查询是后续职责，见[契约](../docs/开发规格/22_ID6347消元与根关联契约.md)。

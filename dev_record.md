@@ -396,6 +396,8 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **更新文件**：`src/theorems/base_model.py`、`src/theorems/models/model_005.py`、`model_021.py`；同步开发规格，并保存诊断 trace。
 - **验证**：当批记录为 79 passed（25 项新测试及 54 项相关回归）；命令、证据和范围见[实现记录](docs/开发规格/07_RM5_RM21实现记录.md)。不作为全系统准确率。
 - **限制／下一步**：尚未接入旧求解器、轨迹构建器和选择器；RM21 新接口仅实现反向模式。建议下一批以 ID 9 检验多曲线关系，再分批扩展模型和轨迹。
+- **释义补充（2026-10-03）**：`TransitionState` 保存题目与推理状态；`BoundAction` 指定模型及作用对象；`Proposal` 保存待提交变化；`BoundApplicator.apply` 校验并写入状态；`TransitionResult` 保存执行结果。`bound_slice.py` 组织固定动作回放，`transition_primitives.py` 提供解析／条件检查／实根筛选等计算。
+
 
 ## 2026-09-24｜整理开发导航与维护约定
 
@@ -410,6 +412,8 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：更新 `src/state/transition_state.py`、`src/solver/transition_primitives.py`、`src/theorems/bound_application.py`、`models/model_003/005/011/012.py`（位于 `src/theorems/`）、`src/reasoning/bound_slice.py`；新增 `tests/test_bound_shared_focus.py`，调整旧绑定测试；同步 API、实现地图及规格，保存 v2 trace。
 - **验证**：两条绑定链与相关旧接口回归合计 113 passed。命令、证据和范围见[ID 9 实现记录](docs/开发规格/08_ID9共焦点实现记录.md)。
 - **限制／下一步**：仅原点中心、x 轴的标准椭圆—双曲线共焦点固定链，未接入旧求解器／选择器。下一批建议补 RM21 正向和 RM11/RM12 普通参数关系模式；再按案例扩展。
+- **释义补充（2026-10-03）**：`FocusEquality` 记录两曲线共焦点关系，`CurveFrame` 记录所属方程的中心／轴向；`instantiate_shared_focus` 核验框架相容，将另一曲线已有 c² 用于目标曲线，并返回来源操作。关系记录自身不计算参数。
+
 
 ## 2026-09-24｜RM21 正向及 RM11/RM12 普通参数模式
 
@@ -417,6 +421,8 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 `src/theorems/parameter_proposals.py`、`tests/test_bound_parameter_modes.py`；更新状态、应用器、RM11/12/21、固定链入口及接口／实现地图／开发规格，保存 ID 65 v3 trace。
 - **验证**：本批 32 项测试；相关回归共 145 passed。真实题 ID 65、200、353 正向链通过，ID 2、ID 9 原链保持通过。命令及完整边界见[实现记录](docs/开发规格/09_参数关系与渐近线正向实现记录.md)。
 - **限制／下一步**：参数模式消费已有平方参数事实，未扩展全部文本解析；渐近线正向仍限原点中心、x 轴。下一批建议补 y 轴 RM4/RM6；仍不接入选择器训练。
+- **释义补充（2026-10-03）**：`parameter_proposals.py` 的 `parameter_proposal` 利用平方参数恒等式补全参数或求标量，返回更新提案；应用器负责提交。渐近线查询读取已生成的两条方程。
+
 
 ## 2026-09-24｜RM4/RM6 与 y 轴框架、渐近线
 
@@ -424,6 +430,8 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 `src/theorems/standard_proposals.py`、`tests/test_bound_y_axis.py`；更新公共运算、应用器、参数提案、RM3/4/5/6/21、固定链入口及文档；保存 ID 380 trace。
 - **验证**：相关回归 173 passed，其中本批 28 项。ID 380/549 渐近线整链通过；ID 1516 仅参数子链通过，不计整题求解。详见[本批记录](docs/开发规格/10_Y轴标准模型实现记录.md)。
 - **限制／下一步**：仍限原点中心、坐标轴对齐；未接入选择器。下一批建议明确 ID 5 抛物线及点归属参数恢复的执行模式后开发。
+- **释义补充（2026-10-03）**：`standard_proposals.py` 的 `standard_proposal` 从绑定的椭圆／双曲线方程提取半轴平方、轴向和类型条件，供 RM3–6 共用；返回提案而非直接修改状态。
+
 
 ## 2026-09-27｜ID 5 抛物线参数恢复与焦半径
 
@@ -431,6 +439,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 `src/solver/parabola_operations.py`、`src/theorems/parabola_proposals.py`、`tests/test_bound_parabola.py`；更新状态、绑定、RM7–10/17 和固定链入口；同步文档并保存 ID 5 v4 trace。
 - **验证**：相关回归 204 passed，其中本批 31 项；覆盖真实题、四方向、条件不足、多解、冲突回滚及旧接口。测试辅助函数曾误用 pytest 的 setup 名称，重命名后消除启动错误。详见[实现记录](docs/开发规格/11_ID5抛物线实现记录.md)。
 - **限制／下一步**：仅原点顶点、数值坐标点、一元系数恢复；未扩展准线或通用距离，也未接入选择器。下一批建议补 RM29 准线及点到直线距离，验证定义路径。
+- **释义补充（2026-10-03）**：`parabola_operations.py` 提供标准系数提取、点代入残差及 p／焦点计算；`parabola_proposals.py` 的 `standard_parabola_proposal` 组织参数提取／点恢复，`focal_radius_proposal` 组织 RM17 焦半径计算。`PointCoordinates` 保存坐标，`PointOnCurve` 保存归属，`FocalDistanceQuery` 表示求点到焦点的距离。
 
 
 ## 2026-09-27｜ID 5 准线定义路径与公共距离操作
@@ -439,6 +448,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 `src/solver/distance_operations.py`、`tests/test_bound_parabola_definition.py`；更新抛物线提案、绑定应用器、RM2/29/52、回放入口及 API／实现地图／规格，保存独立 v4 trace。
 - **验证**：新增 23 项测试，相关回归 227 passed；真实 CLI 回放成功。详见[实现记录](docs/开发规格/12_ID5定义路径实现记录.md)。
 - **限制／下一步**：公共距离支持一般数值直线，绑定入口暂限抛物线准线；下一批建议扩展真实一般直线案例和距离查询。未接入选择器／旧求解器。
+- **释义补充（2026-10-03）**：`distance_operations.py` 的 `point_to_line_distance` 由数值点和直线方程计算精确距离；`directrix_proposal` 提出准线方程，`definition_proposal` 核验点及准线后，将既有准线距离作为焦半径提出。
 
 
 ## 2026-09-27｜RM52 独立直线绑定与距离查询
@@ -447,6 +457,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 distance_proposals.py、test_bound_line_distance.py；更新 transition_state.py、bound_application.py、parabola_proposals.py、model_052.py、bound_slice.py 及接口／实现地图／规格和诊断轨迹。
 - **验证**：新增 24 项，相关回归 251 passed；ID 5882/1253 显式事实投影距离为 4／10，仅诊断，不计原题求解。详见[实现记录](docs/开发规格/13_一般直线距离实现记录.md)。
 - **限制／下一步**：仍限数值点到显式直线距离；建议下一批通过 ID 3723 衔接准线别名与 RM29 输出，继续暂缓选择器训练。
+- **释义补充（2026-10-03）**：`distance_proposals.py` 的 `point_line_distance_proposal` 读取绑定点／线并调用公共距离计算，返回距离属性提案；`PointLineDistanceQuery` 记录要求哪个点到哪条直线的距离，不执行计算。
 
 
 ## 2026-09-29｜ID 3723 准线别名原题闭环
@@ -455,6 +466,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：更新 transition_state.py、bound_application.py、distance_proposals.py、bound_slice.py；新增 test_bound_directrix_alias.py，同步 API／实现地图／规格及 ID 3723 v5 轨迹。
 - **验证**：新增 16 项，相关回归 267 passed；原始 CLI 回放成功，见[实现记录](docs/开发规格/14_ID3723准线别名实现记录.md)。
 - **限制／下一步**：多重别名和别名附加独立方程暂不合并；下一批建议明确焦点别名坐标实例化（ID 946／1793），继续复用距离链。
+- **释义补充（2026-10-03）**：`DirectrixAlias` 保存“G 的准线就是 l”的身份关系；`line_bindings` 查找 l 对应的已有准线方程，供 RM52 使用，不重新计算准线。
 
 
 ## 2026-09-29｜ID 946／1793 焦点别名坐标实例化
@@ -463,6 +475,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：更新 transition_state.py、parabola_proposals.py、bound_application.py、bound_slice.py；新增 test_bound_focus_alias.py，维护接口／实现地图／规格，保存两份 v6 轨迹。
 - **验证**：新增 15 项，相关回归 282 passed；已有坐标冲突整步回滚，来源与重复执行验证通过。详见[实现记录](docs/开发规格/15_焦点别名坐标实现记录.md)。
 - **限制／下一步**：限抛物线有限实数焦点坐标，同一点多别名暂不合并；建议下一批先明确 ID 7260 的交点参数恢复职责。
+- **释义补充（2026-10-03）**：`FocusAlias` 保存“G 的焦点就是 F”的身份关系；标准抛物线提案依据已计算的焦点位置提出 F 的 `PointCoordinates`，应用器检查一致性后提交。
 
 
 ## 2026-10-02｜ID 7260 交点事实与参数恢复职责设计
@@ -479,6 +492,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 line_proposals.py、test_bound_intersection_recovery.py；更新状态、应用器、model_072.py、接口／实现地图／D5 规格，保存两条参数轨迹。
 - **验证**：新增 17 项，相关回归 299 passed；两个顺序均 a=2、p=2。详见[实现记录](docs/开发规格/17_ID7260参数子链实现记录.md)。
 - **限制／下一步**：仅参数子链，原始 Focus(G) 距离查询未实现；下一批扩展该查询与 RM52 属性点绑定。
+- **释义补充（2026-10-03）**：`line_proposals.py` 的 `recover_line_from_point` 利用已知点满足直线方程这一条件恢复一个参数，提出参数值、斜率和截距；已给交点坐标解析复用坐标／归属结构，不是求交点运算。
 
 
 ## 2026-10-02｜ID 7260 原始焦点距离查询闭环
@@ -487,6 +501,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：更新状态、应用器、距离提案、bound_slice.py；新增 test_bound_focus_line_distance.py、更新参数子链测试，维护接口／实现地图／规格，保存完整 v7 trace。
 - **验证**：新增 15 项，相关回归 314 passed；原题 CLI 成功，反向参数恢复顺序亦验证。见[闭环记录](docs/开发规格/18_ID7260焦点距离闭环.md)。
 - **限制／下一步**：固定回放而非自主模型选择；RM52 焦点模式限抛物线。下一批按职责表选择新的模型／真实案例扩展。
+- **释义补充（2026-10-03）**：`FocusLineDistanceQuery` 指定要求哪条曲线的焦点到哪条直线的距离；`focus_line_distance_proposal` 读取既有焦点属性及直线参数，调用距离公式并返回 RM52 提案，不在查询读取中求参。
 
 
 ## 2026-10-02｜全 80 模型审计与下一组选型
@@ -503,6 +518,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 eccentricity_proposals.py、test_bound_eccentricity.py；更新状态、应用器、model_013.py、bound_slice.py、API／实现地图／规格；保存四份 v7 trace 与新的结构审计快照。
 - **验证**：新增20项，相关回归334 passed；四题结果 √3/2、√2/2、√5/2、2。见[记录](docs/开发规格/20_RM13正向离心率实现记录.md)。
 - **下一步**：先明确 RM39／ID2106 切线契约，暂不扩展离心率范围和反向模式。
+- **释义补充（2026-10-03）**：`eccentricity_proposals.py` 的 `derive_eccentricity` 核验已有平方参数并计算 e，返回离心率属性提案；`EccentricityQuery` 只记录要求哪条曲线的离心率。
 
 
 ## 2026-10-03｜RM39 切点验证与 ID 2106 切线闭环
@@ -511,6 +527,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 tangent_proposals.py、model_039.py、test_bound_parabola_tangent.py；更新状态、应用器、定理库与 bound_slice.py，同步 API／实现地图／规格，保存 id2106_bound_trace.json。
 - **验证**：新增 17 项、相关回归 351 passed；四方向与顶点使用独立梯度公式核验。见[实现记录](docs/开发规格/21_RM39抛物线切线实现记录.md)。
 - **限制／下一步**：仅标准抛物线已知数值切点；旧无绑定接口不执行，派生切线尚未接入 RM52／交点链。下一批先明确消元／根关联契约再分步推进。
+- **释义补充（2026-10-03）**：`tangent_proposals.py` 的实际函数名为 `derive_parabola_tangent`，负责验证点在抛物线上并生成切线方程提案（上文 derive_tangent 是动作模式名）；`TangentQuery` 记录指定曲线及切点，`model_039.py` 提供模型入口。
 
 
 ## 2026-10-03｜ID 6347 契约与 RM78 消元子步骤
@@ -519,3 +536,12 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 intersection_operations.py、intersection_proposals.py、test_bound_intersection_reduction.py；更新状态、应用器、model_078.py 与维护文档，新增[契约](docs/开发规格/22_ID6347消元与根关联契约.md)和子步骤证据。用户修改的 RM39 原公式保留，修订旧文档说明。
 - **验证**：新增 24 项、相关回归 375 passed；独立联立解核验根还原，覆盖退化／相切／无实交点与事务边界。
 - **限制／下一步**：仅数值标准抛物线和独立直线；原始弦长查询未接入。下一批补 RM42/43 与实根对资格，再接 RM50；未知直线和命名根关联（ID56）后置。
+- **释义补充（2026-10-03）**：`intersection_operations.py` 的 `substitute_line_in_parabola` 返回消元方程及坐标还原映射；`intersection_proposals.py` 的 `substitute_bound_line` 核验绑定并包装 RM78 提案。`LineSubstitution` 是公共计算返回值；`IntersectionReduction` 是附带对象及方程来源的消元结果记录，供后续根关系计算读取，本身不执行消元。
+
+
+## 2026-10-03｜近期开发文档释义完善
+
+- **变更**：核对 09-24 至 10-03 的开发记录及 09-23 基础接口；实现地图分开解释计算与提案模块，API 补充核心函数／数据结构／查询的中文用途，旧日志保留并增加有日期的释义。
+- **文件**：仅更新 doc/project_structure.md、doc/api_reference.md、dev_record.md；无运行时代码或数据变更。
+- **验证**：链接、核心定义与源码对应、旧日志保留及差异格式检查；未重跑代码测试，历史测试数字不作为本次新结果。
+- **后续**：每批按 AGENTS.md 的说明要求，在文档与 Commit description 中记录具体操作或保存内容。
