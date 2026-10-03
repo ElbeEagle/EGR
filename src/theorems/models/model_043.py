@@ -146,3 +146,7 @@ class VietaTheoremProduct(TheoremModel):
             prod_expr = f"({C})/({A})"
             state.parameters[f'{var}1_times_{var}2'] = prod_expr
             state.geometric_relations.append(f"{var}₁ · {var}₂ = {prod_expr}")
+
+    def propose_bound(self, state, action):
+        from ..intersection_proposals import derive_root_relation
+        return derive_root_relation(state, action)

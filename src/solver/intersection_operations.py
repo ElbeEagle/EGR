@@ -38,3 +38,60 @@ def substitute_line_in_parabola(curve, line, x, y) -> LineSubstitution:
     if reduced.degree() not in (1, 2):
         raise TransitionError('inapplicable', 'Only linear or quadratic reductions supported')
     return LineSubstitution(variable, xy, reduced.monic().as_expr())
+
+
+@dataclass(frozen=True)
+class QuadraticRootStatus:
+    discriminant: sp.Expr
+    distinct_real_roots: int
+
+
+def quadratic_coefficients(polynomial: sp.Expr, variable: sp.Symbol):
+    """Validate a numeric quadratic without solving for its roots."""
+    poly = sp.Poly(polynomial, variable)
+    if poly.degree() != 2:
+        raise TransitionError('inapplicable', 'A quadratic root pair is required')
+    coefficients = tuple(poly.all_coeffs())
+    if any(v.free_symbols or v.is_real is not True or v.is_finite is not True for v in coefficients):
+        raise TransitionError('undetermined', 'Finite real quadratic coefficients required')
+    return coefficients
+
+
+def quadratic_root_relation(polynomial: sp.Expr, variable: sp.Symbol, kind: str) -> sp.Expr:
+    a, b, c = quadratic_coefficients(polynomial, variable)
+    if kind not in ('sum', 'product'):
+        raise TransitionError('inapplicable', 'Unknown root relation')
+    return sp.cancel(-b/a if kind == 'sum' else c/a)
+
+
+def classify_quadratic_roots(polynomial: sp.Expr, variable: sp.Symbol) -> QuadraticRootStatus:
+    a, b, c = quadratic_coefficients(polynomial, variable)
+    discriminant = sp.simplify(b*b-4*a*c)
+    if discriminant.is_positive:
+        count = 2
+    elif discriminant.is_zero:
+        count = 1
+    elif discriminant.is_negative:
+        count = 0
+    else:
+        raise TransitionError('undetermined', 'Real root count cannot be established')
+    return QuadraticRootStatus(discriminant, count)
+
+
+def chord_length_from_relations(root_sum: sp.Expr, root_product: sp.Expr,
+                                xy: tuple[sp.Expr, sp.Expr], variable: sp.Symbol) -> sp.Expr:
+    """Distance from an affine lift and supplied relations; does not apply Vieta."""
+    if any(v.free_symbols or v.is_real is not True or v.is_finite is not True
+           for v in (root_sum, root_product)):
+        raise TransitionError('undetermined', 'Numeric root relations required')
+    polys = [sp.Poly(v, variable) for v in xy]
+    if len(polys) != 2 or any(p.degree() > 1 for p in polys):
+        raise TransitionError('inapplicable', 'An affine coordinate lift is required')
+    if any(c.free_symbols or c.is_real is not True or c.is_finite is not True
+           for p in polys for c in p.all_coeffs()):
+        raise TransitionError('undetermined', 'Numeric affine coefficients required')
+    metric = sp.simplify(sum(p.nth(1)**2 for p in polys))
+    gap = sp.simplify(root_sum**2-4*root_product)
+    if metric.is_positive is not True or gap.is_positive is not True:
+        raise TransitionError('inapplicable', 'Two distinct real points are required')
+    return sp.sqrt(sp.simplify(metric*gap))

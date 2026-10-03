@@ -56,6 +56,15 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id in (42, 43, 50):
+        check_binding(state, replace(action, model_id=78, relation_id=None))
+        fact = state.intersection_reductions.get(action.relation_id)
+        if (fact is None or fact.fact_id != action.relation_id
+                or fact.fact_id != f'derived:intersection:{action.equation_id}:{action.line_equation_id}'
+                or (fact.curve, fact.line, fact.curve_equation_id, fact.line_equation_id)
+                != (action.curve, action.line, action.equation_id, action.line_equation_id)):
+            raise TransitionError('inapplicable', 'Intersection reduction binding mismatch')
+        return fact
     if action.model_id == 78:
         curve = state.equations.get(action.equation_id)
         line = state.equations.get(action.line_equation_id)
@@ -187,6 +196,12 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id in (42, 43, 50):
+        name = {42: 'derive_root_sum', 43: 'derive_root_product', 50: 'derive_chord_length'}[model_id]
+        actions = [BoundAction(model_id, name, f.curve, f.curve_equation_id,
+                               line=f.line, line_equation_id=f.line_equation_id, relation_id=f.fact_id)
+                   for f in state.intersection_reductions.values()]
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id == 78:
         actions = [BoundAction(78, 'substitute_line', c.owner, c.fact_id,
                                line=l.owner, line_equation_id=l.fact_id)

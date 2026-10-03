@@ -8,11 +8,11 @@
 | --- | --- |
 | `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与已支持的查询（或 None）→ 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
 | `BoundAction`（`src.theorems.bound_application`） | `model_id, mode`；曲线模式使用 `curve`，独立直线 RM52 使用 `line` 且 `curve/equation_id=None`；曲线模式的 `equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
-| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM52、RM72、RM78；可按模式过滤；不保证候选已满足所有数学前提 |
-| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM39、RM52、RM72、RM78 提供有限模式实现 |
+| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM42/43、RM50、RM52、RM72、RM78；可按模式过滤；不保证候选已满足所有数学前提 |
+| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM39、RM42/43、RM50、RM52、RM72、RM78 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
-| `state.extract_answer()` | 按查询类型读取已提交的标量、渐近线、焦半径、点／焦点到直线距离、离心率或切线方程；未确定返回 `None`，不在此推导 |
+| `state.extract_answer()` | 按查询类型读取已提交的标量、渐近线、焦半径、点／焦点到直线距离、离心率、切线方程或弦长；未确定返回 `None`，不在此推导 |
 | `solve_asymptote_slice(facts, query)`（`src.reasoning.bound_slice`） | 固定 RM5/RM6→RM21，返回 `SliceResult(status, state, transitions, diagnostic)`，通过 `.answer` 读取答案 |
 | `solve_shared_focus_slice(facts, query)`（同上） | 固定 RM3/RM4→RM11→RM5/RM6→RM12；要求唯一椭圆—双曲线共焦点绑定，返回 `SliceResult` |
 | `solve_forward_asymptote_slice(facts, query)`（同上） | 固定 RM5/RM6→RM21 正向，按渐近线查询对象绑定，返回 `SliceResult` |
@@ -222,4 +222,17 @@ RM13 必须已有 a_sq、b_sq、c_sq 和匹配标准框架；复用 bound_parame
 
 `enumerate_actions(state,78,'substitute_line')` 使用 curve/equation_id/line/line_equation_id，其他字段留空。`IntersectionReduction` 是交点消元结果记录，由 RM78 提案生成，供后续根关系／交点计算读取，定义本身不执行消元。它保存两对象、两方程 ID、variable、xy、polynomial、source；稳定键为 `derived:intersection:{curve_equation_id}:{line_equation_id}`。`Proposal.intersection_reductions` 经应用器提交到 `state.intersection_reductions`，写入 delta 与 provenance，重复 no_op、冲突回滚。未定系数 undetermined，非标准／退化输入 inapplicable。无需先执行标准参数模型，不修改坐标／标量赋值。
 
-本批使用 `TransitionState.from_facts(facts,None)` 作子步骤诊断，尚不解析 Length(InterceptChord(H,G))。根关系、交点资格、命名点关联、弦长及其查询是后续职责，见[契约](../docs/开发规格/22_ID6347消元与根关联契约.md)。
+RM78 可独立使用 `TransitionState.from_facts(facts,None)` 作子步骤诊断；原始弦长查询现已由下述链接通。命名点关联仍待实现，职责起点见[契约](../docs/开发规格/22_ID6347消元与根关联契约.md)。
+
+
+### RM42/43 根关系、实根资格与 RM50 弦长
+
+公共计算位于 intersection_operations.py：`quadratic_coefficients` 检查数值二次式并返回 a,b,c；`quadratic_root_relation` 按请求返回 −b/a 或 c/a；`classify_quadratic_roots` 返回 `QuadraticRootStatus(discriminant,distinct_real_roots)`，该结构仅保存判别式与不同实根数。`chord_length_from_relations(S,P,xy,variable)` 由已知根和积及仿射映射计算长度，不补做韦达。
+
+intersection_proposals.py 的 `derive_root_relation` 组织 RM42/43 提案，分别提出 root_sum／root_product 和资格属性；`derive_chord_length` 读取这些已提交结果，核验源式一致性和两不同实交点后提出 chord_length。它们均不直接修改状态。三个模型入口的 propose_bound 将动作转交对应函数；RM50 旧接口返回 False。
+
+动作模式为 RM42 derive_root_sum、RM43 derive_root_product、RM50 derive_chord_length；绑定字段 curve/equation_id/line/line_equation_id 与 RM78 相同，另用 relation_id 指向已提交的 IntersectionReduction，其他字段为空。check_binding 核验对象及方程对一致；enumerate_actions 从已有消元事实枚举结构候选。
+
+结果沿用 `properties[(消元事实ID, 属性名)]`，属性为 root_sum、root_product、discriminant、distinct_real_roots、chord_length；应用器复用属性原子提交与来源记录。RM42/43 可交换执行；Δ≤0 仍可记录代数关系，但 RM50 inapplicable；一次式不适用二次根关系。缺属性不推导，结果与源式不一致 conflict，重复 no_op。
+
+`ChordLengthQuery(line,curve)` 表示 Length(InterceptChord(H,G)) 的求解目标，限独立 Line／Parabola；不在解析时推导。extract_answer 按唯一曲线／直线方程对读取 chord_length，缺失或歧义返回 None。`solve_chord_length_slice(facts,query)` 固定回放 RM78→RM42→RM43→RM50，不使用弱标注。CLI：`python3 -m src.reasoning.bound_slice --mode chord-length --problem-id 6347`；该模式输出 v8 轨迹，其他模式保留 v7。

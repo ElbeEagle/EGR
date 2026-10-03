@@ -57,6 +57,12 @@ class DirectrixAlias:
 
 
 @dataclass(frozen=True)
+class ChordLengthQuery:
+    line: str
+    curve: str
+
+
+@dataclass(frozen=True)
 class TangentQuery:
     point: str
     curve: str
@@ -120,7 +126,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery | TangentQuery
+    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery | TangentQuery | ChordLengthQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -171,8 +177,11 @@ class TransitionState:
         focus_line_query = re.fullmatch(r'Distance\(\s*Focus\(\s*([A-Za-z]\w*)\s*\)\s*,\s*([A-Za-z]\w*)\s*\)', query_text)
         eccentricity_query = re.fullmatch(r'Eccentricity\(\s*([A-Za-z]\w*)\s*\)', query_text)
         tangent_query = re.fullmatch(r'Expression\(TangentOnPoint\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
+        chord_query = re.fullmatch(r'Length\(InterceptChord\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
         if query is None:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
+        elif chord_query and entities.get(chord_query.group(1)) == 'Line' and entities.get(chord_query.group(2)) == 'Parabola':
+            target = ChordLengthQuery(*chord_query.groups())
         elif tangent_query and entities.get(tangent_query.group(1)) == 'Point' and entities.get(tangent_query.group(2)) == 'Parabola':
             target = TangentQuery(*tangent_query.groups())
         elif eccentricity_query and entities.get(eccentricity_query.group(1)) in ('Ellipse', 'Hyperbola'):
@@ -292,7 +301,7 @@ class TransitionState:
             curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE, 'Parabola': CurveType.PARABOLA}.get(
                 self.entities.get(curve), CurveType.UNKNOWN),
             query_type=(QueryType.EQUATION if isinstance(self.query, (AsymptoteQuery, TangentQuery)) else
-                        QueryType.DISTANCE if isinstance(self.query, (FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery)) else QueryType.VALUE),
+                        QueryType.DISTANCE if isinstance(self.query, (FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery, ChordLengthQuery)) else QueryType.VALUE),
             has_equation=any(f.owner == curve and f.role in ('curve', 'line') for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),
             has_parameters={key for owner, key in self.properties if owner == curve},
@@ -302,6 +311,16 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, ChordLengthQuery):
+            curves = [f for f in self.equations.values() if f.owner == self.query.curve and f.role == 'curve']
+            lines = [f for f in self.equations.values() if f.owner == self.query.line and f.role == 'line']
+            if len(curves) != 1 or len(lines) != 1:
+                return None
+            key = f'derived:intersection:{curves[0].fact_id}:{lines[0].fact_id}'
+            fact = self.intersection_reductions.get(key)
+            if fact is None or (fact.curve, fact.line) != (self.query.curve, self.query.line):
+                return None
+            return self.properties.get((key, 'chord_length'))
         if isinstance(self.query, TangentQuery):
             fact = self.equations.get(f'derived:{self.query.curve}:tangent:{self.query.point}')
             if fact is not None and fact.owner == self.query.curve and fact.role == 'tangent':

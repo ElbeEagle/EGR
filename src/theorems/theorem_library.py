@@ -80,6 +80,7 @@ class TheoremLibrary:
         from .models.model_033 import ParabolaFocalChordLength
         from .models.model_044 import PointDifferenceMethod
         from .models.model_049 import PythagoreanTheorem
+        from .models.model_050 import ChordLengthFormula
         from .models.model_051 import ChordLengthFormulaWithK
         from .models.model_052 import PointToLineDistance
         from .models.model_055 import SlopeFormula
@@ -141,6 +142,7 @@ class TheoremLibrary:
         self.register_model(ParabolaFocalChordLength())
         self.register_model(PointDifferenceMethod())
         self.register_model(PythagoreanTheorem())
+        self.register_model(ChordLengthFormula())
         self.register_model(ChordLengthFormulaWithK())
         self.register_model(PointToLineDistance())
         self.register_model(SlopeFormula())

@@ -545,3 +545,13 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：仅更新 doc/project_structure.md、doc/api_reference.md、dev_record.md；无运行时代码或数据变更。
 - **验证**：链接、核心定义与源码对应、旧日志保留及差异格式检查；未重跑代码测试，历史测试数字不作为本次新结果。
 - **后续**：每批按 AGENTS.md 的说明要求，在文档与 Commit description 中记录具体操作或保存内容。
+
+
+## 2026-10-03｜ID 6347 根关系与弦长闭环
+
+- **公共计算**：intersection_operations.py 增加 quadratic_coefficients（核验二次系数）、quadratic_root_relation（返回根和或积）、classify_quadratic_roots（返回判别式与不同实根数）；QuadraticRootStatus 保存资格计算结果。chord_length_from_relations 根据已知根和积与坐标映射计算弦长，不补做韦达。
+- **模型组织与保存**：intersection_proposals.py 的 derive_root_relation 提出根关系和资格属性，derive_chord_length 消费已有属性并提出长度；model_042/043/050 负责入口转交，应用器统一提交到以消元事实 ID 为键的 properties，记录来源并处理冲突。
+- **查询与回放**：ChordLengthQuery 只表示指定线／曲线的弦长目标，extract_answer 只读结果；solve_chord_length_slice 固定组织 RM78→RM42→RM43→RM50，ID 6347 原始查询得到 8。
+- **文件**：新增 model_050.py、test_bound_chord_length.py、[闭环规格](docs/开发规格/23_ID6347根关系与弦长闭环.md)和 v8 轨迹；更新公共计算、提案、状态、应用器、RM42/43、定理库、回放入口及三份维护文档／规格导航。
+- **验证**：新增 27 项、相关回归 402 passed；原题 CLI 成功，独立交点距离、顺序交换、水平／竖直线、相切／无实根／一次式、隔离和回滚通过。
+- **限制／下一步**：数值标准抛物线与独立直线固定链；不生成命名交点，不代表自主选择。下一批明确 ID56 未知直线参数化、命名根关联与斜率非零条件。

@@ -138,3 +138,7 @@ class VietaTheoremSum(TheoremModel):
             sum_expr = f"-({B})/({A})"
             state.parameters[f'{var}1_plus_{var}2'] = sum_expr
             state.geometric_relations.append(f"{var}₁ + {var}₂ = {sum_expr}")
+
+    def propose_bound(self, state, action):
+        from ..intersection_proposals import derive_root_relation
+        return derive_root_relation(state, action)
