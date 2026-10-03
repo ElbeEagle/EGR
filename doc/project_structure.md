@@ -40,6 +40,7 @@
 | [distance_proposals.py](../src/theorems/distance_proposals.py) | RM52 共用命名点／焦点属性到直线的距离提案；`test_bound_line_distance.py` 覆盖解析、查询隔离及真实事实子案例 |
 | [line_proposals.py](../src/theorems/line_proposals.py) | RM72 受限点斜式一致性求参；交点参数子链见 `tests/test_bound_intersection_recovery.py` |
 | [eccentricity_proposals.py](../src/theorems/eccentricity_proposals.py) | RM13 正向模式，核验已有平方参数后提交 e；不补做参数关系推导 |
+| [intersection_operations.py](../src/solver/intersection_operations.py)、[intersection_proposals.py](../src/theorems/intersection_proposals.py) | RM78 数值直线代入消元与还原映射，提交独立 IntersectionReduction；根／弦长尚未接入 |
 | [tangent_proposals.py](../src/theorems/tangent_proposals.py)、[model_039.py](../src/theorems/models/model_039.py) | RM39 绑定切点验证与四方向切线提案；仅绑定执行，测试见 `test_bound_parabola_tangent.py` |
 | [parameter_proposals.py](../src/theorems/parameter_proposals.py) | RM11/RM12 共用的普通参数关系提案及正值／一致性检查 |
 | [bound_application.py](../src/theorems/bound_application.py) | 动作绑定、候选变化、冲突检查、原子提交（含模型生成的坐标）、受限回代及执行记录 |
@@ -65,7 +66,7 @@
 
 ## 后续顺序与维护
 
-1. RM4/RM6 与 y 轴框架、渐近线及参数关系已验证，见[本批记录](../docs/开发规格/10_Y轴标准模型实现记录.md)。ID 5 已完成标准参数恢复与焦半径闭环，见[记录](../docs/开发规格/11_ID5抛物线实现记录.md)。定义路径已完成，见[记录](../docs/开发规格/12_ID5定义路径实现记录.md)。RM52 已支持独立直线绑定／距离查询；ID 5882/1253 仅验证显式事实子案例，见[记录](../docs/开发规格/13_一般直线距离实现记录.md)。ID 3723 已完成原始查询闭环，见[记录](../docs/开发规格/14_ID3723准线别名实现记录.md)。ID 946/1793 焦点别名坐标实例化已验证，见[记录](../docs/开发规格/15_焦点别名坐标实现记录.md)。ID 7260 已完成[职责设计](../docs/开发规格/16_ID7260交点与参数恢复设计.md)，D5 已确认，交点事实及 RM7／RM72 参数子链已验证，见[记录](../docs/开发规格/17_ID7260参数子链实现记录.md)；Focus(G) 距离原始查询现已接通，见[记录](../docs/开发规格/18_ID7260焦点距离闭环.md)；全库选型已完成，下一批为 RM13 正向离心率与 ID 5988/7488/1586/4528，见[选型规格](../docs/开发规格/19_模型覆盖审计与下一组选型.md)；四题 RM13 原始查询已验证，见[实现记录](../docs/开发规格/20_RM13正向离心率实现记录.md)。RM39 切点验证、派生切线及 ID 2106 原始查询已验证，见[记录](../docs/开发规格/21_RM39抛物线切线实现记录.md)。下一批先明确消元／根关联链的前提、输出及根与点的对应关系，再小批实现；暂不扩展离心率范围或反向模式。
+1. RM4/RM6 与 y 轴框架、渐近线及参数关系已验证，见[本批记录](../docs/开发规格/10_Y轴标准模型实现记录.md)。ID 5 已完成标准参数恢复与焦半径闭环，见[记录](../docs/开发规格/11_ID5抛物线实现记录.md)。定义路径已完成，见[记录](../docs/开发规格/12_ID5定义路径实现记录.md)。RM52 已支持独立直线绑定／距离查询；ID 5882/1253 仅验证显式事实子案例，见[记录](../docs/开发规格/13_一般直线距离实现记录.md)。ID 3723 已完成原始查询闭环，见[记录](../docs/开发规格/14_ID3723准线别名实现记录.md)。ID 946/1793 焦点别名坐标实例化已验证，见[记录](../docs/开发规格/15_焦点别名坐标实现记录.md)。ID 7260 已完成[职责设计](../docs/开发规格/16_ID7260交点与参数恢复设计.md)，D5 已确认，交点事实及 RM7／RM72 参数子链已验证，见[记录](../docs/开发规格/17_ID7260参数子链实现记录.md)；Focus(G) 距离原始查询现已接通，见[记录](../docs/开发规格/18_ID7260焦点距离闭环.md)；全库选型已完成，下一批为 RM13 正向离心率与 ID 5988/7488/1586/4528，见[选型规格](../docs/开发规格/19_模型覆盖审计与下一组选型.md)；四题 RM13 原始查询已验证，见[实现记录](../docs/开发规格/20_RM13正向离心率实现记录.md)。RM39 切点验证、派生切线及 ID 2106 原始查询已验证，见[记录](../docs/开发规格/21_RM39抛物线切线实现记录.md)。ID 6347 的[消元与根关联契约](../docs/开发规格/22_ID6347消元与根关联契约.md)及 RM78 数值消元子步骤已完成；下一批实现 RM42/43 与实根对资格，再接 RM50／弦长查询；暂不扩展离心率范围或反向模式。
 2. 分批覆盖全部 80 个模型，抽提公共运算；同时形成可回放轨迹，处理弱标注顺序问题。
 3. 统一状态初始化、轨迹构建与求解入口，再开展选择器训练和系统评估；Entropy、LLM 工作另行安排。
 

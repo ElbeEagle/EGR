@@ -77,3 +77,7 @@ class SubstitutionXEqualsMYPlusN(TheoremModel):
 
         except Exception:
             return False
+
+    def propose_bound(self, state, action):
+        from ..intersection_proposals import substitute_bound_line
+        return substitute_bound_line(state, action)

@@ -8,8 +8,8 @@
 | --- | --- |
 | `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与标量／渐近线集合／抛物线焦点距离／点到独立直线查询 → 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
 | `BoundAction`（`src.theorems.bound_application`） | `model_id, mode`；曲线模式使用 `curve`，独立直线 RM52 使用 `line` 且 `curve/equation_id=None`；曲线模式的 `equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
-| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM52、RM72；可按模式过滤；不保证候选已满足所有数学前提 |
-| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM52 提供有限模式实现 |
+| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM52、RM72、RM78；可按模式过滤；不保证候选已满足所有数学前提 |
+| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM39、RM52、RM72、RM78 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
 | `state.extract_answer()` | 读取标量赋值或模型生成的两条渐近线表达式（各自等于零），或 RM17／RM2 已提交的焦半径、RM52 已提交的点到直线距离；未确定返回 `None`，不在此求解 |
@@ -192,3 +192,12 @@ RM13 必须已有 a_sq、b_sq、c_sq 和匹配标准框架；复用 bound_parame
 输出 `EquationFact` 的 ID 为 `derived:{curve}:tangent:{point}`、owner 为曲线、role 为 tangent；expression 表示左式减右式等于零，允许非零常数倍。查询只读该精确绑定的已提交方程；不创建命名 Line，暂未接入 RM52／交点运算。来源记录坐标、标准属性、方程及切点验证操作。
 
 `solve_parabola_tangent_slice(facts,query)` 预检唯一标准方向，固定回放 RM7–10→RM39，不使用参考答案／process／models。命令：`python3 -m src.reasoning.bound_slice --mode parabola-tangent --problem-id 2106`。继续使用 v7 trace；RM39 仅绑定接口可执行，旧 can_apply/apply 返回 False。实现与边界见[记录](../docs/开发规格/21_RM39抛物线切线实现记录.md)。
+
+
+### RM78 直线代入消元（数值首批）
+
+`src.solver.intersection_operations.substitute_line_in_parabola(curve,line,x,y)` 返回 `LineSubstitution(variable,xy,polynomial)`；输入为等于零的表达式，限数值标准抛物线／独立仿射直线。优先 x=my+n，水平线改以 x 为变量；输出首一的一次或二次多项式和坐标还原映射，不求根、不判定两实交点。
+
+`enumerate_actions(state,78,'substitute_line')` 使用 curve/equation_id/line/line_equation_id，其他字段留空。`IntersectionReduction` 保存两对象、两方程 ID、variable、xy、polynomial、source；稳定键为 `derived:intersection:{curve_equation_id}:{line_equation_id}`。`Proposal.intersection_reductions` 经应用器提交到 `state.intersection_reductions`，写入 delta 与 provenance，重复 no_op、冲突回滚。未定系数 undetermined，非标准／退化输入 inapplicable。无需先执行标准参数模型，不修改坐标／标量赋值。
+
+本批使用 `TransitionState.from_facts(facts,None)` 作子步骤诊断，尚不解析 Length(InterceptChord(H,G))。根关系、交点资格、命名点关联、弦长及其查询是后续职责，见[契约](../docs/开发规格/22_ID6347消元与根关联契约.md)。

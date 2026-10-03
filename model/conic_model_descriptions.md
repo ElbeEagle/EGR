@@ -136,7 +136,7 @@
 |----|---------|------|------|
 | 37 | Ellipse_Parametric_Equation | x=acosθ, y=bsinθ | 椭圆参数方程 |
 | 38 | Ellipse_Tangent_Line | x₀x/a² + y₀y/b² = 1 | 椭圆在点(x₀,y₀)处切线 |
-| 39 | Parabola_Tangent_Line | y₀y = 2p(x + x₀) | 抛物线切线方程 |
+| 39 | Parabola_Tangent_Line | y₀y = p(x + x₀) | 抛物线切线方程 |
 | 40 | Ellipse_Midpoint_Chord_Slope | k·k_{OM} = -b²/a² | 中点弦斜率关系 |
 
 ---

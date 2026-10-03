@@ -511,3 +511,11 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 tangent_proposals.py、model_039.py、test_bound_parabola_tangent.py；更新状态、应用器、定理库与 bound_slice.py，同步 API／实现地图／规格，保存 id2106_bound_trace.json。
 - **验证**：新增 17 项、相关回归 351 passed；四方向与顶点使用独立梯度公式核验。见[实现记录](docs/开发规格/21_RM39抛物线切线实现记录.md)。
 - **限制／下一步**：仅标准抛物线已知数值切点；旧无绑定接口不执行，派生切线尚未接入 RM52／交点链。下一批先明确消元／根关联契约再分步推进。
+
+
+## 2026-10-03｜ID 6347 契约与 RM78 消元子步骤
+
+- **变更**：明确消元、根对资格、韦达、弦长和只读查询的职责；实现 substitute_line_in_parabola、RM78 substitute_line 及 IntersectionReduction 原子提交。ID 6347 得到 x=y+1、y²−4y−4=0；不提前生成交点或弦长。
+- **文件**：新增 intersection_operations.py、intersection_proposals.py、test_bound_intersection_reduction.py；更新状态、应用器、model_078.py 与维护文档，新增[契约](docs/开发规格/22_ID6347消元与根关联契约.md)和子步骤证据。用户修改的 RM39 原公式保留，修订旧文档说明。
+- **验证**：新增 24 项、相关回归 375 passed；独立联立解核验根还原，覆盖退化／相切／无实交点与事务边界。
+- **限制／下一步**：仅数值标准抛物线和独立直线；原始弦长查询未接入。下一批补 RM42/43 与实根对资格，再接 RM50；未知直线和命名根关联（ID56）后置。

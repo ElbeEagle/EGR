@@ -1,0 +1,69 @@
+{
+  "schema_version": "intersection-reduction-diagnostic-v1",
+  "problem_id": 6347,
+  "scope": "RM78 facts-only substep; original query not executed",
+  "facts": "G: Parabola;H: Line;Expression(G) = (y^2 = 4*x);Expression(H) = (y = x - 1)",
+  "original_query": "Length(InterceptChord(H, G))",
+  "original_query_solved": false,
+  "transition": {
+    "status": "applied",
+    "action": {
+      "model_id": 78,
+      "mode": "substitute_line",
+      "curve": "G",
+      "equation_id": "f2",
+      "line_equation_id": "f3",
+      "relation_id": null,
+      "peer_curve": null,
+      "peer_equation_id": null,
+      "point": null,
+      "coordinate_id": null,
+      "line": "H",
+      "point_role": null
+    },
+    "before_revision": 0,
+    "after_revision": 1,
+    "delta": {
+      "properties": {},
+      "values": {},
+      "intersection_reductions": {
+        "derived:intersection:f2:f3": {
+          "fact_id": "derived:intersection:f2:f3",
+          "curve": "G",
+          "line": "H",
+          "curve_equation_id": "f2",
+          "line_equation_id": "f3",
+          "variable": "y",
+          "xy": [
+            "y + 1",
+            "y"
+          ],
+          "polynomial": "y**2 - 4*y - 4",
+          "source": "RM78"
+        }
+      }
+    },
+    "read_facts": [
+      "entity:G",
+      "entity:H",
+      "f2",
+      "f3"
+    ],
+    "operations": [
+      {
+        "operation": "parameterize_line",
+        "variable": "y",
+        "xy": [
+          "y + 1",
+          "y"
+        ]
+      },
+      {
+        "operation": "substitute_and_normalize",
+        "polynomial": "y**2 - 4*y - 4"
+      }
+    ],
+    "candidates": [],
+    "diagnostic": ""
+  }
+}

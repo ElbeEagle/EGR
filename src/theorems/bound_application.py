@@ -9,7 +9,7 @@ import sympy as sp
 from src.solver.transition_primitives import (
     TransitionError, truth, ensure_consistent, ellipse_parameters, hyperbola_parameters,
 )
-from src.state.transition_state import TransitionState, CurveFrame, EquationFact, PointCoordinates
+from src.state.transition_state import TransitionState, CurveFrame, EquationFact, PointCoordinates, IntersectionReduction
 
 
 @dataclass(frozen=True)
@@ -39,6 +39,7 @@ class Proposal:
     frames: dict[str, CurveFrame] = field(default_factory=dict)
     equations: dict[str, EquationFact] = field(default_factory=dict)
     coordinates: dict[str, PointCoordinates] = field(default_factory=dict)
+    intersection_reductions: dict[str, IntersectionReduction] = field(default_factory=dict)
 
 
 @dataclass
@@ -55,6 +56,17 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 78:
+        curve = state.equations.get(action.equation_id)
+        line = state.equations.get(action.line_equation_id)
+        if (state.entities.get(action.curve) != 'Parabola' or state.entities.get(action.line) != 'Line'
+                or curve is None or curve.owner != action.curve or curve.role != 'curve'
+                or line is None or line.owner != action.line or line.role != 'line'
+                or any(v is not None for v in (action.relation_id, action.peer_curve,
+                    action.peer_equation_id, action.point, action.coordinate_id, action.point_role))):
+            raise TransitionError('inapplicable', 'Line/parabola equation binding mismatch')
+        return curve
+
     if action.model_id == 39:
         fact = state.equations.get(action.equation_id)
         point = state.coordinates.get(action.point)
@@ -175,6 +187,14 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id == 78:
+        actions = [BoundAction(78, 'substitute_line', c.owner, c.fact_id,
+                               line=l.owner, line_equation_id=l.fact_id)
+                   for c in state.equations.values() if c.role == 'curve'
+                   and state.entities.get(c.owner) == 'Parabola'
+                   for l in state.equations.values() if l.role == 'line'
+                   and state.entities.get(l.owner) == 'Line']
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id == 39:
         actions = [BoundAction(39, 'derive_tangent', f.owner, f.fact_id,
                                point=p, coordinate_id=c.fact_id)
@@ -409,9 +429,22 @@ class BoundApplicator:
                                               'Existing point coordinates disagree with focus')
                 else:
                     coordinates[point] = replace(coordinate, xy=xy)
+            reductions = dict(state.intersection_reductions)
+            for key, fact in proposal.intersection_reductions.items():
+                if (action.model_id != 78 or action.mode != 'substitute_line'
+                        or key != fact.fact_id
+                        or key != f'derived:intersection:{action.equation_id}:{action.line_equation_id}'
+                        or (fact.curve, fact.line, fact.curve_equation_id, fact.line_equation_id)
+                        != (action.curve, action.line, action.equation_id, action.line_equation_id)
+                        or not {action.equation_id, action.line_equation_id}.issubset(proposal.read_facts)):
+                    raise TransitionError('inapplicable', 'Invalid intersection reduction binding')
+                if key in reductions and reductions[key] != fact:
+                    raise TransitionError('conflict', 'Conflicting intersection reduction')
+                reductions[key] = fact
+            changed_reductions = {k: v for k, v in reductions.items() if k not in state.intersection_reductions}
             changed_coordinates = {p: c for p, c in coordinates.items() if p not in state.coordinates}
             changed_equations = {k: v for k, v in equations.items() if state.equations.get(k) != v}
-            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates)):
+            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates, changed_reductions)):
                 result.status = 'no_op'
                 return result
             result.delta = {'properties': changed_properties, 'values': changed_values}
@@ -423,6 +456,8 @@ class BoundApplicator:
                 result.delta['equations'] = changed_equations
             if changed_coordinates:
                 result.delta['coordinates'] = changed_coordinates
+            if changed_reductions:
+                result.delta['intersection_reductions'] = changed_reductions
             result.status = 'applied'
             result.after_revision += 1
             provenance = dict(state.provenance)
@@ -438,8 +473,11 @@ class BoundApplicator:
             for key in changed_equations:
                 provenance[key] = tuple(dict.fromkeys(
                     (*provenance.get(key, ()), *proposal.read_facts, f'action:{result.after_revision}')))
+            for key in changed_reductions:
+                provenance[key] = (*proposal.read_facts, f'action:{result.after_revision}')
             for coordinate in changed_coordinates.values():
                 provenance[coordinate.fact_id] = (*proposal.read_facts, f'action:{result.after_revision}')
+            state.intersection_reductions = reductions
             state.coordinates = coordinates
             state.properties, state.values, state.provenance = properties, values, provenance
             state.constraints, state.frames = constraints, frames

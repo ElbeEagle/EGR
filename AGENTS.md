@@ -34,4 +34,42 @@
 - `docs/开发规格/`：仅在职责、设计或案例变化时更新。文档应简短，避免多处重复同一份功能清单。
 - 回复默认中文，给出简短摘要、改动文件和验证结果。代码任务附 <=72 字符的 commit summary，以及包含 Current date、What done/changed(说明新增或修改的核心功能/函数)、Effect(能实现之前不能实现的哪些功能、效果)、Which files added/updated、Next step work 的 commit description；生成说明不等于自动提交。
 
+## 新增文件与核心定义的说明要求
 
+- 对本次新增或职责发生变化的文件、核心函数、类及状态字段，
+  用简明中文说明“它是什么、具体做什么、产生或保存什么结果”。
+  不得只列英文名称，或仅写“新增某模块／某函数／某接口”。
+- 区分文件职责与其中核心定义的职责：
+  - 文件：负责哪一类具体工作；
+  - 函数：对什么输入执行什么操作，返回什么；
+  - 数据结构：表示或保存什么信息，由谁生成、供谁使用；
+  - 查询类型：表达什么求解目标，不将查询表示描述为推导计算。
+- 涉及公共计算、模型提案和状态提交时，明确各自分工；
+  不将“提出状态变化”写成“直接修改状态”。
+- 名称比当前功能宽泛或容易误解时，说明当前实际范围；
+  必要时增加一个简短数学例子。每项通常 1–2 句，不逐行解释代码。
+- 文档和 Commit description 使用一致的中文含义。
+  验收标准：读者不打开源码，也能知道新增内容的实际用途，
+  并区分它是在计算、组织模型应用、保存结果还是表达查询。
+
+## Commit description 建议采用这种写法
+```
+Current date: 2026-10-03
+
+What done/changed:
+- 新增 intersection_operations.py，负责直线与抛物线联立时的公共代入消元计算；substitute_line_in_parabola 将直线表达式代入抛物线，返回一元方程及坐标还原映射。
+- 新增 intersection_proposals.py，负责组织 RM78 的状态更新提案；substitute_bound_line 检查指定曲线和直线的绑定，调用消元计算，将结果与来源交给应用器提交。
+- 在 transition_state.py 新增IntersectionReduction 数据结构，保存消元方程、参与对象及坐标还原映射，供后续根关系计算使用。
+
+Effect:
+- ID6347 可生成 y²−4y−4=0，并保留根 t 对应点 (t+1,t) 的关系。
+- 本批完成消元子步骤；实交点判定和弦长查询尚未接入。
+- 新增24项测试通过，相关回归375项通过。
+
+Which files added/updated:
+- 新增：intersection_operations.py、intersection_proposals.py、test_bound_intersection_reduction.py。
+- 更新：transition_state.py、bound_application.py、model_078.py 及对应维护文档。
+
+Next step work:
+- 实现 RM42/43 根关系及实根对资格检查，再接入RM50弦长计算与查询。
+```

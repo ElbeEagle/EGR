@@ -21,6 +21,19 @@ class EquationFact:
 
 
 @dataclass(frozen=True)
+class IntersectionReduction:
+    fact_id: str
+    curve: str
+    line: str
+    curve_equation_id: str
+    line_equation_id: str
+    variable: sp.Symbol
+    xy: tuple[sp.Expr, sp.Expr]
+    polynomial: sp.Expr
+    source: str
+
+
+@dataclass(frozen=True)
 class FocusEquality:
     fact_id: str
     curves: tuple[str, str]
@@ -120,6 +133,8 @@ class TransitionState:
 
     focus_aliases: dict[str, FocusAlias] = field(default_factory=dict)
     directrix_aliases: dict[str, DirectrixAlias] = field(default_factory=dict)
+
+    intersection_reductions: dict[str, IntersectionReduction] = field(default_factory=dict)
 
     def line_bindings(self, line: str):
         """Resolve identity only; never derive equations or reconcile alternatives."""
