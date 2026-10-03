@@ -1,0 +1,71 @@
+[
+  {
+    "id": 5988,
+    "facts": "G: Ellipse;Expression(G) = (x^2/4 + y^2 = 1)",
+    "original_query": "Eccentricity(G)",
+    "weak_models": [
+      3,
+      13
+    ],
+    "validated_prefix": [
+      3,
+      11
+    ],
+    "a_sq": "4",
+    "c_sq": "3",
+    "independent_eccentricity": "sqrt(3)/2",
+    "scope": "prefix runtime verified; eccentricity is independent math, RM13 not implemented"
+  },
+  {
+    "id": 7488,
+    "facts": "G: Ellipse;Expression(G)=(y^2/4+x^2/2=1)",
+    "original_query": "Eccentricity(G)",
+    "weak_models": [
+      4,
+      13
+    ],
+    "validated_prefix": [
+      4,
+      11
+    ],
+    "a_sq": "4",
+    "c_sq": "2",
+    "independent_eccentricity": "sqrt(2)/2",
+    "scope": "prefix runtime verified; eccentricity is independent math, RM13 not implemented"
+  },
+  {
+    "id": 1586,
+    "facts": "C: Hyperbola;Expression(C) = (x^2/4 - y^2 = 1)",
+    "original_query": "Eccentricity(C)",
+    "weak_models": [
+      5,
+      12,
+      13
+    ],
+    "validated_prefix": [
+      5,
+      12
+    ],
+    "a_sq": "4",
+    "c_sq": "5",
+    "independent_eccentricity": "sqrt(5)/2",
+    "scope": "prefix runtime verified; eccentricity is independent math, RM13 not implemented"
+  },
+  {
+    "id": 4528,
+    "facts": "G: Hyperbola;Expression(G) = (-x^2/12 + y^2/4 = 1)",
+    "original_query": "Eccentricity(G)",
+    "weak_models": [
+      6,
+      13
+    ],
+    "validated_prefix": [
+      6,
+      12
+    ],
+    "a_sq": "4",
+    "c_sq": "16",
+    "independent_eccentricity": "2",
+    "scope": "prefix runtime verified; eccentricity is independent math, RM13 not implemented"
+  }
+]
