@@ -1,0 +1,161 @@
+{
+  "schema_version": "bound-slice-v7",
+  "mode": "eccentricity",
+  "problem_id": 1586,
+  "status": "solved",
+  "facts": "C: Hyperbola;Expression(C) = (x^2/4 - y^2 = 1)",
+  "query": "Eccentricity(C)",
+  "answer": "sqrt(5)/2",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 5,
+        "mode": "extract_parameters",
+        "curve": "C",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('C', 'a_sq')": "4",
+          "('C', 'b_sq')": "1"
+        },
+        "values": {},
+        "frames": {
+          "C": {
+            "equation_id": "f1",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x",
+            "direction": null
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "entity:C",
+        "f1:domain:0"
+      ],
+      "operations": [
+        {
+          "operation": "standard_hyperbola_x",
+          "equation": "f1",
+          "axis": "x",
+          "a_sq": "4",
+          "b_sq": "1"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 12,
+        "mode": "derive_c_sq",
+        "curve": "C",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {
+          "('C', 'c_sq')": "5"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "entity:C",
+        "property:C:a_sq",
+        "property:C:b_sq",
+        "f1:domain:0",
+        "f1",
+        "frame:C"
+      ],
+      "operations": [
+        {
+          "operation": "parameter_relation",
+          "curve": "C",
+          "kind": "Hyperbola",
+          "inputs": {
+            "a_sq": "4",
+            "b_sq": "1"
+          },
+          "target": "c_sq",
+          "result": "5"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 13,
+        "mode": "derive_eccentricity",
+        "curve": "C",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null
+      },
+      "before_revision": 2,
+      "after_revision": 3,
+      "delta": {
+        "properties": {
+          "('C', 'eccentricity')": "sqrt(5)/2"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "f1",
+        "entity:C",
+        "frame:C",
+        "property:C:a_sq",
+        "property:C:b_sq",
+        "property:C:c_sq",
+        "f1:domain:0"
+      ],
+      "operations": [
+        {
+          "operation": "verify_parameter_identity",
+          "residual": "0"
+        },
+        {
+          "operation": "eccentricity_from_squared_parameters",
+          "a_sq": "4",
+          "c_sq": "5",
+          "result": "sqrt(5)/2"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}

@@ -44,6 +44,11 @@ class DirectrixAlias:
 
 
 @dataclass(frozen=True)
+class EccentricityQuery:
+    curve: str
+
+
+@dataclass(frozen=True)
 class AsymptoteQuery:
     curve: str
 
@@ -96,7 +101,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery
+    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -143,8 +148,11 @@ class TransitionState:
         focal_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*Focus\(([A-Za-z]\w*)\)\s*\)', query_text)
         line_query = re.fullmatch(r'Distance\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)', query_text)
         focus_line_query = re.fullmatch(r'Distance\(\s*Focus\(\s*([A-Za-z]\w*)\s*\)\s*,\s*([A-Za-z]\w*)\s*\)', query_text)
+        eccentricity_query = re.fullmatch(r'Eccentricity\(\s*([A-Za-z]\w*)\s*\)', query_text)
         if query is None:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
+        elif eccentricity_query and entities.get(eccentricity_query.group(1)) in ('Ellipse', 'Hyperbola'):
+            target = EccentricityQuery(eccentricity_query.group(1))
         elif focus_line_query and entities.get(focus_line_query.group(1)) == 'Parabola' and entities.get(focus_line_query.group(2)) == 'Line':
             target = FocusLineDistanceQuery(*focus_line_query.groups())
         elif line_query and entities.get(line_query.group(1)) == 'Point' and entities.get(line_query.group(2)) == 'Line':
@@ -270,6 +278,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, EccentricityQuery):
+            return self.properties.get((self.query.curve, 'eccentricity'))
         if isinstance(self.query, AsymptoteQuery):
             # Only a model-produced pair certifies completeness, not one given line.
             facts = [self.equations.get(f'derived:{self.query.curve}:asymptote:{i}') for i in (0, 1)]

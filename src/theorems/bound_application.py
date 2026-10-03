@@ -55,6 +55,15 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 13:
+        fact = state.equations.get(action.equation_id)
+        if (state.entities.get(action.curve) not in ('Ellipse', 'Hyperbola')
+                or fact is None or fact.owner != action.curve or fact.role != 'curve'
+                or any(v is not None for v in (action.line, action.line_equation_id, action.point,
+                       action.coordinate_id, action.relation_id, action.point_role, action.peer_curve,
+                       action.peer_equation_id))):
+            raise TransitionError('inapplicable', 'Eccentricity curve binding mismatch')
+        return fact
     if action.point_role is not None:
         curve = state.equations.get(action.equation_id)
         line = state.equations.get(action.line_equation_id)
@@ -156,6 +165,11 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id == 13:
+        actions = [BoundAction(13, 'derive_eccentricity', f.owner, f.fact_id)
+                   for f in state.equations.values() if f.role == 'curve'
+                   and state.entities.get(f.owner) in ('Ellipse', 'Hyperbola')]
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id == 72:
         actions = []
         for fact in state.equations.values():

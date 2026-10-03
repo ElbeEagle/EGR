@@ -1,0 +1,1062 @@
+{
+  "schema_version": "model-binding-inventory-v1",
+  "scope": "AST method presence and weak-label counts; no semantic or runtime coverage claim",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "records": 5357,
+  "bound_method_ids": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    17,
+    21,
+    29,
+    52,
+    72
+  ],
+  "models": [
+    {
+      "model_id": 0,
+      "name": "Ellipse_Definition",
+      "source": "src/theorems/models/model_000.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 650,
+      "short_candidate_ids": [
+        4587,
+        1850,
+        1014
+      ]
+    },
+    {
+      "model_id": 1,
+      "name": "Hyperbola_Definition",
+      "source": "src/theorems/models/model_001.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 510,
+      "short_candidate_ids": [
+        5530,
+        5980,
+        6162
+      ]
+    },
+    {
+      "model_id": 2,
+      "name": "Parabola_Definition",
+      "source": "src/theorems/models/model_002.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 789,
+      "short_candidate_ids": [
+        1334,
+        5606,
+        6521
+      ]
+    },
+    {
+      "model_id": 3,
+      "name": "Ellipse_Equation_Standard_X",
+      "source": "src/theorems/models/model_003.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 1588,
+      "short_candidate_ids": [
+        6579,
+        1211,
+        7513
+      ]
+    },
+    {
+      "model_id": 4,
+      "name": "Ellipse_Equation_Standard_Y",
+      "source": "src/theorems/models/model_004.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 192,
+      "short_candidate_ids": [
+        7488,
+        876,
+        7754
+      ]
+    },
+    {
+      "model_id": 5,
+      "name": "Hyperbola_Equation_Standard_X",
+      "source": "src/theorems/models/model_005.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 1697,
+      "short_candidate_ids": [
+        6318,
+        3126,
+        200
+      ]
+    },
+    {
+      "model_id": 6,
+      "name": "Hyperbola_Equation_Standard_Y",
+      "source": "src/theorems/models/model_006.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 235,
+      "short_candidate_ids": [
+        6985,
+        3126,
+        4404
+      ]
+    },
+    {
+      "model_id": 7,
+      "name": "Parabola_Equation_Standard_Right",
+      "source": "src/theorems/models/model_007.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 1566,
+      "short_candidate_ids": [
+        1334,
+        6010,
+        6265
+      ]
+    },
+    {
+      "model_id": 8,
+      "name": "Parabola_Equation_Standard_Left",
+      "source": "src/theorems/models/model_008.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 18,
+      "short_candidate_ids": [
+        3296,
+        3153,
+        3721
+      ]
+    },
+    {
+      "model_id": 9,
+      "name": "Parabola_Equation_Standard_Up",
+      "source": "src/theorems/models/model_009.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 248,
+      "short_candidate_ids": [
+        1583,
+        2808,
+        3825
+      ]
+    },
+    {
+      "model_id": 10,
+      "name": "Parabola_Equation_Standard_Down",
+      "source": "src/theorems/models/model_010.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 25,
+      "short_candidate_ids": [
+        1186,
+        4564,
+        888
+      ]
+    },
+    {
+      "model_id": 11,
+      "name": "Ellipse_Parameter_Relation",
+      "source": "src/theorems/models/model_011.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 403,
+      "short_candidate_ids": [
+        2286,
+        844,
+        1234
+      ]
+    },
+    {
+      "model_id": 12,
+      "name": "Hyperbola_Parameter_Relation",
+      "source": "src/theorems/models/model_012.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 448,
+      "short_candidate_ids": [
+        1412,
+        6,
+        1484
+      ]
+    },
+    {
+      "model_id": 13,
+      "name": "Eccentricity_Formula",
+      "source": "src/theorems/models/model_013.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 1396,
+      "short_candidate_ids": [
+        6318,
+        7513,
+        7488
+      ]
+    },
+    {
+      "model_id": 14,
+      "name": "Ellipse_Eccentricity_Range",
+      "source": "src/theorems/models/model_014.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 88,
+      "short_candidate_ids": [
+        3277,
+        4662,
+        7127
+      ]
+    },
+    {
+      "model_id": 15,
+      "name": "Hyperbola_Eccentricity_Range",
+      "source": "src/theorems/models/model_015.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 17,
+      "short_candidate_ids": [
+        3277,
+        3223,
+        1747
+      ]
+    },
+    {
+      "model_id": 16,
+      "name": "Ellipse_Focal_Radius",
+      "source": "src/theorems/models/model_016.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 66,
+      "short_candidate_ids": [
+        616,
+        3430,
+        584
+      ]
+    },
+    {
+      "model_id": 17,
+      "name": "Parabola_Focal_Radius",
+      "source": "src/theorems/models/model_017.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 369,
+      "short_candidate_ids": [
+        20,
+        919,
+        1669
+      ]
+    },
+    {
+      "model_id": 18,
+      "name": "Ellipse_Latus_Rectum",
+      "source": "src/theorems/models/model_018.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 39,
+      "short_candidate_ids": [
+        2976,
+        1509,
+        283
+      ]
+    },
+    {
+      "model_id": 19,
+      "name": "Hyperbola_Latus_Rectum",
+      "source": "src/theorems/models/model_019.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 44,
+      "short_candidate_ids": [
+        5738,
+        6057,
+        6770
+      ]
+    },
+    {
+      "model_id": 20,
+      "name": "Parabola_Latus_Rectum",
+      "source": "src/theorems/models/model_020.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 2,
+      "short_candidate_ids": [
+        1378,
+        1858
+      ]
+    },
+    {
+      "model_id": 21,
+      "name": "Hyperbola_Asymptote",
+      "source": "src/theorems/models/model_021.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 1014,
+      "short_candidate_ids": [
+        3126,
+        200,
+        650
+      ]
+    },
+    {
+      "model_id": 22,
+      "name": "Hyperbola_Focus_To_Asymptote_Distance",
+      "source": "src/theorems/models/model_022.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 68,
+      "short_candidate_ids": [
+        2417,
+        3200,
+        891
+      ]
+    },
+    {
+      "model_id": 23,
+      "name": "Hyperbola_Common_Asymptote_System",
+      "source": "src/theorems/models/model_023.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 32,
+      "short_candidate_ids": [
+        1039,
+        1458,
+        3598
+      ]
+    },
+    {
+      "model_id": 24,
+      "name": "Hyperbola_Equal_Axis",
+      "source": "src/theorems/models/model_024.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 41,
+      "short_candidate_ids": [
+        2092,
+        2287,
+        3582
+      ]
+    },
+    {
+      "model_id": 25,
+      "name": "Ellipse_Second_Definition",
+      "source": "src/theorems/models/model_025.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 14,
+      "short_candidate_ids": [
+        4171,
+        2543,
+        4821
+      ]
+    },
+    {
+      "model_id": 26,
+      "name": "Hyperbola_Second_Definition",
+      "source": "src/theorems/models/model_026.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 8,
+      "short_candidate_ids": [
+        2308,
+        1729,
+        2039
+      ]
+    },
+    {
+      "model_id": 27,
+      "name": "Ellipse_Directrix",
+      "source": "src/theorems/models/model_027.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 53,
+      "short_candidate_ids": [
+        5491,
+        4944,
+        1796
+      ]
+    },
+    {
+      "model_id": 28,
+      "name": "Hyperbola_Directrix",
+      "source": "src/theorems/models/model_028.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 18,
+      "short_candidate_ids": [
+        1834,
+        2779,
+        5953
+      ]
+    },
+    {
+      "model_id": 29,
+      "name": "Parabola_Directrix",
+      "source": "src/theorems/models/model_029.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 889,
+      "short_candidate_ids": [
+        1334,
+        1186,
+        3825
+      ]
+    },
+    {
+      "model_id": 30,
+      "name": "Ellipse_Focal_Triangle_Area",
+      "source": "src/theorems/models/model_030.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 19,
+      "short_candidate_ids": [
+        6796,
+        7232,
+        2868
+      ]
+    },
+    {
+      "model_id": 31,
+      "name": "Hyperbola_Focal_Triangle_Area",
+      "source": "src/theorems/models/model_031.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 6,
+      "short_candidate_ids": [
+        1578,
+        2183,
+        1726
+      ]
+    },
+    {
+      "model_id": 32,
+      "name": "Ellipse_Focal_Triangle_Perimeter",
+      "source": "src/theorems/models/model_032.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 182,
+      "short_candidate_ids": [
+        1552,
+        998,
+        3703
+      ]
+    },
+    {
+      "model_id": 33,
+      "name": "Parabola_Focal_Chord_Length",
+      "source": "src/theorems/models/model_033.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 47,
+      "short_candidate_ids": [
+        3169,
+        913,
+        1095
+      ]
+    },
+    {
+      "model_id": 34,
+      "name": "Parabola_Focal_Chord_Product_X",
+      "source": "src/theorems/models/model_034.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 7,
+      "short_candidate_ids": [
+        1191,
+        2134,
+        1427
+      ]
+    },
+    {
+      "model_id": 35,
+      "name": "Parabola_Focal_Chord_Product_Y",
+      "source": "src/theorems/models/model_035.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 6,
+      "short_candidate_ids": [
+        4373,
+        1833,
+        1427
+      ]
+    },
+    {
+      "model_id": 36,
+      "name": "Parabola_Focal_Chord_Formula_Angle",
+      "source": "src/theorems/models/model_036.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 11,
+      "short_candidate_ids": [
+        829,
+        1208,
+        2151
+      ]
+    },
+    {
+      "model_id": 37,
+      "name": "Ellipse_Parametric_Equation",
+      "source": "src/theorems/models/model_037.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 13,
+      "short_candidate_ids": [
+        1211,
+        3650,
+        1107
+      ]
+    },
+    {
+      "model_id": 38,
+      "name": "Ellipse_Tangent_Line",
+      "source": "src/theorems/models/model_038.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 153,
+      "short_candidate_ids": [
+        4866,
+        163,
+        7237
+      ]
+    },
+    {
+      "model_id": 39,
+      "name": "Parabola_Tangent_Line",
+      "source": "src/theorems/models/model_039.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 39,
+      "short_candidate_ids": [
+        2106,
+        1535,
+        1362
+      ]
+    },
+    {
+      "model_id": 40,
+      "name": "Ellipse_Midpoint_Chord_Slope",
+      "source": "src/theorems/models/model_040.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 6,
+      "short_candidate_ids": [
+        3080,
+        3227,
+        1937
+      ]
+    },
+    {
+      "model_id": 41,
+      "name": "Vieta_Theorem",
+      "source": "src/theorems/models/model_041.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 100,
+      "short_candidate_ids": [
+        1092,
+        1077,
+        813
+      ]
+    },
+    {
+      "model_id": 42,
+      "name": "Vieta_Theorem_Sum",
+      "source": "src/theorems/models/model_042.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 453,
+      "short_candidate_ids": [
+        1743,
+        6347,
+        3057
+      ]
+    },
+    {
+      "model_id": 43,
+      "name": "Vieta_Theorem_Product",
+      "source": "src/theorems/models/model_043.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 234,
+      "short_candidate_ids": [
+        5043,
+        4092,
+        5069
+      ]
+    },
+    {
+      "model_id": 44,
+      "name": "Point_Difference_Method",
+      "source": "src/theorems/models/model_044.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 141,
+      "short_candidate_ids": [
+        4144,
+        4214,
+        1112
+      ]
+    },
+    {
+      "model_id": 45,
+      "name": "Point_Difference_Method_Ellipse",
+      "source": "src/theorems/models/model_045.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 37,
+      "short_candidate_ids": [
+        2324,
+        2227,
+        3337
+      ]
+    },
+    {
+      "model_id": 46,
+      "name": "Point_Difference_Method_Hyperbola",
+      "source": "src/theorems/models/model_046.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 230,
+      "short_candidate_ids": [
+        6579,
+        7526,
+        5253
+      ]
+    },
+    {
+      "model_id": 47,
+      "name": "Cosine_Law",
+      "source": "src/theorems/models/model_047.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 216,
+      "short_candidate_ids": [
+        3509,
+        5556,
+        1462
+      ]
+    },
+    {
+      "model_id": 48,
+      "name": "Sine_Law",
+      "source": "src/theorems/models/model_048.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 18,
+      "short_candidate_ids": [
+        4300,
+        1270,
+        7510
+      ]
+    },
+    {
+      "model_id": 49,
+      "name": "Pythagorean_Theorem",
+      "source": "src/theorems/models/model_049.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 355,
+      "short_candidate_ids": [
+        4587,
+        540,
+        3455
+      ]
+    },
+    {
+      "model_id": 50,
+      "name": "Chord_Length_Formula",
+      "source": "src/theorems/models/model_050.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 0,
+      "short_candidate_ids": []
+    },
+    {
+      "model_id": 51,
+      "name": "Chord_Length_Formula_With_K",
+      "source": "src/theorems/models/model_051.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 185,
+      "short_candidate_ids": [
+        1077,
+        1743,
+        6347
+      ]
+    },
+    {
+      "model_id": 52,
+      "name": "Point_To_Line_Distance",
+      "source": "src/theorems/models/model_052.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 364,
+      "short_candidate_ids": [
+        1334,
+        3256,
+        7653
+      ]
+    },
+    {
+      "model_id": 53,
+      "name": "Two_Points_Distance",
+      "source": "src/theorems/models/model_053.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 368,
+      "short_candidate_ids": [
+        4587,
+        163,
+        4343
+      ]
+    },
+    {
+      "model_id": 54,
+      "name": "Midpoint_Formula",
+      "source": "src/theorems/models/model_054.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 275,
+      "short_candidate_ids": [
+        4144,
+        1532,
+        4214
+      ]
+    },
+    {
+      "model_id": 55,
+      "name": "Slope_Formula",
+      "source": "src/theorems/models/model_055.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 136,
+      "short_candidate_ids": [
+        1972,
+        4144,
+        4214
+      ]
+    },
+    {
+      "model_id": 56,
+      "name": "Triangle_Area_Formula",
+      "source": "src/theorems/models/model_056.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 325,
+      "short_candidate_ids": [
+        6796,
+        6356,
+        6502
+      ]
+    },
+    {
+      "model_id": 57,
+      "name": "Triangle_Area_With_Sin",
+      "source": "src/theorems/models/model_057.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 165,
+      "short_candidate_ids": [
+        6356,
+        6502,
+        6761
+      ]
+    },
+    {
+      "model_id": 58,
+      "name": "Triangle_Area_Coordinate",
+      "source": "src/theorems/models/model_058.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 32,
+      "short_candidate_ids": [
+        3729,
+        3749,
+        2100
+      ]
+    },
+    {
+      "model_id": 59,
+      "name": "Vector_Dot_Product_Algebraic",
+      "source": "src/theorems/models/model_059.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 99,
+      "short_candidate_ids": [
+        2344,
+        3786,
+        2986
+      ]
+    },
+    {
+      "model_id": 60,
+      "name": "Vector_Dot_Product_Geometric",
+      "source": "src/theorems/models/model_060.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 14,
+      "short_candidate_ids": [
+        2689,
+        901,
+        1026
+      ]
+    },
+    {
+      "model_id": 61,
+      "name": "Vector_Perpendicular_Condition",
+      "source": "src/theorems/models/model_061.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 247,
+      "short_candidate_ids": [
+        1972,
+        5008,
+        1471
+      ]
+    },
+    {
+      "model_id": 62,
+      "name": "Vector_Collinear_Condition",
+      "source": "src/theorems/models/model_062.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 401,
+      "short_candidate_ids": [
+        1936,
+        6521,
+        5805
+      ]
+    },
+    {
+      "model_id": 63,
+      "name": "Basic_Inequality",
+      "source": "src/theorems/models/model_063.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 335,
+      "short_candidate_ids": [
+        6579,
+        4866,
+        3126
+      ]
+    },
+    {
+      "model_id": 64,
+      "name": "Basic_Inequality_Equal_Condition",
+      "source": "src/theorems/models/model_064.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 26,
+      "short_candidate_ids": [
+        804,
+        1466,
+        1176
+      ]
+    },
+    {
+      "model_id": 65,
+      "name": "Discriminant_Delta",
+      "source": "src/theorems/models/model_065.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 152,
+      "short_candidate_ids": [
+        6579,
+        1092,
+        7526
+      ]
+    },
+    {
+      "model_id": 66,
+      "name": "Discriminant_Tangent_Condition",
+      "source": "src/theorems/models/model_066.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 72,
+      "short_candidate_ids": [
+        3126,
+        578,
+        2126
+      ]
+    },
+    {
+      "model_id": 67,
+      "name": "Discriminant_Intersect_Condition",
+      "source": "src/theorems/models/model_067.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 22,
+      "short_candidate_ids": [
+        5879,
+        1465,
+        874
+      ]
+    },
+    {
+      "model_id": 68,
+      "name": "Triangle_Midline_Theorem",
+      "source": "src/theorems/models/model_068.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 320,
+      "short_candidate_ids": [
+        6796,
+        7424,
+        5069
+      ]
+    },
+    {
+      "model_id": 69,
+      "name": "Trapezoid_Midline_Theorem",
+      "source": "src/theorems/models/model_069.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 30,
+      "short_candidate_ids": [
+        1176,
+        1301,
+        1095
+      ]
+    },
+    {
+      "model_id": 70,
+      "name": "Incircle_Radius_Formula",
+      "source": "src/theorems/models/model_070.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 35,
+      "short_candidate_ids": [
+        3438,
+        1395,
+        1634
+      ]
+    },
+    {
+      "model_id": 71,
+      "name": "Equal_Area_Method",
+      "source": "src/theorems/models/model_071.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 43,
+      "short_candidate_ids": [
+        1536,
+        1395,
+        2148
+      ]
+    },
+    {
+      "model_id": 72,
+      "name": "Line_Point_Slope_Form",
+      "source": "src/theorems/models/model_072.py",
+      "legacy_methods_present": true,
+      "bound_method_present": true,
+      "weak_label_record_count": 366,
+      "short_candidate_ids": [
+        1092,
+        3126,
+        578
+      ]
+    },
+    {
+      "model_id": 73,
+      "name": "Line_Two_Point_Form",
+      "source": "src/theorems/models/model_073.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 15,
+      "short_candidate_ids": [
+        1199,
+        1823,
+        3026
+      ]
+    },
+    {
+      "model_id": 74,
+      "name": "Line_Intercept_Form",
+      "source": "src/theorems/models/model_074.py",
+      "legacy_methods_present": false,
+      "bound_method_present": false,
+      "weak_label_record_count": 3,
+      "short_candidate_ids": [
+        3002,
+        3489,
+        1375
+      ]
+    },
+    {
+      "model_id": 75,
+      "name": "Circle_Standard_Equation",
+      "source": "src/theorems/models/model_075.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 527,
+      "short_candidate_ids": [
+        3126,
+        7526,
+        4343
+      ]
+    },
+    {
+      "model_id": 76,
+      "name": "Circle_Tangent_Condition",
+      "source": "src/theorems/models/model_076.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 140,
+      "short_candidate_ids": [
+        1404,
+        956,
+        7371
+      ]
+    },
+    {
+      "model_id": 77,
+      "name": "Homogenization_Eccentricity",
+      "source": "src/theorems/models/model_077.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 221,
+      "short_candidate_ids": [
+        2725,
+        3313,
+        1911
+      ]
+    },
+    {
+      "model_id": 78,
+      "name": "Substitution_x_equals_my_plus_n",
+      "source": "src/theorems/models/model_078.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 361,
+      "short_candidate_ids": [
+        1092,
+        578,
+        6347
+      ]
+    },
+    {
+      "model_id": 79,
+      "name": "Quadratic_Function_Maximum",
+      "source": "src/theorems/models/model_079.py",
+      "legacy_methods_present": true,
+      "bound_method_present": false,
+      "weak_label_record_count": 132,
+      "short_candidate_ids": [
+        1211,
+        6985,
+        1092
+      ]
+    }
+  ]
+}

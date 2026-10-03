@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 from copy import deepcopy
 
-from src.state.transition_state import TransitionState, AsymptoteQuery, FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery
+from src.state.transition_state import TransitionState, AsymptoteQuery, FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery, EccentricityQuery
 from src.theorems.bound_application import BoundAction, BoundApplicator, enumerate_actions
 from src.solver.transition_primitives import TransitionError
 
@@ -233,6 +233,27 @@ def solve_intersection_focus_distance_slice(facts: str, query: str) -> SliceResu
     return replay_actions(state, (accepted[0], line, distance))
 
 
+def solve_eccentricity_slice(facts: str, query: str) -> SliceResult:
+    """Fixed standard -> squared-parameter relation -> forward eccentricity."""
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, EccentricityQuery):
+        return SliceResult('inapplicable', state, diagnostic='Requires eccentricity query')
+    actions = [a for a in enumerate_actions(state, 13) if a.curve == state.query.curve]
+    if len(actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Requires unique bound curve equation')
+    forward = actions[0]
+    try:
+        standard = select_standard_action(state, forward.curve, forward.equation_id)
+    except TransitionError as exc:
+        return SliceResult(exc.status, state, diagnostic=str(exc))
+    relation = 11 if state.entities[forward.curve] == 'Ellipse' else 12
+    return replay_actions(state, (standard, BoundAction(relation, 'derive_c_sq',
+                                 forward.curve, forward.equation_id), forward))
+
+
 def replay_actions(state: TransitionState, actions) -> SliceResult:
     """Run an explicit diagnostic action sequence; retain unsuccessful attempts too."""
     applicator = BoundApplicator()
@@ -256,7 +277,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -266,7 +287,8 @@ if __name__ == '__main__':
              'parabola-definition': solve_parabola_definition_slice,
              'point-line-distance': solve_point_line_distance_slice,
              'directrix-alias-distance': solve_directrix_alias_distance_slice,
-             'intersection-focus-distance': solve_intersection_focus_distance_slice}[args.mode]
+             'intersection-focus-distance': solve_intersection_focus_distance_slice,
+             'eccentricity': solve_eccentricity_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):

@@ -1,6 +1,6 @@
 # 关键接口参考
 
-更新：2026-10-02。本页描述当前可调用接口；完整设计见[开发规格](../docs/开发规格/02_状态表示与应用器接口.md)，模块导航见[实现地图](project_structure.md)。新绑定执行接口与旧流程并存，不可直接混用两套状态。
+更新：2026-10-03。本页描述当前可调用接口；完整设计见[开发规格](../docs/开发规格/02_状态表示与应用器接口.md)，模块导航见[实现地图](project_structure.md)。新绑定执行接口与旧流程并存，不可直接混用两套状态。
 
 ## 新绑定执行接口：当前开发入口
 
@@ -8,8 +8,8 @@
 | --- | --- |
 | `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与标量／渐近线集合／抛物线焦点距离／点到独立直线查询 → 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
 | `BoundAction`（`src.theorems.bound_application`） | `model_id, mode`；曲线模式使用 `curve`，独立直线 RM52 使用 `line` 且 `curve/equation_id=None`；曲线模式的 `equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
-| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–12、RM17、RM21、RM29、RM52；可按模式过滤；不保证候选已满足所有数学前提 |
-| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–12、RM17、RM21、RM29、RM52 提供有限模式实现 |
+| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM52；可按模式过滤；不保证候选已满足所有数学前提 |
+| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM52 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
 | `state.extract_answer()` | 读取标量赋值或模型生成的两条渐近线表达式（各自等于零），或 RM17／RM2 已提交的焦半径、RM52 已提交的点到直线距离；未确定返回 `None`，不在此求解 |
@@ -172,3 +172,12 @@ RM52 新增 `focus_line_distance` 模式，BoundAction 使用 `point_role='focus
 `solve_intersection_focus_distance_slice(facts,query)` 固定选择唯一共享已知点，预检标准方向，回放 RM7–10 recover_from_point→RM72 recover_from_point→RM52；不是学习型选择器，不读 models/process/答案。原始 ID 7260 命令：`python3 -m src.reasoning.bound_slice --mode intersection-focus-distance --problem-id 7260`。
 
 本模式限抛物线焦点与独立 Line 方程；公共距离支持竖直线，但固定链的 RM72 恢复仍限非竖直线。测试 `tests/test_bound_focus_line_distance.py`。既有命名点／别名路径保持兼容。
+
+
+### RM13 正向离心率
+
+`EccentricityQuery(curve)` 解析 Ellipse／Hyperbola 的 `Eccentricity(G)`，只读 properties[(G,eccentricity)]。`enumerate_actions(state,13,'derive_eccentricity')` 产生曲线／方程绑定；其他点线绑定字段不适用。
+
+RM13 必须已有 a_sq、b_sq、c_sq 和匹配标准框架；复用 bound_parameters，检查有限实数、正值及参数恒等式后，仅提交 e=√(c²/a²)。缺 c² 返回 inapplicable，不暗中执行 RM11/12；冲突回滚，重复 no_op。首批限非圆标准椭圆／非退化双曲线、原点中心与 x/y 轴，符号值返回 undetermined，不处理范围和反向求参。
+
+`solve_eccentricity_slice(facts,query)` 固定执行标准模型→RM11/12 derive_c_sq→RM13；唯一方程及轴向预检，无模型预测。命令：`python3 -m src.reasoning.bound_slice --mode eccentricity --problem-id 5988`（其余 ID：7488、1586、4528）。动作 schema 不变，继续 v7 trace。实现 `eccentricity_proposals.py`，测试 `test_bound_eccentricity.py`。

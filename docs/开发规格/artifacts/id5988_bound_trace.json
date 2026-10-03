@@ -1,0 +1,161 @@
+{
+  "schema_version": "bound-slice-v7",
+  "mode": "eccentricity",
+  "problem_id": 5988,
+  "status": "solved",
+  "facts": "G: Ellipse;Expression(G) = (x^2/4 + y^2 = 1)",
+  "query": "Eccentricity(G)",
+  "answer": "sqrt(3)/2",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 3,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'a_sq')": "4",
+          "('G', 'b_sq')": "1"
+        },
+        "values": {},
+        "frames": {
+          "G": {
+            "equation_id": "f1",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x",
+            "direction": null
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "entity:G",
+        "f1:domain:0"
+      ],
+      "operations": [
+        {
+          "operation": "standard_ellipse_x",
+          "equation": "f1",
+          "axis": "x",
+          "a_sq": "4",
+          "b_sq": "1"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 11,
+        "mode": "derive_c_sq",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {
+          "('G', 'c_sq')": "3"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "entity:G",
+        "property:G:a_sq",
+        "property:G:b_sq",
+        "f1:domain:0",
+        "f1",
+        "frame:G"
+      ],
+      "operations": [
+        {
+          "operation": "parameter_relation",
+          "curve": "G",
+          "kind": "Ellipse",
+          "inputs": {
+            "a_sq": "4",
+            "b_sq": "1"
+          },
+          "target": "c_sq",
+          "result": "3"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 13,
+        "mode": "derive_eccentricity",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null
+      },
+      "before_revision": 2,
+      "after_revision": 3,
+      "delta": {
+        "properties": {
+          "('G', 'eccentricity')": "sqrt(3)/2"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "f1",
+        "entity:G",
+        "frame:G",
+        "property:G:a_sq",
+        "property:G:b_sq",
+        "property:G:c_sq",
+        "f1:domain:0"
+      ],
+      "operations": [
+        {
+          "operation": "verify_parameter_identity",
+          "residual": "0"
+        },
+        {
+          "operation": "eccentricity_from_squared_parameters",
+          "a_sq": "4",
+          "c_sq": "3",
+          "result": "sqrt(3)/2"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}

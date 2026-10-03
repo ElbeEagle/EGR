@@ -26,6 +26,10 @@ class EccentricityFormula(TheoremModel):
     输出: e=1/2
     """
     
+    def propose_bound(self, state, action):
+        from ..eccentricity_proposals import derive_eccentricity
+        return derive_eccentricity(state, action)
+
     def __init__(self):
         super().__init__(
             model_id=13,
