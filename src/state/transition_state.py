@@ -33,6 +33,19 @@ class IntersectionReduction:
     xy: tuple[sp.Expr, sp.Expr]
     polynomial: sp.Expr
     source: str
+    named_points: tuple[str, ...] = ()
+    intersection_id: str | None = None
+
+
+@dataclass(frozen=True)
+class LineParameterization:
+    line: str
+    parameter: sp.Symbol
+    point: str
+    coordinate_id: str
+    incidence_id: str
+    intersection_id: str
+    line_equation_id: str
 
 
 @dataclass(frozen=True)
@@ -143,6 +156,8 @@ class TransitionState:
     directrix_aliases: dict[str, DirectrixAlias] = field(default_factory=dict)
 
     intersection_reductions: dict[str, IntersectionReduction] = field(default_factory=dict)
+
+    parameterizations: dict[str, LineParameterization] = field(default_factory=dict)
 
     named_lines: dict[str, NamedLine] = field(default_factory=dict)
     named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)

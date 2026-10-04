@@ -65,3 +65,39 @@ def derive_chord_length(state, action):
                     read_facts=(fact.fact_id, *(f'property:{fact.fact_id}:{n}' for n in names)),
                     operations=[{'operation': 'chord_length_from_root_relations', 'xy': fact.xy,
                                  'root_sum': total, 'root_product': product, 'length': length}])
+
+
+def parameterize_named_line(state, action):
+    import sympy as sp
+    from src.solver.intersection_operations import parameterize_through_point
+    from src.state.transition_state import EquationFact, LineParameterization
+    curve = check_binding(state, action)
+    line_id = f'derived:{action.line}:parameterized'
+    if any(f.owner == action.line and f.role == 'line' and f.fact_id != line_id
+           for f in state.equations.values()):
+        raise TransitionError('inapplicable', 'Line already has an independent equation')
+    parameter = sp.Symbol(f'@parameter:{action.line}:u', real=True)
+    xy = tuple(v.subs(state.values) for v in state.coordinates[action.point].xy)
+    reduction, horizontal = parameterize_through_point(curve.expression.subs(state.values),
+        state.symbols['x'], state.symbols['y'], xy, parameter)
+    n = state.named_intersections[action.relation_id]
+    key = f'derived:intersection:{curve.fact_id}:{line_id}'
+    fact = IntersectionReduction(key, action.curve, action.line, curve.fact_id, line_id,
+        reduction.variable, reduction.xy, reduction.polynomial, 'RM78', n.points, n.fact_id)
+    local = LineParameterization(action.line, parameter, action.point, action.coordinate_id,
+                                action.incidence_id, n.fact_id, line_id)
+    reads = (curve.fact_id, action.coordinate_id, action.incidence_id, n.fact_id,
+             f'identity:{action.line}', *(f'value:{v}' for v in sorted(state.values, key=str)))
+    distinct_guard = sp.Gt(sp.discriminant(fact.polynomial, fact.variable), 0)
+    return Proposal(constraints={f'{key}:distinct_roots': distinct_guard},
+                    equations={line_id: EquationFact(line_id, action.line, 'line',
+                            state.symbols['x']-reduction.xy[0], 'RM78')},
+                    intersection_reductions={key: fact}, parameterizations={action.line: local},
+                    read_facts=reads,
+                    operations=[{'operation':'exclude_horizontal_branch', 'polynomial':horizontal,
+                                 'distinct_intersections':1, 'required':2},
+                                {'operation':'parameterize_through_point', 'parameter':parameter,
+                                 'xy':reduction.xy},
+                                {'operation':'substitute_and_associate_roots', 'polynomial':fact.polynomial,
+                                 'unordered_points':n.points, 'coordinate':'y',
+                                 'required_distinct_guard':distinct_guard}])

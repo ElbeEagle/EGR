@@ -95,3 +95,18 @@ def chord_length_from_relations(root_sum: sp.Expr, root_product: sp.Expr,
     if metric.is_positive is not True or gap.is_positive is not True:
         raise TransitionError('inapplicable', 'Two distinct real points are required')
     return sp.sqrt(sp.simplify(metric*gap))
+
+
+def parameterize_through_point(curve, x, y, xy, parameter):
+    """Exclude the horizontal branch of an x-axis standard parabola pencil."""
+    if any(v.free_symbols or v.is_real is not True or v.is_finite is not True for v in xy):
+        raise TransitionError('undetermined', 'Numeric through-point required')
+    coefficient = parabola_coefficient(curve, x, y, 'x')
+    if coefficient.free_symbols or coefficient.is_real is not True or coefficient.is_finite is not True:
+        raise TransitionError('undetermined', 'Numeric standard parabola required')
+    horizontal = sp.Poly(curve.subs(y, xy[1]), x)
+    if horizontal.degree() != 1 or horizontal.LC().is_zero is not False:
+        raise TransitionError('undetermined', 'Horizontal branch not excluded')
+    lift = (sp.expand(parameter*(y-xy[1])+xy[0]), y)
+    polynomial = sp.Poly(curve.subs(x, lift[0]), y).monic().as_expr()
+    return LineSubstitution(y, lift, polynomial), horizontal.as_expr()

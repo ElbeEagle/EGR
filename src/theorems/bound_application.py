@@ -9,7 +9,7 @@ import sympy as sp
 from src.solver.transition_primitives import (
     TransitionError, truth, ensure_consistent, ellipse_parameters, hyperbola_parameters,
 )
-from src.state.transition_state import TransitionState, CurveFrame, EquationFact, PointCoordinates, IntersectionReduction
+from src.state.transition_state import TransitionState, CurveFrame, EquationFact, PointCoordinates, IntersectionReduction, LineParameterization
 
 
 @dataclass(frozen=True)
@@ -26,6 +26,7 @@ class BoundAction:
     coordinate_id: str | None = None
     line: str | None = None
     point_role: str | None = None
+    incidence_id: str | None = None
 
 
 @dataclass
@@ -40,6 +41,7 @@ class Proposal:
     equations: dict[str, EquationFact] = field(default_factory=dict)
     coordinates: dict[str, PointCoordinates] = field(default_factory=dict)
     intersection_reductions: dict[str, IntersectionReduction] = field(default_factory=dict)
+    parameterizations: dict[str, LineParameterization] = field(default_factory=dict)
 
 
 @dataclass
@@ -56,6 +58,24 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 78 and action.mode == 'parameterize_named_line':
+        curve = state.equations.get(action.equation_id)
+        intersection = state.named_intersections.get(action.relation_id)
+        point = state.coordinates.get(action.point)
+        incidence = state.incidences.get(action.incidence_id)
+        if (curve is None or curve.owner != action.curve or curve.role != 'curve'
+                or state.entities.get(action.curve) != 'Parabola'
+                or action.line not in state.named_lines or intersection is None
+                or (intersection.line, intersection.curve) != (action.line, action.curve)
+                or point is None or point.fact_id != action.coordinate_id
+                or incidence is None or (incidence.point, incidence.curve) != (action.point, action.line)
+                or any(v is not None for v in (action.line_equation_id, action.peer_curve,
+                                               action.peer_equation_id, action.point_role))):
+            raise TransitionError('inapplicable', 'Named line parameterization binding mismatch')
+        return curve
+    if action.incidence_id is not None:
+        raise TransitionError('inapplicable', 'Incidence binding only valid for named parameterization')
+
     if action.model_id in (42, 43, 50):
         check_binding(state, replace(action, model_id=78, relation_id=None))
         fact = state.intersection_reductions.get(action.relation_id)
@@ -209,6 +229,12 @@ def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = 
                    and state.entities.get(c.owner) == 'Parabola'
                    for l in state.equations.values() if l.role == 'line'
                    and state.entities.get(l.owner) == 'Line']
+        actions += [BoundAction(78, 'parameterize_named_line', n.curve, c.fact_id,
+                                relation_id=n.fact_id, line=n.line, point=i.point,
+                                coordinate_id=state.coordinates[i.point].fact_id, incidence_id=i.fact_id)
+                    for n in state.named_intersections.values()
+                    for c in state.equations.values() if c.owner == n.curve and c.role == 'curve'
+                    for i in state.incidences.values() if i.curve == n.line and i.point in state.coordinates]
         return [a for a in actions if mode is None or a.mode == mode]
     if model_id == 39:
         actions = [BoundAction(39, 'derive_tangent', f.owner, f.fact_id,
@@ -404,7 +430,13 @@ class BoundApplicator:
             for key, fact in proposal.equations.items():
                 tangent = (action.model_id == 39 and fact.role == 'tangent'
                            and key == f'derived:{action.curve}:tangent:{action.point}')
-                if key != fact.fact_id or fact.owner != action.curve or (fact.role not in ('asymptote', 'directrix') and not tangent):
+                named_line = (action.model_id == 78 and action.mode == 'parameterize_named_line'
+                              and fact.role == 'line' and fact.owner == action.line
+                              and key == f'derived:{action.line}:parameterized'
+                              and action.line in proposal.parameterizations)
+                if not named_line and (key != fact.fact_id or fact.owner != action.curve or (fact.role not in ('asymptote', 'directrix') and not tangent)):
+                    raise TransitionError('inapplicable', 'Invalid derived equation binding')
+                if key != fact.fact_id:
                     raise TransitionError('inapplicable', 'Invalid derived equation binding')
                 normalized = replace(fact, expression=sp.simplify(fact.expression.subs(values)))
                 if key in equations:
@@ -444,14 +476,35 @@ class BoundApplicator:
                                               'Existing point coordinates disagree with focus')
                 else:
                     coordinates[point] = replace(coordinate, xy=xy)
+            parameterizations = dict(state.parameterizations)
+            for line, fact in proposal.parameterizations.items():
+                if (action.model_id != 78 or action.mode != 'parameterize_named_line'
+                        or line != action.line or fact.line != line
+                        or (fact.point, fact.coordinate_id, fact.incidence_id, fact.intersection_id)
+                        != (action.point, action.coordinate_id, action.incidence_id, action.relation_id)
+                        or fact.parameter != sp.Symbol(f'@parameter:{line}:u', real=True)
+                        or fact.line_equation_id != f'derived:{line}:parameterized'
+                        or fact.line_equation_id not in proposal.equations):
+                    raise TransitionError('inapplicable', 'Invalid local parameter binding')
+                if line in parameterizations and parameterizations[line] != fact:
+                    raise TransitionError('conflict', 'Conflicting line parameterization')
+                parameterizations[line] = fact
+            changed_parameterizations = {k:v for k,v in parameterizations.items() if k not in state.parameterizations}
             reductions = dict(state.intersection_reductions)
             for key, fact in proposal.intersection_reductions.items():
-                if (action.model_id != 78 or action.mode != 'substitute_line'
+                parameterized = action.mode == 'parameterize_named_line'
+                line_id = f'derived:{action.line}:parameterized' if parameterized else action.line_equation_id
+                if parameterized:
+                    n = state.named_intersections[action.relation_id]
+                    if (action.line not in proposal.parameterizations or fact.named_points != n.points
+                            or fact.intersection_id != n.fact_id):
+                        raise TransitionError('inapplicable', 'Invalid unordered named-root association')
+                if (action.model_id != 78 or action.mode not in ('substitute_line', 'parameterize_named_line')
                         or key != fact.fact_id
-                        or key != f'derived:intersection:{action.equation_id}:{action.line_equation_id}'
+                        or key != f'derived:intersection:{action.equation_id}:{line_id}'
                         or (fact.curve, fact.line, fact.curve_equation_id, fact.line_equation_id)
-                        != (action.curve, action.line, action.equation_id, action.line_equation_id)
-                        or not {action.equation_id, action.line_equation_id}.issubset(proposal.read_facts)):
+                        != (action.curve, action.line, action.equation_id, line_id)
+                        or not {action.equation_id, action.relation_id if parameterized else line_id}.issubset(proposal.read_facts)):
                     raise TransitionError('inapplicable', 'Invalid intersection reduction binding')
                 if key in reductions and reductions[key] != fact:
                     raise TransitionError('conflict', 'Conflicting intersection reduction')
@@ -459,7 +512,7 @@ class BoundApplicator:
             changed_reductions = {k: v for k, v in reductions.items() if k not in state.intersection_reductions}
             changed_coordinates = {p: c for p, c in coordinates.items() if p not in state.coordinates}
             changed_equations = {k: v for k, v in equations.items() if state.equations.get(k) != v}
-            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates, changed_reductions)):
+            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates, changed_reductions, changed_parameterizations)):
                 result.status = 'no_op'
                 return result
             result.delta = {'properties': changed_properties, 'values': changed_values}
@@ -473,6 +526,8 @@ class BoundApplicator:
                 result.delta['coordinates'] = changed_coordinates
             if changed_reductions:
                 result.delta['intersection_reductions'] = changed_reductions
+            if changed_parameterizations:
+                result.delta['parameterizations'] = changed_parameterizations
             result.status = 'applied'
             result.after_revision += 1
             provenance = dict(state.provenance)
@@ -492,6 +547,9 @@ class BoundApplicator:
                 provenance[key] = (*proposal.read_facts, f'action:{result.after_revision}')
             for coordinate in changed_coordinates.values():
                 provenance[coordinate.fact_id] = (*proposal.read_facts, f'action:{result.after_revision}')
+            for line in changed_parameterizations:
+                provenance[f'parameterization:{line}'] = (*proposal.read_facts, f'action:{result.after_revision}')
+            state.parameterizations = parameterizations
             state.intersection_reductions = reductions
             state.coordinates = coordinates
             state.properties, state.values, state.provenance = properties, values, provenance

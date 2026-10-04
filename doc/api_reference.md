@@ -219,6 +219,7 @@ RM13 必须已有 a_sq、b_sq、c_sq 和匹配标准框架；复用 bound_parame
 ### RM78 直线代入消元（数值首批）
 
 `src.solver.intersection_operations.substitute_line_in_parabola(curve,line,x,y)` 返回 `LineSubstitution(variable,xy,polynomial)`，这是公共计算的返回值结构，保存保留变量、坐标还原映射与一元多项式，尚不带题目对象或来源；输入为等于零的表达式，限数值标准抛物线／独立仿射直线。优先 x=my+n，水平线改以 x 为变量；输出首一的一次或二次多项式和坐标还原映射，不求根、不判定两实交点。
+`LineSubstitution` 是一个保存“直线代入曲线后的计算结果”的数据结构
 
 `enumerate_actions(state,78,'substitute_line')` 使用 curve/equation_id/line/line_equation_id，其他字段留空。`IntersectionReduction` 是交点消元结果记录，由 RM78 提案生成，供后续根关系／交点计算读取，定义本身不执行消元。它保存两对象、两方程 ID、variable、xy、polynomial、source；稳定键为 `derived:intersection:{curve_equation_id}:{line_equation_id}`。`Proposal.intersection_reductions` 经应用器提交到 `state.intersection_reductions`，写入 delta 与 provenance，重复 no_op、冲突回滚。未定系数 undetermined，非标准／退化输入 inapplicable。无需先执行标准参数模型，不修改坐标／标量赋值。
 
@@ -246,4 +247,15 @@ intersection_proposals.py 的 `derive_root_relation` 组织 RM42/43 提案，分
 
 `SlopeSum`／state.slope_sums 保存 base_point、endpoints、value 和 nonzero_x_differences。后者记录 (终点,起点) 的 x 坐标差非零要求，供后续 RM55 验证，不是已证明约束；本批不生成坐标符号或代数分母。斜率和限有限数值、同起点及两个不同终点。
 
-`NamedLineQuery(line)` 表示 Expression(LineOf(A,B)) 的目标，不执行参数化。extract_answer 只读唯一所属 line 方程，缺失、歧义或仍含待定参数返回 None。Origin 声明按定义保存为 Point 与来源明确的 (0,0)，重复坐标暂拒绝。未知直线 RM78、符号韦达和 RM55 尚未接入；实际契约见[规格](../docs/开发规格/24_ID56命名直线与参数化契约.md)。
+`NamedLineQuery(line)` 表示 Expression(LineOf(A,B)) 的目标，不执行参数化。extract_answer 只读唯一所属 line 方程，缺失、歧义或仍含待定参数返回 None。Origin 声明按定义保存为 Point 与来源明确的 (0,0)，重复坐标暂拒绝。未知直线 RM78 已由下节接入；符号韦达和 RM55 尚未接入；实际契约见[规格](../docs/开发规格/24_ID56命名直线与参数化契约.md)。
+
+
+### RM78 未知命名直线参数化
+
+`parameterize_through_point`（intersection_operations.py）检查数值 x 轴标准抛物线的水平分支只产生一个交点，返回过点直线族的坐标映射、符号消元式与水平分支证据。`parameterize_named_line`（intersection_proposals.py）组织这些结果和给定两交点的 Δ>0 要求，提出状态变化；model_078.py 按模式转交，提交仍由应用器完成。
+
+模式 `parameterize_named_line` 使用 curve/equation_id、line、point/coordinate_id、relation_id（NamedIntersection ID）及新增 incidence_id（过点归属 ID），line_equation_id 留空。enumerate_actions 从已有交点／数值过点事实产生候选；不要求初态已有未知直线方程。
+
+`LineParameterization` 保存直线作用域的参数、过点与来源 ID、派生直线 ID；`Proposal.parameterizations` 是待提交记录，提交后位于 `state.parameterizations[line]`。参数名 `@parameter:{line}:u` 与原题标量隔离，重复不重新创建自由度。`IntersectionReduction.named_points/intersection_id` 保存无序根标签与原声明来源，配合 variable／xy 供后续符号韦达及 RM55 使用；不产生点坐标。
+
+应用器一次提交参数、派生 line 方程、消元及条件；来源不一致或结果冲突不部分提交。已有独立直线不替换，同线不同表示暂不合并。查询仍只读，含未定参数返回 None。首批不支持 y 轴／平移抛物线、符号输入系数；符号 RM42/43、RM55 及新消元结构赋值归约后续实现，见[记录](../docs/开发规格/25_ID56参数化与命名根关联实现.md)。

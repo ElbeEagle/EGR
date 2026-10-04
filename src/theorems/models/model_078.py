@@ -79,5 +79,7 @@ class SubstitutionXEqualsMYPlusN(TheoremModel):
             return False
 
     def propose_bound(self, state, action):
-        from ..intersection_proposals import substitute_bound_line
+        from ..intersection_proposals import substitute_bound_line, parameterize_named_line
+        if action.mode == 'parameterize_named_line':
+            return parameterize_named_line(state, action)
         return substitute_bound_line(state, action)

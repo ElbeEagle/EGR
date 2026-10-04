@@ -30,7 +30,8 @@
 
 - `doc/project_structure.md`：仅更新受影响的关键文件职责、能力／接入状态及下一步。
 - `doc/api_reference.md`：仅更新变化的接口、行为与适用范围，避免复制源码和进度统计。
-- `dev_record.md`：保留旧记录，追加日期、变更、文件、验证及剩余限制(简要说明)；长说明链接到对应规格／实现记录。
+- `dev_record.md`：保留旧记录，追加日期、开发记录、变更、文件、验证及剩余限制(简要说明)；长说明链接到对应规格／实现记录。每条工作记录（包括同一天的不同批次）在标题后的第一项，必须列出本批对应的开发记录文件，使用仓库相对路径和可点击链接：
+  - **实现记录**：[docs/开发规格/NN_名称.md](docs/开发规格/NN_名称.md)
 - `docs/开发规格/`：仅在职责、设计或案例变化时更新。文档应简短，避免多处重复同一份功能清单。
 - 回复默认中文，给出简短摘要、改动文件和验证结果。代码任务附英文的 <=72 字符的 commit summary，以及包含 Current date、What done/changed(说明新增或修改的核心功能/函数)、Effect(能实现之前不能实现的哪些功能、效果)、Which files added/updated、Next step work 的 commit description；生成说明不等于自动提交。
 
@@ -57,19 +58,22 @@
 Current date: 2026-10-03
 
 What done/changed:
-- 新增 intersection_operations.py，负责直线与抛物线联立时的公共代入消元计算；substitute_line_in_parabola 将直线表达式代入抛物线，返回一元方程及坐标还原映射。
-- 新增 intersection_proposals.py，负责组织 RM78 的状态更新提案；substitute_bound_line 检查指定曲线和直线的绑定，调用消元计算，将结果与来源交给应用器提交。
-- 在 transition_state.py 新增IntersectionReduction 数据结构，保存消元方程、参与对象及坐标还原映射，供后续根关系计算使用。
+- 新增 named_line_facts.py，解析命名直线、交点集合和斜率和。
+  register_named_line 统一 AB/BA 身份，parse_named_line_fact 记录给定关系。
+- NamedLine 保存身份和端点；NamedIntersection 保存无序交点标签及来源，
+  供后续 RM78 关联根；SlopeSum 保存斜率和及待验证分母要求，供 RM55 使用。
+- 更新 transition_state.py：from_facts 接入结构与 Origin 坐标定义；
+  NamedLineQuery 只表达目标，extract_answer 只读已有直线方程。
+- 明确水平分支排除、局部参数作用域、无序根对及分母证据的执行职责。
 
 Effect:
-- ID6347 可生成 y²−4y−4=0，并保留根 t 对应点 (t+1,t) 的关系。
-- 本批完成消元子步骤；实交点判定和弦长查询尚未接入。
-- 新增24项测试通过，相关回归375项通过。
+- ID56 原始输入可完整解析，不提前生成参数、根坐标或答案。
+- 新增14项测试、相关回归416项通过，文档与证据检查通过。
 
 Which files added/updated:
-- 新增：intersection_operations.py、intersection_proposals.py、test_bound_intersection_reduction.py。
-- 更新：transition_state.py、bound_application.py、model_078.py 及对应维护文档。
+- 新增 named_line_facts.py、test_bound_named_line_input.py、规格及初态证据。
+- 更新 transition_state.py、三份维护文档及规格导航。
 
 Next step work:
-- 实现 RM42/43 根关系及实根对资格检查，再接入RM50弦长计算与查询。
+- 实现 RM78 参数化与根对关联，再扩展符号根关系和 RM55。
 ```

@@ -1,0 +1,111 @@
+{
+  "schema_version": "named-parameterization-v1",
+  "problem_id": 56,
+  "scope": "RM78 substep only",
+  "facts": "G: Parabola;A: Point;B: Point;O: Origin;M: Point;Expression(G) = (y^2 = 2*x);Coordinate(M) = (1, 0);PointOnCurve(M,LineOf(A,B));Intersection(LineOf(A,B), G) = {A, B};Slope(LineSegmentOf(O, A))+Slope(LineSegmentOf(O, B)) = 1",
+  "query": "Expression(LineOf(A,B))",
+  "answer": null,
+  "transition": {
+    "status": "applied",
+    "action": {
+      "model_id": 78,
+      "mode": "parameterize_named_line",
+      "curve": "G",
+      "equation_id": "f5",
+      "line_equation_id": null,
+      "relation_id": "f8",
+      "peer_curve": null,
+      "peer_equation_id": null,
+      "point": "M",
+      "coordinate_id": "f6",
+      "line": "@line:A:B",
+      "point_role": null,
+      "incidence_id": "f7"
+    },
+    "before_revision": 0,
+    "after_revision": 1,
+    "delta": {
+      "properties": {},
+      "values": {},
+      "constraints": {
+        "derived:intersection:f5:derived:@line:A:B:parameterized:distinct_roots": "True"
+      },
+      "equations": {
+        "derived:@line:A:B:parameterized": {
+          "fact_id": "derived:@line:A:B:parameterized",
+          "owner": "@line:A:B",
+          "role": "line",
+          "expression": "-@parameter:@line:A:B:u*y + x - 1",
+          "source": "RM78"
+        }
+      },
+      "intersection_reductions": {
+        "derived:intersection:f5:derived:@line:A:B:parameterized": {
+          "fact_id": "derived:intersection:f5:derived:@line:A:B:parameterized",
+          "curve": "G",
+          "line": "@line:A:B",
+          "curve_equation_id": "f5",
+          "line_equation_id": "derived:@line:A:B:parameterized",
+          "variable": "y",
+          "xy": [
+            "@parameter:@line:A:B:u*y + 1",
+            "y"
+          ],
+          "polynomial": "-2*@parameter:@line:A:B:u*y + y**2 - 2",
+          "source": "RM78",
+          "named_points": [
+            "A",
+            "B"
+          ],
+          "intersection_id": "f8"
+        }
+      },
+      "parameterizations": {
+        "@line:A:B": {
+          "line": "@line:A:B",
+          "parameter": "@parameter:@line:A:B:u",
+          "point": "M",
+          "coordinate_id": "f6",
+          "incidence_id": "f7",
+          "intersection_id": "f8",
+          "line_equation_id": "derived:@line:A:B:parameterized"
+        }
+      }
+    },
+    "read_facts": [
+      "f5",
+      "f6",
+      "f7",
+      "f8",
+      "identity:@line:A:B"
+    ],
+    "operations": [
+      {
+        "operation": "exclude_horizontal_branch",
+        "polynomial": "-2*x",
+        "distinct_intersections": 1,
+        "required": 2
+      },
+      {
+        "operation": "parameterize_through_point",
+        "parameter": "@parameter:@line:A:B:u",
+        "xy": [
+          "@parameter:@line:A:B:u*y + 1",
+          "y"
+        ]
+      },
+      {
+        "operation": "substitute_and_associate_roots",
+        "polynomial": "-2*@parameter:@line:A:B:u*y + y**2 - 2",
+        "unordered_points": [
+          "A",
+          "B"
+        ],
+        "coordinate": "y",
+        "required_distinct_guard": "True"
+      }
+    ],
+    "candidates": [],
+    "diagnostic": ""
+  }
+}

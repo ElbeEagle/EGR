@@ -25,7 +25,7 @@ def test_original_input_no_inference():
     assert set(s.coordinates)=={'O','M'}
     assert len(s.equations)==1 and not s.intersection_reductions
     assert not s.values and not s.properties and not s.history and s.revision==0
-    assert not enumerate_actions(s,78) # Unknown-line mode is a later batch.
+    assert not enumerate_actions(s,78,'substitute_line') # No explicit numeric line equation.
     before=deepcopy(s);assert s.extract_answer() is None and s==before
     assert len(s.incidences)==5
     for key in s.incidences:
