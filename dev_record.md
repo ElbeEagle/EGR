@@ -555,3 +555,11 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **文件**：新增 model_050.py、test_bound_chord_length.py、[闭环规格](docs/开发规格/23_ID6347根关系与弦长闭环.md)和 v8 轨迹；更新公共计算、提案、状态、应用器、RM42/43、定理库、回放入口及三份维护文档／规格导航。
 - **验证**：新增 27 项、相关回归 402 passed；原题 CLI 成功，独立交点距离、顺序交换、水平／竖直线、相切／无实根／一次式、隔离和回滚通过。
 - **限制／下一步**：数值标准抛物线与独立直线固定链；不生成命名交点，不代表自主选择。下一批明确 ID56 未知直线参数化、命名根关联与斜率非零条件。
+
+
+## 2026-10-03｜ID56 参数化契约与命名直线初态
+
+- **文件职责**：新增 named_line_facts.py，解析命名直线、交点集合和斜率和；更新 transition_state.py 接入这些给定结构、Origin 坐标定义和只读直线查询。新增 test_bound_named_line_input.py 验证原题及输入边界。
+- **核心定义**：register_named_line 规范端点顺序与直线身份，parse_named_line_fact 记录关系；NamedLine 保存身份，NamedIntersection 保存无序点集来源，SlopeSum 保存数值斜率和及待验证非零 x 差，分别供 RM78／RM55 后续消费。NamedLineQuery 只表达目标；from_facts 不生成参数，extract_answer 不求参。
+- **效果／验证**：ID56 原始 facts/query 可完整解析；14 项新增、416 项相关回归通过，保存 parsed_only 初态证据，答案仍为空、revision=0。
+- **契约／下一步**：明确水平分支排除、局部参数作用域、无序根对及分母证据，见[规格](docs/开发规格/24_ID56命名直线与参数化契约.md)。下一批先实现 RM78 参数化与根对关联，再扩展符号根关系及 RM55；本批不是原题求解闭环。

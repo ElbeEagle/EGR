@@ -236,3 +236,14 @@ intersection_proposals.py 的 `derive_root_relation` 组织 RM42/43 提案，分
 结果沿用 `properties[(消元事实ID, 属性名)]`，属性为 root_sum、root_product、discriminant、distinct_real_roots、chord_length；应用器复用属性原子提交与来源记录。RM42/43 可交换执行；Δ≤0 仍可记录代数关系，但 RM50 inapplicable；一次式不适用二次根关系。缺属性不推导，结果与源式不一致 conflict，重复 no_op。
 
 `ChordLengthQuery(line,curve)` 表示 Length(InterceptChord(H,G)) 的求解目标，限独立 Line／Parabola；不在解析时推导。extract_answer 按唯一曲线／直线方程对读取 chord_length，缺失或歧义返回 None。`solve_chord_length_slice(facts,query)` 固定回放 RM78→RM42→RM43→RM50，不使用弱标注。CLI：`python3 -m src.reasoning.bound_slice --mode chord-length --problem-id 6347`；该模式输出 v8 轨迹，其他模式保留 v7。
+
+
+### ID56 命名直线输入（仅结构化初态）
+
+`src.state.named_line_facts` 负责解析命名直线及相关给定关系，不计算直线方程。`register_named_line` 校验点标签并将 LineOf(A,B)/LineOf(B,A) 规范为同一 @line:A:B；`NamedLine` 和 state.named_lines 保存身份及无序端点。查询引用仅登记身份，不证明两点坐标不同或生成归属。
+
+`parse_named_line_fact` 接入 from_facts，识别 PointOnCurve(M,LineOf(A,B))、Intersection(LineOf(A,B),G)={A,B} 和同起点两线段斜率和等于数值。`NamedIntersection`／state.named_intersections 保存直线、抛物线及无序点集来源，供后续 RM78 关联根；给定交点隐含的归属保留原事实 ID。当前要求交点标签与 LineOf 端点一致。
+
+`SlopeSum`／state.slope_sums 保存 base_point、endpoints、value 和 nonzero_x_differences。后者记录 (终点,起点) 的 x 坐标差非零要求，供后续 RM55 验证，不是已证明约束；本批不生成坐标符号或代数分母。斜率和限有限数值、同起点及两个不同终点。
+
+`NamedLineQuery(line)` 表示 Expression(LineOf(A,B)) 的目标，不执行参数化。extract_answer 只读唯一所属 line 方程，缺失、歧义或仍含待定参数返回 None。Origin 声明按定义保存为 Point 与来源明确的 (0,0)，重复坐标暂拒绝。未知直线 RM78、符号韦达和 RM55 尚未接入；实际契约见[规格](../docs/开发规格/24_ID56命名直线与参数化契约.md)。

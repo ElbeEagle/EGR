@@ -8,6 +8,8 @@ from typing import Any
 import sympy as sp
 
 from src.solver.transition_primitives import parse_expression
+from .named_line_facts import (NamedLine, NamedIntersection, SlopeSum, NamedLineQuery,
+                               LINE, register_named_line, parse_named_line_fact)
 from .abstract_state import AbstractState, CurveType, QueryType
 
 
@@ -126,7 +128,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery | TangentQuery | ChordLengthQuery
+    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery | TangentQuery | ChordLengthQuery | NamedLineQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -141,6 +143,10 @@ class TransitionState:
     directrix_aliases: dict[str, DirectrixAlias] = field(default_factory=dict)
 
     intersection_reductions: dict[str, IntersectionReduction] = field(default_factory=dict)
+
+    named_lines: dict[str, NamedLine] = field(default_factory=dict)
+    named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)
+    slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
     def line_bindings(self, line: str):
         """Resolve identity only; never derive equations or reconcile alternatives."""
@@ -161,12 +167,12 @@ class TransitionState:
         parts = [p.strip() for p in facts.split(';') if p.strip()]
         entities = {}
         for part in parts:
-            declaration = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Number|Real)', part)
+            declaration = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Origin|Number|Real)', part)
             if declaration:
                 name, kind = declaration.groups()
                 if name in ('x', 'y') or name in entities:
                     raise ValueError('Duplicate or reserved entity')
-                entities[name] = kind
+                entities[name] = 'Point' if kind == 'Origin' else kind
         symbols = {name: sp.Symbol(name, real=True) for name in ('x', 'y')}
         symbols.update({name: sp.Symbol(name, real=True) for name, kind in entities.items()
                         if kind in ('Number', 'Real')})
@@ -178,7 +184,8 @@ class TransitionState:
         eccentricity_query = re.fullmatch(r'Eccentricity\(\s*([A-Za-z]\w*)\s*\)', query_text)
         tangent_query = re.fullmatch(r'Expression\(TangentOnPoint\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
         chord_query = re.fullmatch(r'Length\(InterceptChord\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
-        if query is None:
+        named_line_query = re.fullmatch(rf'Expression\(\s*{LINE}\s*\)', query_text)
+        if query is None or named_line_query:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
         elif chord_query and entities.get(chord_query.group(1)) == 'Line' and entities.get(chord_query.group(2)) == 'Parabola':
             target = ChordLengthQuery(*chord_query.groups())
@@ -199,9 +206,21 @@ class TransitionState:
         else:
             raise ValueError('Unsupported or undeclared query target')
         state = cls(entities, symbols, {}, {}, target)
+        if named_line_query:
+            state.query = NamedLineQuery(register_named_line(state, *named_line_query.groups(), 'query'))
         for index, part in enumerate(parts):
             fact_id = f'f{index}'
-            if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Number|Real)', part):
+            origin = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*Origin', part)
+            if origin:
+                point = origin.group(1)
+                if point in state.coordinates:
+                    raise ValueError('Duplicate origin coordinate')
+                state.coordinates[point] = PointCoordinates(fact_id, point, (sp.S.Zero, sp.S.Zero), part)
+                state.provenance[fact_id] = (f'entity:{point}',)
+                continue
+            if parse_named_line_fact(state, part, fact_id):
+                continue
+            if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Origin|Number|Real)', part):
                 continue
             intersection = re.fullmatch(
                 r'Coordinate\(OneOf\(Intersection\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)\)\s*=\s*\(([^,]+),([^,]+)\)', part)
@@ -300,7 +319,7 @@ class TransitionState:
         return AbstractState(
             curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE, 'Parabola': CurveType.PARABOLA}.get(
                 self.entities.get(curve), CurveType.UNKNOWN),
-            query_type=(QueryType.EQUATION if isinstance(self.query, (AsymptoteQuery, TangentQuery)) else
+            query_type=(QueryType.EQUATION if isinstance(self.query, (AsymptoteQuery, TangentQuery, NamedLineQuery)) else
                         QueryType.DISTANCE if isinstance(self.query, (FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery, ChordLengthQuery)) else QueryType.VALUE),
             has_equation=any(f.owner == curve and f.role in ('curve', 'line') for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),
@@ -311,6 +330,14 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, NamedLineQuery):
+            equations = [f for f in self.equations.values() if f.owner == self.query.line and f.role == 'line']
+            if len(equations) != 1:
+                return None
+            expression = equations[0].expression
+            if expression.free_symbols - {self.symbols['x'], self.symbols['y']}:
+                return None
+            return expression
         if isinstance(self.query, ChordLengthQuery):
             curves = [f for f in self.equations.values() if f.owner == self.query.curve and f.role == 'curve']
             lines = [f for f in self.equations.values() if f.owner == self.query.line and f.role == 'line']

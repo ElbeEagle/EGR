@@ -1,0 +1,94 @@
+{
+  "schema_version": "named-line-input-v1",
+  "problem_id": 56,
+  "facts": "G: Parabola;A: Point;B: Point;O: Origin;M: Point;Expression(G) = (y^2 = 2*x);Coordinate(M) = (1, 0);PointOnCurve(M,LineOf(A,B));Intersection(LineOf(A,B), G) = {A, B};Slope(LineSegmentOf(O, A))+Slope(LineSegmentOf(O, B)) = 1",
+  "query": "Expression(LineOf(A,B))",
+  "status": "parsed_only",
+  "answer": null,
+  "named_lines": {
+    "@line:A:B": {
+      "line": "@line:A:B",
+      "endpoints": [
+        "A",
+        "B"
+      ]
+    }
+  },
+  "named_intersections": {
+    "f8": {
+      "fact_id": "f8",
+      "line": "@line:A:B",
+      "curve": "G",
+      "points": [
+        "A",
+        "B"
+      ],
+      "source": "Intersection(LineOf(A,B), G) = {A, B}"
+    }
+  },
+  "slope_sums": {
+    "f9": {
+      "fact_id": "f9",
+      "base_point": "O",
+      "endpoints": [
+        "A",
+        "B"
+      ],
+      "value": "1",
+      "nonzero_x_differences": [
+        [
+          "A",
+          "O"
+        ],
+        [
+          "B",
+          "O"
+        ]
+      ],
+      "source": "Slope(LineSegmentOf(O, A))+Slope(LineSegmentOf(O, B)) = 1"
+    }
+  },
+  "coordinates": {
+    "O": {
+      "fact_id": "f3",
+      "point": "O",
+      "xy": [
+        "0",
+        "0"
+      ],
+      "source": "O: Origin"
+    },
+    "M": {
+      "fact_id": "f6",
+      "point": "M",
+      "xy": [
+        "1",
+        "0"
+      ],
+      "source": "Coordinate(M) = (1, 0)"
+    }
+  },
+  "provenance": {
+    "identity:@line:A:B": [
+      "query",
+      "f7",
+      "f8"
+    ],
+    "f3": [
+      "entity:O"
+    ],
+    "f8:on:A:@line:A:B": [
+      "f8"
+    ],
+    "f8:on:A:G": [
+      "f8"
+    ],
+    "f8:on:B:@line:A:B": [
+      "f8"
+    ],
+    "f8:on:B:G": [
+      "f8"
+    ]
+  },
+  "revision": 0
+}
