@@ -27,6 +27,7 @@ class BoundAction:
     line: str | None = None
     point_role: str | None = None
     incidence_id: str | None = None
+    slope_sum_id: str | None = None
 
 
 @dataclass
@@ -58,6 +59,16 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 55:
+        fact = check_binding(state, replace(action, model_id=42, slope_sum_id=None))
+        slope = state.slope_sums.get(action.slope_sum_id)
+        if (slope is None or not fact.named_points or slope.endpoints != fact.named_points
+                or slope.nonzero_x_differences != tuple((p, slope.base_point) for p in fact.named_points)):
+            raise TransitionError('inapplicable', 'Slope sum and named-root binding mismatch')
+        return fact
+    if action.slope_sum_id is not None:
+        raise TransitionError('inapplicable', 'Slope sum binding only valid for RM55')
+
     if action.model_id == 78 and action.mode == 'parameterize_named_line':
         curve = state.equations.get(action.equation_id)
         intersection = state.named_intersections.get(action.relation_id)
@@ -216,6 +227,13 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id == 55:
+        actions = [BoundAction(55, 'solve_slope_sum', f.curve, f.curve_equation_id,
+                               line=f.line, line_equation_id=f.line_equation_id,
+                               relation_id=f.fact_id, slope_sum_id=c.fact_id)
+                   for f in state.intersection_reductions.values() for c in state.slope_sums.values()
+                   if f.named_points and f.named_points == c.endpoints]
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id in (42, 43, 50):
         name = {42: 'derive_root_sum', 43: 'derive_root_product', 50: 'derive_chord_length'}[model_id]
         actions = [BoundAction(model_id, name, f.curve, f.curve_equation_id,
@@ -506,10 +524,21 @@ class BoundApplicator:
                         != (action.curve, action.line, action.equation_id, line_id)
                         or not {action.equation_id, action.relation_id if parameterized else line_id}.issubset(proposal.read_facts)):
                     raise TransitionError('inapplicable', 'Invalid intersection reduction binding')
+                fact = replace(fact, polynomial=sp.simplify(fact.polynomial.subs(values)),
+                               xy=tuple(sp.simplify(v.subs(values)) for v in fact.xy))
                 if key in reductions and reductions[key] != fact:
                     raise TransitionError('conflict', 'Conflicting intersection reduction')
                 reductions[key] = fact
-            changed_reductions = {k: v for k, v in reductions.items() if k not in state.intersection_reductions}
+            for key, fact in list(reductions.items()):
+                reduced = replace(fact, polynomial=sp.simplify(fact.polynomial.subs(values)),
+                                  xy=tuple(sp.simplify(v.subs(values)) for v in fact.xy))
+                if reduced != fact:
+                    result.operations.append({'operation': 'restricted_substitution', 'intersection': key,
+                                              'before': fact.polynomial, 'after': reduced.polynomial,
+                                              'xy_before': fact.xy, 'xy_after': reduced.xy,
+                                              'substitution': dict(values)})
+                    reductions[key] = reduced
+            changed_reductions = {k: v for k, v in reductions.items() if state.intersection_reductions.get(k) != v}
             changed_coordinates = {p: c for p, c in coordinates.items() if p not in state.coordinates}
             changed_equations = {k: v for k, v in equations.items() if state.equations.get(k) != v}
             if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates, changed_reductions, changed_parameterizations)):
@@ -544,7 +573,8 @@ class BoundApplicator:
                 provenance[key] = tuple(dict.fromkeys(
                     (*provenance.get(key, ()), *proposal.read_facts, f'action:{result.after_revision}')))
             for key in changed_reductions:
-                provenance[key] = (*proposal.read_facts, f'action:{result.after_revision}')
+                provenance[key] = tuple(dict.fromkeys((*provenance.get(key, ()), *proposal.read_facts,
+                                                       f'action:{result.after_revision}')))
             for coordinate in changed_coordinates.values():
                 provenance[coordinate.fact_id] = (*proposal.read_facts, f'action:{result.after_revision}')
             for line in changed_parameterizations:

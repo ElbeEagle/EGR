@@ -8,8 +8,8 @@
 | --- | --- |
 | `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与已支持的查询（或 None）→ 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
 | `BoundAction`（`src.theorems.bound_application`） | `model_id, mode`；曲线模式使用 `curve`，独立直线 RM52 使用 `line` 且 `curve/equation_id=None`；曲线模式的 `equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
-| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM42/43、RM50、RM52、RM72、RM78；可按模式过滤；不保证候选已满足所有数学前提 |
-| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM39、RM42/43、RM50、RM52、RM72、RM78 提供有限模式实现 |
+| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM42/43、RM50、RM52、RM55、RM72、RM78；可按模式过滤；不保证候选已满足所有数学前提 |
+| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM39、RM42/43、RM50、RM52、RM55、RM72、RM78 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
 | `state.extract_answer()` | 按查询类型读取已提交的标量、渐近线、焦半径、点／焦点到直线距离、离心率、切线方程或弦长；未确定返回 `None`，不在此推导 |
@@ -247,7 +247,7 @@ intersection_proposals.py 的 `derive_root_relation` 组织 RM42/43 提案，分
 
 `SlopeSum`／state.slope_sums 保存 base_point、endpoints、value 和 nonzero_x_differences。后者记录 (终点,起点) 的 x 坐标差非零要求，供后续 RM55 验证，不是已证明约束；本批不生成坐标符号或代数分母。斜率和限有限数值、同起点及两个不同终点。
 
-`NamedLineQuery(line)` 表示 Expression(LineOf(A,B)) 的目标，不执行参数化。extract_answer 只读唯一所属 line 方程，缺失、歧义或仍含待定参数返回 None。Origin 声明按定义保存为 Point 与来源明确的 (0,0)，重复坐标暂拒绝。未知直线 RM78 已由下节接入；符号韦达和 RM55 尚未接入；实际契约见[规格](../docs/开发规格/24_ID56命名直线与参数化契约.md)。
+`NamedLineQuery(line)` 表示 Expression(LineOf(A,B)) 的目标，不执行参数化。extract_answer 只读唯一所属 line 方程，缺失、歧义或仍含待定参数返回 None。Origin 声明按定义保存为 Point 与来源明确的 (0,0)，重复坐标暂拒绝。未知直线 RM78 已由下节接入；符号韦达与 RM55 已由后节有限模式接入；实际契约见[规格](../docs/开发规格/24_ID56命名直线与参数化契约.md)。
 
 
 ### RM78 未知命名直线参数化
@@ -258,4 +258,17 @@ intersection_proposals.py 的 `derive_root_relation` 组织 RM42/43 提案，分
 
 `LineParameterization` 保存直线作用域的参数、过点与来源 ID、派生直线 ID；`Proposal.parameterizations` 是待提交记录，提交后位于 `state.parameterizations[line]`。参数名 `@parameter:{line}:u` 与原题标量隔离，重复不重新创建自由度。`IntersectionReduction.named_points/intersection_id` 保存无序根标签与原声明来源，配合 variable／xy 供后续符号韦达及 RM55 使用；不产生点坐标。
 
-应用器一次提交参数、派生 line 方程、消元及条件；来源不一致或结果冲突不部分提交。已有独立直线不替换，同线不同表示暂不合并。查询仍只读，含未定参数返回 None。首批不支持 y 轴／平移抛物线、符号输入系数；符号 RM42/43、RM55 及新消元结构赋值归约后续实现，见[记录](../docs/开发规格/25_ID56参数化与命名根关联实现.md)。
+应用器一次提交参数、派生 line 方程、消元及条件；来源不一致或结果冲突不部分提交。已有独立直线不替换，同线不同表示暂不合并。查询仍只读，含未定参数返回 None。首批不支持 y 轴／平移抛物线、符号输入系数；符号 RM42/43、RM55 及新消元结构赋值归约现已按后节接入，见[记录](../docs/开发规格/25_ID56参数化与命名根关联实现.md)。
+
+
+### ID56 符号韦达与 RM55 斜率和求参
+
+`quadratic_coefficients`／`quadratic_root_relation` 增加 parameters 白名单，允许已登记局部实参数，首项仍须非零数值；`classify_quadratic_roots` 可读取条件判断判别式。`derive_root_relation` 核验参数作用域和 NamedIntersection 的同源关联后，提出 S/P 与资格属性及来源，不直接写状态。
+
+新增 slope_proposals.py 组织 RM55 提案。`solve_named_slope_sum` 消费既有根和积、实根资格、原点坐标及给定斜率和；对 y²=cx 先证明 P≠0、x_Ax_B=P²/c²≠0，再用 cS/P 建立约束，复用 finite_real_solutions 返回唯一赋值提案。缺关系不内部执行韦达，不支持非原点起点／未知曲线系数／符号首项。
+
+RM55 模式 solve_slope_sum 绑定 curve/equation_id/line/line_equation_id、relation_id（消元事实）和新增 slope_sum_id（SlopeSum）；其他字段为空。check_binding 核对命名端点与分母要求，enumerate_actions 仅列结构候选。重复 no_op、冲突不提交，未定或多解不任选。
+
+应用器新增对 IntersectionReduction.polynomial／xy 的已知值回代，记录 restricted_substitution 与累计来源；与 values、派生直线和属性归约一起提交。LineParameterization 保留参数身份，值存于 values；不生成 A/B 坐标。已有 NamedLineQuery 仍只读最终方程。
+
+`solve_named_slope_slice(facts,query)` 固定组织 RM78→RM42→RM43→RM55，要求唯一参数化及根／斜率绑定。CLI `python3 -m src.reasoning.bound_slice --mode named-slope --problem-id 56` 输出 v9；不使用 gold 模型序列。边界与文件释义见[记录](../docs/开发规格/26_ID56符号韦达与斜率求参闭环.md)。

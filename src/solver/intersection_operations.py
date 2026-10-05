@@ -1,7 +1,7 @@
 """Exact line substitution; no root solving, point naming or state mutation."""
 from dataclasses import dataclass
 import sympy as sp
-from .transition_primitives import TransitionError
+from .transition_primitives import TransitionError, truth
 from .parabola_operations import parabola_coefficient
 
 
@@ -46,28 +46,30 @@ class QuadraticRootStatus:
     distinct_real_roots: int
 
 
-def quadratic_coefficients(polynomial: sp.Expr, variable: sp.Symbol):
+def quadratic_coefficients(polynomial: sp.Expr, variable: sp.Symbol, parameters=()):
     """Validate a numeric quadratic without solving for its roots."""
     poly = sp.Poly(polynomial, variable)
     if poly.degree() != 2:
         raise TransitionError('inapplicable', 'A quadratic root pair is required')
     coefficients = tuple(poly.all_coeffs())
-    if any(v.free_symbols or v.is_real is not True or v.is_finite is not True for v in coefficients):
+    if any(v.free_symbols - set(parameters) or v.is_real is not True or v.is_finite is not True for v in coefficients):
         raise TransitionError('undetermined', 'Finite real quadratic coefficients required')
+    if coefficients[0].free_symbols or coefficients[0].is_zero is not False:
+        raise TransitionError('undetermined', 'Nonzero numeric leading coefficient required')
     return coefficients
 
 
-def quadratic_root_relation(polynomial: sp.Expr, variable: sp.Symbol, kind: str) -> sp.Expr:
-    a, b, c = quadratic_coefficients(polynomial, variable)
+def quadratic_root_relation(polynomial: sp.Expr, variable: sp.Symbol, kind: str, parameters=()) -> sp.Expr:
+    a, b, c = quadratic_coefficients(polynomial, variable, parameters)
     if kind not in ('sum', 'product'):
         raise TransitionError('inapplicable', 'Unknown root relation')
     return sp.cancel(-b/a if kind == 'sum' else c/a)
 
 
-def classify_quadratic_roots(polynomial: sp.Expr, variable: sp.Symbol) -> QuadraticRootStatus:
-    a, b, c = quadratic_coefficients(polynomial, variable)
+def classify_quadratic_roots(polynomial: sp.Expr, variable: sp.Symbol, parameters=(), constraints=()) -> QuadraticRootStatus:
+    a, b, c = quadratic_coefficients(polynomial, variable, parameters)
     discriminant = sp.simplify(b*b-4*a*c)
-    if discriminant.is_positive:
+    if truth(discriminant > 0, constraints) is True:
         count = 2
     elif discriminant.is_zero:
         count = 1

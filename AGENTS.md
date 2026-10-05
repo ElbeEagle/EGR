@@ -31,7 +31,7 @@
 - `doc/project_structure.md`：仅更新受影响的关键文件职责、能力／接入状态及下一步。
 - `doc/api_reference.md`：仅更新变化的接口、行为与适用范围，避免复制源码和进度统计。
 - `dev_record.md`：保留旧记录，追加日期、开发记录、变更、文件、验证及剩余限制(简要说明)；长说明链接到对应规格／实现记录。每条工作记录（包括同一天的不同批次）在标题后的第一项，必须列出本批对应的开发记录文件，使用仓库相对路径和可点击链接：
-  - **实现记录**：[docs/开发规格/NN_名称.md](docs/开发规格/NN_名称.md)
+  - **开发记录**：[docs/开发规格/NN_名称.md](docs/开发规格/NN_名称.md)
 - `docs/开发规格/`：仅在职责、设计或案例变化时更新。文档应简短，避免多处重复同一份功能清单。
 - 回复默认中文，给出简短摘要、改动文件和验证结果。代码任务附英文的 <=72 字符的 commit summary，以及包含 Current date、What done/changed(说明新增或修改的核心功能/函数)、Effect(能实现之前不能实现的哪些功能、效果)、Which files added/updated、Next step work 的 commit description；生成说明不等于自动提交。
 

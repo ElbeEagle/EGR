@@ -1,0 +1,375 @@
+{
+  "schema_version": "bound-slice-v9",
+  "mode": "named-slope",
+  "problem_id": 56,
+  "status": "solved",
+  "facts": "G: Parabola;A: Point;B: Point;O: Origin;M: Point;Expression(G) = (y^2 = 2*x);Coordinate(M) = (1, 0);PointOnCurve(M,LineOf(A,B));Intersection(LineOf(A,B), G) = {A, B};Slope(LineSegmentOf(O, A))+Slope(LineSegmentOf(O, B)) = 1",
+  "query": "Expression(LineOf(A,B))",
+  "answer": "x + y/2 - 1",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 78,
+        "mode": "parameterize_named_line",
+        "curve": "G",
+        "equation_id": "f5",
+        "line_equation_id": null,
+        "relation_id": "f8",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": "M",
+        "coordinate_id": "f6",
+        "line": "@line:A:B",
+        "point_role": null,
+        "incidence_id": "f7",
+        "slope_sum_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {},
+        "values": {},
+        "constraints": {
+          "derived:intersection:f5:derived:@line:A:B:parameterized:distinct_roots": "True"
+        },
+        "equations": {
+          "derived:@line:A:B:parameterized": {
+            "fact_id": "derived:@line:A:B:parameterized",
+            "owner": "@line:A:B",
+            "role": "line",
+            "expression": "-@parameter:@line:A:B:u*y + x - 1",
+            "source": "RM78"
+          }
+        },
+        "intersection_reductions": {
+          "derived:intersection:f5:derived:@line:A:B:parameterized": {
+            "fact_id": "derived:intersection:f5:derived:@line:A:B:parameterized",
+            "curve": "G",
+            "line": "@line:A:B",
+            "curve_equation_id": "f5",
+            "line_equation_id": "derived:@line:A:B:parameterized",
+            "variable": "y",
+            "xy": [
+              "@parameter:@line:A:B:u*y + 1",
+              "y"
+            ],
+            "polynomial": "-2*@parameter:@line:A:B:u*y + y**2 - 2",
+            "source": "RM78",
+            "named_points": [
+              "A",
+              "B"
+            ],
+            "intersection_id": "f8"
+          }
+        },
+        "parameterizations": {
+          "@line:A:B": {
+            "line": "@line:A:B",
+            "parameter": "@parameter:@line:A:B:u",
+            "point": "M",
+            "coordinate_id": "f6",
+            "incidence_id": "f7",
+            "intersection_id": "f8",
+            "line_equation_id": "derived:@line:A:B:parameterized"
+          }
+        }
+      },
+      "read_facts": [
+        "f5",
+        "f6",
+        "f7",
+        "f8",
+        "identity:@line:A:B"
+      ],
+      "operations": [
+        {
+          "operation": "exclude_horizontal_branch",
+          "polynomial": "-2*x",
+          "distinct_intersections": 1,
+          "required": 2
+        },
+        {
+          "operation": "parameterize_through_point",
+          "parameter": "@parameter:@line:A:B:u",
+          "xy": [
+            "@parameter:@line:A:B:u*y + 1",
+            "y"
+          ]
+        },
+        {
+          "operation": "substitute_and_associate_roots",
+          "polynomial": "-2*@parameter:@line:A:B:u*y + y**2 - 2",
+          "unordered_points": [
+            "A",
+            "B"
+          ],
+          "coordinate": "y",
+          "required_distinct_guard": "True"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 42,
+        "mode": "derive_root_sum",
+        "curve": "G",
+        "equation_id": "f5",
+        "line_equation_id": "derived:@line:A:B:parameterized",
+        "relation_id": "derived:intersection:f5:derived:@line:A:B:parameterized",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "@line:A:B",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {
+          "('derived:intersection:f5:derived:@line:A:B:parameterized', 'root_sum')": "2*@parameter:@line:A:B:u",
+          "('derived:intersection:f5:derived:@line:A:B:parameterized', 'discriminant')": "4*@parameter:@line:A:B:u**2 + 8",
+          "('derived:intersection:f5:derived:@line:A:B:parameterized', 'distinct_real_roots')": "2"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "derived:intersection:f5:derived:@line:A:B:parameterized",
+        "parameterization:@line:A:B",
+        "f8",
+        "derived:intersection:f5:derived:@line:A:B:parameterized:distinct_roots"
+      ],
+      "operations": [
+        {
+          "operation": "vieta_sum",
+          "variable": "y",
+          "value": "2*@parameter:@line:A:B:u"
+        },
+        {
+          "operation": "classify_real_roots",
+          "discriminant": "4*@parameter:@line:A:B:u**2 + 8",
+          "distinct_real_roots": 2
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 43,
+        "mode": "derive_root_product",
+        "curve": "G",
+        "equation_id": "f5",
+        "line_equation_id": "derived:@line:A:B:parameterized",
+        "relation_id": "derived:intersection:f5:derived:@line:A:B:parameterized",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "@line:A:B",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 2,
+      "after_revision": 3,
+      "delta": {
+        "properties": {
+          "('derived:intersection:f5:derived:@line:A:B:parameterized', 'root_product')": "-2"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "derived:intersection:f5:derived:@line:A:B:parameterized",
+        "parameterization:@line:A:B",
+        "f8",
+        "derived:intersection:f5:derived:@line:A:B:parameterized:distinct_roots"
+      ],
+      "operations": [
+        {
+          "operation": "vieta_product",
+          "variable": "y",
+          "value": "-2"
+        },
+        {
+          "operation": "classify_real_roots",
+          "discriminant": "4*@parameter:@line:A:B:u**2 + 8",
+          "distinct_real_roots": 2
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 55,
+        "mode": "solve_slope_sum",
+        "curve": "G",
+        "equation_id": "f5",
+        "line_equation_id": "derived:@line:A:B:parameterized",
+        "relation_id": "derived:intersection:f5:derived:@line:A:B:parameterized",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "@line:A:B",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": "f9"
+      },
+      "before_revision": 3,
+      "after_revision": 4,
+      "delta": {
+        "properties": {
+          "('derived:intersection:f5:derived:@line:A:B:parameterized', 'root_sum')": "-1",
+          "('derived:intersection:f5:derived:@line:A:B:parameterized', 'discriminant')": "9"
+        },
+        "values": {
+          "@parameter:@line:A:B:u": "-1/2"
+        },
+        "equations": {
+          "derived:@line:A:B:parameterized": {
+            "fact_id": "derived:@line:A:B:parameterized",
+            "owner": "@line:A:B",
+            "role": "line",
+            "expression": "x + y/2 - 1",
+            "source": "RM78"
+          }
+        },
+        "intersection_reductions": {
+          "derived:intersection:f5:derived:@line:A:B:parameterized": {
+            "fact_id": "derived:intersection:f5:derived:@line:A:B:parameterized",
+            "curve": "G",
+            "line": "@line:A:B",
+            "curve_equation_id": "f5",
+            "line_equation_id": "derived:@line:A:B:parameterized",
+            "variable": "y",
+            "xy": [
+              "1 - y/2",
+              "y"
+            ],
+            "polynomial": "y**2 + y - 2",
+            "source": "RM78",
+            "named_points": [
+              "A",
+              "B"
+            ],
+            "intersection_id": "f8"
+          }
+        }
+      },
+      "read_facts": [
+        "derived:intersection:f5:derived:@line:A:B:parameterized",
+        "f8",
+        "f9",
+        "f3",
+        "f5",
+        "derived:@line:A:B:parameterized",
+        "parameterization:@line:A:B",
+        "property:derived:intersection:f5:derived:@line:A:B:parameterized:root_sum",
+        "property:derived:intersection:f5:derived:@line:A:B:parameterized:root_product",
+        "property:derived:intersection:f5:derived:@line:A:B:parameterized:discriminant",
+        "property:derived:intersection:f5:derived:@line:A:B:parameterized:distinct_real_roots",
+        "derived:intersection:f5:derived:@line:A:B:parameterized:distinct_roots"
+      ],
+      "operations": [
+        {
+          "operation": "verify_slope_denominators",
+          "root_product": "-2",
+          "x_product": "1",
+          "points": [
+            "A",
+            "B"
+          ]
+        },
+        {
+          "operation": "slope_sum_from_vieta",
+          "expression": "-2*@parameter:@line:A:B:u",
+          "target": "1",
+          "residual": "-2*@parameter:@line:A:B:u - 1"
+        },
+        {
+          "operation": "real_roots",
+          "roots": [
+            "-1/2"
+          ]
+        },
+        {
+          "operation": "check_root",
+          "root": "-1/2",
+          "conditions": [
+            "True"
+          ],
+          "residual": "0",
+          "checks": [
+            true,
+            true
+          ]
+        },
+        {
+          "operation": "restricted_substitution",
+          "property": [
+            "derived:intersection:f5:derived:@line:A:B:parameterized",
+            "root_sum"
+          ],
+          "before": "2*@parameter:@line:A:B:u",
+          "after": "-1",
+          "substitution": {
+            "@parameter:@line:A:B:u": "-1/2"
+          }
+        },
+        {
+          "operation": "restricted_substitution",
+          "property": [
+            "derived:intersection:f5:derived:@line:A:B:parameterized",
+            "discriminant"
+          ],
+          "before": "4*@parameter:@line:A:B:u**2 + 8",
+          "after": "9",
+          "substitution": {
+            "@parameter:@line:A:B:u": "-1/2"
+          }
+        },
+        {
+          "operation": "restricted_substitution",
+          "equation": "derived:@line:A:B:parameterized",
+          "before": "-@parameter:@line:A:B:u*y + x - 1",
+          "after": "x + y/2 - 1",
+          "substitution": {
+            "@parameter:@line:A:B:u": "-1/2"
+          }
+        },
+        {
+          "operation": "restricted_substitution",
+          "intersection": "derived:intersection:f5:derived:@line:A:B:parameterized",
+          "before": "-2*@parameter:@line:A:B:u*y + y**2 - 2",
+          "after": "y**2 + y - 2",
+          "xy_before": [
+            "@parameter:@line:A:B:u*y + 1",
+            "y"
+          ],
+          "xy_after": [
+            "1 - y/2",
+            "y"
+          ],
+          "substitution": {
+            "@parameter:@line:A:B:u": "-1/2"
+          }
+        }
+      ],
+      "candidates": [
+        "-1/2"
+      ],
+      "diagnostic": ""
+    }
+  ]
+}

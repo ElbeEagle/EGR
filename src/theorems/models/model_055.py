@@ -150,3 +150,7 @@ class SlopeFormula(TheoremModel):
         except (ValueError, TypeError):
             # 坐标包含符号表达式，无法数值计算
             return None
+
+    def propose_bound(self, state, action):
+        from ..slope_proposals import solve_named_slope_sum
+        return solve_named_slope_sum(state, action)

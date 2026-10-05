@@ -32,12 +32,23 @@ def derive_root_relation(state, action):
     if action.mode != f'derive_root_{kind}':
         raise TransitionError('inapplicable', 'Unsupported root relation mode')
     fact = state.intersection_reductions[action.relation_id]
-    value = quadratic_root_relation(fact.polynomial, fact.variable, kind)
-    status = classify_quadratic_roots(fact.polynomial, fact.variable)
+    parameters, extra_reads = (), ()
+    if fact.named_points:
+        local = state.parameterizations.get(fact.line)
+        named = state.named_intersections.get(fact.intersection_id)
+        if (local is None or named is None or named.points != fact.named_points
+                or named.line != fact.line or named.curve != fact.curve
+                or local.line_equation_id != fact.line_equation_id):
+            raise TransitionError('inapplicable', 'Missing scoped named-root association')
+        parameters = (local.parameter,)
+        extra_reads = (f'parameterization:{fact.line}', named.fact_id, *state.constraints.keys())
+    value = quadratic_root_relation(fact.polynomial, fact.variable, kind, parameters)
+    status = classify_quadratic_roots(fact.polynomial, fact.variable, parameters,
+                                      [c.subs(state.values) for c in state.constraints.values()])
     return Proposal(properties={(fact.fact_id, f'root_{kind}'): value,
                                 (fact.fact_id, 'discriminant'): status.discriminant,
                                 (fact.fact_id, 'distinct_real_roots'): sp.Integer(status.distinct_real_roots)},
-                    read_facts=(fact.fact_id,),
+                    read_facts=(fact.fact_id, *extra_reads),
                     operations=[{'operation': 'vieta_'+kind, 'variable': fact.variable, 'value': value},
                                 {'operation': 'classify_real_roots', 'discriminant': status.discriminant,
                                  'distinct_real_roots': status.distinct_real_roots}])
