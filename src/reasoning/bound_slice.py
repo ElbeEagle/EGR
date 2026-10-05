@@ -295,6 +295,29 @@ def solve_chord_length_slice(facts: str, query: str) -> SliceResult:
     return replay_actions(state, [first, *following])
 
 
+def solve_focal_chord_slice(facts: str, query: str) -> SliceResult:
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, ChordLengthQuery):
+        return SliceResult('inapplicable',state,diagnostic='Requires intercept chord query')
+    actions=[a for a in enumerate_actions(state,78,'substitute_line')
+             if a.curve==state.query.curve and a.line==state.query.line]
+    if len(actions)!=1:
+        return SliceResult('undetermined',state,diagnostic='Requires unique curve/line equations')
+    first=actions[0]; app=BoundApplicator()
+    probes=[app.apply(deepcopy(state),BoundAction(mid,'extract_parameters',first.curve,first.equation_id))
+            for mid in (7,8,9,10)]
+    accepted=[p.action for p in probes if p.status in ('applied','no_op')]
+    if len(accepted)!=1:
+        return SliceResult('undetermined',state,diagnostic='Standard direction not uniquely established')
+    key=f'derived:intersection:{first.equation_id}:{first.line_equation_id}'
+    return replay_actions(state,[accepted[0],first,
+        replace(first,model_id=42,mode='derive_root_sum',relation_id=key),
+        replace(first,model_id=33,mode='derive_focal_chord',relation_id=key)])
+
+
 def solve_named_slope_slice(facts: str, query: str) -> SliceResult:
     try:
         state = TransitionState.from_facts(facts, query)
@@ -343,7 +366,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -357,7 +380,8 @@ if __name__ == '__main__':
              'eccentricity': solve_eccentricity_slice,
              'parabola-tangent': solve_parabola_tangent_slice,
              'chord-length': solve_chord_length_slice,
-             'named-slope': solve_named_slope_slice}[args.mode]
+             'named-slope': solve_named_slope_slice,
+             'focal-chord': solve_focal_chord_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
@@ -369,7 +393,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

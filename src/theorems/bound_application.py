@@ -87,7 +87,7 @@ def check_binding(state, action):
     if action.incidence_id is not None:
         raise TransitionError('inapplicable', 'Incidence binding only valid for named parameterization')
 
-    if action.model_id in (42, 43, 50):
+    if action.model_id in (33, 42, 43, 50):
         check_binding(state, replace(action, model_id=78, relation_id=None))
         fact = state.intersection_reductions.get(action.relation_id)
         if (fact is None or fact.fact_id != action.relation_id
@@ -234,8 +234,8 @@ def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = 
                    for f in state.intersection_reductions.values() for c in state.slope_sums.values()
                    if f.named_points and f.named_points == c.endpoints]
         return [a for a in actions if mode is None or a.mode == mode]
-    if model_id in (42, 43, 50):
-        name = {42: 'derive_root_sum', 43: 'derive_root_product', 50: 'derive_chord_length'}[model_id]
+    if model_id in (33, 42, 43, 50):
+        name = {33: 'derive_focal_chord', 42: 'derive_root_sum', 43: 'derive_root_product', 50: 'derive_chord_length'}[model_id]
         actions = [BoundAction(model_id, name, f.curve, f.curve_equation_id,
                                line=f.line, line_equation_id=f.line_equation_id, relation_id=f.fact_id)
                    for f in state.intersection_reductions.values()]

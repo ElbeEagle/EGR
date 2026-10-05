@@ -8,8 +8,8 @@
 | --- | --- |
 | `TransitionState.from_facts(facts, query)`（`src.state.transition_state`） | 事实字符串与已支持的查询（或 None）→ 初态；只解析显式事实与定义域，不执行定理。非法／不支持的输入可抛出解析异常 |
 | `BoundAction`（`src.theorems.bound_application`） | `model_id, mode`；曲线模式使用 `curve`，独立直线 RM52 使用 `line` 且 `curve/equation_id=None`；曲线模式的 `equation_id=None` 仅限无曲线方程的普通参数模式；其他可选 `line_equation_id / relation_id / peer_curve / peer_equation_id / point / coordinate_id`；明确模型、应用方式和所属对象／方程 |
-| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM39、RM42/43、RM50、RM52、RM55、RM72、RM78；可按模式过滤；不保证候选已满足所有数学前提 |
-| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM39、RM42/43、RM50、RM52、RM55、RM72、RM78 提供有限模式实现 |
+| `enumerate_actions(state, model_id, mode=None)`（同上） | 枚举结构绑定候选，目前支持 RM2–13、RM17、RM21、RM29、RM33、RM39、RM42/43、RM50、RM52、RM55、RM72、RM78；可按模式过滤；不保证候选已满足所有数学前提 |
+| `TheoremModel.propose_bound(state, action)`（`src.theorems.base_model`） | 模型提出 `Proposal`；基类默认未实现，目前 RM2–13、RM17、RM21、RM29、RM33、RM39、RM42/43、RM50、RM52、RM55、RM72、RM78 提供有限模式实现 |
 | `BoundApplicator(library=None).apply(state, action)`（`src.theorems.bound_application`） | 在隔离副本上调用模型，校验候选后提交到传入状态，返回 `TransitionResult` |
 | `state.abstract(curve)` | 返回既有 `AbstractState` 的兼容视图；不是新对象感知编码器 |
 | `state.extract_answer()` | 按查询类型读取已提交的标量、渐近线、焦半径、点／焦点到直线距离、离心率、切线方程或弦长；未确定返回 `None`，不在此推导 |
@@ -272,3 +272,14 @@ RM55 模式 solve_slope_sum 绑定 curve/equation_id/line/line_equation_id、rel
 应用器新增对 IntersectionReduction.polynomial／xy 的已知值回代，记录 restricted_substitution 与累计来源；与 values、派生直线和属性归约一起提交。LineParameterization 保留参数身份，值存于 values；不生成 A/B 坐标。已有 NamedLineQuery 仍只读最终方程。
 
 `solve_named_slope_slice(facts,query)` 固定组织 RM78→RM42→RM43→RM55，要求唯一参数化及根／斜率绑定。CLI `python3 -m src.reasoning.bound_slice --mode named-slope --problem-id 56` 输出 v9；不使用 gold 模型序列。边界与文件释义见[记录](../docs/开发规格/26_ID56符号韦达与斜率求参闭环.md)。
+
+
+### RM33 焦点弦长
+
+新增 focal_chord_proposals.py 组织焦点弦应用；`derive_focal_chord` 读取已有标准框架、p、焦点，以及指定消元事实的 root_sum／discriminant／distinct_real_roots，验证直线过焦点、两不同实交点及源式一致，再提出弦长。复用 bound_parabola、substitute_point；不补做参数提取、消元、韦达或 RM34/35 根积性质。model_033.propose_bound 转交提案，旧接口保留。
+
+模式 derive_focal_chord 使用 curve/equation_id/line/line_equation_id/relation_id（消元ID），其他绑定字段为空。支持四方向数值标准抛物线：长度=sign×轴向坐标和+p；轴向坐标和从仿射还原映射和已有根和取得。
+
+输出沿用 `properties[(消元ID,chord_length)]`，另提出 `focus_on_line=1` 记录同一方程对已过焦点验证；操作包含焦点代入残差，两属性由应用器原子提交。ChordLengthQuery 不变，查询只读。缺前提或非焦点弦 inapplicable，冲突回滚，重复 no_op。
+
+`solve_focal_chord_slice(facts,query)` 预检唯一标准方向，固定回放标准模型→RM78→RM42→RM33；CLI `python3 -m src.reasoning.bound_slice --mode focal-chord --problem-id 6347` 输出 v10 独立轨迹，不覆盖一般弦长路径。限制与释义见[记录](../docs/开发规格/27_ID6347焦点弦长路径.md)。

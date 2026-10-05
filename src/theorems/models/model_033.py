@@ -185,3 +185,7 @@ class ParabolaFocalChordLength(TheoremModel):
         
         except Exception:
             return False
+
+    def propose_bound(self, state, action):
+        from ..focal_chord_proposals import derive_focal_chord
+        return derive_focal_chord(state, action)

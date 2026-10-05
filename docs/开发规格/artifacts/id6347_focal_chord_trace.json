@@ -1,0 +1,242 @@
+{
+  "schema_version": "bound-slice-v10",
+  "mode": "focal-chord",
+  "problem_id": 6347,
+  "status": "solved",
+  "facts": "G: Parabola;H: Line;Expression(G) = (y^2 = 4*x);Expression(H) = (y = x - 1)",
+  "query": "Length(InterceptChord(H, G))",
+  "answer": "8",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 7,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f2",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'p')": "2",
+          "('G', 'focus_x')": "1",
+          "('G', 'focus_y')": "0"
+        },
+        "values": {},
+        "frames": {
+          "G": {
+            "equation_id": "f2",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x",
+            "direction": "right"
+          }
+        }
+      },
+      "read_facts": [
+        "f2",
+        "entity:G"
+      ],
+      "operations": [
+        {
+          "operation": "standard_parabola",
+          "direction": "right",
+          "coefficient": "4",
+          "p": "2",
+          "focus": [
+            "1",
+            "0"
+          ]
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 78,
+        "mode": "substitute_line",
+        "curve": "G",
+        "equation_id": "f2",
+        "line_equation_id": "f3",
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "H",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {},
+        "values": {},
+        "intersection_reductions": {
+          "derived:intersection:f2:f3": {
+            "fact_id": "derived:intersection:f2:f3",
+            "curve": "G",
+            "line": "H",
+            "curve_equation_id": "f2",
+            "line_equation_id": "f3",
+            "variable": "y",
+            "xy": [
+              "y + 1",
+              "y"
+            ],
+            "polynomial": "y**2 - 4*y - 4",
+            "source": "RM78",
+            "named_points": [],
+            "intersection_id": null
+          }
+        }
+      },
+      "read_facts": [
+        "entity:G",
+        "entity:H",
+        "f2",
+        "f3"
+      ],
+      "operations": [
+        {
+          "operation": "parameterize_line",
+          "variable": "y",
+          "xy": [
+            "y + 1",
+            "y"
+          ]
+        },
+        {
+          "operation": "substitute_and_normalize",
+          "polynomial": "y**2 - 4*y - 4"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 42,
+        "mode": "derive_root_sum",
+        "curve": "G",
+        "equation_id": "f2",
+        "line_equation_id": "f3",
+        "relation_id": "derived:intersection:f2:f3",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "H",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 2,
+      "after_revision": 3,
+      "delta": {
+        "properties": {
+          "('derived:intersection:f2:f3', 'root_sum')": "4",
+          "('derived:intersection:f2:f3', 'discriminant')": "32",
+          "('derived:intersection:f2:f3', 'distinct_real_roots')": "2"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "derived:intersection:f2:f3"
+      ],
+      "operations": [
+        {
+          "operation": "vieta_sum",
+          "variable": "y",
+          "value": "4"
+        },
+        {
+          "operation": "classify_real_roots",
+          "discriminant": "32",
+          "distinct_real_roots": 2
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 33,
+        "mode": "derive_focal_chord",
+        "curve": "G",
+        "equation_id": "f2",
+        "line_equation_id": "f3",
+        "relation_id": "derived:intersection:f2:f3",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "H",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 3,
+      "after_revision": 4,
+      "delta": {
+        "properties": {
+          "('derived:intersection:f2:f3', 'chord_length')": "8",
+          "('derived:intersection:f2:f3', 'focus_on_line')": "1"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "f2",
+        "entity:G",
+        "frame:G",
+        "property:G:p",
+        "property:G:focus_x",
+        "property:G:focus_y",
+        "f3",
+        "derived:intersection:f2:f3",
+        "property:derived:intersection:f2:f3:root_sum",
+        "property:derived:intersection:f2:f3:discriminant",
+        "property:derived:intersection:f2:f3:distinct_real_roots"
+      ],
+      "operations": [
+        {
+          "operation": "verify_line_through_focus",
+          "focus": [
+            "1",
+            "0"
+          ],
+          "residual": "0"
+        },
+        {
+          "operation": "focal_chord_from_root_sum",
+          "axis": "x",
+          "sign": 1,
+          "axial_sum": "6",
+          "p": "2",
+          "length": "8"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}
