@@ -1,0 +1,236 @@
+{
+  "schema_version": "focal-chord-selection-v1",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "scope": "All records weak-labeled RM34/35; parsing probes and independent algebra only, no solver coverage claim",
+  "weak_label_counts": {
+    "34": 7,
+    "35": 6
+  },
+  "unique_candidates": 11,
+  "candidates": [
+    {
+      "id": 1191,
+      "weak_models": [
+        7,
+        17,
+        34,
+        56
+      ],
+      "facts": "G: Parabola;H: Line;O: Origin;A: Point;B: Point;F: Point;Expression(G) = (x^2 = 8*y);PointOnCurve(F, H);Focus(G) = F;Intersection(H, G) = {A, B};Abs(LineSegmentOf(A, F)) = 6",
+      "query": "Area(TriangleOf(O, A, B))",
+      "input_parses": false,
+      "first_parse_error": "Unsupported or undeclared query target",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported arithmetic syntax or undeclared symbol"
+    },
+    {
+      "id": 1254,
+      "weak_models": [
+        7,
+        2,
+        1,
+        72,
+        78,
+        41,
+        34,
+        51
+      ],
+      "facts": "G: Parabola;A: Point;B: Point;F: Point;P: Point;k: Number;k>0;Expression(G) = (y^2 = 4*x);Intersection(Directrix(G), xAxis) = P;Slope(LineOf(A,B)) = k;Intersection(H,G)={A,B};Focus(G) = F;Abs(LineSegmentOf(F, A)) = 2*Abs(LineSegmentOf(F, B));H:Line;PointOnCurve(P,H);Slope(H)=k",
+      "query": "k",
+      "input_parses": false,
+      "first_parse_error": "Unsupported arithmetic syntax or undeclared symbol",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported arithmetic syntax or undeclared symbol"
+    },
+    {
+      "id": 1297,
+      "weak_models": [
+        7,
+        2,
+        78,
+        41,
+        42,
+        43,
+        34,
+        35,
+        17,
+        33
+      ],
+      "facts": "l: Line;C: Parabola;A: Point;F: Point;B: Point;P: Point;M: Point;N: Point;k:Number;k>0;Expression(C) = (y^2 = 4*x);Coordinate(P) = (-1, 0);Focus(C) = F;PointOnCurve(P, l);Slope(l) = k;Intersection(l, C) = {A, B};Intersection(LineOf(A,F), C) = M;Intersection(LineOf(B,F), C) = N;Abs(LineSegmentOf(A, F))/Abs(LineSegmentOf(F, M)) + Abs(LineSegmentOf(B, F))/Abs(LineSegmentOf(F, N)) = 18",
+      "query": "k",
+      "input_parses": false,
+      "first_parse_error": "Unsupported arithmetic syntax or undeclared symbol",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported arithmetic syntax or undeclared symbol"
+    },
+    {
+      "id": 1427,
+      "weak_models": [
+        7,
+        2,
+        34,
+        35,
+        17,
+        62,
+        56
+      ],
+      "facts": "G: Parabola;p: Number;A: Point;F: Point;B: Point;O: Origin;Z: Line;p>0;Expression(G) = (y^2 = 2*(p*x));Focus(G) = F;PointOnCurve(F, Z);Intersection(Z, G) = {A, B};VectorOf(A, F) = 2*VectorOf(F, B);Area(TriangleOf(O, A, B)) = Abs(LineSegmentOf(A, B))*sqrt(2)/3",
+      "query": "Expression(G)",
+      "input_parses": false,
+      "first_parse_error": "Unsupported or undeclared query target",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported arithmetic syntax or undeclared symbol"
+    },
+    {
+      "id": 1833,
+      "weak_models": [
+        7,
+        78,
+        42,
+        43,
+        35
+      ],
+      "facts": "G: Parabola;Expression(G) = (y^2 = 2*(p*x));p: Number;H: Line;PointOnCurve(Focus(G), H);NumIntersection(H, G) = 2;A: Point;B: Point;Intersection(H, G) = {A, B};y1: Number;y2: Number;YCoordinate(A) = y1;YCoordinate(B) = y2",
+      "query": "y1*y2",
+      "input_parses": false,
+      "first_parse_error": "Unsupported or undeclared query target",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported fact syntax: PointOnCurve(Focus(G), H)"
+    },
+    {
+      "id": 2134,
+      "weak_models": [
+        7,
+        2,
+        34,
+        17,
+        58
+      ],
+      "facts": "l: Line;C: Parabola;A: Point;M: Point;B: Point;F: Point;Expression(C) = (y^2 = 8*x);Focus(C) = F;PointOnCurve(F, l);Intersection(l, C) = {A, B};Intersection(l, Directrix(C)) = M;MidPoint(LineSegmentOf(A, M)) = F",
+      "query": "Abs(LineSegmentOf(A, B))",
+      "input_parses": false,
+      "first_parse_error": "Unsupported or undeclared query target",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported arithmetic syntax or undeclared symbol"
+    },
+    {
+      "id": 2348,
+      "weak_models": [
+        7,
+        78,
+        42,
+        43,
+        34,
+        56
+      ],
+      "facts": "C: Parabola;Expression(C) = (y^2 = 2*(p*x));p: Number;p>0;F: Point;Focus(C) = F;G: Line;PointOnCurve(F, G);A: Point;B: Point;Intersection(G, C) = {A, B};l: Line;Directrix(C) = l;L1: Line;L2: Line;PointOnCurve(A, L1);PointOnCurve(B, L2);IsPerpendicular(L1, l);IsPerpendicular(L2, l);A1: Point;B1: Point;FootPoint(L1, l) = A1;FootPoint(L2, l) = B1;Area(TriangleOf(A, A1, F)) = 9;Area(TriangleOf(B, B1, F)) = 1",
+      "query": "Area(TriangleOf(A1, B1, F))",
+      "input_parses": false,
+      "first_parse_error": "Unsupported or undeclared query target",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported arithmetic syntax or undeclared symbol"
+    },
+    {
+      "id": 2505,
+      "weak_models": [
+        7,
+        78,
+        42,
+        34,
+        17,
+        75
+      ],
+      "facts": "G: Parabola;Expression(G) = (y^2 = 2*p*x);p: Number;p>0;F: Point;Focus(G) = F;Intersection(Directrix(G), xAxis) = C;C: Point;PointOnCurve(F, LineSegmentOf(A, B)) = True;IsChordOf(LineSegmentOf(A, B), G) = True;A: Point;B: Point;AngleOf(C, B, F) = ApplyUnit(90, degree)",
+      "query": "LineSegmentOf(A, F) - LineSegmentOf(B, F)",
+      "input_parses": false,
+      "first_parse_error": "Unsupported or undeclared query target",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported arithmetic syntax or undeclared symbol"
+    },
+    {
+      "id": 2555,
+      "weak_models": [
+        7,
+        2,
+        35,
+        17,
+        62,
+        56
+      ],
+      "facts": "G: Parabola;Expression(G) = (y^2 = 2*p*x);p: Number;p>0;F: Point;Focus(G) = F;l: Line;Directrix(G) = l;H: Line;PointOnCurve(F,H);A: Point;B: Point;Intersection(H, G) = {A, B};L1: Line;L2: Line;PointOnCurve(A,L1);PointOnCurve(B,L2);IsPerpendicular(l,L1);IsPerpendicular(l,L2);C: Point;D: Point;FootPoint(l,L1) = C;FootPoint(l,L2) = D;Abs(LineSegmentOf(A, F)) = 2*Abs(LineSegmentOf(B, F));Area(TriangleOf(C, D, F)) = sqrt(2)",
+      "query": "p",
+      "input_parses": false,
+      "first_parse_error": "Unsupported arithmetic syntax or undeclared symbol",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported arithmetic syntax or undeclared symbol"
+    },
+    {
+      "id": 3419,
+      "weak_models": [
+        7,
+        42,
+        43,
+        59,
+        35,
+        55,
+        60
+      ],
+      "facts": "G: Parabola;p: Number;A: Point;B: Point;O: Origin;F: Point;p>0;Expression(G) = (y^2 = 2*(p*x));Focus(G) = F;IsChordOf(LineSegmentOf(A,B),G);PointOnCurve(F, LineSegmentOf(A, B));DotProduct(VectorOf(O, A), VectorOf(O, B)) =-3;Inclination(LineSegmentOf(A,B))=ApplyUnit(60,degree)",
+      "query": "Tan(AngleOf(A, O, B))",
+      "input_parses": false,
+      "first_parse_error": "Unsupported or undeclared query target",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported fact syntax: IsChordOf(LineSegmentOf(A,B),G)"
+    },
+    {
+      "id": 4373,
+      "weak_models": [
+        7,
+        2,
+        78,
+        41,
+        35,
+        59
+      ],
+      "facts": "G: Parabola;H: Line;O: Origin;A: Point;B: Point;Expression(G) = (y^2 = 4*x);PointOnCurve(Focus(G),H);Intersection(G, H) = {A, B}",
+      "query": "DotProduct(VectorOf(O, A), VectorOf(O, B))",
+      "input_parses": false,
+      "first_parse_error": "Unsupported or undeclared query target",
+      "facts_only_parses": false,
+      "first_facts_error": "Unsupported fact syntax: PointOnCurve(Focus(G),H)"
+    }
+  ],
+  "independent_algebra": [
+    {
+      "axis": "x",
+      "sign": -1,
+      "axial_product": "p**2/4",
+      "transverse_product": "-p**2",
+      "two_real_roots": true
+    },
+    {
+      "axis": "x",
+      "sign": 1,
+      "axial_product": "p**2/4",
+      "transverse_product": "-p**2",
+      "two_real_roots": true
+    },
+    {
+      "axis": "y",
+      "sign": -1,
+      "axial_product": "p**2/4",
+      "transverse_product": "-p**2",
+      "two_real_roots": true
+    },
+    {
+      "axis": "y",
+      "sign": 1,
+      "axial_product": "p**2/4",
+      "transverse_product": "-p**2",
+      "two_real_roots": true
+    }
+  ],
+  "selected_primary": 4373,
+  "selected_axis_validation": 1191,
+  "deferred_symbolic": 1833
+}

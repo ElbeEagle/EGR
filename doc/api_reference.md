@@ -283,3 +283,10 @@ RM55 模式 solve_slope_sum 绑定 curve/equation_id/line/line_equation_id、rel
 输出沿用 `properties[(消元ID,chord_length)]`，另提出 `focus_on_line=1` 记录同一方程对已过焦点验证；操作包含焦点代入残差，两属性由应用器原子提交。ChordLengthQuery 不变，查询只读。缺前提或非焦点弦 inapplicable，冲突回滚，重复 no_op。
 
 `solve_focal_chord_slice(facts,query)` 预检唯一标准方向，固定回放标准模型→RM78→RM42→RM33；CLI `python3 -m src.reasoning.bound_slice --mode focal-chord --problem-id 6347` 输出 v10 独立轨迹，不覆盖一般弦长路径。限制与释义见[记录](../docs/开发规格/27_ID6347焦点弦长路径.md)。
+
+
+### RM34/35 审查边界（尚无运行时接口）
+
+现有 `focus_on_line` 由 RM33 成功路径提交，依赖特定消元方程对，不能单凭值1用于另一条弦。RM34/35 将复用标准框架、焦点与来源核验；显式给定焦点归属的路径尚需开发，不要求先求RM33弦长。首批拟输出弦所属轴向／横向坐标积，不代算点积或查询。当前未增加模型入口、状态字段或查询类型，见[选型契约](../docs/开发规格/28_RM34_RM35证据审查与首批选型.md)。
+
+审查工具 `scripts/audit/focal_chord_candidates.py` 中 build_audit 返回候选原文、数据哈希及解析诊断；verify_product_identities 返回四方向乘积的独立数学核验结果。两者用于选型与复核，不作为求解API。
