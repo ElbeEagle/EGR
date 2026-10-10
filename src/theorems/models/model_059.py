@@ -252,3 +252,7 @@ class VectorDotProductAlgebraic(TheoremModel):
                 return round(dot, 4)
         except (ValueError, TypeError):
             return None
+
+    def propose_bound(self, state, action):
+        from ..focal_chord_proposals import derive_origin_dot
+        return derive_origin_dot(state, action)

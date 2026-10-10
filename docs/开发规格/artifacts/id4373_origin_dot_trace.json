@@ -1,0 +1,233 @@
+{
+  "schema_version": "bound-slice-v11",
+  "mode": "origin-dot",
+  "problem_id": 4373,
+  "status": "solved",
+  "facts": "G: Parabola;H: Line;O: Origin;A: Point;B: Point;Expression(G) = (y^2 = 4*x);PointOnCurve(Focus(G),H);Intersection(G, H) = {A, B}",
+  "query": "DotProduct(VectorOf(O, A), VectorOf(O, B))",
+  "answer": "-3",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 7,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f5",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'p')": "2",
+          "('G', 'focus_x')": "1",
+          "('G', 'focus_y')": "0"
+        },
+        "values": {},
+        "frames": {
+          "G": {
+            "equation_id": "f5",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x",
+            "direction": "right"
+          }
+        }
+      },
+      "read_facts": [
+        "f5",
+        "entity:G"
+      ],
+      "operations": [
+        {
+          "operation": "standard_parabola",
+          "direction": "right",
+          "coefficient": "4",
+          "p": "2",
+          "focus": [
+            "1",
+            "0"
+          ]
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 34,
+        "mode": "derive_axial_product",
+        "curve": "G",
+        "equation_id": "f5",
+        "line_equation_id": null,
+        "relation_id": "f7",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "H",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {
+          "('f7', 'x_product')": "1"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "f5",
+        "entity:G",
+        "frame:G",
+        "property:G:p",
+        "property:G:focus_x",
+        "property:G:focus_y",
+        "f7",
+        "f6"
+      ],
+      "operations": [
+        {
+          "operation": "verify_given_focal_chord",
+          "intersection": "f7",
+          "points": [
+            "A",
+            "B"
+          ],
+          "focus_sources": [
+            "f6"
+          ]
+        },
+        {
+          "operation": "focal_chord_coordinate_product",
+          "axis": "x",
+          "coordinate": "x",
+          "p": "2",
+          "value": "1"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 35,
+        "mode": "derive_transverse_product",
+        "curve": "G",
+        "equation_id": "f5",
+        "line_equation_id": null,
+        "relation_id": "f7",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "H",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 2,
+      "after_revision": 3,
+      "delta": {
+        "properties": {
+          "('f7', 'y_product')": "-4"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "f5",
+        "entity:G",
+        "frame:G",
+        "property:G:p",
+        "property:G:focus_x",
+        "property:G:focus_y",
+        "f7",
+        "f6"
+      ],
+      "operations": [
+        {
+          "operation": "verify_given_focal_chord",
+          "intersection": "f7",
+          "points": [
+            "A",
+            "B"
+          ],
+          "focus_sources": [
+            "f6"
+          ]
+        },
+        {
+          "operation": "focal_chord_coordinate_product",
+          "axis": "x",
+          "coordinate": "y",
+          "p": "2",
+          "value": "-4"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 59,
+        "mode": "derive_origin_dot",
+        "curve": "G",
+        "equation_id": "f5",
+        "line_equation_id": null,
+        "relation_id": "f7",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": "O",
+        "coordinate_id": "f2",
+        "line": "H",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 3,
+      "after_revision": 4,
+      "delta": {
+        "properties": {
+          "('dot:O:A:B', 'dot_product')": "-3"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "f7",
+        "f2",
+        "property:f7:x_product",
+        "property:f7:y_product"
+      ],
+      "operations": [
+        {
+          "operation": "origin_dot_from_products",
+          "products": [
+            "1",
+            "-4"
+          ],
+          "value": "-3"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}

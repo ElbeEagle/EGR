@@ -59,6 +59,9 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id in (34,35,59):
+        from .focal_chord_evidence import check_product_binding
+        return check_product_binding(state,action)
     if action.model_id == 55:
         fact = check_binding(state, replace(action, model_id=42, slope_sum_id=None))
         slope = state.slope_sums.get(action.slope_sum_id)
@@ -227,6 +230,24 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id in (34,35,59):
+        from src.state.named_line_facts import OriginDotProductQuery
+        name = {34:'derive_axial_product',35:'derive_transverse_product',59:'derive_origin_dot'}[model_id]
+        actions=[]
+        for fact in (*state.named_intersections.values(), *state.intersection_reductions.values()):
+            for curve in state.equations.values():
+                if curve.owner != fact.curve or curve.role != 'curve':
+                    continue
+                extra={}
+                if model_id==59:
+                    q=state.query
+                    if not isinstance(q,OriginDotProductQuery) or getattr(fact,'points',())!=q.points or q.origin not in state.coordinates:
+                        continue
+                    extra={'point':q.origin,'coordinate_id':state.coordinates[q.origin].fact_id}
+                actions.append(BoundAction(model_id,name,fact.curve,curve.fact_id,
+                    line=fact.line,relation_id=fact.fact_id,
+                    line_equation_id=getattr(fact,'line_equation_id',None),**extra))
+        return [a for a in actions if mode is None or a.mode==mode]
     if model_id == 55:
         actions = [BoundAction(55, 'solve_slope_sum', f.curve, f.curve_equation_id,
                                line=f.line, line_equation_id=f.line_equation_id,

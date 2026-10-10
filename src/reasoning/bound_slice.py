@@ -343,6 +343,35 @@ def solve_named_slope_slice(facts: str, query: str) -> SliceResult:
     return SliceResult('solved' if state.extract_answer() is not None else 'unresolved',state,transitions)
 
 
+def solve_origin_dot_slice(facts: str, query: str) -> SliceResult:
+    """Fixed standard -> RM34 -> RM35 -> RM59 replay, independent of gold labels."""
+    from src.state.named_line_facts import OriginDotProductQuery
+    try:
+        state=TransitionState.from_facts(facts,query)
+    except (ValueError,SyntaxError) as exc:
+        return SliceResult('failed',diagnostic=str(exc))
+    if not isinstance(state.query,OriginDotProductQuery):
+        return SliceResult('inapplicable',state,diagnostic='Requires origin dot query')
+    candidates=[a for a in enumerate_actions(state,34)
+                if a.relation_id in state.named_intersections
+                and state.named_intersections[a.relation_id].points==state.query.points]
+    if len(candidates)!=1:
+        return SliceResult('undetermined',state,diagnostic='Requires unique endpoint/curve binding')
+    product=candidates[0]
+    app=BoundApplicator()
+    probes=[app.apply(deepcopy(state),BoundAction(mid,'extract_parameters',product.curve,product.equation_id))
+            for mid in (7,8,9,10)]
+    accepted=[p.action for p in probes if p.status in ('applied','no_op')]
+    if len(accepted)!=1:
+        return SliceResult('undetermined',state,diagnostic='Requires unique standard direction')
+    origin=state.coordinates.get(state.query.origin)
+    if origin is None:
+        return SliceResult('inapplicable',state,diagnostic='Missing origin coordinate')
+    return replay_actions(state,[accepted[0],product,
+        replace(product,model_id=35,mode='derive_transverse_product'),
+        replace(product,model_id=59,mode='derive_origin_dot',point=origin.point,coordinate_id=origin.fact_id)])
+
+
 def replay_actions(state: TransitionState, actions) -> SliceResult:
     """Run an explicit diagnostic action sequence; retain unsuccessful attempts too."""
     applicator = BoundApplicator()
@@ -366,7 +395,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -381,7 +410,7 @@ if __name__ == '__main__':
              'parabola-tangent': solve_parabola_tangent_slice,
              'chord-length': solve_chord_length_slice,
              'named-slope': solve_named_slope_slice,
-             'focal-chord': solve_focal_chord_slice}[args.mode]
+             'focal-chord': solve_focal_chord_slice, 'origin-dot': solve_origin_dot_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
@@ -393,7 +422,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

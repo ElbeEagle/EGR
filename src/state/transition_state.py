@@ -8,7 +8,7 @@ from typing import Any
 import sympy as sp
 
 from src.solver.transition_primitives import parse_expression
-from .named_line_facts import (NamedLine, NamedIntersection, SlopeSum, NamedLineQuery,
+from .named_line_facts import (NamedLine, NamedIntersection, SlopeSum, NamedLineQuery, FocusOnLine, OriginDotProductQuery,
                                LINE, register_named_line, parse_named_line_fact)
 from .abstract_state import AbstractState, CurveType, QueryType
 
@@ -159,6 +159,8 @@ class TransitionState:
 
     parameterizations: dict[str, LineParameterization] = field(default_factory=dict)
 
+    focus_incidences: dict[str, FocusOnLine] = field(default_factory=dict)
+
     named_lines: dict[str, NamedLine] = field(default_factory=dict)
     named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
@@ -200,7 +202,13 @@ class TransitionState:
         tangent_query = re.fullmatch(r'Expression\(TangentOnPoint\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
         chord_query = re.fullmatch(r'Length\(InterceptChord\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
         named_line_query = re.fullmatch(rf'Expression\(\s*{LINE}\s*\)', query_text)
-        if query is None or named_line_query:
+        dot_query = re.fullmatch(r'DotProduct\(\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*,\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\)', query_text)
+        if dot_query:
+            o,a,other,b = dot_query.groups()
+            if o != other or a == b or any(entities.get(v) != 'Point' for v in (o,a,b)):
+                raise ValueError('Dot query requires a shared base and two points')
+            target = OriginDotProductQuery(o,tuple(sorted((a,b))))
+        elif query is None or named_line_query:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
         elif chord_query and entities.get(chord_query.group(1)) == 'Line' and entities.get(chord_query.group(2)) == 'Parabola':
             target = ChordLengthQuery(*chord_query.groups())
@@ -345,6 +353,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, OriginDotProductQuery):
+            return self.properties.get((self.query.owner, "dot_product"))
         if isinstance(self.query, NamedLineQuery):
             equations = [f for f in self.equations.values() if f.owner == self.query.line and f.role == 'line']
             if len(equations) != 1:

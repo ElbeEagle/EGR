@@ -77,6 +77,8 @@ class TheoremLibrary:
         from .models.model_079 import QuadraticFunctionMaximum
         
         # 新增模型 (阶段2)
+        from .models.model_034 import ParabolaFocalChordAxialProduct
+        from .models.model_035 import ParabolaFocalChordTransverseProduct
         from .models.model_033 import ParabolaFocalChordLength
         from .models.model_044 import PointDifferenceMethod
         from .models.model_049 import PythagoreanTheorem
@@ -140,6 +142,8 @@ class TheoremLibrary:
         
         # 新增模型
         self.register_model(ParabolaFocalChordLength())
+        self.register_model(ParabolaFocalChordAxialProduct())
+        self.register_model(ParabolaFocalChordTransverseProduct())
         self.register_model(PointDifferenceMethod())
         self.register_model(PythagoreanTheorem())
         self.register_model(ChordLengthFormula())

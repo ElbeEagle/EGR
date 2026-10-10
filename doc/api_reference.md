@@ -285,8 +285,18 @@ RM55 模式 solve_slope_sum 绑定 curve/equation_id/line/line_equation_id、rel
 `solve_focal_chord_slice(facts,query)` 预检唯一标准方向，固定回放标准模型→RM78→RM42→RM33；CLI `python3 -m src.reasoning.bound_slice --mode focal-chord --problem-id 6347` 输出 v10 独立轨迹，不覆盖一般弦长路径。限制与释义见[记录](../docs/开发规格/27_ID6347焦点弦长路径.md)。
 
 
-### RM34/35 审查边界（尚无运行时接口）
+### RM34/35 数值坐标积与 RM59 原点点积
 
-现有 `focus_on_line` 由 RM33 成功路径提交，依赖特定消元方程对，不能单凭值1用于另一条弦。RM34/35 将复用标准框架、焦点与来源核验；显式给定焦点归属的路径尚需开发，不要求先求RM33弦长。首批拟输出弦所属轴向／横向坐标积，不代算点积或查询。当前未增加模型入口、状态字段或查询类型，见[选型契约](../docs/开发规格/28_RM34_RM35证据审查与首批选型.md)。
+`parse_named_line_fact` 支持独立命名直线的 Intersection(H,G)={A,B} 及对象／端点反序。复用 NamedIntersection 保存无序点对；新增 FocusOnLine／state.focus_incidences 保存 PointOnCurve(Focus(G),H) 来源，命名焦点继续复用 FocusAlias。
 
-审查工具 `scripts/audit/focal_chord_candidates.py` 中 build_audit 返回候选原文、数据哈希及解析诊断；verify_product_identities 返回四方向乘积的独立数学核验结果。两者用于选型与复核，不作为求解API。
+`check_product_binding` 核对交点或消元事实与动作对象；`verify_focal_chord` 核验已提交标准参数、直接／别名焦点归属或消元源式及两实交点。FocalChordEvidence 返回归属ID、轴向、p、来源及验证操作，不写状态。数值方程／端点存在时交叉检查，冲突拒绝；verify_focus_line 供 RM33/34/35 共享，RM33 仍要求既有根和。
+
+RM34 的 derive_axial_product、RM35 的 derive_transverse_product 使用 curve/equation_id/line/relation_id；计算来源另指定 line_equation_id，给定来源该字段为空。其余字段为空。输出 properties[(交点或消元ID,x_product/y_product)]，分别为轴向 p²/4 或横向 −p²。无 RM33／RM43 强制依赖；仅数值标准抛物线。
+
+RM59 的 derive_origin_dot 额外绑定 point/coordinate_id，要求匹配查询的共同起点坐标为(0,0)。derive_origin_dot 只相加同一命名交点事实下已提交的 x_product、y_product，提出 properties[(query.owner,dot_product)]；缺项不补做模型。
+
+OriginDotProductQuery 保存共同起点和无序终点，表达 DotProduct(VectorOf(O,A),VectorOf(O,B)) 目标；owner=dot:O:A:B 用于结果定位。extract_answer 只读点积，无隐藏计算。
+
+solve_origin_dot_slice 固定回放标准模型→RM34→RM35→RM59；CLI `python3 -m src.reasoning.bound_slice --mode origin-dot --problem-id 4373` 输出 v11 轨迹。职责与边界见[本批记录](../docs/开发规格/29_RM34_RM35与原点点积闭环.md)。
+
+候选审查工具 focal_chord_candidates.py 仍仅用于选型审计，不作为求解API。

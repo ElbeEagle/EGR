@@ -25,6 +25,24 @@ class NamedIntersection:
 
 
 @dataclass(frozen=True)
+class FocusOnLine:
+    fact_id: str
+    curve: str
+    line: str
+    source: str
+
+
+@dataclass(frozen=True)
+class OriginDotProductQuery:
+    origin: str
+    points: tuple[str, str]
+
+    @property
+    def owner(self):
+        return 'dot:' + ':'.join((self.origin, *self.points))
+
+
+@dataclass(frozen=True)
 class SlopeSum:
     fact_id: str
     base_point: str  # Common starting point; not necessarily coordinate origin.
@@ -54,6 +72,27 @@ def register_named_line(state, first: str, second: str, source_id: str) -> str:
 def parse_named_line_fact(state, part: str, fact_id: str) -> bool:
     """Record supported given relationships; return False for other syntax."""
     from .transition_state import PointOnCurve
+    focus = re.fullmatch(rf'PointOnCurve\(\s*Focus\(\s*{NAME}\s*\)\s*,\s*{NAME}\s*\)', part)
+    if focus:
+        curve, line = focus.groups()
+        if state.entities.get(curve) != 'Parabola' or state.entities.get(line) != 'Line':
+            raise ValueError('Focus incidence requires a Parabola and Line')
+        state.focus_incidences[fact_id] = FocusOnLine(fact_id, curve, line, part)
+        return True
+    explicit = re.fullmatch(rf'Intersection\(\s*{NAME}\s*,\s*{NAME}\s*\)\s*=\s*\{{\s*{NAME}\s*,\s*{NAME}\s*\}}', part)
+    if explicit:
+        left, right, a, b = explicit.groups()
+        if sorted(state.entities.get(o, '') for o in (left, right)) != ['Line', 'Parabola'] or a == b or any(state.entities.get(v) != 'Point' for v in (a,b)):
+            raise ValueError('Intersection requires Line, Parabola and two distinct points')
+        line, curve = (left,right) if state.entities[left] == 'Line' else (right,left)
+        points = tuple(sorted((a,b)))
+        state.named_intersections[fact_id] = NamedIntersection(fact_id,line,curve,points,part)
+        for point in points:
+            for owner in (line,curve):
+                key = f'{fact_id}:on:{point}:{owner}'
+                state.incidences[key] = PointOnCurve(key,point,owner,part)
+                state.provenance[key] = (fact_id,)
+        return True
     incidence = re.fullmatch(rf'PointOnCurve\(\s*{NAME}\s*,\s*{LINE}\s*\)', part)
     if incidence:
         point, first, second = incidence.groups()
