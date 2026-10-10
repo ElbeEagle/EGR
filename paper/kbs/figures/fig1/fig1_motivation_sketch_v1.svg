@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1368pt" height="720pt" viewBox="0 0 1368 720" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-09T09:43:37.172339</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.9.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 720 
+L 1368 720 
+L 1368 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 34.3425 619.488 
+L 449.0175 619.488 
+L 449.0175 90.036 
+L 34.3425 90.036 
+L 34.3425 619.488 
+z
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #777777; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 476.6625 619.488 
+L 891.3375 619.488 
+L 891.3375 90.036 
+L 476.6625 90.036 
+L 476.6625 619.488 
+z
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #777777; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 918.9825 619.488 
+L 1333.6575 619.488 
+L 1333.6575 90.036 
+L 918.9825 90.036 
+L 918.9825 619.488 
+z
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #777777; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 138.01125 396.7056 
+C 149.486925 396.7056 160.494131 392.648407 168.608658 385.427571 
+C 176.723186 378.206735 181.282519 368.411804 181.282519 358.2 
+C 181.282519 347.988196 176.723186 338.193265 168.608658 330.972429 
+C 160.494131 323.751593 149.486925 319.6944 138.01125 319.6944 
+C 126.535575 319.6944 115.528369 323.751593 107.413842 330.972429 
+C 99.299314 338.193265 94.739981 347.988196 94.739981 358.2 
+C 94.739981 368.411804 99.299314 378.206735 107.413842 385.427571 
+C 115.528369 392.648407 126.535575 396.7056 138.01125 396.7056 
+L 138.01125 396.7056 
+z
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #000000; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 345.34875 396.7056 
+C 354.237769 396.7056 362.763914 392.648407 369.0494 385.427571 
+C 375.334886 378.206735 378.866531 368.411804 378.866531 358.2 
+C 378.866531 347.988196 375.334886 338.193265 369.0494 330.972429 
+C 362.763914 323.751593 354.237769 319.6944 345.34875 319.6944 
+C 336.459731 319.6944 327.933586 323.751593 321.6481 330.972429 
+C 315.362614 338.193265 311.830969 347.988196 311.830969 358.2 
+C 311.830969 368.411804 315.362614 378.206735 321.6481 385.427571 
+C 327.933586 392.648407 336.459731 396.7056 345.34875 396.7056 
+L 345.34875 396.7056 
+z
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #000000; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 138.01125 504.597863 
+Q 138.01125 519.784996 138.01125 533.742291 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 140.41125 528.942291 
+L 138.01125 533.742291 
+L 135.61125 528.942291 
+z
+" clip-path="url(#pc0ea530944)" style="fill: #333333; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 345.34875 504.597863 
+Q 345.34875 519.784996 345.34875 533.742291 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 347.74875 528.942291 
+L 345.34875 533.742291 
+L 342.94875 528.942291 
+z
+" clip-path="url(#pc0ea530944)" style="fill: #333333; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 684 277.685666 
+Q 684 289.437821 684 299.96014 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 686.4 295.16014 
+L 684 299.96014 
+L 681.6 295.16014 
+z
+" clip-path="url(#pc0ea530944)" style="fill: #333333; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 684 356.762604 
+Q 684 366.794656 684 375.59687 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 686.4 370.79687 
+L 684 375.59687 
+L 681.6 370.79687 
+z
+" clip-path="url(#pc0ea530944)" style="fill: #333333; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 684 541.1016 
+C 702.145561 541.1016 719.550369 536.319908 732.381218 527.809637 
+C 745.212067 519.299366 752.421375 507.755341 752.421375 495.72 
+C 752.421375 483.684659 745.212067 472.140634 732.381218 463.630363 
+C 719.550369 455.120092 702.145561 450.3384 684 450.3384 
+C 665.854439 450.3384 648.449631 455.120092 635.618782 463.630363 
+C 622.787933 472.140634 615.578625 483.684659 615.578625 495.72 
+C 615.578625 507.755341 622.787933 519.299366 635.618782 527.809637 
+C 648.449631 536.319908 665.854439 541.1016 684 541.1016 
+L 684 541.1016 
+z
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #000000; stroke-width: 1.3; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 939.71625 523.224 
+L 1112.4975 523.224 
+L 1112.4975 289.44 
+L 939.71625 289.44 
+L 939.71625 523.224 
+z
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #777777; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 1140.1425 523.224 
+L 1312.92375 523.224 
+L 1312.92375 289.44 
+L 1140.1425 289.44 
+L 1140.1425 523.224 
+z
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #777777; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 1026.106875 380.825666 
+Q 1026.106875 392.577821 1026.106875 403.10014 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 1028.506875 398.30014 
+L 1026.106875 403.10014 
+L 1023.706875 398.30014 
+z
+" clip-path="url(#pc0ea530944)" style="fill: #333333; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 1226.533125 380.825666 
+Q 1226.533125 392.577821 1226.533125 403.10014 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+    <path d="M 1228.933125 398.30014 
+L 1226.533125 403.10014 
+L 1224.133125 398.30014 
+z
+" clip-path="url(#pc0ea530944)" style="fill: #333333; stroke: #333333; stroke-width: 1.1; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 87.828731 358.2 
+L 188.193769 358.2 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #999999; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 138.01125 403.5816 
+L 138.01125 312.8184 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #999999; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <defs>
+     <path id="md92b6e67c0" d="M 0 2 
+C 0.530406 2 1.03916 1.789267 1.414214 1.414214 
+C 1.789267 1.03916 2 0.530406 2 0 
+C 2 -0.530406 1.789267 -1.03916 1.414214 -1.414214 
+C 1.03916 -1.789267 0.530406 -2 0 -2 
+C -0.530406 -2 -1.03916 -1.789267 -1.414214 -1.414214 
+C -1.789267 -1.03916 -2 -0.530406 -2 0 
+C -2 0.530406 -1.789267 1.03916 -1.414214 1.414214 
+C -1.03916 1.789267 -0.530406 2 0 2 
+z
+" style="stroke: #333333"/>
+    </defs>
+    <g clip-path="url(#pc0ea530944)">
+     <use xlink:href="#md92b6e67c0" x="118.65975" y="358.2" style="fill: #333333; stroke: #333333"/>
+     <use xlink:href="#md92b6e67c0" x="157.36275" y="358.2" style="fill: #333333; stroke: #333333"/>
+    </g>
+   </g>
+   <g id="line2d_4">
+    <path d="M 304.919719 358.2 
+L 385.777781 358.2 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #999999; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 345.34875 403.5816 
+L 345.34875 312.8184 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #999999; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_6">
+    <g clip-path="url(#pc0ea530944)">
+     <use xlink:href="#md92b6e67c0" x="345.34875" y="377.4528" style="fill: #333333; stroke: #333333"/>
+     <use xlink:href="#md92b6e67c0" x="345.34875" y="338.9472" style="fill: #333333; stroke: #333333"/>
+    </g>
+   </g>
+   <g id="line2d_7">
+    <path d="M 608.667375 495.72 
+L 759.332625 495.72 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #999999; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_8">
+    <path d="M 684 547.9776 
+L 684 443.4624 
+" clip-path="url(#pc0ea530944)" style="fill: none; stroke: #999999; stroke-width: 0.7; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_9">
+    <g clip-path="url(#pc0ea530944)">
+     <use xlink:href="#md92b6e67c0" x="633.001718" y="495.72" style="fill: #333333; stroke: #333333"/>
+     <use xlink:href="#md92b6e67c0" x="734.998282" y="495.72" style="fill: #333333; stroke: #333333"/>
+    </g>
+   </g>
+   <g id="text_1">
+    <text style="fill: #222222; font: 700 18px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: start" x="41.25375" y="46.659937" transform="rotate(-0 41.25375 46.659937)">Fig. 1 | Problem characteristics and method motivation</text>
+   </g>
+   <g id="text_2">
+    <text style="fill: #222222; font: 700 14px 'DejaVu Sans', 'Arial', sans-serif" transform="translate(122.25125 118.258406)">(a) Geometric roles determine</text>
+    <text style="fill: #222222; font: 700 14px 'DejaVu Sans', 'Arial', sans-serif" transform="translate(165.079219 138.190469)">algebraic identities</text>
+   </g>
+   <g id="text_3">
+    <text style="fill: #222222; font: 700 14px 'DejaVu Sans', 'Arial', sans-serif" transform="translate(564.765937 118.203719)">(b) Algebraic results establish</text>
+    <text style="fill: #222222; font: 700 14px 'DejaVu Sans', 'Arial', sans-serif" transform="translate(600.550156 138.245156)">geometric conditions</text>
+   </g>
+   <g id="text_4">
+    <text style="fill: #222222; font: 700 14px 'DejaVu Sans', 'Arial', sans-serif" transform="translate(1026.303125 118.258406)">(c) The query determines</text>
+    <text style="fill: #222222; font: 700 14px 'DejaVu Sans', 'Arial', sans-serif" transform="translate(1013.967812 138.299844)">which information is needed</text>
+   </g>
+   <g id="text_5">
+    <!-- $x^2/m+y^2/4=1,\quad |F_1F_2|=2$ -->
+    <g style="fill: #222222" transform="translate(145.64 204.742)">
+     <text>
+      <tspan style="font: oblique 14px 'DejaVu Sans'" x="0 20.245085 51.068327 131.845638 146.516243" y="-0.3671875">xmyFF</tspan>
+      <tspan style="font: 9.8px 'DejaVu Sans'" x="8.910417 59.978743 139.898372 154.568978" y="-5.7265625 -5.7265625 1.9296875 1.9296875">2212</tspan>
+      <tspan style="font: 14px 'DejaVu Sans'" x="15.528288 36.610319 66.596615 71.313411 82.948177 97.406185 106.313411 127.128841 161.186849 168.631185 183.089193" y="-0.3671875">/+/4=1,||=2</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_6">
+    <text style="fill: #222222; font: 10px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="241.68" y="240.629375" transform="rotate(-0 241.68 240.629375)">Two alternative given conditions</text>
+   </g>
+   <g id="text_7">
+    <!-- Foci on the $x$-axis -->
+    <g style="fill: #222222" transform="translate(83.61625 285.599312)">
+     <text>
+      <tspan style="font: 700 11px 'DejaVu Sans'" x="0 7.51416 15.071289 21.591797 25.362305 29.191895 36.749023 44.580078 48.409668 53.667969 61.499023 68.959473 79.298828 83.864258 91.287109 98.382324 102.152832" y="-0.640625">Foci on the -axis</tspan>
+      <tspan style="font: oblique 11px 'DejaVu Sans'" x="72.789062" y="-0.640625">x</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_8">
+    <!-- Foci on the $y$-axis -->
+    <g style="fill: #222222" transform="translate(290.95375 285.589)">
+     <text>
+      <tspan style="font: 700 11px 'DejaVu Sans'" x="0 7.51416 15.071289 21.591797 25.362305 29.191895 36.749023 44.580078 48.409668 53.667969 61.499023 68.959473 79.298828 83.864258 91.287109 98.382324 102.152832" y="-0.640625">Foci on the -axis</tspan>
+      <tspan style="font: oblique 11px 'DejaVu Sans'" x="72.789062" y="-0.640625">y</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_9">
+    <text style="fill: #222222; font: 8px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="195.105019" y="360.4075" transform="rotate(-0 195.105019 360.4075)">x</text>
+   </g>
+   <g id="text_10">
+    <text style="fill: #222222; font: 8px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="138.01125" y="308.1499" transform="rotate(-0 138.01125 308.1499)">y</text>
+   </g>
+   <g id="text_11">
+    <text style="fill: #222222; font: 8px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="392.689031" y="360.4075" transform="rotate(-0 392.689031 360.4075)">x</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #222222; font: 8px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="345.34875" y="308.1499" transform="rotate(-0 345.34875 308.1499)">y</text>
+   </g>
+   <g id="text_13">
+    <!-- $m=a^2,\ 4=b^2$ -->
+    <g style="fill: #222222" transform="translate(91.08125 441.265406)">
+     <text>
+      <tspan style="font: oblique 13px 'DejaVu Sans'" x="0 28.621582 78.45291" y="-0.2640625000000014">mab</tspan>
+      <tspan style="font: 13px 'DejaVu Sans'" x="15.196289 43.337718 54.223906 65.027617" y="-0.2640625000000014">=,4=</tspan>
+      <tspan style="font: 9.1px 'DejaVu Sans'" x="37.192552 87.67265" y="-5.240625000000001">22</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_14">
+    <!-- $4=a^2,\ m=b^2$ -->
+    <g style="fill: #222222" transform="translate(298.41875 441.265406)">
+     <text>
+      <tspan style="font: 13px 'DejaVu Sans'" x="0 10.803711 38.94514 65.027617" y="-0.2640625000000014">4=,=</tspan>
+      <tspan style="font: oblique 13px 'DejaVu Sans'" x="24.229004 49.831328 78.45291" y="-0.2640625000000014">amb</tspan>
+      <tspan style="font: 9.1px 'DejaVu Sans'" x="32.799974 87.67265" y="-5.240625000000001">22</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_15">
+    <!-- $c=1,\qquad a^2=b^2+c^2$ -->
+    <g style="fill: #222222" transform="translate(166.64 489.704437)">
+     <text>
+      <tspan style="font: oblique 14px 'DejaVu Sans'" x="0 68.243164 101.277194 135.010404" y="-0.3671875">cabc</tspan>
+      <tspan style="font: 14px 'DejaVu Sans'" x="10.424805 24.882812 33.790039 86.819186 120.552396" y="-0.3671875">=1,=+</tspan>
+      <tspan style="font: 9.8px 'DejaVu Sans'" x="77.473776 111.206986 143.35918" y="-5.7265625">222</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_16">
+    <!-- $m=5$ -->
+    <g style="fill: #222222" transform="translate(113.87125 562.294937)">
+     <text>
+      <tspan style="font: oblique 17px 'DejaVu Sans'" x="0" y="-0.609375">m</tspan>
+      <tspan style="font: 17px 'DejaVu Sans'" x="19.87207 37.428223" y="-0.609375">=5</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_17">
+    <!-- $m=3$ -->
+    <g style="fill: #222222" transform="translate(321.20875 562.294937)">
+     <text>
+      <tspan style="font: oblique 17px 'DejaVu Sans'" x="0" y="-0.375">m</tspan>
+      <tspan style="font: 17px 'DejaVu Sans'" x="19.87207 37.428223" y="-0.375">=3</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_18">
+    <text style="fill: #222222; font: 700 11px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="241.68" y="598.414344" transform="rotate(-0 241.68 598.414344)">Roles determine parameter meaning.</text>
+   </g>
+   <g id="text_19">
+    <!-- $G:\quad x^2/9+y^2/4=1$ -->
+    <g style="fill: #222222" transform="translate(611.775 205.302)">
+     <text>
+      <tspan style="font: oblique 15px 'DejaVu Sans'" x="0 37.133789 85.156494" y="-0.4593750000000014">Gxy</tspan>
+      <tspan style="font: 15px 'DejaVu Sans'" x="14.545898 53.77124 57.199951 69.665771 101.793945 106.847656 119.313477 134.804199" y="-0.4593750000000014">:/9+/4=1</tspan>
+      <tspan style="font: 10.5px 'DejaVu Sans'" x="46.680664 94.703369" y="-6.201562500000001">22</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_20">
+    <!-- $a^2=9,\quad b^2=4$ -->
+    <g style="fill: #222222" transform="translate(631.29 259.358437)">
+     <text>
+      <tspan style="font: oblique 14px 'DejaVu Sans'" x="0 62.756686" y="-0.3671875">ab</tspan>
+      <tspan style="font: 9.8px 'DejaVu Sans'" x="9.230612 72.686478" y="-5.7265625">22</tspan>
+      <tspan style="font: 14px 'DejaVu Sans'" x="18.576022 33.03403 41.941257 82.031888 96.489896" y="-0.3671875">=9,=4</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_21">
+    <!-- $c^2=a^2-b^2=5$ -->
+    <g style="fill: #222222" transform="translate(626.175 334.835062)">
+     <text>
+      <tspan style="font: oblique 15px 'DejaVu Sans'" x="0 34.449092 69.843008" y="-0.4593750000000014">cab</tspan>
+      <tspan style="font: 10.5px 'DejaVu Sans'" x="8.94543 44.339346 80.480664" y="-6.201562500000001">222</tspan>
+      <tspan style="font: 15px 'DejaVu Sans'" x="18.958369 54.352285 90.493604 105.984326" y="-0.4593750000000014">=−=5</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_22">
+    <!-- $\mathrm{Foci}(G)=\{(-\sqrt{5},0),(\sqrt{5},0)\}$ -->
+    <g style="fill: #222222" transform="translate(598.44 411.516375)">
+     <text>
+      <tspan style="font: 12px 'DejaVu Sans'" x="0 6.902344 14.244141 20.841797 24.175781 38.15625 45.175781 57.568359 65.203125 69.884766 88.673279 97.808044 103.960388 111.595154 116.276794 122.429138 135.844604 144.97937 151.131714 158.766479 163.44812" y="-0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.5 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.5 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994">Foci()={(−5,0),(5,0)}</tspan>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="28.857422" y="-0.8112499999999994">G</tspan>
+      <tspan style="font: 6.858351px 'STIXSizeOneSym'" x="79.939453 127.110779" y="-2.6549999999999994">√√</tspan>
+     </text>
+     <rect x="87.173279" y="-13.5" width="10.634766" height="0.75"/>
+     <rect x="134.344604" y="-13.5" width="10.634766" height="0.75"/>
+    </g>
+   </g>
+   <g id="text_23">
+    <text style="fill: #222222; font: 8px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="766.243875" y="497.9275" transform="rotate(-0 766.243875 497.9275)">x</text>
+   </g>
+   <g id="text_24">
+    <text style="fill: #222222; font: 8px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="684" y="438.7939" transform="rotate(-0 684 438.7939)">y</text>
+   </g>
+   <g id="text_25">
+    <text style="fill: #222222; font: 700 11px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="684" y="567.515312" transform="rotate(-0 684 567.515312)">Derived foci</text>
+   </g>
+   <g id="text_26">
+    <text style="fill: #222222; font: 700 11px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="684" y="598.414344" transform="rotate(-0 684 598.414344)">Parameters establish geometric objects.</text>
+   </g>
+   <g id="text_27">
+    <text style="fill: #222222; font: 10px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="1126.32" y="195.935375" transform="rotate(-0 1126.32 195.935375)">Same given curve; different queries</text>
+   </g>
+   <g id="text_28">
+    <!-- $G:\quad x^2/9+y^2/4=1$ -->
+    <g style="fill: #222222" transform="translate(1054.095 239.682)">
+     <text>
+      <tspan style="font: oblique 15px 'DejaVu Sans'" x="0 37.133789 85.156494" y="-0.4593750000000014">Gxy</tspan>
+      <tspan style="font: 15px 'DejaVu Sans'" x="14.545898 53.77124 57.199951 69.665771 101.793945 106.847656 119.313477 134.804199" y="-0.4593750000000014">:/9+/4=1</tspan>
+      <tspan style="font: 10.5px 'DejaVu Sans'" x="46.680664 94.703369" y="-6.201562500000001">22</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_29">
+    <text style="fill: #222222; font: 700 12px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="1026.106875" y="320.208375" transform="rotate(-0 1026.106875 320.208375)">Eccentricity</text>
+   </g>
+   <g id="text_30">
+    <text style="fill: #222222; font: 700 11px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="1226.533125" y="319.936344" transform="rotate(-0 1226.533125 319.936344)">Major-axis length</text>
+   </g>
+   <g id="text_31">
+    <!-- $q=e$ -->
+    <g style="fill: #222222" transform="translate(1008.746875 362.034687)">
+     <text>
+      <tspan style="font: oblique 14px 'DejaVu Sans'" x="0 26.072266" y="-0.15625">qe</tspan>
+      <tspan style="font: 14px 'DejaVu Sans'" x="11.614258" y="-0.15625">=</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_32">
+    <!-- $q=L$ -->
+    <g style="fill: #222222" transform="translate(1209.593125 362.034687)">
+     <text>
+      <tspan style="font: oblique 14px 'DejaVu Sans'" x="0 26.072266" y="-0.796875">qL</tspan>
+      <tspan style="font: 14px 'DejaVu Sans'" x="11.614258" y="-0.796875">=</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_33">
+    <!-- Need $a,c$ -->
+    <g style="fill: #222222" transform="translate(998.446875 430.27125)">
+     <text>
+      <tspan style="font: 12px 'DejaVu Sans'" x="0 8.976562 16.359375 23.742188 31.359375 42.527344" y="-0.875">Need ,</tspan>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="35.173828 48.679688" y="-0.875">ac</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_34">
+    <!-- Need $a$ -->
+    <g style="fill: #222222" transform="translate(1205.233125 430.27125)">
+     <text>
+      <tspan style="font: 12px 'DejaVu Sans'" x="0 8.976562 16.359375 23.742188 31.359375" y="-0.875">Need </tspan>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="35.173828" y="-0.875">a</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_35">
+    <!-- $a=3,\ c=\sqrt{5}$ -->
+    <g style="fill: #222222" transform="translate(986.566875 473.100375)">
+     <text>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="0 39.767539" y="-0.8112499999999994">ac</tspan>
+      <tspan style="font: 12px 'DejaVu Sans'" x="9.691406 22.083984 29.71875 48.703086 69.82949" y="-0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.5">=3,=5</tspan>
+      <tspan style="font: 6.858351px 'STIXSizeOneSym'" x="61.095664" y="-2.6549999999999994">√</tspan>
+     </text>
+     <rect x="68.32949" y="-13.5" width="10.634766" height="0.75"/>
+    </g>
+   </g>
+   <g id="text_36">
+    <!-- $a=3$ -->
+    <g style="fill: #222222" transform="translate(1211.653125 471.52725)">
+     <text>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="0" y="-0.09375">a</tspan>
+      <tspan style="font: 12px 'DejaVu Sans'" x="9.691406 22.083984" y="-0.09375">=3</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_37">
+    <!-- $e=c/a=\sqrt{5}/3$ -->
+    <g style="fill: #222222" transform="translate(983.866875 509.423175)">
+     <text>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="0 22.113281 32.753906" y="-0.8112499999999994">eca</tspan>
+      <tspan style="font: 12px 'DejaVu Sans'" x="9.720703 28.710938 42.445312 63.571716 72.706482 76.749451" y="-0.8112499999999994 -0.8112499999999994 -0.8112499999999994 -0.5 -0.8112499999999994 -0.8112499999999994">=/=5/3</tspan>
+      <tspan style="font: 6.858351px 'STIXSizeOneSym'" x="54.837891" y="-2.6549999999999994">√</tspan>
+     </text>
+     <rect x="62.071716" y="-13.5" width="10.634766" height="0.75"/>
+    </g>
+   </g>
+   <g id="text_38">
+    <!-- $L=2a=6$ -->
+    <g style="fill: #222222" transform="translate(1197.133125 507.97005)">
+     <text>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="0 29.050781" y="-0.09375">La</tspan>
+      <tspan style="font: 12px 'DejaVu Sans'" x="9.023438 21.416016 38.742188 51.134766" y="-0.09375">=2=6</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_39">
+    <text style="fill: #777777; font: 10px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="1126.32" y="560.363375" transform="rotate(-0 1126.32 560.363375)">For L, neither c nor the foci need to be derived.</text>
+   </g>
+   <g id="text_40">
+    <text style="fill: #222222; font: 700 11px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="1126.32" y="598.457312" transform="rotate(-0 1126.32 598.457312)">Queries determine relevant dependencies.</text>
+   </g>
+   <g id="text_41">
+    <text style="fill: #222222; font: 700 14px 'DejaVu Sans', 'Arial', sans-serif; text-anchor: middle" x="684" y="664.552437" transform="rotate(-0 684 664.552437)">Each reasoning step depends on geometric roles, established facts, and the query.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pc0ea530944">
+   <rect x="20.52" y="14.4" width="1326.96" height="687.6"/>
+  </clipPath>
+ </defs>
+</svg>

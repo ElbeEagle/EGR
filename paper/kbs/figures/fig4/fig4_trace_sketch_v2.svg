@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1512pt" height="648pt" viewBox="0 0 1512 648" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-08T22:11:53.961039</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.9.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 648 
+L 1512 648 
+L 1512 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 27.069677 505.44 
+L 349.710968 505.44 
+L 349.710968 117.612 
+L 27.069677 117.612 
+L 27.069677 505.44 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 44.994194 253.044 
+L 331.786452 253.044 
+L 331.786452 173.016 
+L 44.994194 173.016 
+L 44.994194 253.044 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 44.994194 480.816 
+L 331.786452 480.816 
+L 331.786452 308.448 
+L 44.994194 308.448 
+L 44.994194 480.816 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 188.390323 308.448 
+L 188.390323 254.497444 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 185.790323 259.697444 
+L 188.390323 254.497444 
+L 190.990323 259.697444 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #444444; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 588.704516 505.44 
+L 911.345806 505.44 
+L 911.345806 117.612 
+L 588.704516 117.612 
+L 588.704516 505.44 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 606.629032 253.044 
+L 893.42129 253.044 
+L 893.42129 173.016 
+L 606.629032 173.016 
+L 606.629032 253.044 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 606.629032 480.816 
+L 893.42129 480.816 
+L 893.42129 308.448 
+L 606.629032 308.448 
+L 606.629032 480.816 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 750.025161 308.448 
+L 750.025161 254.497444 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 747.425161 259.697444 
+L 750.025161 254.497444 
+L 752.625161 259.697444 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #444444; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 1150.339355 505.44 
+L 1472.980645 505.44 
+L 1472.980645 117.612 
+L 1150.339355 117.612 
+L 1150.339355 505.44 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 1168.263871 253.044 
+L 1455.056129 253.044 
+L 1455.056129 173.016 
+L 1168.263871 173.016 
+L 1168.263871 253.044 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 1168.263871 480.816 
+L 1455.056129 480.816 
+L 1455.056129 308.448 
+L 1168.263871 308.448 
+L 1168.263871 480.816 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 1311.66 308.448 
+L 1311.66 254.497444 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 1309.06 259.697444 
+L 1311.66 254.497444 
+L 1314.26 259.697444 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #444444; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 379.585161 456.192 
+L 558.830323 456.192 
+L 558.830323 259.2 
+L 379.585161 259.2 
+L 379.585161 456.192 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 331.786452 209.952 
+L 469.207742 209.952 
+L 469.207742 257.746556 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #366b99; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 471.807742 252.546556 
+L 469.207742 257.746556 
+L 466.607742 252.546556 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #366b99; stroke: #366b99; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 331.786452 382.32 
+L 378.131717 382.32 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 372.931717 379.72 
+L 378.131717 382.32 
+L 372.931717 384.92 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #444444; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 558.830323 382.32 
+L 605.175588 382.32 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #aa5946; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 599.975588 379.72 
+L 605.175588 382.32 
+L 599.975588 384.92 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #aa5946; stroke: #aa5946; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 941.22 456.192 
+L 1120.465161 456.192 
+L 1120.465161 259.2 
+L 941.22 259.2 
+L 941.22 456.192 
+z
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 893.42129 209.952 
+L 1030.842581 209.952 
+L 1030.842581 257.746556 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #366b99; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 1033.442581 252.546556 
+L 1030.842581 257.746556 
+L 1028.242581 252.546556 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #366b99; stroke: #366b99; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 893.42129 382.32 
+L 939.766556 382.32 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 934.566556 379.72 
+L 939.766556 382.32 
+L 934.566556 384.92 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #444444; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 1120.465161 382.32 
+L 1166.810427 382.32 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #aa5946; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 1161.610427 379.72 
+L 1166.810427 382.32 
+L 1161.610427 384.92 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #aa5946; stroke: #aa5946; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 1311.66 480.816 
+L 1311.66 553.234556 
+" clip-path="url(#p3d91960df4)" style="fill: none; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+    <path d="M 1314.26 548.034556 
+L 1311.66 553.234556 
+L 1309.06 548.034556 
+z
+" clip-path="url(#p3d91960df4)" style="fill: #444444; stroke: #444444; stroke-width: 1.3; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="fill: #222222; font: 700 18px 'DejaVu Sans'; text-anchor: start" x="33.044516" y="42.339938" transform="rotate(-0 33.044516 42.339938)">Fig. 4 | Dual-layer state transitions: a worked example</text>
+   </g>
+   <g id="text_2">
+    <!-- Given: $G:x^2=ay$, $A=(1,1/4)$, $A\in G$.     Query: $q=\mathrm{Distance}(A,\mathrm{Focus}(G))$. -->
+    <g style="fill: #222222" transform="translate(33.044516 79.42)">
+     <text>
+      <tspan style="font: 14px 'DejaVu Sans'" x="0 10.848633 14.738281 23.023438 31.636719 40.509766 45.226562 63.25293 88.953092 120.275358 124.725553 141.480436 155.938444 161.400358 170.307585 177.485319 186.392546 191.109342 200.016569 205.478483 209.928678 226.683561 252.455046 256.905241 261.355436 265.805632 270.255827 274.706022 279.156217 290.175749 299.048796 307.662077 313.417936 321.703092 326.419889 342.484342 356.94235 367.722624 371.612272 378.906217 384.395475 392.974577 401.847624 409.544889 418.158171 433.197233 440.374967 448.427702 456.993132 464.690397 473.563444 480.857389 497.167936 502.62985 508.091764" y="-0.3671875">Given: :=, =(1,1/4), ∈.     Query: =Distance(,Focus()).</tspan>
+      <tspan style="font: oblique 14px 'DejaVu Sans'" x="49.676758 70.697266 103.4111 111.990202 129.175749 214.378874 241.606413 330.870085 423.620085 486.319303" y="-0.3671875">GxayAAGqAG</tspan>
+      <tspan style="font: 9.8px 'DejaVu Sans'" x="79.607682" y="-5.7265625">2</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_3">
+    <!-- $S_0$ -->
+    <g style="fill: #222222" transform="translate(178.955323 146.926938)">
+     <text>
+      <tspan style="font: oblique 17px 'DejaVu Sans'" x="0" y="-0.375">S</tspan>
+      <tspan style="font: 11.9px 'DejaVu Sans'" x="10.791016" y="2.4140625">0</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_4">
+    <text style="fill: #222222; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="188.390323" y="194.748375" transform="rotate(-0 188.390323 194.748375)">Abstract layer</text>
+   </g>
+   <g id="text_5">
+    <text style="fill: #222222; font: 9px 'DejaVu Sans'; text-anchor: middle" x="188.390323" y="221.669438" transform="rotate(-0 188.390323 221.669438)">Parabola · y-axis · Equation · Point on curve</text>
+   </g>
+   <g id="text_6">
+    <text style="fill: #222222; font: 700 9px 'DejaVu Sans'; text-anchor: middle" x="188.390323" y="243.180281" transform="rotate(-0 188.390323 243.180281)">Missing focus or focal distance</text>
+   </g>
+   <g id="text_7">
+    <text style="fill: #222222; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="188.390323" y="336.336375" transform="rotate(-0 188.390323 336.336375)">Symbolic layer</text>
+   </g>
+   <g id="text_8">
+    <!-- $\phi(S_0^{\mathrm{sym}},q)$ -->
+    <g style="fill: #222222" transform="translate(200.34 284.156)">
+     <text>
+      <tspan style="font: oblique 11px 'DejaVu Sans'" x="0 11.547852 41.333092" y="-0.006250000000001421">ϕSq</tspan>
+      <tspan style="font: 11px 'DejaVu Sans'" x="7.256348 35.693444 48.315514" y="-0.006250000000001421">(,)</tspan>
+      <tspan style="font: 7.7px 'DejaVu Sans'" x="18.530273 19.323424 23.335094 27.89193" y="3.0015624999999986 -5.690625000000001 -5.690625000000001 -5.690625000000001">0sym</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_9">
+    <!-- $S_1$ -->
+    <g style="fill: #222222" transform="translate(740.590161 146.926938)">
+     <text>
+      <tspan style="font: oblique 17px 'DejaVu Sans'" x="0" y="-0.375">S</tspan>
+      <tspan style="font: 11.9px 'DejaVu Sans'" x="10.791016" y="2.4140625">1</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_10">
+    <text style="fill: #222222; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="750.025161" y="194.748375" transform="rotate(-0 750.025161 194.748375)">Abstract layer</text>
+   </g>
+   <g id="text_11">
+    <text style="fill: #222222; font: 9px 'DejaVu Sans'; text-anchor: middle" x="750.025161" y="221.669438" transform="rotate(-0 750.025161 221.669438)">Parabola · y-axis · Equation · Point on curve</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #222222; font: 700 9px 'DejaVu Sans'; text-anchor: middle" x="750.025161" y="243.180281" transform="rotate(-0 750.025161 243.180281)">Missing focus or focal distance</text>
+   </g>
+   <g id="text_13">
+    <text style="fill: #222222; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="750.025161" y="336.336375" transform="rotate(-0 750.025161 336.336375)">Symbolic layer</text>
+   </g>
+   <g id="text_14">
+    <!-- $\phi(S_1^{\mathrm{sym}},q)$ -->
+    <g style="fill: #222222" transform="translate(761.974839 284.156)">
+     <text>
+      <tspan style="font: oblique 11px 'DejaVu Sans'" x="0 11.547852 41.333092" y="-0.11562500000000142">ϕSq</tspan>
+      <tspan style="font: 11px 'DejaVu Sans'" x="7.256348 35.693444 48.315514" y="-0.11562500000000142">(,)</tspan>
+      <tspan style="font: 7.7px 'DejaVu Sans'" x="18.530273 19.323424 23.335094 27.89193" y="2.8921874999999986 -5.690625000000001 -5.690625000000001 -5.690625000000001">1sym</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_15">
+    <!-- $S_2$ -->
+    <g style="fill: #222222" transform="translate(1302.225 146.926938)">
+     <text>
+      <tspan style="font: oblique 17px 'DejaVu Sans'" x="0" y="-0.375">S</tspan>
+      <tspan style="font: 11.9px 'DejaVu Sans'" x="10.791016" y="2.4140625">2</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_16">
+    <text style="fill: #222222; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="1311.66" y="194.748375" transform="rotate(-0 1311.66 194.748375)">Abstract layer</text>
+   </g>
+   <g id="text_17">
+    <text style="fill: #222222; font: 9px 'DejaVu Sans'; text-anchor: middle" x="1311.66" y="221.669438" transform="rotate(-0 1311.66 221.669438)">Parabola · y-axis · Equation · Point on curve</text>
+   </g>
+   <g id="text_18">
+    <text style="fill: #222222; font: 700 9px 'DejaVu Sans'; text-anchor: middle" x="1311.66" y="243.180281" transform="rotate(-0 1311.66 243.180281)">Target deficit removed</text>
+   </g>
+   <g id="text_19">
+    <text style="fill: #222222; font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="1311.66" y="336.336375" transform="rotate(-0 1311.66 336.336375)">Symbolic layer</text>
+   </g>
+   <g id="text_20">
+    <!-- $\phi(S_2^{\mathrm{sym}},q)$ -->
+    <g style="fill: #222222" transform="translate(1323.609677 284.211)">
+     <text>
+      <tspan style="font: oblique 11px 'DejaVu Sans'" x="0 11.547852 41.333092" y="-0.006250000000001421">ϕSq</tspan>
+      <tspan style="font: 11px 'DejaVu Sans'" x="7.256348 35.693444 48.315514" y="-0.006250000000001421">(,)</tspan>
+      <tspan style="font: 7.7px 'DejaVu Sans'" x="18.530273 19.323424 23.335094 27.89193" y="3.0015624999999986 -5.690625000000001 -5.690625000000001 -5.690625000000001">2sym</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_21">
+    <!-- $G:x^2=ay$ -->
+    <g style="fill: #222222" transform="translate(155.565323 386.87)">
+     <text>
+      <tspan style="font: oblique 13px 'DejaVu Sans'" x="0 19.519043 49.896175 57.862484" y="-0.2640625000000014">Gxay</tspan>
+      <tspan style="font: 13px 'DejaVu Sans'" x="12.606445 36.470882" y="-0.2640625000000014">:=</tspan>
+      <tspan style="font: 9.1px 'DejaVu Sans'" x="27.793001" y="-5.240625000000001">2</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_22">
+    <!-- $A=(1,1/4),\quad A\in G$ -->
+    <g style="fill: #222222" transform="translate(125.600323 422.843187)">
+     <text>
+      <tspan style="font: oblique 13px 'DejaVu Sans'" x="0 90.181152 115.463867" y="-0.140625">AAG</tspan>
+      <tspan style="font: 13px 'DejaVu Sans'" x="11.425781 24.851074 29.922852 38.193848 44.858887 53.129883 57.509766 65.780762 70.852539 101.606934" y="-0.140625">=(1,1/4),∈</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_23">
+    <text style="fill: #222222; font: 9px 'DejaVu Sans'; text-anchor: middle" x="188.390323" y="461.753438" transform="rotate(-0 188.390323 461.753438)">Parameter and focal distance unknown</text>
+   </g>
+   <g id="text_24">
+    <text style="fill: #777777; font: 10px 'DejaVu Sans'; text-anchor: middle" x="750.025161" y="372.767375" transform="rotate(-0 750.025161 372.767375)">Given facts retained</text>
+   </g>
+   <g id="text_25">
+    <!-- $+\ a=4,\ p=2,\ \mathrm{opening}=\mathrm{up}$ -->
+    <g style="fill: #222222" transform="translate(663.865161 410.244)">
+     <text>
+      <tspan style="font: 12px 'DejaVu Sans'" x="0 23.642539 36.035117 43.669883 63.67375 76.066328 83.701094 93.749883 101.09168 108.708867 116.09168 123.697149 127.031133 134.636602 144.59168 156.984258 164.589727" y="-0.875">+=4,=2,opening=up</tspan>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="13.951133 53.718672" y="-0.875">ap</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_26">
+    <!-- $+\ \mathrm{Focus}(G)=(0,1)$ -->
+    <g style="fill: #222222" transform="translate(693.565161 456.42525)">
+     <text>
+      <tspan style="font: 12px 'DejaVu Sans'" x="0 13.951133 20.853477 28.195274 34.79293 42.398399 48.650352 62.63082 69.650352 82.04293 86.72457 94.359336 100.51168 108.146445" y="-0.890625">+Focus()=(0,1)</tspan>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="53.331992" y="-0.890625">G</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_27">
+    <!-- Facts from $S_1$ retained -->
+    <g style="fill: #777777" transform="translate(1255.36 378.923375)">
+     <text>
+      <tspan style="font: 10px 'DejaVu Sans'" x="0 5.751953 11.879883 17.37793 21.298828 26.508789 29.6875 33.208008 37.319336 43.4375 53.178711 67.432129 70.61084 74.722168 80.874512 84.79541 90.92334 93.70166 100.039551 106.191895" y="-0.40625">Facts from  retained</tspan>
+      <tspan style="font: oblique 10px 'DejaVu Sans'" x="56.357422" y="-0.40625">S</tspan>
+      <tspan style="font: 7px 'DejaVu Sans'" x="62.705078" y="1.234375">1</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_28">
+    <!-- $+\ \mathrm{FocalDistance}(A,G)$ -->
+    <g style="fill: #222222" transform="translate(1246.14 422.56725)">
+     <text>
+      <tspan style="font: 12px 'DejaVu Sans'" x="0 13.951133 20.853477 28.195274 34.79293 42.146445 45.48043 54.720664 58.054649 64.306602 69.01168 76.365195 83.970664 90.56832 97.951133 110.841758 126.29293" y="-0.875">+FocalDistance(,)</tspan>
+      <tspan style="font: oblique 12px 'DejaVu Sans'" x="102.632774 116.994102" y="-0.875">AG</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_29">
+    <!-- $=5/4$ -->
+    <g style="fill: #222222" transform="translate(1291.78 460.055125)">
+     <text>
+      <tspan style="font: 14px 'DejaVu Sans'" x="2.727539 17.185547 26.092773 30.80957" y="-0.796875">=5/4</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_30">
+    <!-- $P_9$ -->
+    <g style="fill: #222222" transform="translate(460.567742 288.239)">
+     <text>
+      <tspan style="font: oblique 16px 'DejaVu Sans'" x="0" y="-0.328125">P</tspan>
+      <tspan style="font: 11.2px 'DejaVu Sans'" x="9.648438" y="2.296875">9</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_31">
+    <text style="fill: #222222; font: 10px 'DejaVu Sans'; text-anchor: middle" x="469.207742" y="323.519375" transform="rotate(-0 469.207742 323.519375)">Recover parameters</text>
+   </g>
+   <g id="text_32">
+    <!-- Bind: $G,A$ -->
+    <g style="fill: #222222" transform="translate(444.907742 360.455375)">
+     <text>
+      <tspan style="font: 10px 'DejaVu Sans'" x="0 6.860352 9.638672 15.976562 22.324219 25.693359 36.621094" y="-0.40625">Bind: ,</tspan>
+      <tspan style="font: oblique 10px 'DejaVu Sans'" x="28.87207 41.748047" y="-0.40625">GA</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_33">
+    <!-- $1=a/4$ -->
+    <g style="fill: #222222" transform="translate(451.957742 403.547375)">
+     <text>
+      <tspan style="font: 10px 'DejaVu Sans'" x="0 8.310547 24.765625 28.134766" y="-0.703125">1=/4</tspan>
+      <tspan style="font: oblique 10px 'DejaVu Sans'" x="18.637695" y="-0.703125">a</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_34">
+    <!-- $a=4,\ p=2$ -->
+    <g style="fill: #222222" transform="translate(440.107742 440.463062)">
+     <text>
+      <tspan style="font: oblique 10px 'DejaVu Sans'" x="0 33.139616" y="-0.578125">ap</tspan>
+      <tspan style="font: 10px 'DejaVu Sans'" x="8.076172 18.40332 24.765625 41.435514 51.762663" y="-0.578125">=4,=2</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_35">
+    <text style="fill: #366b99; font: 10px 'DejaVu Sans'; text-anchor: middle" x="439.333548" y="188.087375" transform="rotate(-0 439.333548 188.087375)">Select</text>
+   </g>
+   <g id="text_36">
+    <text style="fill: #222222; font: 8px 'DejaVu Sans'; text-anchor: middle" x="355.685806" y="359.9035" transform="rotate(-0 355.685806 359.9035)">Read</text>
+   </g>
+   <g id="text_37">
+    <text style="fill: #aa5946; font: 9px 'DejaVu Sans'; text-anchor: middle" x="469.207742" y="483.299438" transform="rotate(-0 469.207742 483.299438)">Apply &amp; update</text>
+   </g>
+   <g id="text_38">
+    <!-- $P_{17}$ -->
+    <g style="fill: #222222" transform="translate(1018.602581 288.239)">
+     <text>
+      <tspan style="font: oblique 16px 'DejaVu Sans'" x="0" y="-0.328125">P</tspan>
+      <tspan style="font: 11.2px 'DejaVu Sans'" x="9.648438 16.774219" y="2.296875">17</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_39">
+    <text style="fill: #222222; font: 10px 'DejaVu Sans'; text-anchor: middle" x="1030.842581" y="323.519375" transform="rotate(-0 1030.842581 323.519375)">Focal distance</text>
+   </g>
+   <g id="text_40">
+    <!-- Bind: $G,A$ -->
+    <g style="fill: #222222" transform="translate(1006.542581 360.455375)">
+     <text>
+      <tspan style="font: 10px 'DejaVu Sans'" x="0 6.860352 9.638672 15.976562 22.324219 25.693359 36.621094" y="-0.40625">Bind: ,</tspan>
+      <tspan style="font: oblique 10px 'DejaVu Sans'" x="28.87207 41.748047" y="-0.40625">GA</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_41">
+    <!-- $y_A+p/2$ -->
+    <g style="fill: #222222" transform="translate(1011.342581 403.527062)">
+     <text>
+      <tspan style="font: oblique 10px 'DejaVu Sans'" x="0 23.255371" y="-0.578125">yp</tspan>
+      <tspan style="font: oblique 7px 'DejaVu Sans'" x="5.917969" y="1.0625">A</tspan>
+      <tspan style="font: 10px 'DejaVu Sans'" x="12.928223 29.603027 32.597168" y="-0.578125">+/2</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_42">
+    <!-- $=1/4+1=5/4$ -->
+    <g style="fill: #222222" transform="translate(993.142581 440.483375)">
+     <text>
+      <tspan style="font: 10px 'DejaVu Sans'" x="1.948242 12.275391 18.637695 22.006836 30.317383 40.644531 48.955078 59.282227 65.644531 69.013672" y="-0.703125">=1/4+1=5/4</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_43">
+    <text style="fill: #366b99; font: 10px 'DejaVu Sans'; text-anchor: middle" x="1000.968387" y="188.087375" transform="rotate(-0 1000.968387 188.087375)">Select</text>
+   </g>
+   <g id="text_44">
+    <text style="fill: #222222; font: 8px 'DejaVu Sans'; text-anchor: middle" x="917.320645" y="359.9035" transform="rotate(-0 917.320645 359.9035)">Read</text>
+   </g>
+   <g id="text_45">
+    <text style="fill: #aa5946; font: 9px 'DejaVu Sans'; text-anchor: middle" x="1030.842581" y="483.299438" transform="rotate(-0 1030.842581 483.299438)">Apply &amp; update</text>
+   </g>
+   <g id="text_46">
+    <!-- $P_{17}$ unavailable: prerequisites missing -->
+    <g style="fill: #222222" transform="translate(93.390323 545.126)">
+     <text>
+      <tspan style="font: oblique 10px 'DejaVu Sans'" x="0" y="-0.40625">P</tspan>
+      <tspan style="font: 7px 'DejaVu Sans'" x="6.030273 10.483887" y="1.234375">17</tspan>
+      <tspan style="font: 10px 'DejaVu Sans'" x="15.210938 18.389648 24.727539 31.06543 37.193359 43.111328 49.239258 52.017578 54.795898 60.923828 67.271484 70.049805 76.202148 79.571289 82.75 89.097656 93.208984 99.361328 103.472656 109.625 115.972656 122.310547 125.088867 130.298828 133.077148 136.998047 143.150391 148.360352 151.539062 161.280273 164.058594 169.268555 174.478516 177.256836 183.594727" y="-0.40625"> unavailable: prerequisites missing</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_47">
+    <!-- $P_{17}$ applicable: prerequisites established -->
+    <g style="fill: #222222" transform="translate(648.825161 545.126)">
+     <text>
+      <tspan style="font: oblique 10px 'DejaVu Sans'" x="0" y="-0.40625">P</tspan>
+      <tspan style="font: 7px 'DejaVu Sans'" x="6.030273 10.483887" y="1.234375">17</tspan>
+      <tspan style="font: 10px 'DejaVu Sans'" x="15.210938 18.389648 24.517578 30.865234 37.212891 39.991211 42.769531 48.267578 54.395508 60.743164 63.521484 69.673828 73.042969 76.22168 82.569336 86.680664 92.833008 96.944336 103.09668 109.444336 115.782227 118.560547 123.770508 126.548828 130.469727 136.62207 141.832031 145.010742 151.163086 156.373047 160.293945 166.421875 172.769531 175.547852 178.326172 183.536133 189.874023 196.026367" y="-0.40625"> applicable: prerequisites established</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_48">
+    <!-- $\mathrm{Extract}(S_2^{\mathrm{sym}},q)=5/4$ -->
+    <g style="fill: #222222" transform="translate(1243.085 583.407)">
+     <text>
+      <tspan style="font: 13px 'DejaVu Sans'" x="0 8.213867 15.907227 21.004395 26.349121 34.31543 41.462891 46.560059 80.167337 95.084329 102.688822 116.114115 124.385111 128.764993" y="-0.18125000000000213">Extract(,)=5/4</tspan>
+      <tspan style="font: oblique 13px 'DejaVu Sans'" x="51.631836 86.832376" y="-0.18125000000000213">Sq</tspan>
+      <tspan style="font: 9.1px 'DejaVu Sans'" x="59.883789 60.820951 65.562015 70.947367" y="3.373437499999998 -6.903125 -6.903125 -6.903125">2sym</tspan>
+     </text>
+    </g>
+   </g>
+   <g id="text_49">
+    <text style="fill: #222222; font: 9px 'DejaVu Sans'; text-anchor: start" x="33.044516" y="612.575438" transform="rotate(-0 33.044516 612.575438)">Method illustration based on fixed replay; no selector ranking is asserted.  + New facts.  The displayed descriptor sets of S₀ and S₁ are identical.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p3d91960df4">
+   <rect x="15.12" y="12.96" width="1481.76" height="615.6"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -7,26 +7,47 @@
 
 * **学术定位**：属于复杂解析几何领域的知识驱动推理与神经符号计算，是此前函数题求解（TDF）工作的纵深拓展。
 
-  
+
+
+
+论文术语表
+
+| 中文                                  | 英文（首次全称 / 之后简称）                                  | 符号                                        |
+| ------------------------------------- | ------------------------------------------------------------ | ------------------------------------------- |
+| 圆锥求解器                            | Conic-Solver                                                 | —                                           |
+| 圆锥曲线问题                          | conic-section problem                                        | $x=(F,q)$                                   |
+| 题目表示模型                          | problem representation model (RM)                            | —                                           |
+| 符号层 / 抽象层                       | symbolic layer / abstract layer                              | $S_t^{\mathrm{sym}}$ / $S_t^{\mathrm{abs}}$ |
+| 抽象描述子 / 描述子集合               | abstract descriptor / descriptor set                         | $d$ / $\\mathcal{D}$                        |
+| 推理模式 / <br />推理模式池           | reasoning pattern (RP) / RP pool                             | $P_i$ / $\Lambda$                           |
+| 几何–代数转换（四种）                 | Geometric-algebraic transform：identity / relation / realization / deficit | —                                           |
+| 模式选择器 / 模式应用器               | pattern selector / pattern applicator                        | $p_\theta(P_i\mid S_t^{\mathrm{abs}})$      |
+| 模式实例（RP 绑定到具体对象后的结果） | pattern instance                                             | —                                           |
+| 可抽取答案状态 / 答案抽取             | answer-ready state / answer extraction                       | $S_T$                                       |
+
+
 
 ---
 
 ### 2. 圆锥曲线的核心特征与求解困难
 > 解析几何既不同于“纯代数方程”，也不同于“几何证明”，具备三大本质特征：
 
-1. **“几何实体属性” 与 “代数参数变换” 深度耦合**：解题高度依赖“标准方程建立 $\leftrightarrow$ 内在参数提取（$a, b, c, p$） $\leftrightarrow$ 几何关系转化”的交替推演；
+1. **“几何实体属性” 与 “代数参数变换” 深度耦合**：每一个推理步骤，都把对象的几何角色与其参数的代数表达式耦合在一起。
+   解题高度依赖“标准方程建立 $\leftrightarrow$ 内在参数提取（$a, b, c, p$） $\leftrightarrow$ 几何关系转化”的交替推演；
 2. **推理步骤长**：相较于 代数题、算术题，推理步骤明显更长。
 3. **应用定理时严格依赖当前的题目**：定理不能任意调用，必须在当前状态已具备相应几何实体与参数时才可触发。
 
 
-**“几何实体属性” 与 “代数参数变换” 深度耦合**：解题高度依赖“标准方程建立 $\leftrightarrow$ 内在参数提取（$a, b, c, p$） $\leftrightarrow$ 几何关系转化”的交替推演，具体内含：
 
-单步推理中，包含 ”几何 <—> 代数“ 的双向对应（包含4种投射）：
+**“几何实体属性” 与 “代数参数变换” 深度耦合**：每一个推理步骤，都把对象的几何角色与其参数的代数表达式耦合在一起。
+解题高度依赖“标准方程建立 $\leftrightarrow$ 内在参数提取（$a, b, c, p$） $\leftrightarrow$ 几何关系转化”的交替推演，具体内含：
 
-1. **身份投射：** 几何角色 $\rightarrow$ 符号的代数身份（焦点在哪轴 \(\Rightarrow\) 谁是 \(a^{2}\)）。
-2. **关系投射：** 几何对象 $\rightarrow$ 代数式（渐近线 \(\Rightarrow\) \(y=\pm(b/a)x\)，不是 \(e=c/a\)）。
-3. **回代投射：** 代数运算/变换 $\rightarrow$  结果写回几何对象（\(2p=4\Rightarrow F(0,1)\)、准线）。
-4. **缺口投射：** 查询所缺的几何量，决定下一步补哪个参数（要 \(e\) 就缺 \(c,a\)；要 \(|PF|\) 就缺焦点或准线）。
+圆锥曲线推理求解中，包含4种 ”几何 <—> 代数“ 的转换/对应：
+
+1. **身份对应：** 几何角色 $\rightarrow$ 符号的代数身份（焦点在哪轴 \(\Rightarrow\) 谁是 \(a^{2}\)）。
+2. **关系对应：** 几何对象 $\rightarrow$ 代数式（渐近线 \(\Rightarrow\) \(y=\pm(b/a)x\)，不是 \(e=c/a\)）。
+3. **回代对应：** 代数运算/变换 $\rightarrow$  结果写回几何对象（\(2p=4\Rightarrow F(0,1)\)、准线）。
+4. **缺口对应：** 查询所缺的几何量，决定下一步补哪个参数（要 \(e\) 就缺 \(c,a\)；要 \(|PF|\) 就缺焦点或准线）。
 
 
 
@@ -60,7 +81,7 @@
 ---
 
 ### 3. 核心思想：基于状态转换的求解范式（Core Paradigm）
-* **核心思想**：将圆锥曲线解题建模为一个**基于题目状态和定理模型的状态转换求解范式（State-Transform Solving Paradigm）**，本质是状态驱动的序贯决策过程（Next Reasoning Model Prediction）。
+* **核心思想**：将圆锥曲线解题建模为一个**基于题目状态和定理模型的状态转换求解范式（State-Transform Solving Paradigm）**，本质是状态驱动的序贯决策过程（Next Reasoning Pattern Prediction）。
 * **基本求解链条**：
   $$S_0 \xrightarrow{M_0} S_1 \xrightarrow{M_1} \cdots \xrightarrow{M_{T-1}} S_T \xrightarrow{\text{Extract}} \hat{a}$$
   * 输入为 $x = (F, q)$（初始已知事实与求解目标）；
@@ -102,7 +123,7 @@
 
 ---
 
-### 5. 定理模型：80 个 RM 的“原材料与构建逻辑”（Reasoning-Model Pool）
+### 5. 定理模型：80 个 RP 的“原材料与构建逻辑”（Reasoning-Pattern Pool）
 > 解释“转换”从何而来、为何有效：
 
 * **原材料**：
@@ -118,10 +139,17 @@
 
 1. 看查询 \(q\)：终态必须出现的几何量/代数对象是什么。
 2. 看当前条件：哪些角色已填，哪些还空。
-3. 若空的是某实体/参数，而当前已有它的几何宿主，则存在一条合法转换：用该宿主上的几何–代数耦合，把缺口补上。
-4. 这条转换就是一个 pattern / RM：\(\mathrm{pre}=\)「宿主已在、缺口仍空」；\(\mathrm{trans}=\)「执行那次投射并写回」。
+3. 若空的是某实体/参数，而当前已有它的几何对象，则存在一条合法转换：用该对象上的几何–代数耦合，把缺口补上。
+4. 这条转换就是一个 pattern / RP：\(\mathrm{pre}=\)「实体已在、缺口仍空」；\(\mathrm{trans}=\)「执行那次投射并写回」。
 
 
+
+4种 ”几何 <—> 代数“ 的转换/对应：
+
+1. **身份对应：** 几何角色 $\rightarrow$ 符号的代数身份（焦点在哪轴 \(\Rightarrow\) 谁是 \(a^{2}\)）。
+2. **关系对应：** 几何对象 $\rightarrow$ 代数式（渐近线 \(\Rightarrow\) \(y=\pm(b/a)x\)，不是 \(e=c/a\)）。
+3. **回代对应：** 代数运算/变换 $\rightarrow$  结果写回几何对象（\(2p=4\Rightarrow F(0,1)\)、准线）。
+4. **缺口对应：** 查询所缺的几何量，决定下一步补哪个参数（要 \(e\) 就缺 \(c,a\)；要 \(|PF|\) 就缺焦点或准线）。
 
 
 
@@ -147,17 +175,3 @@ conic-section problem难在**几何身份和代数表达式的依赖**。主要�
 
 
 
-| 中文                                  | 英文（首次全称 / 之后简称）                                  | 符号                                                     |
-| ------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------- |
-| 圆锥求解器                            | Conic-Solver                                                 | —                                                        |
-| 圆锥曲线问题                          | conic-section problem                                        | $x=(F,q)$                                                |
-| 状态–动作范式 / 状态                  | state-transform paradigm                                     | $S_t$                                                    |
-| 题目表示模型                          | problem representation model (RM)                            | —                                                        |
-| 符号层 / 抽象层                       | symbolic layer / abstract layer                              | $S_t^{\\mathrm{sym}}$ / $S_t^{\\mathrm{abs}}$            |
-| 抽象描述子 / 描述子集合               | abstract descriptor / descriptor set                         | $d$ / $\\mathcal{D}$                                     |
-| 推理模式 / <br />推理模式池           | reasoning pattern (RP) / RP pool                             | $P_i$ / $\\Lambda$（沿用 TDF 中 meta-model pool 的记号） |
-| 几何–代数对应（四种）                 | identity / relation-selection / realization / deficit projection | —                                                        |
-| 模式选择器 / 模式应用器               | pattern selector / pattern applicator                        | $p_\theta(P_i\mid S_t^{\mathrm{abs}})$                   |
-| 模式实例（RP 绑定到具体对象后的结果） | pattern instance                                             | —                                                        |
-| 共享符号原语                          | shared symbolic primitives                                   | —                                                        |
-| 可抽取答案状态 / 答案抽取             | answer-ready state / answer extraction                       | $S_T$ / $\\mathrm{Extract}$                              |
