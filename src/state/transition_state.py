@@ -10,6 +10,10 @@ import sympy as sp
 from src.solver.transition_primitives import parse_expression
 from .named_line_facts import (NamedLine, NamedIntersection, SlopeSum, NamedLineQuery, FocusOnLine, OriginDotProductQuery,
                                LINE, register_named_line, parse_named_line_fact)
+from .coordinate_product_facts import (
+    CoordinateComponentAlias, IntersectionCount, CoordinateProductQuery,
+    parse_coordinate_product_fact, validate_coordinate_product_input, read_coordinate_product,
+)
 from .abstract_state import AbstractState, CurveType, QueryType
 
 
@@ -159,6 +163,9 @@ class TransitionState:
 
     parameterizations: dict[str, LineParameterization] = field(default_factory=dict)
 
+    coordinate_aliases: dict[str, CoordinateComponentAlias] = field(default_factory=dict)
+    intersection_counts: dict[str, IntersectionCount] = field(default_factory=dict)
+
     focus_incidences: dict[str, FocusOnLine] = field(default_factory=dict)
 
     named_lines: dict[str, NamedLine] = field(default_factory=dict)
@@ -203,7 +210,13 @@ class TransitionState:
         chord_query = re.fullmatch(r'Length\(InterceptChord\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
         named_line_query = re.fullmatch(rf'Expression\(\s*{LINE}\s*\)', query_text)
         dot_query = re.fullmatch(r'DotProduct\(\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*,\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\)', query_text)
-        if dot_query:
+        product_query = re.fullmatch(r'\s*([A-Za-z]\w*)\s*\*\s*([A-Za-z]\w*)\s*', query_text)
+        if product_query:
+            names = product_query.groups()
+            if any(entities.get(n) not in ('Number', 'Real') for n in names):
+                raise ValueError('Product query requires declared scalars')
+            target = CoordinateProductQuery(tuple(sorted(names)))
+        elif dot_query:
             o,a,other,b = dot_query.groups()
             if o != other or a == b or any(entities.get(v) != 'Point' for v in (o,a,b)):
                 raise ValueError('Dot query requires a shared base and two points')
@@ -240,6 +253,8 @@ class TransitionState:
                     raise ValueError('Duplicate origin coordinate')
                 state.coordinates[point] = PointCoordinates(fact_id, point, (sp.S.Zero, sp.S.Zero), part)
                 state.provenance[fact_id] = (f'entity:{point}',)
+                continue
+            if parse_coordinate_product_fact(state, part, fact_id):
                 continue
             if parse_named_line_fact(state, part, fact_id):
                 continue
@@ -335,6 +350,7 @@ class TransitionState:
                 guards = guards_l + guards_r
             for i, guard in enumerate(guards):
                 state.constraints[f'{fact_id}:domain:{i}'] = guard
+        validate_coordinate_product_input(state)
         return state
 
     def abstract(self, curve: str) -> AbstractState:
@@ -353,6 +369,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, CoordinateProductQuery):
+            return read_coordinate_product(self, self.query)
         if isinstance(self.query, OriginDotProductQuery):
             return self.properties.get((self.query.owner, "dot_product"))
         if isinstance(self.query, NamedLineQuery):

@@ -1,6 +1,6 @@
 # 当前实现地图
 
-更新：2026-10-07。开发前先读本文，再按任务阅读[关键接口](api_reference.md)、[开发记录](../dev_record.md)及[开发规格](../docs/开发规格/README.md)。本文记录当前代码事实，规格中的设计不自动视为已实现。
+更新：2026-10-10。开发前先读本文，再按任务阅读[关键接口](api_reference.md)、[开发记录](../dev_record.md)及[开发规格](../docs/开发规格/README.md)。本文记录当前代码事实，规格中的设计不自动视为已实现。
 
 ## 目标与当前阶段
 
@@ -34,6 +34,7 @@
 
 | 文件 | 主要职责 |
 | --- | --- |
+| [coordinate_product_facts.py](../src/state/coordinate_product_facts.py) | 保存坐标分量别名／给定交点数，校验声明并定位已有坐标积；不推导符号结果，见[规格30](../docs/开发规格/30_ID1833坐标别名与乘积查询.md) |
 | [named_line_facts.py](../src/state/named_line_facts.py) | 命名直线输入：规范 LineOf 身份，保存无序交点集合、斜率和及分母要求，供后续参数化与斜率推理使用 |
 | [transition_state.py](../src/state/transition_state.py) | 题目状态与事实定义：解析已给信息，保存对象、方程、关系、模型结果及来源；表示查询目标并读取已提交答案 |
 | [transition_primitives.py](../src/solver/transition_primitives.py) | 受限解析、椭圆／双曲线标准形式、共焦点实例化、斜率、实根与条件检查 |
@@ -86,3 +87,5 @@
 候选审查工具：[focal_chord_candidates.py](../scripts/audit/focal_chord_candidates.py) 读取 RM34/35 弱标注候选，记录输入解析缺口并独立核验焦点弦乘积；不是求解器或覆盖率评测。
 
 本批模型入口：新增 model_034.py／model_035.py 仅转交绑定提案；model_059.py 保留旧实现并增加原点点积绑定。named_line_facts.py 新增焦点归属结构与点积目标；transition_state.py 接入并只读答案。bound_slice.py 的 origin-dot 模式保存固定回放；test_bound_focal_products.py 覆盖本批真实案例与拒绝边界。
+
+ID1833 当前已完成原始输入解析及只读分量乘积查询：coordinate_aliases／intersection_counts 保存给定身份与计数，原始题仍未求解。下一批明确符号参数条件和方向无关证据；数值RM34/35接口未放宽。

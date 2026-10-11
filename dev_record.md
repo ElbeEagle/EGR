@@ -631,3 +631,13 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **效果／验证**：4373 原题 RM7→RM34→RM35→RM59 得−3；1191投影轴向/横向(4,−16)，6347计算证据(1,−4)，无需RM33／RM43。新增30项、相关493项通过，文档链接与差异空白检查通过。
 - **文件／证据**：新增 test_bound_focal_products.py、规格29与id4373_origin_dot_trace.json；bound_slice.py 增加固定回放入口，同步三份维护文档与规格导航／索引。
 - **限制／下一步**：数值标准抛物线、原点点积；1191面积未求解，未接自主选择器。回到职责表选型；1833符号参数及坐标分量别名另批。
+
+## 2026-10-10｜ID1833 坐标别名与只读乘积查询
+
+- **开发记录**：[docs/开发规格/30_ID1833坐标别名与乘积查询.md](docs/开发规格/30_ID1833坐标别名与乘积查询.md)
+- `src/state/coordinate_product_facts.py`（新增）→ 保存给定分量身份、计数和查询目标。CoordinateComponentAlias 保存标量／点／轴向及来源；IntersectionCount 保存给定交点数；CoordinateProductQuery 表达两分量乘积。parse_coordinate_product_fact 记录结构，validate_coordinate_product_input 检查声明矛盾与查询绑定，read_coordinate_product 只定位唯一命名点对的已有坐标积，不计算。
+- `src/state/transition_state.py`（扩展）→ 接入新输入与答案读取。coordinate_aliases／intersection_counts 保存解析结果；from_facts 增加入口及末尾校验，extract_answer 调用只读定位。复用已有 NamedIntersection 与 properties，不修改模型提案或应用器。
+- `tests/test_bound_coordinate_products.py`（新增）→ 验证原始初态、正性边界、数值查询衔接与冲突／歧义；`docs/开发规格/artifacts/id1833_coordinate_input.json` 保存 parsed_only 初态，供后续开发复核，不是执行轨迹。
+- **效果／验证**：新增16项、针对性46项、相关509项通过。1833原始输入解析成功，revision=0、answer=None；显式p>0诊断可执行已有RM7，但RM35仍拒绝符号参数。数值构造输入经RM7→RM35读得−4。差异空白、文档链接及初态证据检查通过。
+- **文件／边界**：新增规格30、输入模块、测试和证据；更新状态、三份维护文档、规格导航／索引。原始数据未改，原题未求解；不将已有数值接口说成符号支持。
+- **下一步**：明确符号焦点弦条件来源、原式系数与正几何参数区别；正参数诊断须显式p>0，原始1833则需非退化且方向无关的处理，不能默认正性。

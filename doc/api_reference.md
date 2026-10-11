@@ -300,3 +300,12 @@ OriginDotProductQuery 保存共同起点和无序终点，表达 DotProduct(Vect
 solve_origin_dot_slice 固定回放标准模型→RM34→RM35→RM59；CLI `python3 -m src.reasoning.bound_slice --mode origin-dot --problem-id 4373` 输出 v11 轨迹。职责与边界见[本批记录](../docs/开发规格/29_RM34_RM35与原点点积闭环.md)。
 
 候选审查工具 focal_chord_candidates.py 仍仅用于选型审计，不作为求解API。
+
+
+### 坐标分量别名与乘积查询（ID1833输入层）
+
+`src/state/coordinate_product_facts.py` 新增 CoordinateComponentAlias（标量名、点、轴向、来源）、IntersectionCount（给定线／曲线交点数）及 CoordinateProductQuery（两个分量别名的乘积目标）。parse_coordinate_product_fact 仅记录给定结构；validate_coordinate_product_input 拒绝同对象对计数矛盾、与命名两点集合不一致，以及缺别名／跨轴／同点的查询。
+
+`src/state/transition_state.py` 新增 coordinate_aliases／intersection_counts，from_facts 接入上述解析与末尾校验；extract_answer 扩展为调用 read_coordinate_product。后者仅通过别名匹配唯一 NamedIntersection，再读该事实的 x_product/y_product；缺失／多匹配返回None，不相乘已知坐标，不生成values。
+
+查询只支持 a*b 两个已声明同轴、不同点的分量别名，顺序可反转；不是通用表达式求解。原始1833未提供p>0，解析不补正性；本批未开放符号RM34/35，详见[规格30](../docs/开发规格/30_ID1833坐标别名与乘积查询.md)。

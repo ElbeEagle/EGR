@@ -1,0 +1,55 @@
+{
+  "schema_version": "coordinate-product-input-v1",
+  "problem_id": 1833,
+  "status": "parsed_only",
+  "facts": "G: Parabola;Expression(G) = (y^2 = 2*(p*x));p: Number;H: Line;PointOnCurve(Focus(G), H);NumIntersection(H, G) = 2;A: Point;B: Point;Intersection(H, G) = {A, B};y1: Number;y2: Number;YCoordinate(A) = y1;YCoordinate(B) = y2",
+  "query": "y1*y2",
+  "revision": 0,
+  "answer": null,
+  "coordinate_aliases": {
+    "y1": {
+      "fact_id": "f11",
+      "symbol": "y1",
+      "point": "A",
+      "axis": "y",
+      "source": "YCoordinate(A) = y1"
+    },
+    "y2": {
+      "fact_id": "f12",
+      "symbol": "y2",
+      "point": "B",
+      "axis": "y",
+      "source": "YCoordinate(B) = y2"
+    }
+  },
+  "intersection_counts": {
+    "f5": {
+      "fact_id": "f5",
+      "line": "H",
+      "curve": "G",
+      "count": 2,
+      "source": "NumIntersection(H, G) = 2"
+    }
+  },
+  "named_intersections": {
+    "f8": {
+      "fact_id": "f8",
+      "line": "H",
+      "curve": "G",
+      "points": [
+        "A",
+        "B"
+      ],
+      "source": "Intersection(H, G) = {A, B}"
+    }
+  },
+  "query_target": {
+    "symbols": [
+      "y1",
+      "y2"
+    ]
+  },
+  "constraints": {},
+  "properties": {},
+  "limitation": "Original input does not establish p>0; symbolic RM34/35 are not implemented."
+}
