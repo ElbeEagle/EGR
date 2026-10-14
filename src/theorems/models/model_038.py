@@ -128,3 +128,7 @@ class EllipseTangentLine(TheoremModel):
     def _append_once(self, values, value) -> None:
         if value not in values:
             values.append(value)
+
+    def propose_bound(self, state, action):
+        from ..tangent_proposals import derive_ellipse_tangent
+        return derive_ellipse_tangent(state, action)

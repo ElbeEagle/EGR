@@ -110,10 +110,10 @@ def check_binding(state, action):
             raise TransitionError('inapplicable', 'Line/parabola equation binding mismatch')
         return curve
 
-    if action.model_id == 39:
+    if action.model_id in (38, 39):
         fact = state.equations.get(action.equation_id)
         point = state.coordinates.get(action.point)
-        if (state.entities.get(action.curve) != 'Parabola' or state.entities.get(action.point) != 'Point'
+        if (state.entities.get(action.curve) != {38: 'Ellipse', 39: 'Parabola'}[action.model_id] or state.entities.get(action.point) != 'Point'
                 or fact is None or fact.owner != action.curve or fact.role != 'curve'
                 or point is None or point.fact_id != action.coordinate_id
                 or any(v is not None for v in (action.line, action.line_equation_id, action.relation_id,
@@ -277,11 +277,11 @@ def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = 
                     for c in state.equations.values() if c.owner == n.curve and c.role == 'curve'
                     for i in state.incidences.values() if i.curve == n.line and i.point in state.coordinates]
         return [a for a in actions if mode is None or a.mode == mode]
-    if model_id == 39:
-        actions = [BoundAction(39, 'derive_tangent', f.owner, f.fact_id,
+    if model_id in (38, 39):
+        actions = [BoundAction(model_id, 'derive_tangent', f.owner, f.fact_id,
                                point=p, coordinate_id=c.fact_id)
                    for f in state.equations.values() if f.role == 'curve'
-                   and state.entities.get(f.owner) == 'Parabola' for p, c in state.coordinates.items()]
+                   and state.entities.get(f.owner) == {38: 'Ellipse', 39: 'Parabola'}[model_id] for p, c in state.coordinates.items()]
         return [a for a in actions if mode is None or a.mode == mode]
     if model_id == 13:
         actions = [BoundAction(13, 'derive_eccentricity', f.owner, f.fact_id)
@@ -469,7 +469,7 @@ class BoundApplicator:
             changed_frames = {k: v for k, v in frames.items() if k not in state.frames}
             equations = dict(state.equations)
             for key, fact in proposal.equations.items():
-                tangent = (action.model_id == 39 and fact.role == 'tangent'
+                tangent = (action.model_id in (38, 39) and fact.role == 'tangent'
                            and key == f'derived:{action.curve}:tangent:{action.point}')
                 named_line = (action.model_id == 78 and action.mode == 'parameterize_named_line'
                               and fact.role == 'line' and fact.owner == action.line

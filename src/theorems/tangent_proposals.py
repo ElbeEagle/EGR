@@ -1,4 +1,4 @@
-"""RM39 tangent at a verified numeric point of a standard parabola."""
+"""RM38/39 tangents at verified numeric points of standard conics."""
 import sympy as sp
 from src.solver.transition_primitives import TransitionError, truth
 from src.solver.parabola_operations import substitute_point
@@ -29,3 +29,28 @@ def derive_parabola_tangent(state, action):
                     operations=[{'operation': 'verify_tangent_point', 'residual': residual},
                                 {'operation': 'parabola_tangent', 'axis': axis, 'sign': sign,
                                  'p': p, 'point': action.point, 'equation': expression}])
+
+
+def derive_ellipse_tangent(state, action):
+    """Consume committed standard parameters and propose one verified tangent."""
+    from src.solver.tangent_operations import ellipse_tangent
+    from .bound_application import bound_parameters, bound_axis
+    fact = check_binding(state, action)
+    if action.mode != 'derive_tangent':
+        raise TransitionError('inapplicable', 'Unsupported RM38 mode')
+    a_sq, b_sq = bound_parameters(state, action.curve, action.equation_id)
+    axis = bound_axis(state, action.curve, action.equation_id)
+    x_sq, y_sq = (a_sq, b_sq) if axis == 'x' else (b_sq, a_sq)
+    xy = tuple(v.subs(state.values) for v in state.coordinates[action.point].xy)
+    residual, expression = ellipse_tangent(state.symbols['x'], state.symbols['y'],
+        x_sq.subs(state.values), y_sq.subs(state.values), xy)
+    key = f'derived:{action.curve}:tangent:{action.point}'
+    return Proposal(
+        equations={key: EquationFact(key, action.curve, 'tangent', expression, 'RM38')},
+        read_facts=(fact.fact_id, action.coordinate_id, f'entity:{action.curve}',
+                    f'entity:{action.point}', f'frame:{action.curve}',
+                    *(f'property:{action.curve}:{k}' for k in ('a_sq', 'b_sq')),
+                    *state.constraints, *(f'value:{v}' for v in state.values)),
+        operations=[{'operation': 'verify_tangent_point', 'residual': residual},
+                    {'operation': 'ellipse_tangent', 'axis': axis, 'point': action.point,
+                     'x_sq': x_sq, 'y_sq': y_sq, 'equation': expression}])

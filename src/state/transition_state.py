@@ -225,7 +225,7 @@ class TransitionState:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
         elif chord_query and entities.get(chord_query.group(1)) == 'Line' and entities.get(chord_query.group(2)) == 'Parabola':
             target = ChordLengthQuery(*chord_query.groups())
-        elif tangent_query and entities.get(tangent_query.group(1)) == 'Point' and entities.get(tangent_query.group(2)) == 'Parabola':
+        elif tangent_query and entities.get(tangent_query.group(1)) == 'Point' and entities.get(tangent_query.group(2)) in ('Parabola', 'Ellipse'):
             target = TangentQuery(*tangent_query.groups())
         elif eccentricity_query and entities.get(eccentricity_query.group(1)) in ('Ellipse', 'Hyperbola'):
             target = EccentricityQuery(eccentricity_query.group(1))

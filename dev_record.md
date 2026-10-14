@@ -654,3 +654,15 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **效果／验证**：原始1833得−p²，终态保存p≠0及来源，不默认p>0，不产生方向框架或正参数属性。新增23项、相关532项通过；保存id1833_symbolic_product_trace.json，文档链接及空白检查通过。
 - **文件／边界**：新增规格31、提案模块、测试及轨迹；同步三份维护文档与导航／索引。限一个实符号数值倍数系数和已给命名焦点弦；原题已固定回放，尚未接自主选择器。已有论文改动不触碰。
 - **下一步**：回到职责表选有限模型／案例，按实际需要扩展符号交叉核验，不扩大到任意符号线求交。
+
+
+## 2026-10-14｜RM38 椭圆切线与ID2126
+
+- **开发记录**：[docs/开发规格/32_RM38椭圆切线与ID2126.md](docs/开发规格/32_RM38椭圆切线与ID2126.md)
+- `src/solver/tangent_operations.py`（新增）→ 数值椭圆切线公共计算；ellipse_tangent核验实际分母及点归属，返回残差和隐式方程，不写状态。
+- `src/theorems/tangent_proposals.py` → 新增derive_ellipse_tangent，复用已提交参数／框架核验，按轴向映射分母，提出附来源的切线；`src/theorems/models/model_038.py` → 新增propose_bound转交，旧接口保留。
+- `src/theorems/bound_application.py` → 扩展check_binding／enumerate_actions到RM38，并允许其切线提案沿用事务提交；`src/state/transition_state.py` → 扩展from_facts接受椭圆TangentQuery，复用已有查询类和只读结果，不新增推导。
+- `src/reasoning/bound_slice.py` → 新增solve_ellipse_tangent_slice与v13轨迹；固定预检标准方向后回放RM3/4→RM38，不读弱标注指导选择。
+- `tests/test_bound_ellipse_tangent.py`（新增）→ 验证原题、二重交点、轴向、竖直／水平、缺参数、错误绑定、冲突及范围拒绝。
+- **效果／验证**：ID2126原题得x/4+y/2−1=0，等价于x+2y−4=0。新增20项、相关552项通过，链接／空白／轨迹检查通过；新增id2126_ellipse_tangent_trace.json，同步三份维护文档与规格导航／索引。
+- **边界／下一步**：仅原点中心轴对齐非圆数值椭圆已知点，不支持外点引切线、未知切点或符号参数。下一批先审查RM54／4795的中点身份与RM40/45弦方向职责；已有论文改动未触碰。

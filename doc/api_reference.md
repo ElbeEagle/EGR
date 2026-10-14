@@ -320,3 +320,12 @@ solve_origin_dot_slice 固定回放标准模型→RM34→RM35→RM59；CLI `pyth
 `src/theorems/focal_chord_proposals.py` 的 derive_coordinate_product 按显式模式转交；`src/theorems/bound_application.py` 的 enumerate_actions 接受RM34 derive_symbolic_axial_product／RM35 derive_symbolic_transverse_product，默认仍枚举原数值模式。绑定使用curve/equation_id/line/relation_id（命名交点），其他字段为空；结果复用x_product/y_product。
 
 `src/reasoning/bound_slice.py` 新增 solve_symbolic_focal_product_slice，按查询端点固定回放RM35，CLI模式symbolic-focal-product输出v12。原始1833得−p²并提交p≠0；查询类型及只读逻辑不变。范围与文件释义见[规格31](../docs/开发规格/31_ID1833方向无关符号焦点弦.md)；前节数值限制仍适用于原模式。
+
+
+### RM38 数值椭圆已知点切线
+
+`src/solver/tangent_operations.py` 新增ellipse_tangent：读取实际x/y分母与数值点，核验点归属并返回残差和隐式切线，不改状态。`src/theorems/tangent_proposals.py` 新增derive_ellipse_tangent：复用bound_parameters／bound_axis检查已提交半轴及框架，映射分母后提出附来源的EquationFact。
+
+`src/theorems/models/model_038.py` 新增propose_bound转交；`src/theorems/bound_application.py` 扩展check_binding／enumerate_actions及派生切线提交资格。模式derive_tangent绑定curve/equation_id/point/coordinate_id，其他字段为空；结果复用derived:曲线:tangent:点、role=tangent。重复no_op，冲突回滚。
+
+`src/state/transition_state.py` 的from_facts扩展已有TangentQuery到Ellipse，extract_answer仍只读。`src/reasoning/bound_slice.py` 新增solve_ellipse_tangent_slice，预检RM3/4后固定回放RM38；CLI ellipse-tangent输出v13。限中心原点、轴对齐、非圆数值椭圆及已知数值点，外点／符号／平移另批，见[规格32](../docs/开发规格/32_RM38椭圆切线与ID2126.md)。

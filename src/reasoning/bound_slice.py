@@ -254,6 +254,26 @@ def solve_eccentricity_slice(facts: str, query: str) -> SliceResult:
                                  forward.curve, forward.equation_id), forward))
 
 
+def solve_ellipse_tangent_slice(facts: str, query: str) -> SliceResult:
+    """Fixed RM3/4 -> RM38 diagnostic; standard axis is verified before replay."""
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, TangentQuery):
+        return SliceResult('inapplicable', state, diagnostic='Requires tangent equation query')
+    actions = [a for a in enumerate_actions(state, 38)
+               if (a.curve, a.point) == (state.query.curve, state.query.point)]
+    if len(actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Unique ellipse/point binding required')
+    tangent = actions[0]
+    try:
+        standard = select_standard_action(state, tangent.curve, tangent.equation_id)
+    except TransitionError as exc:
+        return SliceResult(exc.status, state, diagnostic=str(exc))
+    return replay_actions(state, (standard, tangent))
+
+
 def solve_parabola_tangent_slice(facts: str, query: str) -> SliceResult:
     try:
         state = TransitionState.from_facts(facts, query)
@@ -413,7 +433,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot', 'symbolic-focal-product'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot', 'symbolic-focal-product', 'ellipse-tangent'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -428,7 +448,7 @@ if __name__ == '__main__':
              'parabola-tangent': solve_parabola_tangent_slice,
              'chord-length': solve_chord_length_slice,
              'named-slope': solve_named_slope_slice,
-             'focal-chord': solve_focal_chord_slice, 'origin-dot': solve_origin_dot_slice, 'symbolic-focal-product': solve_symbolic_focal_product_slice}[args.mode]
+             'focal-chord': solve_focal_chord_slice, 'origin-dot': solve_origin_dot_slice, 'symbolic-focal-product': solve_symbolic_focal_product_slice, 'ellipse-tangent': solve_ellipse_tangent_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
@@ -440,7 +460,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v12' if args.mode == 'symbolic-focal-product' else 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v13' if args.mode == 'ellipse-tangent' else 'bound-slice-v12' if args.mode == 'symbolic-focal-product' else 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

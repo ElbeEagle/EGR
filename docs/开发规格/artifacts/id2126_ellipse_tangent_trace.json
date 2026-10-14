@@ -1,0 +1,131 @@
+{
+  "schema_version": "bound-slice-v13",
+  "mode": "ellipse-tangent",
+  "problem_id": 2126,
+  "status": "solved",
+  "facts": "G: Ellipse;P: Point;Expression(G) = (x^2/4 + y^2/3 = 1);Coordinate(P) = (1, 3/2);PointOnCurve(P, G)",
+  "query": "Expression(TangentOnPoint(P, G))",
+  "answer": "x/4 + y/2 - 1",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 3,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f2",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'a_sq')": "4",
+          "('G', 'b_sq')": "3"
+        },
+        "values": {},
+        "frames": {
+          "G": {
+            "equation_id": "f2",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x",
+            "direction": null
+          }
+        }
+      },
+      "read_facts": [
+        "f2",
+        "entity:G",
+        "f2:domain:0",
+        "f2:domain:1",
+        "f3:domain:0"
+      ],
+      "operations": [
+        {
+          "operation": "standard_ellipse_x",
+          "equation": "f2",
+          "axis": "x",
+          "a_sq": "4",
+          "b_sq": "3"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 38,
+        "mode": "derive_tangent",
+        "curve": "G",
+        "equation_id": "f2",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": "P",
+        "coordinate_id": "f3",
+        "line": null,
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {},
+        "values": {},
+        "equations": {
+          "derived:G:tangent:P": {
+            "fact_id": "derived:G:tangent:P",
+            "owner": "G",
+            "role": "tangent",
+            "expression": "x/4 + y/2 - 1",
+            "source": "RM38"
+          }
+        }
+      },
+      "read_facts": [
+        "f2",
+        "f3",
+        "entity:G",
+        "entity:P",
+        "frame:G",
+        "property:G:a_sq",
+        "property:G:b_sq",
+        "f2:domain:0",
+        "f2:domain:1",
+        "f3:domain:0"
+      ],
+      "operations": [
+        {
+          "operation": "verify_tangent_point",
+          "residual": "0"
+        },
+        {
+          "operation": "ellipse_tangent",
+          "axis": "x",
+          "point": "P",
+          "x_sq": "4",
+          "y_sq": "3",
+          "equation": "x/4 + y/2 - 1"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}

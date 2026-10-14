@@ -51,7 +51,8 @@
 | [symbolic_focal_proposals.py](../src/theorems/symbolic_focal_proposals.py) | 组织受限符号焦点弦提案，核对来源，提出非退化条件与一项坐标积，交既有应用器提交 |
 | [focal_chord_evidence.py](../src/theorems/focal_chord_evidence.py) | 核验给定／计算两种焦点弦证据及数值一致性，返回来源和验证操作供提案消费，不修改状态 |
 | [slope_proposals.py](../src/theorems/slope_proposals.py) | RM55 斜率和提案：读取已有命名根关系，验证原点斜率分母，再提出局部参数赋值；不补做韦达 |
-| [tangent_proposals.py](../src/theorems/tangent_proposals.py) | 抛物线切线提案：验证给定点在曲线上，计算四方向切线方程并返回待提交结果，供 RM39 使用 |
+| [tangent_operations.py](../src/solver/tangent_operations.py) | 数值椭圆切点核验及切线计算，返回残差和方程，不改状态 |
+| [tangent_proposals.py](../src/theorems/tangent_proposals.py) | RM38/39切线提案：读取已提交标准参数、验证给定切点，组织椭圆／抛物线切线及来源供应用器提交 |
 | `model_042.py`、`model_043.py`、[model_050.py](../src/theorems/models/model_050.py) | 根和／根积／弦长模型入口：将绑定动作转交相应提案；RM50 仅新绑定接口可执行 |
 | [model_039.py](../src/theorems/models/model_039.py) | RM39 模型入口：将绑定应用转交切线提案函数；旧无绑定执行接口未实现 |
 | [parameter_proposals.py](../src/theorems/parameter_proposals.py) | 普通参数关系提案：利用椭圆／双曲线的 a²、b²、c² 关系补全参数或求标量，供 RM11/RM12 使用 |
@@ -90,3 +91,5 @@
 本批模型入口：新增 model_034.py／model_035.py 仅转交绑定提案；model_059.py 保留旧实现并增加原点点积绑定。named_line_facts.py 新增焦点归属结构与点积目标；transition_state.py 接入并只读答案。bound_slice.py 的 origin-dot 模式保存固定回放；test_bound_focal_products.py 覆盖本批真实案例与拒绝边界。
 
 ID1833 已通过独立的方向无关符号RM35固定回放得到−p²，非退化条件p≠0由曲线类型与原式导出并原子提交，不默认p>0。数值模式未放宽；符号模式只处理已给命名焦点弦，见[规格31](../docs/开发规格/31_ID1833方向无关符号焦点弦.md)。下一步回到职责表选择新的有限案例。
+
+RM38已完成ID2126原题固定RM3→RM38，得x+2y−4=0；复用TangentQuery及切线提交，支持两轴数值非圆椭圆。见[规格32](../docs/开发规格/32_RM38椭圆切线与ID2126.md)。下一批先审查RM54／4795的中点绑定与RM40/45弦方向职责，尚不执行未知端点求解。
