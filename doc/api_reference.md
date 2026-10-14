@@ -329,3 +329,8 @@ solve_origin_dot_slice 固定回放标准模型→RM34→RM35→RM59；CLI `pyth
 `src/theorems/models/model_038.py` 新增propose_bound转交；`src/theorems/bound_application.py` 扩展check_binding／enumerate_actions及派生切线提交资格。模式derive_tangent绑定curve/equation_id/point/coordinate_id，其他字段为空；结果复用derived:曲线:tangent:点、role=tangent。重复no_op，冲突回滚。
 
 `src/state/transition_state.py` 的from_facts扩展已有TangentQuery到Ellipse，extract_answer仍只读。`src/reasoning/bound_slice.py` 新增solve_ellipse_tangent_slice，预检RM3/4后固定回放RM38；CLI ellipse-tangent输出v13。限中心原点、轴对齐、非圆数值椭圆及已知数值点，外点／符号／平移另批，见[规格32](../docs/开发规格/32_RM38椭圆切线与ID2126.md)。
+
+
+### 中点弦接口审查（尚未实现）
+
+ID4795需要绑定(line,curve)弦身份、匿名无序端点对和给定中点坐标；不能直接复用要求两个点名的NamedIntersection。RM54拟提出同源端点坐标和；RM40可直接使用给定中点；RM45消费坐标和走点差路径。现有Expression(l)解析与该类派生直线提交仍需扩展，本批无新增可调用接口。设计及退化边界见[规格33](../docs/开发规格/33_ID4795中点身份与弦方向契约.md)。

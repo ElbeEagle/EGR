@@ -1,0 +1,117 @@
+{
+  "schema_version": "midpoint-contract-audit-v1",
+  "status": "design_audit_only",
+  "data_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 4795,
+      "facts": "l: Line;G: Ellipse;Expression(G) = (x^2/4 + y^2/16 = 1);Coordinate(MidPoint(InterceptChord(l,G))) = (1/2, 1)",
+      "query": "Expression(l)",
+      "weak_models": [
+        3,
+        44,
+        54
+      ],
+      "normalized_midpoint": [
+        "1/2",
+        "1"
+      ],
+      "interior_value": "1/8",
+      "verified_line": "(2*x + y - 2)/16",
+      "independent_intersections": [
+        [
+          "1/2 - sqrt(7)/2",
+          "1 + sqrt(7)"
+        ],
+        [
+          "1/2 + sqrt(7)/2",
+          "1 - sqrt(7)"
+        ]
+      ],
+      "midpoint_check": true,
+      "current_parser_probes": {
+        "facts_only": "Unsupported arithmetic syntax or undeclared symbol",
+        "original_query": "Unsupported or undeclared query target"
+      }
+    },
+    {
+      "id": 7439,
+      "facts": "G: Ellipse;H: LineSegment;Expression(G) = (x^2/4 + y^2/2 = 1);Coordinate(MidPoint(H)) = (1,1);IsChordOf(H,G)",
+      "query": "Expression(OverlappingLine(H))",
+      "weak_models": [
+        3,
+        44,
+        54
+      ],
+      "normalized_midpoint": [
+        "1",
+        "1"
+      ],
+      "interior_value": "3/4",
+      "verified_line": "(x + 2*y - 3)/4",
+      "independent_intersections": [
+        [
+          "1 - sqrt(6)/3",
+          "sqrt(6)/6 + 1"
+        ],
+        [
+          "sqrt(6)/3 + 1",
+          "1 - sqrt(6)/6"
+        ]
+      ],
+      "midpoint_check": true,
+      "current_parser_probes": {
+        "facts_only": "Unsupported fact syntax: H: LineSegment",
+        "original_query": "Unsupported or undeclared query target"
+      }
+    }
+  ],
+  "boundary_checks": [
+    {
+      "midpoint": [
+        1,
+        0
+      ],
+      "rho": "1/4",
+      "classification": "unique_chord",
+      "formal_line": "(x - 1)/4"
+    },
+    {
+      "midpoint": [
+        0,
+        2
+      ],
+      "rho": "1/4",
+      "classification": "unique_chord",
+      "formal_line": "(y - 2)/8"
+    },
+    {
+      "midpoint": [
+        0,
+        0
+      ],
+      "rho": "0",
+      "classification": "underdetermined",
+      "formal_line": "0"
+    },
+    {
+      "midpoint": [
+        2,
+        0
+      ],
+      "rho": "1",
+      "classification": "invalid_nondegenerate_chord",
+      "formal_line": "(x - 2)/2"
+    },
+    {
+      "midpoint": [
+        3,
+        0
+      ],
+      "rho": "9/4",
+      "classification": "invalid_nondegenerate_chord",
+      "formal_line": "3*(x - 3)/4"
+    }
+  ],
+  "runtime_models_implemented": false
+}
