@@ -233,6 +233,8 @@ def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = 
     if model_id in (34,35,59):
         from src.state.named_line_facts import OriginDotProductQuery
         name = {34:'derive_axial_product',35:'derive_transverse_product',59:'derive_origin_dot'}[model_id]
+        if model_id in (34,35) and mode == {34:'derive_symbolic_axial_product',35:'derive_symbolic_transverse_product'}[model_id]:
+            name = mode
         actions=[]
         for fact in (*state.named_intersections.values(), *state.intersection_reductions.values()):
             for curve in state.equations.values():

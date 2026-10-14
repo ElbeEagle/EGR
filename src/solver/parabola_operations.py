@@ -30,3 +30,26 @@ def parabola_geometry(coefficient, axis, sign, constraints):
     require(p > 0, constraints, 'Opening direction or nondegeneracy not established')
     focus = (sign*p/2, sp.S.Zero) if axis == 'x' else (sp.S.Zero, sign*p/2)
     return p, focus
+
+
+def signed_parabola_parameter(expression, x, y, symbols, constraints=()):
+    """Return axis and signed q for v²=2qu; q is a scalar multiple of one real symbol.
+
+    Nondegeneracy is returned as a condition, not assumed here. The caller must
+    justify it from the declared curve type and submit it transactionally.
+    """
+    for axis in ('x', 'y'):
+        try:
+            coefficient = parabola_coefficient(expression, x, y, axis, constraints)
+        except TransitionError:
+            continue
+        q = sp.cancel(coefficient/2)
+        if len(q.free_symbols) != 1 or not q.free_symbols <= set(symbols):
+            raise TransitionError('undetermined', 'One declared symbolic coefficient required')
+        symbol = next(iter(q.free_symbols))
+        factor = sp.cancel(q/symbol)
+        if (factor.free_symbols or factor.is_real is not True or factor.is_finite is not True
+                or factor.is_zero is not False or symbol.is_real is not True):
+            raise TransitionError('undetermined', 'Signed parameter must be a nonzero numeric multiple of a real symbol')
+        return axis, q, sp.Abs(q), sp.Ne(q, 0)
+    raise TransitionError('inapplicable', 'Origin-vertex standard parabola required')

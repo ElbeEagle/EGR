@@ -641,3 +641,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **效果／验证**：新增16项、针对性46项、相关509项通过。1833原始输入解析成功，revision=0、answer=None；显式p>0诊断可执行已有RM7，但RM35仍拒绝符号参数。数值构造输入经RM7→RM35读得−4。差异空白、文档链接及初态证据检查通过。
 - **文件／边界**：新增规格30、输入模块、测试和证据；更新状态、三份维护文档、规格导航／索引。原始数据未改，原题未求解；不将已有数值接口说成符号支持。
 - **下一步**：明确符号焦点弦条件来源、原式系数与正几何参数区别；正参数诊断须显式p>0，原始1833则需非退化且方向无关的处理，不能默认正性。
+
+
+## 2026-10-14｜ID1833 方向无关符号焦点弦
+
+- **开发记录**：[docs/开发规格/31_ID1833方向无关符号焦点弦.md](docs/开发规格/31_ID1833方向无关符号焦点弦.md)
+- `src/solver/parabola_operations.py` → 公共核验：新增signed_parabola_parameter，返回轴向、有符号q、Abs(q)和待提交非零条件，复用标准式提取，不写状态。
+- `src/theorems/focal_chord_evidence.py` → 来源处理：新增given_focus_sources抽提直接／别名焦点归属ID，数值与符号路径复用。
+- `src/theorems/symbolic_focal_proposals.py`（新增）→ 提案组织：derive_symbolic_product核验给定焦点弦，提出类型导出的q≠0及一项坐标积；显式线方程／相关坐标未核验时返回未定。
+- `src/theorems/focal_chord_proposals.py` → 扩展derive_coordinate_product的符号模式转交；`src/theorems/bound_application.py` → 扩展enumerate_actions的显式符号候选，复用既有条件／属性原子提交，不改变数值模式。
+- `src/reasoning/bound_slice.py` → 新增solve_symbolic_focal_product_slice固定回放RM35及v12输出；`tests/test_bound_symbolic_focal.py`（新增）→ 验证原题、符号前提、轴向、拒绝边界和事务性。
+- **效果／验证**：原始1833得−p²，终态保存p≠0及来源，不默认p>0，不产生方向框架或正参数属性。新增23项、相关532项通过；保存id1833_symbolic_product_trace.json，文档链接及空白检查通过。
+- **文件／边界**：新增规格31、提案模块、测试及轨迹；同步三份维护文档与导航／索引。限一个实符号数值倍数系数和已给命名焦点弦；原题已固定回放，尚未接自主选择器。已有论文改动不触碰。
+- **下一步**：回到职责表选有限模型／案例，按实际需要扩展符号交叉核验，不扩大到任意符号线求交。

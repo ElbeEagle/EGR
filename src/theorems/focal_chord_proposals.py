@@ -44,6 +44,9 @@ def derive_focal_chord(state, action):
 
 
 def derive_coordinate_product(state, action):
+    if action.mode in ('derive_symbolic_axial_product', 'derive_symbolic_transverse_product'):
+        from .symbolic_focal_proposals import derive_symbolic_product
+        return derive_symbolic_product(state, action)
     from .focal_chord_evidence import verify_focal_chord
     mode = {34:'derive_axial_product',35:'derive_transverse_product'}.get(action.model_id)
     if action.mode != mode:

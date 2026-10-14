@@ -1,0 +1,70 @@
+{
+  "schema_version": "bound-slice-v12",
+  "mode": "symbolic-focal-product",
+  "problem_id": 1833,
+  "status": "solved",
+  "facts": "G: Parabola;Expression(G) = (y^2 = 2*(p*x));p: Number;H: Line;PointOnCurve(Focus(G), H);NumIntersection(H, G) = 2;A: Point;B: Point;Intersection(H, G) = {A, B};y1: Number;y2: Number;YCoordinate(A) = y1;YCoordinate(B) = y2",
+  "query": "y1*y2",
+  "answer": "-p**2",
+  "diagnostic": "",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 35,
+        "mode": "derive_symbolic_transverse_product",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": "f8",
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": "H",
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('f8', 'y_product')": "-p**2"
+        },
+        "values": {},
+        "constraints": {
+          "derived:f1:parabola_nonzero": "Ne(p, 0)"
+        }
+      },
+      "read_facts": [
+        "entity:G",
+        "f1",
+        "f8",
+        "f4",
+        "f5"
+      ],
+      "operations": [
+        {
+          "operation": "standard_signed_parameter",
+          "axis": "x",
+          "signed_q": "p",
+          "positive_geometric_parameter": "Abs(p)"
+        },
+        {
+          "operation": "nondegenerate_parabola_type_condition",
+          "source": "entity:G",
+          "condition": "Ne(p, 0)"
+        },
+        {
+          "operation": "given_focal_chord_product",
+          "intersection": "f8",
+          "coordinate": "y",
+          "value": "-p**2"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ]
+}

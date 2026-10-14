@@ -42,6 +42,18 @@ def verify_focus_line(line, x, y, focus):
     return residual
 
 
+def given_focus_sources(state, curve, line):
+    """Resolve given focus incidence and aliases; return source IDs, not a proof flag."""
+    sources = [f.fact_id for f in state.focus_incidences.values()
+               if (f.curve, f.line) == (curve, line)]
+    for alias in state.focus_aliases.values():
+        if alias.curve == curve:
+            for incidence in state.incidences.values():
+                if (incidence.point, incidence.curve) == (alias.point, line):
+                    sources.extend((alias.fact_id, incidence.fact_id))
+    return sources
+
+
 def verify_focal_chord(state, action):
     fact = check_product_binding(state,action)
     _,axis,_,p,focus = bound_parabola(state,action,state.equations[action.equation_id])
@@ -51,13 +63,7 @@ def verify_focal_chord(state, action):
     operations=[]
     given = fact.fact_id in state.named_intersections
     if given:
-        sources = [f.fact_id for f in state.focus_incidences.values()
-                   if (f.curve,f.line)==(fact.curve,fact.line)]
-        for alias in state.focus_aliases.values():
-            if alias.curve == fact.curve:
-                for incidence in state.incidences.values():
-                    if (incidence.point,incidence.curve)==(alias.point,fact.line):
-                        sources.extend((alias.fact_id,incidence.fact_id))
+        sources = given_focus_sources(state, fact.curve, fact.line)
         if not sources:
             raise TransitionError('inapplicable','Given focus incidence required')
         reads.extend(sources)

@@ -309,3 +309,14 @@ solve_origin_dot_slice 固定回放标准模型→RM34→RM35→RM59；CLI `pyth
 `src/state/transition_state.py` 新增 coordinate_aliases／intersection_counts，from_facts 接入上述解析与末尾校验；extract_answer 扩展为调用 read_coordinate_product。后者仅通过别名匹配唯一 NamedIntersection，再读该事实的 x_product/y_product；缺失／多匹配返回None，不相乘已知坐标，不生成values。
 
 查询只支持 a*b 两个已声明同轴、不同点的分量别名，顺序可反转；不是通用表达式求解。原始1833未提供p>0，解析不补正性；本批未开放符号RM34/35，详见[规格30](../docs/开发规格/30_ID1833坐标别名与乘积查询.md)。
+
+
+### 方向无关符号焦点弦（规格31）
+
+`src/solver/parabola_operations.py` 的新增 signed_parabola_parameter 返回标准式v²=2qu的轴向、有符号q、正几何参数表达式Abs(q)及非零条件；q限单个已声明实符号的非零数值倍数。不写正参数属性或方向框架。
+
+`src/theorems/focal_chord_evidence.py` 的 given_focus_sources 抽提直接焦点归属／别名关系来源，两模式复用。新增 `src/theorems/symbolic_focal_proposals.py` 的 derive_symbolic_product 验证给定点对和唯一曲线原式，提出类型导出的q≠0与一项坐标积，应用器统一提交；显式线方程／相关坐标交叉核验暂不支持，返回undetermined。
+
+`src/theorems/focal_chord_proposals.py` 的 derive_coordinate_product 按显式模式转交；`src/theorems/bound_application.py` 的 enumerate_actions 接受RM34 derive_symbolic_axial_product／RM35 derive_symbolic_transverse_product，默认仍枚举原数值模式。绑定使用curve/equation_id/line/relation_id（命名交点），其他字段为空；结果复用x_product/y_product。
+
+`src/reasoning/bound_slice.py` 新增 solve_symbolic_focal_product_slice，按查询端点固定回放RM35，CLI模式symbolic-focal-product输出v12。原始1833得−p²并提交p≠0；查询类型及只读逻辑不变。范围与文件释义见[规格31](../docs/开发规格/31_ID1833方向无关符号焦点弦.md)；前节数值限制仍适用于原模式。

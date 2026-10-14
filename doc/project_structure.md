@@ -1,6 +1,6 @@
 # 当前实现地图
 
-更新：2026-10-10。开发前先读本文，再按任务阅读[关键接口](api_reference.md)、[开发记录](../dev_record.md)及[开发规格](../docs/开发规格/README.md)。本文记录当前代码事实，规格中的设计不自动视为已实现。
+更新：2026-10-14。开发前先读本文，再按任务阅读[关键接口](api_reference.md)、[开发记录](../dev_record.md)及[开发规格](../docs/开发规格/README.md)。本文记录当前代码事实，规格中的设计不自动视为已实现。
 
 ## 目标与当前阶段
 
@@ -48,6 +48,7 @@
 | [intersection_operations.py](../src/solver/intersection_operations.py) | 交点相关公共计算：将直线代入标准抛物线，支持过点未知直线族及水平分支检查，计算数值／受限局部参数二次根关系及实根数，并由根关系及坐标映射计算弦长；不生成命名交点 |
 | [intersection_proposals.py](../src/theorems/intersection_proposals.py) | RM78/42/43/50 提案：绑定消元事实，组织数值消元、命名直线参数化、根关系及弦长计算，包装结果与来源供应用器提交 |
 | [focal_chord_proposals.py](../src/theorems/focal_chord_proposals.py) | RM33/34/35/59 提案：分别组织焦点弦长、轴向／横向积和原点点积，交应用器提交；不互相暗中补做模型 |
+| [symbolic_focal_proposals.py](../src/theorems/symbolic_focal_proposals.py) | 组织受限符号焦点弦提案，核对来源，提出非退化条件与一项坐标积，交既有应用器提交 |
 | [focal_chord_evidence.py](../src/theorems/focal_chord_evidence.py) | 核验给定／计算两种焦点弦证据及数值一致性，返回来源和验证操作供提案消费，不修改状态 |
 | [slope_proposals.py](../src/theorems/slope_proposals.py) | RM55 斜率和提案：读取已有命名根关系，验证原点斜率分母，再提出局部参数赋值；不补做韦达 |
 | [tangent_proposals.py](../src/theorems/tangent_proposals.py) | 抛物线切线提案：验证给定点在曲线上，计算四方向切线方程并返回待提交结果，供 RM39 使用 |
@@ -88,4 +89,4 @@
 
 本批模型入口：新增 model_034.py／model_035.py 仅转交绑定提案；model_059.py 保留旧实现并增加原点点积绑定。named_line_facts.py 新增焦点归属结构与点积目标；transition_state.py 接入并只读答案。bound_slice.py 的 origin-dot 模式保存固定回放；test_bound_focal_products.py 覆盖本批真实案例与拒绝边界。
 
-ID1833 当前已完成原始输入解析及只读分量乘积查询：coordinate_aliases／intersection_counts 保存给定身份与计数，原始题仍未求解。下一批明确符号参数条件和方向无关证据；数值RM34/35接口未放宽。
+ID1833 已通过独立的方向无关符号RM35固定回放得到−p²，非退化条件p≠0由曲线类型与原式导出并原子提交，不默认p>0。数值模式未放宽；符号模式只处理已给命名焦点弦，见[规格31](../docs/开发规格/31_ID1833方向无关符号焦点弦.md)。下一步回到职责表选择新的有限案例。

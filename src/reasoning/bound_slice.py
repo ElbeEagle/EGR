@@ -372,6 +372,24 @@ def solve_origin_dot_slice(facts: str, query: str) -> SliceResult:
         replace(product,model_id=59,mode='derive_origin_dot',point=origin.point,coordinate_id=origin.fact_id)])
 
 
+def solve_symbolic_focal_product_slice(facts: str, query: str) -> SliceResult:
+    """Explicit RM35 diagnostic for a transverse component product; no learned selection."""
+    from src.state.coordinate_product_facts import CoordinateProductQuery
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, CoordinateProductQuery):
+        return SliceResult('inapplicable', state, diagnostic='Coordinate product query required')
+    points = tuple(sorted(state.coordinate_aliases[n].point for n in state.query.symbols))
+    actions = [a for a in enumerate_actions(state, 35, 'derive_symbolic_transverse_product')
+               if a.relation_id in state.named_intersections
+               and state.named_intersections[a.relation_id].points == points]
+    if len(actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Unique symbolic focal pair required')
+    return replay_actions(state, actions)
+
+
 def replay_actions(state: TransitionState, actions) -> SliceResult:
     """Run an explicit diagnostic action sequence; retain unsuccessful attempts too."""
     applicator = BoundApplicator()
@@ -395,7 +413,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot', 'symbolic-focal-product'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -410,7 +428,7 @@ if __name__ == '__main__':
              'parabola-tangent': solve_parabola_tangent_slice,
              'chord-length': solve_chord_length_slice,
              'named-slope': solve_named_slope_slice,
-             'focal-chord': solve_focal_chord_slice, 'origin-dot': solve_origin_dot_slice}[args.mode]
+             'focal-chord': solve_focal_chord_slice, 'origin-dot': solve_origin_dot_slice, 'symbolic-focal-product': solve_symbolic_focal_product_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
@@ -422,7 +440,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v12' if args.mode == 'symbolic-focal-product' else 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,
