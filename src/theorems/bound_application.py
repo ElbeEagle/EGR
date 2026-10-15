@@ -59,6 +59,9 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 40:
+        from .midpoint_proposals import check_midpoint_binding
+        return check_midpoint_binding(state, action)
     if action.model_id in (34,35,59):
         from .focal_chord_evidence import check_product_binding
         return check_product_binding(state,action)
@@ -230,6 +233,12 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id == 40:
+        actions = [BoundAction(40, 'derive_midpoint_chord', c.curve, f.fact_id,
+                               line=c.line, relation_id=c.chord_id)
+                   for c in state.chords.values() for f in state.equations.values()
+                   if f.owner == c.curve and f.role == 'curve']
+        return [a for a in actions if mode is None or a.mode == mode]
     if model_id in (34,35,59):
         from src.state.named_line_facts import OriginDotProductQuery
         name = {34:'derive_axial_product',35:'derive_transverse_product',59:'derive_origin_dot'}[model_id]
@@ -475,7 +484,11 @@ class BoundApplicator:
                               and fact.role == 'line' and fact.owner == action.line
                               and key == f'derived:{action.line}:parameterized'
                               and action.line in proposal.parameterizations)
-                if not named_line and (key != fact.fact_id or fact.owner != action.curve or (fact.role not in ('asymptote', 'directrix') and not tangent)):
+                midpoint_line = (action.model_id == 40 and action.mode == 'derive_midpoint_chord'
+                                 and action.relation_id in state.chords
+                                 and fact.role == 'line' and fact.owner == action.line
+                                 and key == f'derived:{action.relation_id}:line')
+                if not (named_line or midpoint_line) and (key != fact.fact_id or fact.owner != action.curve or (fact.role not in ('asymptote', 'directrix') and not tangent)):
                     raise TransitionError('inapplicable', 'Invalid derived equation binding')
                 if key != fact.fact_id:
                     raise TransitionError('inapplicable', 'Invalid derived equation binding')

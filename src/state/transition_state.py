@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .chord_facts import ChordIdentity, AnonymousEndpointPair, ChordMidpoint, parse_chord_midpoint
 
 from dataclasses import dataclass, field
 import re
@@ -172,6 +173,10 @@ class TransitionState:
     named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
+    chords: dict[str, ChordIdentity] = field(default_factory=dict)
+    chord_endpoint_pairs: dict[str, AnonymousEndpointPair] = field(default_factory=dict)
+    chord_midpoints: dict[str, ChordMidpoint] = field(default_factory=dict)
+
     def line_bindings(self, line: str):
         """Resolve identity only; never derive equations or reconcile alternatives."""
         explicit = [f for f in self.equations.values() if f.owner == line and f.role == 'line']
@@ -208,6 +213,7 @@ class TransitionState:
         eccentricity_query = re.fullmatch(r'Eccentricity\(\s*([A-Za-z]\w*)\s*\)', query_text)
         tangent_query = re.fullmatch(r'Expression\(TangentOnPoint\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
         chord_query = re.fullmatch(r'Length\(InterceptChord\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
+        explicit_line_query = re.fullmatch(r'Expression\(\s*([A-Za-z]\w*)\s*\)', query_text)
         named_line_query = re.fullmatch(rf'Expression\(\s*{LINE}\s*\)', query_text)
         dot_query = re.fullmatch(r'DotProduct\(\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*,\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\)', query_text)
         product_query = re.fullmatch(r'\s*([A-Za-z]\w*)\s*\*\s*([A-Za-z]\w*)\s*', query_text)
@@ -221,6 +227,8 @@ class TransitionState:
             if o != other or a == b or any(entities.get(v) != 'Point' for v in (o,a,b)):
                 raise ValueError('Dot query requires a shared base and two points')
             target = OriginDotProductQuery(o,tuple(sorted((a,b))))
+        elif explicit_line_query and entities.get(explicit_line_query.group(1)) == 'Line':
+            target = NamedLineQuery(explicit_line_query.group(1))
         elif query is None or named_line_query:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
         elif chord_query and entities.get(chord_query.group(1)) == 'Line' and entities.get(chord_query.group(2)) == 'Parabola':
@@ -253,6 +261,8 @@ class TransitionState:
                     raise ValueError('Duplicate origin coordinate')
                 state.coordinates[point] = PointCoordinates(fact_id, point, (sp.S.Zero, sp.S.Zero), part)
                 state.provenance[fact_id] = (f'entity:{point}',)
+                continue
+            if parse_chord_midpoint(state, part, fact_id):
                 continue
             if parse_coordinate_product_fact(state, part, fact_id):
                 continue

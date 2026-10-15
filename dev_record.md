@@ -676,3 +676,20 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `doc/project_structure.md`／`doc/api_reference.md` → 分别标明下一批接入顺序与尚无接口的边界；规格导航和职责索引同步链接审查。
 - **结论／验证**：4795应走y轴RM4，独立核验2x+y−2=0及两实交点的中点；7439数学核验x+2y−3=0但对象语法延期。两个真实案例、5个边界探针及链接／空白检查通过；无运行时代码修改，不重跑或更新历史回归统计。
 - **下一步**：先实现4795复合中点、弦身份／匿名端点对及只读Expression(l)初态；再RM4→RM40。RM54→RM45另批，处理中心未定、非内点冲突与同源绑定。现阶段不声称系统已解4795。
+
+
+## 2026-10-14｜ID4795匿名中点弦与RM40闭环
+
+- **开发记录**：[docs/开发规格/34_ID4795中点弦与RM40闭环.md](docs/开发规格/34_ID4795中点弦与RM40闭环.md)
+- `src/state/chord_facts.py`（新增）→ 保存给定弦信息。`ChordIdentity`保存直线、曲线、端点对ID和来源；`AnonymousEndpointPair`保存无序端点对身份及给定来源，不能当成计算得到的根；`ChordMidpoint`保存同源中点坐标。`parse_chord_midpoint`核对声明、数值坐标及重复一致性，供RM40绑定，后续可供RM54使用。
+- `src/state/transition_state.py` → 管理状态与只读答案。新增`chords/chord_endpoint_pairs/chord_midpoints`容器，扩展`from_facts`解析复合中点和独立Line查询；复用NamedLineQuery和extract_answer，不新增推导型查询。
+- `src/solver/midpoint_operations.py`（新增）→ 公共数值计算。`ellipse_midpoint_chord`读取实际分母和中点，核验内点／非中心，返回ρ、法向量与直线；`canonical_numeric_line`归一化一次式，供同一直线等价核验。均不修改状态。
+- `src/theorems/midpoint_proposals.py`（新增）→ 组织RM40提案。`check_midpoint_binding`核对曲线方程、弦及匿名对的同源性；`derive_midpoint_chord`读取已提交参数／框架、核验已有线方程，提出派生方程与弦级ρ、法向量、两不同实交点资格及来源，交应用器提交。
+- `src/theorems/models/model_040.py`（新增）／`src/theorems/theorem_library.py` → 提供并注册RM40入口。`EllipseMidpointChord.propose_bound`转交上述提案；旧can_apply/apply保持不可用，不将绑定功能宣称已接旧求解器。
+- `src/theorems/bound_application.py` → 绑定与事务提交。扩展`enumerate_actions/check_binding`按弦产生／核验候选；扩展`BoundApplicator.apply`仅接受绑定直线上的RM40派生方程，复用冲突检查、来源记录与no_op处理。
+- `src/reasoning/bound_slice.py` → 固定诊断回放。新增`solve_midpoint_chord_slice`预检RM3/4方向，再回放RM40；CLI增加midpoint-chord和v14轨迹，不读取process、答案或弱标签指导动作。
+- `tests/test_bound_midpoint_chord.py`（新增）→ 验证原题、初态无坐标／无答案、对象隔离、重复来源、轴向及退化边界、已有线一致性、错误绑定、事务回滚和幂等。求交仅用于独立测试核验，不进入运行时。
+
+- **验证／效果**：新增22项、相关回归574项通过；原题固定RM4→RM40得2x+y−2=0。初态无答案，无端点坐标，保存parsed_only初态和v14轨迹。
+- **文件／边界**：新增规格34及两份JSON证据，同步三份维护文档、导航和索引。限中心轴对齐数值非圆椭圆，符号／命名端点核验延期；未修改数据弱标注及用户论文文件。
+- **下一步**：RM54提交同源匿名端点坐标和，RM45消费这些关系；不作为RM40强制依赖。

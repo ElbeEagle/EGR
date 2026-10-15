@@ -1,0 +1,43 @@
+{
+  "schema_version": "midpoint-initial-v1",
+  "problem_id": 4795,
+  "stage": "parsed_only",
+  "facts": "l: Line;G: Ellipse;Expression(G) = (x^2/4 + y^2/16 = 1);Coordinate(MidPoint(InterceptChord(l,G))) = (1/2, 1)",
+  "query": "Expression(l)",
+  "revision": 0,
+  "chords": {
+    "@chord:l:G": {
+      "chord_id": "@chord:l:G",
+      "line": "l",
+      "curve": "G",
+      "pair_id": "@chord:l:G:endpoints",
+      "sources": [
+        "f3"
+      ]
+    }
+  },
+  "anonymous_pairs": {
+    "@chord:l:G:endpoints": {
+      "pair_id": "@chord:l:G:endpoints",
+      "chord_id": "@chord:l:G",
+      "sources": [
+        "f3"
+      ]
+    }
+  },
+  "midpoints": {
+    "@chord:l:G": {
+      "chord_id": "@chord:l:G",
+      "xy": [
+        "1/2",
+        "1"
+      ],
+      "sources": [
+        "f3"
+      ]
+    }
+  },
+  "point_coordinates": {},
+  "derived_properties": {},
+  "answer": null
+}
