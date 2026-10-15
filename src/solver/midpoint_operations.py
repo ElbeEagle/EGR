@@ -16,7 +16,7 @@ def canonical_numeric_line(expression, x, y):
     return sp.expand((a*x+b*y+c)/(a if a!=0 else b))
 
 
-def ellipse_midpoint_chord(x, y, dx, dy, xy):
+def verify_ellipse_midpoint(dx, dy, xy):
     if any(v.free_symbols or v.is_real is not True or v.is_finite is not True for v in (dx,dy,*xy)):
         raise TransitionError('undetermined','Finite numeric ellipse and midpoint required')
     if dx.is_positive is not True or dy.is_positive is not True:
@@ -27,6 +27,30 @@ def ellipse_midpoint_chord(x, y, dx, dy, xy):
         raise TransitionError('undetermined','Center midpoint does not determine a unique diameter')
     if (1-rho).is_positive is not True:
         raise TransitionError('conflict','Midpoint must be strictly inside a nondegenerate chord')
+    return rho
+
+
+def midpoint_coordinate_sums(xy):
+    """Return endpoint sums from a given midpoint, without solving endpoints."""
+    return tuple(sp.simplify(2*v) for v in xy)
+
+
+def ellipse_midpoint_chord(x, y, dx, dy, xy):
+    rho = verify_ellipse_midpoint(dx, dy, xy)
+    mx,my = xy
     nx,ny = mx/dx,my/dy
     line = canonical_numeric_line(nx*(x-mx)+ny*(y-my),x,y)
     return rho,(nx,ny),line
+
+
+def ellipse_point_difference(x, y, dx, dy, sums):
+    """Subtract endpoint equations: sx/dx * delta_x + sy/dy * delta_y = 0."""
+    sx,sy = sums
+    midpoint = (sx/2,sy/2)
+    rho = verify_ellipse_midpoint(dx,dy,midpoint)
+    coefficients = (sx/dx,sy/dy)
+    # Half the difference coefficients matches the RM40 normal convention.
+    normal = tuple(v/2 for v in coefficients)
+    line = canonical_numeric_line(
+        coefficients[0]*(x-midpoint[0])+coefficients[1]*(y-midpoint[1]),x,y)
+    return rho,normal,line,coefficients

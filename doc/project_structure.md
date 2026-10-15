@@ -37,8 +37,8 @@
 | [coordinate_product_facts.py](../src/state/coordinate_product_facts.py) | 保存坐标分量别名／给定交点数，校验声明并定位已有坐标积；不推导符号结果，见[规格30](../docs/开发规格/30_ID1833坐标别名与乘积查询.md) |
 | [named_line_facts.py](../src/state/named_line_facts.py) | 命名直线输入：规范 LineOf 身份，保存无序交点集合、斜率和及分母要求，供后续参数化与斜率推理使用 |
 | [chord_facts.py](../src/state/chord_facts.py) | 保存数值复合中点、(line,curve)弦身份及匿名无序端点对，不求端点坐标 |
-| [midpoint_operations.py](../src/solver/midpoint_operations.py) | 核验数值椭圆中点资格，计算法向量与规范化直线，不写状态 |
-| [midpoint_proposals.py](../src/theorems/midpoint_proposals.py) | 核验RM40同源绑定、已提交框架／参数和已有线方程，组织变化交应用器提交 |
+| [midpoint_operations.py](../src/solver/midpoint_operations.py) | 计算中点对应的端点和，核验数值椭圆中点资格；支持直接中点／点差方向，不写状态 |
+| [midpoint_proposals.py](../src/theorems/midpoint_proposals.py) | 组织RM54端点和、RM40直接中点及RM45点差提案；核验同源绑定与已有线，交应用器提交 |
 | [transition_state.py](../src/state/transition_state.py) | 题目状态与事实定义：解析已给信息，保存对象、方程、关系、模型结果及来源；表示查询目标并读取已提交答案 |
 | [transition_primitives.py](../src/solver/transition_primitives.py) | 受限解析、椭圆／双曲线标准形式、共焦点实例化、斜率、实根与条件检查 |
 | [standard_proposals.py](../src/theorems/standard_proposals.py) | 标准椭圆／双曲线参数提案：从绑定方程提取半轴平方、轴向及类型条件，供 RM3–6 使用 |
@@ -97,4 +97,4 @@ ID1833 已通过独立的方向无关符号RM35固定回放得到−p²，非退
 
 RM38已完成ID2126原题固定RM3→RM38，得x+2y−4=0；复用TangentQuery及切线提交，支持两轴数值非圆椭圆。见[规格32](../docs/开发规格/32_RM38椭圆切线与ID2126.md)。后续中点弦实现见下段。
 
-ID4795已接入复合中点、弦身份与匿名无序端点对；独立Line的Expression(l)复用只读查询。固定RM4→RM40得2x+y−2=0，不生成端点坐标，见[规格34](../docs/开发规格/34_ID4795中点弦与RM40闭环.md)。下一步RM54→RM45为独立点差路径，不是RM40前置；尚未接自主选择器。
+ID4795已接入复合中点、弦身份与匿名无序端点对；独立Line的Expression(l)复用只读查询。固定RM4→RM40得2x+y−2=0，不生成端点坐标，见[规格34](../docs/开发规格/34_ID4795中点弦与RM40闭环.md)。RM54→RM45独立点差路径现已实现，见[规格35](../docs/开发规格/35_ID4795端点和与点差路径.md)；不是RM40前置，尚未接自主选择器。

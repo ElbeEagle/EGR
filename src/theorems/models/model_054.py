@@ -92,3 +92,7 @@ class MidpointFormula(TheoremModel):
 
         except Exception:
             return False
+
+    def propose_bound(self, state, action):
+        from ..midpoint_proposals import derive_endpoint_sums
+        return derive_endpoint_sums(state, action)

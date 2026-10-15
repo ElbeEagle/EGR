@@ -59,7 +59,7 @@ class TransitionResult:
 
 
 def check_binding(state, action):
-    if action.model_id == 40:
+    if action.model_id in (40,45,54):
         from .midpoint_proposals import check_midpoint_binding
         return check_midpoint_binding(state, action)
     if action.model_id in (34,35,59):
@@ -233,8 +233,9 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
-    if model_id == 40:
-        actions = [BoundAction(40, 'derive_midpoint_chord', c.curve, f.fact_id,
+    if model_id in (40,45,54):
+        name = {40:'derive_midpoint_chord',54:'derive_endpoint_sums',45:'derive_point_difference_chord'}[model_id]
+        actions = [BoundAction(model_id, name, c.curve, f.fact_id,
                                line=c.line, relation_id=c.chord_id)
                    for c in state.chords.values() for f in state.equations.values()
                    if f.owner == c.curve and f.role == 'curve']
@@ -484,7 +485,8 @@ class BoundApplicator:
                               and fact.role == 'line' and fact.owner == action.line
                               and key == f'derived:{action.line}:parameterized'
                               and action.line in proposal.parameterizations)
-                midpoint_line = (action.model_id == 40 and action.mode == 'derive_midpoint_chord'
+                midpoint_line = (action.model_id in (40,45)
+                                 and action.mode == {40:'derive_midpoint_chord',45:'derive_point_difference_chord'}[action.model_id]
                                  and action.relation_id in state.chords
                                  and fact.role == 'line' and fact.owner == action.line
                                  and key == f'derived:{action.relation_id}:line')

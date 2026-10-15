@@ -693,3 +693,18 @@ Value成功率: 93.0%  ← v1: 90.1%
 - **验证／效果**：新增22项、相关回归574项通过；原题固定RM4→RM40得2x+y−2=0。初态无答案，无端点坐标，保存parsed_only初态和v14轨迹。
 - **文件／边界**：新增规格34及两份JSON证据，同步三份维护文档、导航和索引。限中心轴对齐数值非圆椭圆，符号／命名端点核验延期；未修改数据弱标注及用户论文文件。
 - **下一步**：RM54提交同源匿名端点坐标和，RM45消费这些关系；不作为RM40强制依赖。
+
+
+## 2026-10-15｜RM54匿名端点和与RM45点差闭环
+
+- **开发记录**：[docs/开发规格/35_ID4795端点和与点差路径.md](docs/开发规格/35_ID4795端点和与点差路径.md)
+- `src/solver/midpoint_operations.py` → 公共计算。抽提`verify_ellipse_midpoint`供两条路径核验资格；新增`midpoint_coordinate_sums`返回中点两倍，`ellipse_point_difference`读取端点和，返回ρ、法向量、直线及点差系数。均不写状态。
+- `src/theorems/midpoint_proposals.py` → 模型提案。新增`derive_endpoint_sums`提出匿名对属性；新增`derive_point_difference_chord`读取同对属性及来源后组织点差计算。抽提`chord_line_proposal`核验已有线并提出统一结果，由应用器提交。复用现有properties保存`(pair_id,x_sum/y_sum)`，不是新端点坐标结构。
+- `src/theorems/models/model_054.py`／`src/theorems/models/model_045.py` → 模型入口。前者新增绑定提案转交并保留旧接口；后者新增EllipsePointDifference，绑定入口转交RM45提案，旧接口不可用。
+- `src/theorems/theorem_library.py` → 注册库。新增RM45注册；RM54沿用已有注册。
+- `src/theorems/bound_application.py` → 候选与提交。扩展`enumerate_actions/check_binding`支持RM54/45同源弦绑定；扩展`apply`允许RM45向该弦直线提交派生方程。坐标和复用既有属性事务／来源机制。
+- `src/reasoning/bound_slice.py` → 诊断编排。新增`solve_point_difference_slice`固定预检RM3/4后回放RM54→RM45；增加point-difference CLI和v15轨迹，不用弱标注、process或答案决定动作。
+- `tests/test_bound_point_difference.py` → 新增20项测试，检查真实原题、坐标和依赖／来源／对象隔离、两轴与零分量、退化边界、冲突回滚及两条路径交叉幂等。
+
+- **效果／验证**：ID4795固定RM4→RM54→RM45得到2x+y−2=0；本批20项、两路径42项、相关回归594项通过。保存v15原题轨迹，同步维护文档、导航及索引。
+- **边界／下一步**：限数值匿名中点弦，不生成端点坐标，RM40无新增前置依赖，未接自主选择器。回到职责表选择有限案例；命名端点身份关联及核验另批。未修改用户论文及数据弱标注。

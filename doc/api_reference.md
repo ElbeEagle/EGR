@@ -131,6 +131,15 @@ assert result.status == "solved" and result.answer == 5
 - `src/solver/midpoint_operations.py`：`ellipse_midpoint_chord(x,y,dx,dy,xy)`返回ρ、法向量、规范化一次式；中心未定、非内点冲突。`canonical_numeric_line`用于数值直线等价核验，均不写状态。
 - `src/theorems/midpoint_proposals.py`：`check_midpoint_binding`核验弦、匿名对、中点与方程；`derive_midpoint_chord`需已提交标准参数／框架，提出线方程及弦级midpoint_rho、normal_x/y、distinct_real_intersections=2，不直接写状态。
 - `src/theorems/bound_application.py`：候选为`BoundAction(40,'derive_midpoint_chord',curve,equation_id,line=line,relation_id=chord_id)`；应用器新增绑定直线派生方程许可，其余复用事务／来源规则。已有线必须数值等价，保留原式。
-- `src/reasoning/bound_slice.py`：`solve_midpoint_chord_slice(facts,query)`固定RM3/4→RM40，ID4795实际选RM4。RM54/45另批，非强制依赖。
+- `src/reasoning/bound_slice.py`：`solve_midpoint_chord_slice(facts,query)`固定RM3/4→RM40，ID4795实际选RM4。RM54/45独立路径见下节，非强制依赖。
 
 限中心轴对齐非圆数值椭圆；符号中点、命名端点交叉核验未接入。完整职责与验证见[规格34](../docs/开发规格/34_ID4795中点弦与RM40闭环.md)。
+
+## 匿名端点和与椭圆点差（RM54／45）
+
+- `src/theorems/midpoint_proposals.py`：`derive_endpoint_sums`提出`properties[(pair_id,'x_sum'/'y_sum')]`，由已有应用器保存来源；只作中点两倍关系，不生成坐标或实弦资格。`derive_point_difference_chord`必须读取同对的两项属性并核验来源／中点一致性，再使用已提交框架及半轴参数计算方向。
+- `src/solver/midpoint_operations.py`：`midpoint_coordinate_sums(xy)`返回坐标和；`ellipse_point_difference(x,y,dx,dy,sums)`返回ρ、统一法向量、直线和原始点差系数，复用`verify_ellipse_midpoint`检查非中心内点。
+- `src/theorems/bound_application.py`：同一弦绑定支持`(54,'derive_endpoint_sums')`及`(45,'derive_point_difference_chord')`，其他绑定字段同RM40；RM45获派生直线提交许可，RM54使用属性提交。缺和／来源不可应用，不自动补算。
+- `src/reasoning/bound_slice.py`：`solve_point_difference_slice(facts,query)`固定RM3/4→RM54→RM45，CLI为point-difference；原查询只读逻辑不变。
+
+RM54可在标准模型之前执行；RM45需要标准模型及同对坐标和。中心／非内点处理、现有线核验和有限范围见[规格35](../docs/开发规格/35_ID4795端点和与点差路径.md)。
