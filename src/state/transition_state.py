@@ -1,6 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
-from .chord_facts import ChordIdentity, AnonymousEndpointPair, ChordMidpoint, parse_chord_midpoint
+from .chord_facts import ChordIdentity, AnonymousEndpointPair, ChordMidpoint, parse_chord_midpoint, ChordEndpointNames, collect_named_chords
 
 from dataclasses import dataclass, field
 import re
@@ -173,6 +173,7 @@ class TransitionState:
     named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
+    chord_endpoint_names: dict[str, ChordEndpointNames] = field(default_factory=dict)
     chords: dict[str, ChordIdentity] = field(default_factory=dict)
     chord_endpoint_pairs: dict[str, AnonymousEndpointPair] = field(default_factory=dict)
     chord_midpoints: dict[str, ChordMidpoint] = field(default_factory=dict)
@@ -252,7 +253,10 @@ class TransitionState:
         state = cls(entities, symbols, {}, {}, target)
         if named_line_query:
             state.query = NamedLineQuery(register_named_line(state, *named_line_query.groups(), 'query'))
+        chord_parts = collect_named_chords(state, parts)
         for index, part in enumerate(parts):
+            if index in chord_parts:
+                continue
             fact_id = f'f{index}'
             origin = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*Origin', part)
             if origin:

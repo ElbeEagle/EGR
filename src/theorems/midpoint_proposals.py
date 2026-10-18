@@ -1,7 +1,7 @@
 """Anonymous midpoint chord proposals for RM40/54/45; no endpoint solving."""
 import sympy as sp
 from src.solver.transition_primitives import TransitionError
-from src.solver.midpoint_operations import ellipse_midpoint_chord, canonical_numeric_line, midpoint_coordinate_sums, ellipse_point_difference
+from src.solver.midpoint_operations import ellipse_midpoint_chord, canonical_numeric_line, midpoint_coordinate_sums, ellipse_point_difference, verify_chord_endpoints
 from src.state.transition_state import EquationFact
 from .bound_application import Proposal, bound_parameters, bound_axis
 
@@ -19,8 +19,15 @@ def check_midpoint_binding(state, action):
     pair = state.chord_endpoint_pairs.get(chord.pair_id)
     if (midpoint is None or midpoint.chord_id!=chord.chord_id or pair is None
             or (pair.pair_id,pair.chord_id)!=(chord.pair_id,chord.chord_id)
-            or midpoint.sources!=chord.sources or pair.sources!=chord.sources):
+            or not set(midpoint.sources).issubset(chord.sources) or pair.sources!=chord.sources):
         raise TransitionError('inapplicable','Missing or mismatched anonymous endpoint identity')
+    names = state.chord_endpoint_names.get(chord.pair_id)
+    if names is None and set(midpoint.sources)!=set(chord.sources):
+        raise TransitionError('inapplicable','Missing named endpoint association')
+    if names and (names.pair_id!=chord.pair_id or len(set(names.points))!=2
+                  or any(state.entities.get(p)!='Point' for p in names.points)
+                  or set(chord.sources)!=set((*names.sources,*midpoint.sources))):
+        raise TransitionError('inapplicable','Mismatched named endpoint association')
     return chord
 
 
@@ -46,7 +53,7 @@ def derive_endpoint_sums(state, action):
     midpoint = state.chord_midpoints[chord.chord_id]
     sums = midpoint_coordinate_sums(midpoint.xy)
     return Proposal(properties={(chord.pair_id,k):v for k,v in zip(('x_sum','y_sum'),sums)},
-        read_facts=(chord.chord_id,chord.pair_id,*midpoint.sources),
+        read_facts=(chord.chord_id,chord.pair_id,*chord.sources),
         operations=[{'operation':'midpoint_coordinate_sums','pair':chord.pair_id,
                      'midpoint':midpoint.xy,'sums':sums}])
 
@@ -81,6 +88,14 @@ def chord_line_proposal(state, action, chord, rho, normal, line, operations, ext
     x,y = state.symbols['x'],state.symbols['y']
     if any((f.line,f.curve)==(chord.line,chord.curve) for f in state.named_intersections.values()):
         raise TransitionError('undetermined','Named endpoint cross-check not implemented for this mode')
+    names = state.chord_endpoint_names.get(chord.pair_id)
+    coordinates = [state.coordinates[p] for p in names.points if p in state.coordinates] if names else []
+    verify_chord_endpoints(state.equations[action.equation_id].expression.subs(state.values),
+        line,x,y,midpoint.xy,[tuple(v.subs(state.values) for v in c.xy) for c in coordinates])
+    if names:
+        extra_reads = (*extra_reads,*names.sources,*(c.fact_id for c in coordinates))
+        operations = [*operations,{'operation':'verify_named_endpoints','pair':chord.pair_id,
+                                  'points':names.points,'checked_coordinates':tuple(c.point for c in coordinates)}]
     existing = [f for f in state.equations.values() if f.owner==chord.line and f.role=='line']
     for fact in existing:
         if sp.simplify(canonical_numeric_line(fact.expression.subs(state.values),x,y)-line)!=0:
@@ -90,7 +105,7 @@ def chord_line_proposal(state, action, chord, rho, normal, line, operations, ext
     return Proposal(equations=equations,
         properties={(chord.chord_id,'midpoint_rho'):rho,(chord.chord_id,'normal_x'):normal[0],
                     (chord.chord_id,'normal_y'):normal[1],(chord.chord_id,'distinct_real_intersections'):sp.Integer(2)},
-        read_facts=(action.equation_id,chord.chord_id,chord.pair_id,*midpoint.sources,
+        read_facts=(action.equation_id,chord.chord_id,chord.pair_id,*chord.sources,
                     f'frame:{chord.curve}',*(f'property:{chord.curve}:{k}' for k in ('a_sq','b_sq')),
                     *(f.fact_id for f in existing),*extra_reads,*state.constraints,*(f'value:{v}' for v in state.values)),
         operations=operations)

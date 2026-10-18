@@ -54,3 +54,18 @@ def ellipse_point_difference(x, y, dx, dy, sums):
     line = canonical_numeric_line(
         coefficients[0]*(x-midpoint[0])+coefficients[1]*(y-midpoint[1]),x,y)
     return rho,normal,line,coefficients
+
+
+def verify_chord_endpoints(curve, line, x, y, midpoint, coordinates):
+    """Check only supplied numeric endpoints; never construct a missing endpoint."""
+    for xy in coordinates:
+        if any(v.free_symbols or v.is_real is not True or v.is_finite is not True for v in xy):
+            raise TransitionError('undetermined','Numeric endpoint coordinates required')
+        if any(sp.simplify(expr.subs({x:xy[0],y:xy[1]}))!=0 for expr in (curve,line)):
+            raise TransitionError('conflict','Endpoint is not on both bound curve and line')
+    if len(coordinates)==2:
+        first,second = coordinates
+        if all(sp.simplify(a-b)==0 for a,b in zip(first,second)):
+            raise TransitionError('conflict','Chord endpoints must be distinct')
+        if any(sp.simplify((a+b)/2-m)!=0 for a,b,m in zip(first,second,midpoint)):
+            raise TransitionError('conflict','Endpoint midpoint contradicts given midpoint')
