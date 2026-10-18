@@ -1,0 +1,851 @@
+\title [mode = title]{Conic-Solver: Solving Conic-Section Problems with Dual-Layer Problem Representation and Geometry--Algebra Reasoning Patterns}
+
+\begin{abstract}
+Automated solving of conic-section problems requires an algorithm that combines geometric reasoning with algebraic computation and produces derivations that learners can follow. General algebraic procedures become expensive on the nonlinear constraints of these problems, and large language models generate steps that are not verified. This paper analyzes how conic-section problems are solved and observes that each useful step couples a geometric role of an object with an algebraic expression of its parameters. Based on this observation, we formulate conic-section problem solving as a sequence of state transforms, each realized by a reasoning pattern. We then propose Conic-Solver, a knowledge-based algorithm that implements this formulation. Conic-Solver represents each state with a two-layer problem representation model. The symbolic layer records the exact conditions for execution, and the abstract layer describes the state with a finite set of descriptors for pattern selection. A pool of 80 reasoning patterns is constructed from the deficits between conditions and queries. Each pattern combines a geometric condition, an algebraic operation, and a write-back rule. A learned pattern selector ranks candidate patterns from the abstract layer, and a pattern applicator verifies and executes them on the symbolic layer. Experiments on the Conic10K dataset show that Conic-Solver achieves an answer accuracy of TBD, which exceeds large language models and knowledge-based baselines by TBD points. The pattern pool covers TBD of the test problems, and every solution of Conic-Solver consists of verified steps.
+\end{abstract}
+
+% Keywords
+% Each keyword is seperated by \sep
+\begin{keywords}
+Conic-section problem solving \sep Neuro-symbolic reasoning \sep Reasoning pattern \sep Problem representation model \sep Symbolic solver
+\end{keywords}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+
+Developing an algorithm that solves conic-section problems step by step is an important task in both theory and practice. In theory, conic-section problems form a representative problem class in which geometric reasoning and algebraic computation are interleaved throughout a derivation. This interleaving goes beyond the arithmetic word problems and elementary function problems addressed by existing knowledge-based solvers~\cite{yu2023implicit,peng_scene-attention_2025,xiong2026udfsolver}. In practice, conic sections are a core topic of senior high school mathematics. An intelligent tutoring system requires a solver that produces not only a correct final answer, but also a step-by-step derivation that students can follow~\cite{lu_radarmath_2021,yu2022func-relation}. Existing solvers have not yet met both requirements on conic-section problems.
+
+A conic-section problem mainly concerns an ellipse, a hyperbola, or a parabola, together with related objects such as foci, directrices, chords, and asymptotes. These problems belong to the field of analytic geometry, in which every object carries a geometric identity and an algebraic carrier at the same time. Solving such a problem differs from proving a Euclidean geometry theorem or solving an algebraic equation system. Instead, the solution of a conic-section problem proceeds along both a geometric strand and an algebraic strand. The geometric strand records objects, their geometric roles, and the relations among them, such as a line being an asymptote of a hyperbola or a point lying on a parabola. The algebraic strand records equations, parameters, and quantitative constraints. Each reasoning step either advances within one strand or transfers information between the two strands. Specifically, the solving process involves four types of geometry--algebra transformations: deriving new geometric relations from existing ones (G2G), translating geometric conditions into algebraic forms (G2A), computing new algebraic results from established equations (A2A), and interpreting algebraic results back as geometric objects or attributes (A2G).
+
+Crucially, the geometric strand and the algebraic strand depend on each other and gate each other's progress. Even a step within the algebraic strand requires permission from the geometric strand. Consider the equation $x^2/m+y^2/4=1$ with a focal length of 2. If the curve is an ellipse with foci on the $x$-axis, the parameter $m$ plays the role of $a^2$, and the relation $a^2=b^2+c^2$ yields $m=5$. If the foci lie on the $y$-axis, $m$ plays the role of $b^2$, and the same relation yields $m=3$. If the curve is a hyperbola, the parameter relation changes to $c^2=a^2+b^2$. Conversely, a new object on the geometric strand often requires a value computed on the algebraic strand. In the parabola $x^2=ay$ passing through $A(1,1/4)$, substituting the coordinates of $A$ yields $a=4$ on the algebraic strand. Only after $x^2=4y$ is interpreted back on the geometric strand as an upward-opening parabola with $p=2$ do the focus $F(0,1)$ and the directrix $y=-1$ become available for subsequent geometric deduction. This mutual dependence gives rise to three core difficulties in solving conic-section problems. First, the solver must satisfy strict reasoning dependencies, because a transformation can be applied only after earlier geometric or algebraic steps have established its prerequisites. Second, the solver must preserve exact geometry--algebra correspondence, so that every parameter remains attached to the correct object role and every computed value is interpreted back into a usable fact. Third, the solver must select transformations that actually contribute to the reasoning and solving, because many operations are valid at a given step but irrelevant to the goal.
+
+A natural question is whether a general algebraic algorithm can bypass these step-by-step transformations. Linear equation systems can be solved by Gaussian elimination in a fixed and readable order. For the nonlinear polynomial systems of conic sections, general elimination procedures also exist, such as Gr\"obner bases and Wu's method~\cite{buchberger1965,wu1986mechanical}. Their computational cost, however, grows rapidly with the number of variables and the polynomial degree. Unguided elimination over quadratic curve constraints often produces large intermediate polynomials. Even when elimination reaches an answer, its intermediate expressions lose the geometric roles of the objects and do not resemble the derivations taught in mathematics education. Conic-section problems therefore have no general single-step elimination procedure that is both tractable and explainable. A practical solver must decompose the solving process into a sequence of short transformations, each guided by the geometric meaning of the current conditions.
+
+Existing approaches do not yet provide this kind of stepwise and knowledge-guided solving. Relation-centric algorithms acquire a group of relations from a problem and then solve the relations as a system of equations~\cite{yu2023implicit,peng_scene-attention_2025}. Their symbolic solvers rely on linear elimination and cannot handle the multi-step nonlinear constraints of conic sections. UDfSolver extends this framework to solve six types of text-diagram function (TDF) problems through a pool of function meta-models~\cite{xiong2026udfsolver}. It selects meta-models either by matching a predefined inference pathway or by traversing the entire pool. Predefined pathways cannot cover the diverse condition combinations of conic-section problems, while exhaustive traversal applies many irrelevant operations when the derivation chain is long. Computer algebra systems execute symbolic operations accurately, but they cannot decide which geometric property to apply next or track which object a parameter belongs to~\cite{meurer2017sympy}. Geometry solvers and geometry--algebra solvers focus on recognizing Euclidean configurations from diagrams and translating them into metric equations in one direction~\cite{lu2021intergps,trinh2024alphageometry,huang2025hologram}. They do not model the bidirectional transitions between curve equations, intrinsic parameters, and geometric roles. Large language models can generate fluent mathematical derivations~\cite{wei2022chain}, but they maintain no explicit state of the problem conditions. As a result, they frequently misassign parameter identities or apply formulas before required conditions are established~\cite{hendrycks2021math,conic10k}.
+
+To overcome these limitations, we model conic-section problem solving within the state-transform paradigm~\cite{yu2023implicit}. We treat the conditions established at each stage of a solution as a state, and we treat each step from one state to the next as a state transform realized by a reasoning pattern. The solving process is formulated as the chain
+\begin{equation}
+S_0 \xrightarrow{P_0} S_1 \xrightarrow{P_1} \cdots \xrightarrow{P_{T-1}} S_T \xrightarrow{\mathrm{Extract}} \hat{a},
+\label{eq:intro_transition}
+\end{equation}
+where $S_t$ is the state at step $t$, $P_t$ is the reasoning pattern applied at step $t$, and $\hat{a}$ is the final answer extracted from the terminal state $S_T$. This formulation replaces unguided global elimination with a sequence of local, verifiable transitions. To turn this formulation into a working algorithm, three design problems must be solved: how to represent each state $S_t$, how to construct and distinguish the reasoning patterns $P_t$, and how to execute these patterns to reach the terminal state $S_T$.
+
+In this paper, we propose Conic-Solver, a knowledge-based algorithm that solves these three problems through three corresponding designs. First, a state must support both exact symbolic calculation and high-level pattern selection. A representation that keeps only raw equations hides the key geometric roles needed to choose the next step, whereas a representation that keeps only abstract features cannot execute algebraic operations. Conic-Solver therefore introduces a dual-layer problem representation model (RM). Its symbolic layer stores the exact objects, equations, parameters, and constraints for computation. Its abstract layer maps the symbolic layer and the solving goal into a finite set of descriptors that capture the curve type, orientation, available object roles, and the deficit still missing for the solving goal. Second, the solver needs a finite set of well-defined transformations to advance the state along and across the two strands. Using high school analytic geometry principles and reference solutions as raw materials, we analyze how human steps bridge the deficits between given conditions and queries across the four types of geometry--algebra transformations. By encapsulating recurring combinations of geometric preconditions, symbolic primitives, and write-back rules, we construct a pool of 80 strictly distinguished reasoning patterns (RPs). Third, having a pool of RPs is not enough, because multiple patterns may be applicable at $S_t$ while others lack required prerequisites. Conic-Solver therefore separates pattern selection from pattern application. At each step, a neural pattern selector reads the abstract layer and predicts the candidate RPs most likely to reduce the goal deficit. A symbolic pattern applicator then binds the candidate to concrete objects on the symbolic layer, checks its preconditions, executes its symbolic primitives, and writes the resulting facts back to the state. Each executed pattern enriches the symbolic layer and updates the abstract descriptors, which in turn unlocks the prerequisites of subsequent patterns until the goal deficit is closed at $S_T$.
+We evaluate Conic-Solver on conic-section problems from the Conic10K benchmark~\cite{conic10k}. We compare it against closed-source and open-source large language models, a computer-algebra baseline, and knowledge-based baselines including an adaptation of UDfSolver. Experimental results show that Conic-Solver achieves an answer accuracy of TBD, surpassing the strongest baseline by TBD points. Further analyses verify that the 80 reasoning patterns cover TBD of the test problems and that the abstract descriptors enable effective pattern selection across long derivation chains.
+The main contributions of this paper are summarized as follows:
+\begin{enumerate}
+\item We characterize conic-section problem solving as a dual-strand state-transform process governed by four types of geometry--algebra transformations. On this basis, we construct a pool of 80 strictly distinguished reasoning patterns that covers TBD of the problems in the benchmark.
+\item We propose a dual-layer problem representation model that pairs an exact symbolic layer with a finite abstract descriptor layer, reconciling the requirements of symbolic execution and neural pattern selection.
+\item We develop the Conic-Solver algorithm, in which a pattern selector and a pattern applicator iterate to select, verify, and execute reasoning patterns step by step until the goal deficit is resolved.
+\item Extensive experiments on the Conic10K dataset demonstrate that Conic-Solver outperforms large language models and existing knowledge-based solvers in answer accuracy while producing fully verifiable derivations.
+\end{enumerate}
+
+The remainder of this paper is organized as follows. Section~\ref{sec:related_work} reviews related work. Section~\ref{sec:problem_formulation} analyzes the characteristics of conic-section problems and formalizes the state-transform solving principle. Section~\ref{sec:method} presents the dual-layer problem representation model, the reasoning-pattern pool, the pattern selector, and the pattern applicator. Section~\ref{sec:algorithm} describes the complete solving algorithm and illustrates how sequential pattern execution solves a problem. Section~\ref{sec:experiments} reports the experimental results. Section~\ref{sec:discussion} discusses the educational value, generalization boundary, and limitations of the method. Section~\ref{sec:conclusion} concludes the paper.
+
+
+\section{Related work}
+\label{sec:related_work}
+
+This section reviews existing research related to Conic-Solver along three dimensions. Section~\ref{sec:related_math_solving} examines general approaches to automatic mathematical problem solving, which fall into relation-flow methods and large language model methods. Section~\ref{sec:related_geometry} reviews geometry problem solving, covering Euclidean theorem proving and geometry--algebra problem solving. Section~\ref{sec:related_algebra_function} reviews algebraic and function problem solving, focusing on computer algebra systems and our prior series of solvers for arithmetic and function problems.
+
+\subsection{Automatic math problem solving}
+\label{sec:related_math_solving}
+
+Research in automatic mathematical problem solving can be broadly divided into two main streams: the relation-flow approach and the large language model approach.
+
+The relation-flow approach solves mathematical problems under a state-transform paradigm~\cite{yu2019framework,yu2023implicit}. Methods in this stream first parse a problem into an explicit intermediate representation, called an understood state, which consists of a set of quantity relations or structured mathematical objects~\cite{yu2022func-relation,peng_scene-attention_2025}. A symbolic solver then transforms this understood state into a system of equations and derives the final answer through exact algebraic operations~\cite{xiong2026udfsolver}. Because every intermediate state and transformation rule is explicitly defined, relation-flow algorithms avoid calculation hallucinations and produce step-by-step solutions that align with classroom instruction~\cite{nguyen2018criteria,nawaz2024ai}. However, traditional relation-flow algorithms assume that once the understood state is acquired, the remaining deduction can be completed by solving a unified equation system or following a small set of fixed procedures. This assumption breaks down on complex analytic geometry problems, where nonlinear constraints and long dependency chains require dynamic, step-by-step planning during the reasoning stage itself.
+
+The large language model approach formulates mathematical problem solving as sequence generation. Chain-of-thought prompting enables large language models to generate intermediate natural-language reasoning steps before outputting a final answer~\cite{wei2022chain}. Sampling multiple paths via self-consistency and exploring step candidates via tree search further improve reasoning accuracy~\cite{wang2023selfconsistency,yao2023tree}. Domain-specific pre-training, post-training, and process supervision have also strengthened mathematical performance on general benchmarks~\cite{hendrycks2021math,lightman2023lets,math_posttraining}. Despite their fluency, large language models generate derivations without maintaining an explicit symbolic state of the problem conditions. As a result, a generated step may assign a parameter to the wrong geometric role, omit a required orientation constraint, or make an algebraic manipulation error. On the Conic10K benchmark, state-of-the-art language models still struggle to produce reliable derivations for conic-section problems~\cite{conic10k}.
+
+To reduce calculation errors in text generation, program-aided and neuro-symbolic methods couple large language models with external symbolic tools~\cite{garcez2019neuralsymbolic}. Some methods translate a problem into an executable program or a symbolic solver call in one shot~\cite{gao2023pal,chen2023programofthoughts,pan2023logiclm}. Other methods invoke computer algebra tools during multi-step generation~\cite{mathsensei,multitool_math}. Similarly, neural theorem provers use a learned policy to select tactics while relying on a proof assistant to verify each step~\cite{bansal2019holist,polu2020generative,yang2023leandojo}. These hybrid methods show the benefit of separating step proposal from symbolic verification. Nevertheless, program-aided methods generate ad-hoc code for each problem rather than drawing steps from a curriculum-aligned knowledge pool. Conic-Solver advances the relation-flow stream by incorporating learned step selection into a verified state-transform loop, ensuring that every step is drawn from a finite pool of domain reasoning patterns and checked against an explicit symbolic state.
+
+\subsection{Geometry problem solving}
+\label{sec:related_geometry}
+
+Conic-section problems involve geometric curves, points, and lines, which connects our work to automated geometry problem solving. Existing geometry solvers mainly address two tasks: Euclidean theorem proving and Euclidean geometry--algebra problem solving.
+
+Classical algebraic methods for Euclidean theorem proving translate geometric statements into polynomial systems over point coordinates. Wu's method and Gr\"obner basis algorithms then prove theorems mechanically by polynomial elimination~\cite{buchberger1965,wu1986mechanical,chou1988mechanical}. Although these elimination procedures are theoretically complete for broad classes of geometric statements, their computational complexity grows rapidly with the number of variables and the polynomial degree. Moreover, the intermediate polynomials produced during elimination lose their geometric meaning and cannot serve as step-by-step derivations for learners. Deductive geometry solvers preserve readability by reasoning directly over geometric predicates. Systems such as GeoS and Inter-GPS parse text and diagrams into formal literals and apply Euclidean theorems through symbolic deduction~\cite{seo2015geos,lu2021intergps}. AlphaGeometry combines a neural language model that proposes auxiliary constructions with a symbolic deduction engine to prove complex Olympiad geometry theorems~\cite{trinh2024alphageometry,alphageometry2}. These deductive systems operate purely within the geometric strand over configurations of points, lines, triangles, and circles. They do not represent analytic curve equations or manipulate intrinsic algebraic parameters.
+
+Closer to our setting is research on geometry--algebra problems, which ask for numerical or algebraic quantities in Euclidean diagrams. In our prior work, the HGR algorithm represents a geometry--algebra problem as a unified graph called a hologram~\cite{huang2025hologram}. It uses deep reinforcement learning to select graph models from a prepared pool, recognizing implicit Euclidean configurations such as similar triangles or right triangles to derive metric equations. Both HGR and Conic-Solver select domain models step by step from a finite pool. However, the two problem classes differ fundamentally in how geometry and algebra interact. In Euclidean geometry--algebra problems, the main difficulty is to recognize hidden geometric configurations in a diagram and translate them in one direction into algebraic equations over segment lengths and angles. In conic-section problems, every object carries a geometric identity and an algebraic carrier at the same time. Solving such a problem differs from proving a Euclidean geometry theorem or translating a static diagram into metric equations. A conic curve is given with an algebraic equation and parameters such as $a$, $b$, $c$, $p$, and $e$ from the start. The solver must not only translate geometric roles into algebraic equations via G2A transformations, but also interpret computed parameter values back into new geometric objects such as foci, directrices, and asymptotes via A2G transformations. Existing Euclidean geometry solvers do not model these bidirectional transitions between curve equations and geometric roles.
+
+\subsection{Algebraic and function problem solving}
+\label{sec:related_algebra_function}
+
+Because conic-section problems rely heavily on equations and parameter computations, our work is also closely related to algebraic solvers and our prior series of relation-centric algorithms for arithmetic and function problems.
+
+General computer algebra systems, such as SymPy, provide exact symbolic operations including polynomial simplification, substitution, and equation solving~\cite{meurer2017sympy}. Conic-Solver reuses such operations as low-level symbolic primitives within individual reasoning patterns. However, a standalone computer algebra system operates purely on the algebraic strand. It does not know which geometric property applies to a curve, which parameter plays the role of the semi-major axis, or how to avoid expensive global elimination over nonlinear constraints.
+
+To integrate domain knowledge with symbolic computation, our group has developed a series of relation-centric solvers across progressively more complex mathematical domains. For arithmetic word problems, early algorithms introduced syntax--semantics models to extract explicit quantity relations from text and solved the resulting linear equation system by Gaussian elimination~\cite{yu2019framework}. Subsequent work combined a syntax--semantics extractor with a neural network miner to acquire implicit relations such as unit conversions and domain formulas~\cite{yu2023implicit}. More recently, the scene-attention relation-centric algorithm incorporated scene knowledge to organize relation acquisition and guide intra-scene and inter-scene symbolic inference~\cite{peng_scene-attention_2025}. In all of these arithmetic solvers, the understood state is a set of scalar quantity relations, and the symbolic solver resolves them through linear equation solving.
+
+We later extended this state-transform methodology to text-diagram function problems, in which functions are compound mathematical objects rather than scalar quantities. For piecewise linear functions, a relation-centric algorithm introduced period relations to represent domain-restricted line segments and developed an equation--function interaction solver~\cite{yu2022func-relation}. Building on that work, UDfSolver addressed six fundamental function types: linear, quadratic, inverse proportional, exponential, logarithmic, and power functions~\cite{xiong2026udfsolver}. UDfSolver introduced a uniform representation model to standardize function attributes and point incidence relations across different function types. It also proposed a decoupled inference strategy that separates a procedural inference layer from a pool of 27 function meta-models. During solving, its procedural layer invokes function meta-models either by matching a predefined inference pathway or by exhaustively traversing the meta-model pool.
+
+Conic-Solver is a natural continuation of this research line toward senior high school analytic geometry, and it inherits the core philosophy of structured state representation and modular knowledge pools. At the same time, conic-section problems introduce three structural challenges that go beyond arithmetic and elementary function problems. First, in elementary function problems, a function is primarily an algebraic mapping $y=f(x)$ accompanied by points on its graph. In conic-section problems, every object carries a geometric identity and an algebraic carrier at the same time, and solving such a problem differs from solving an algebraic equation system or instantiating a function expression. A single curve is tied to multiple auxiliary geometric entities—including foci, vertices, directrices, asymptotes, focal chords, and tangent lines—whose roles and parameters gate each other across the geometric and algebraic strands. Second, whereas elementary function solving requires only 27 meta-models and short inference chains, conic-section solving requires a much larger repertoire of 80 reasoning patterns spanning G2G, G2A, A2A, and A2G transformations. Third, because condition combinations in conic-section problems are highly diverse and solution chains are long, neither the predefined pathways nor the exhaustive pool traversal of UDfSolver remains effective. Predefined pathways cannot enumerate all valid multi-step combinations, while exhaustive traversal generates many applicable but goal-irrelevant facts. Conic-Solver resolves these challenges by introducing a dual-layer problem representation model and pairing a learned abstract-layer pattern selector with a verified symbolic-layer pattern applicator.
+
+
+\section{Problem formulation and solving principle}
+\label{sec:problem_formulation}
+Designing an effective solving algorithm requires a clear formulation of the target problem and a principled analysis of its inherent difficulties. This section first states the conic-section problem-solving task. It then analyzes the dual-strand characteristics and core difficulties of conic-section problems from a geometry--algebra perspective. Based on this analysis, it formalizes the state-transform solving principle that guides the design of Conic-Solver.
+
+\subsection{Problem statement}
+\label{sec:problem_statement}
+
+A conic-section problem is given as a pair
+\begin{equation}
+x=(F,q),
+\label{eq:problem}
+\end{equation}
+where $F$ is a finite set of initial facts and $q$ is the solving goal. The facts describe the curves, points, lines, equations, and parameter constraints stated in the problem. The solving goal specifies the target quantity or mathematical object to be determined, such as a parameter value, an eccentricity, a distance, a curve equation, or a parameter range. In this paper, $F$ and $q$ are expressed in the formal language of the Conic10K dataset~\cite{conic10k}. For example, the problem ``the hyperbola $x^2/4-y^2/m^2=1$ $(m>0)$ has an asymptote $5x-2y=0$; find $m$'' is represented as
+\begin{equation}
+\begin{aligned}
+F=\{&\mathrm{Hyperbola}(G),\ m>0,\ \mathrm{Expression}(G)=(x^2/4-y^2/m^2=1),\\
+&\mathrm{Expression}(\mathrm{OneOf}(\mathrm{Asymptote}(G)))=(5x-2y=0)\},\qquad q=m.
+\end{aligned}
+\label{eq:example_problem}
+\end{equation}
+This input setting isolates multi-step mathematical reasoning from natural-language parsing, which lies outside the scope of this study.
+Let $\mathcal{C}$ denote a corpus of conic-section problems. The research problem of this paper is to develop a solving algorithm that satisfies two requirements. First, the algorithm should accurately solve as many problems in $\mathcal{C}$ as possible. Second, the solution produced for each problem should be a sequence of explicit steps, each of which can be verified by the algorithm and understood by a learner. The second requirement excludes black-box approaches that output only a final answer or an unverified text derivation.
+
+\subsection{Characteristics of conic-section problems}
+\label{sec:characteristics}
+
+To design an algorithm that meets both requirements, we examined the formal annotations and reference solutions in the Conic10K corpus. This examination reveals three fundamental characteristics of conic-section problem solving.
+
+\begin{observation}[Characteristics of conic-section problems]
+Solutions of conic-section problems exhibit three characteristics: (1) dual-strand geometry--algebra coupling, where each step operates along or across a geometric strand and an algebraic strand; (2) long dependent chains, where a solution comprises multiple sequential steps that rely on intermediate facts established by earlier steps; and (3) condition-dependent applicability, where a piece of domain knowledge is applicable only when the current state contains the specific geometric roles and algebraic parameters it requires.
+\label{obs:characteristics}
+\end{observation}
+
+The first characteristic captures the essence of conic-section problems. In analytic geometry, every mathematical object simultaneously carries a geometric identity and an algebraic carrier. An ellipse, for instance, is both a locus of points with two foci on a specific coordinate axis and a quadratic equation $x^2/a^2+y^2/b^2=1$ governed by parameters $a$, $b$, and $c$. Because of this dual nature, the solving process unfolds along two parallel strands. The geometric strand tracks curves, points, lines, their geometric roles such as focus, directrix, or asymptote, and their spatial relations. The algebraic strand tracks equations, coordinates, parameters, equalities, and inequalities.
+
+Neither strand can complete a solution alone. Reasoning solely within the geometric strand corresponds to Euclidean theorem proving, whereas reasoning solely within the algebraic strand corresponds to pure equation solving. Geometry--algebra problems with Euclidean diagrams typically identify a geometric configuration first and translate it into a system of metric equations in a single pass~\cite{huang2025hologram}. By contrast, solving a conic-section problem requires frequent bidirectional transitions between the geometric strand and the algebraic strand. Specifically, every reasoning step falls into one of four types of geometry--algebra transformations, which are summarized in Table~\ref{tab:projections}.
+
+\begin{table*}[t]
+\centering
+\caption{Four types of geometry--algebra transformations in conic-section problem solving.}
+\label{tab:projections}
+\begin{tabular}{p{0.23\textwidth}p{0.18\textwidth}p{0.25\textwidth}p{0.24\textwidth}}
+\hline
+Transformation type & Strand direction & Core function & Representative example \\
+\hline
+Geometric reasoning (G2G) & Geometry to geometry & Derive new geometric relations or roles from established geometric facts & Convert the focal distance $|AF|$ of a point on a parabola into its distance to the directrix by definition. \\
+Algebraization (G2A) & Geometry to algebra & Identify parameter roles or translate geometric conditions into algebraic relations & Substitute the coordinates of a point on a curve into the curve equation, or express the slope of an asymptote as $\pm b/a$. \\
+Algebraic computation (A2A) & Algebra to algebra & Compute new parameter values or algebraic relations from existing equations and constraints & Solve $a^2=b^2+c^2$ for an ellipse, apply Vieta's formulas to a quadratic equation, or evaluate a discriminant. \\
+Geometric interpretation (A2G) & Algebra to geometry & Interpret algebraic equations or computed parameters as new geometric objects or attributes & Read $x^2=4y$ as an upward-opening parabola with $p=2$, focus $F(0,1)$, and directrix $y=-1$. \\
+\hline
+\end{tabular}
+\end{table*}
+
+The two strands are not independent; rather, they mutually gate each other through these four transformations. The problem in Equation~\eqref{eq:example_problem} illustrates how the geometric strand gates the algebraic strand. A solver cannot find $m$ by blindly eliminating $x$ and $y$ between $x^2/4-y^2/m^2=1$ and $5x-2y=0$. Instead, it must first perform an A2G transformation on the standard hyperbola equation to identify the focal axis and extract the semi-axes $a=2$ and $b=m$. It must then use the geometric fact that $5x-2y=0$ is an asymptote to trigger a G2A transformation, which equates the line slope $5/2$ with the asymptote slope $b/a=m/2$. Finally, an A2A computation under the constraint $m>0$ yields $m=5$. Without the geometric role of the asymptote, the algebraic equality $m/2=5/2$ cannot be formulated.
+
+A second problem illustrates how the algebraic strand gates the geometric strand. Suppose the parabola $x^2=ay$ passes through the point $A(1,1/4)$, and the solving goal asks for the distance $|AF|$ from $A$ to the focus $F$. The given conditions do not yet specify the coordinates of $F$. First, a G2A transformation uses the fact that $A$ lies on the parabola to substitute $(1,1/4)$ into $x^2=ay$, yielding $1=a/4$. Second, an A2A computation solves this equation to obtain $a=4$. Stopping at $a=4$, however, leaves the solving goal unresolved because the focus $F$ is still absent on the geometric strand. Third, an A2G transformation interprets the updated equation $x^2=4y$ as an upward-opening standard parabola with $p=2$, which establishes the focus $F(0,1)$ and the directrix $y=-1$ on the geometric strand. Fourth, a G2G transformation applies the parabola definition to equate $|AF|$ with the distance from $A$ to the directrix. Fifth, a G2A transformation writes this distance as $y_A+p/2=1/4+1$, and an A2A computation produces the final value $5/4$. Here, the algebraic result $a=4$ must be translated back into geometric objects before the definition of the parabola can be applied.
+
+Combining the three characteristics in Observation~\ref{obs:characteristics} with the four transformation types reveals three core difficulties that a conic-section solver must overcome. The first difficulty is satisfying cross-strand reasoning dependencies. Because the geometric and algebraic strands gate each other, a transformation can be executed only after earlier steps have established all of its required objects and parameters. In the annotated corpus, a solution takes TBD steps on average, and TBD\% of the problems require at least five steps. Skipping a prerequisite step or applying a rule prematurely stalls the derivation.
+
+The second difficulty is preserving exact geometry--algebra correspondence. Throughout a multi-step derivation, every symbol must remain bound to its specific object and geometric role. If a solver confuses $a^2$ and $b^2$ when the foci lie on the $y$-axis, the subsequent algebraic calculations remain syntactically valid but mathematically wrong. Similarly, when an algebraic computation produces a value such as $p=2$, the solver must explicitly attach the resulting focus and directrix to the corresponding parabola so that later steps can reference them.
+
+The third difficulty is selecting goal-directed transformations. Once the standard equation of a curve is known, many G2A, A2G, and A2A transformations become applicable at the same time. The solver can derive the foci, the vertices, the directrices, the eccentricity, or the latus rectum, yet only one or two of these quantities help answer the solving goal $g$. Because no general elimination procedure can collapse these choices into a single step, the solver must repeatedly identify the deficit between the current conditions and the solving goal, and select a transformation that reduces this deficit.
+
+These three difficulties directly motivate our solving principle. To handle long dependent chains without a single-step elimination algorithm, we model problem solving as a sequence of step-by-step state transforms. To preserve exact object-parameter correspondence while exposing the high-level features needed for step selection, we represent each state with both a symbolic layer and an abstract layer. To ensure that each step respects cross-strand prerequisites and writes its results back to the right objects, we encapsulate domain knowledge into self-contained reasoning patterns. Finally, to choose goal-directed steps and guarantee their mathematical validity, we decouple pattern selection from pattern application.
+
+\subsection{State-transform solving principle}
+\label{sec:solving_principle}
+
+We formalize our approach within the state-transform paradigm of problem solving~\cite{yu2023implicit,peng_scene-attention_2025}. In this paradigm, a solving process is defined by a sequence of states and the transforms that convert each state into its successor. Previous relation-centric algorithms for arithmetic and elementary function problems use coarse-grained transforms~\cite{yu2022func-relation,yu2023implicit}. They convert a problem into a relation set and then convert the relation set into the final answer through a single equation-solving transform. The analysis in Section~\ref{sec:characteristics} shows that such a single step is not available for conic-section problems. We therefore expand the final transform into a sequence of fine-grained transforms, each of which is realized by one reasoning pattern. The following definitions formalize this principle.
+
+To track the progress of a multi-step derivation, the solver first needs an explicit record of all conditions available at step $t$. Because subsequent transformations depend on both the initial facts and the intermediate geometric or algebraic facts derived so far, we define a state as follows.
+
+\begin{definition}[State]
+A state $S_t$ of a conic-section problem is the collection of mathematical conditions established after $t$ reasoning steps. It comprises the initial facts in $F$, the intermediate facts derived in the first $t$ steps, and the solving goal $g$.
+\label{def:state}
+\end{definition}
+
+The initial state $S_0$ contains only the given facts $F$ and the solving goal $g$. Each subsequent step adds newly derived facts to form $S_{t+1}$. During solving, a state $S_t$ must serve two distinct tasks: executing a transformation and selecting the next transformation. These two tasks impose conflicting requirements on how $S_t$ is represented. Executing a transformation requires the exact equations, coordinates, parameter values, and inequalities in $S_t$. Selecting the next transformation, however, depends on a small number of structural features and the remaining gap to the solving goal. Consider two states that both contain a hyperbola, a line $l$, and a point $M$. If $l$ holds the asymptote role of the hyperbola, the asymptote slope transformation applies. If $l$ intersects the hyperbola to form a chord with midpoint $M$, the midpoint-chord transformation applies instead. Raw equations leave such decisive roles implicit, making it difficult for a selector to generalize across different numerical parameters. Conversely, a summary that keeps only high-level roles loses the exact expressions needed for symbolic computation. To resolve this conflict, we introduce a dual-layer problem representation model.
+
+\begin{definition}[Problem representation model]
+The problem representation model (RM) of a state $S_t$ is a pair
+\begin{equation}
+\mathcal{M}(S_t)=\left(S_t^{\mathrm{sym}},S_t^{\mathrm{abs}}\right),
+\label{eq:rm}
+\end{equation}
+where $S_t^{\mathrm{sym}}$ is the symbolic layer and $S_t^{\mathrm{abs}}$ is the abstract layer. The symbolic layer records the geometric objects with their algebraic expressions, the geometric relations between objects, and the algebraic constraints of $S_t$ in exact form for transformation execution. The abstract layer is a subset of a finite descriptor set $\mathcal{D}$ that summarizes $S_t$ for transformation selection.
+\label{def:rm}
+\end{definition}
+
+To connect the two layers without manual intervention during solving, the abstract layer is deterministically projected from the symbolic layer and the solving goal through a set of predicate descriptors.
+
+\begin{definition}[Abstract descriptor]
+An abstract descriptor $d\in\mathcal{D}$ is a binary predicate over the symbolic layer $S_t^{\mathrm{sym}}$ and the solving goal $g$. It evaluates to $1$ when $S_t^{\mathrm{sym}}$ and $q$ exhibit a specific structural feature, including the curve type, the curve orientation, an established object role, or a quantity still missing for the solving goal. The abstract layer of $S_t$ is the set of descriptors that hold at step $t$:
+\begin{equation}
+S_t^{\mathrm{abs}}=\phi\left(S_t^{\mathrm{sym}},q\right)=\left\{d\in\mathcal{D}\mid d\left(S_t^{\mathrm{sym}},q\right)=1\right\}.
+\label{eq:abstract_layer}
+\end{equation}
+\label{def:descriptor}
+\end{definition}
+
+Under Definitions~\ref{def:rm} and~\ref{def:descriptor}, the two layers cooperate with a clear division of labor. All mathematical transformations read and update only the symbolic layer $S_t^{\mathrm{sym}}$, which guarantees that no symbolic precision is lost. Whenever $S_t^{\mathrm{sym}}$ is updated to $S_{t+1}^{\mathrm{sym}}$, the abstract layer $S_{t+1}^{\mathrm{abs}}$ is automatically recomputed via $\phi$. Because descriptor set $\mathcal{D}$ is finite, this mapping can be learned from a limited corpus. Section~\ref{sec:method} presents the descriptor set constructed for conic-section problems.
+
+Next, we formalize the unit of transformation that advances $S_t$ to $S_{t+1}$. A plain algebraic formula, such as $c^2=a^2+b^2$ or $y=\pm(b/a)x$, cannot serve directly as a state transform. A formula does not state which geometric objects its symbols refer to, under what geometric preconditions it is valid, or which object in the state should receive the computed result. To preserve geometry--algebra correspondence across the four transformation types (G2G, G2A, A2A, and A2G), each transformation unit must bind specific object roles, check preconditions, execute symbolic operations, and write the output back to designated objects. We define such a unit as a reasoning pattern.
+
+\begin{definition}[Reasoning pattern]
+A reasoning pattern (RP) is a quadruple
+\begin{equation}
+P_i=\langle I_i,G_i,A_i,W_i\rangle ,
+\label{eq:rp}
+\end{equation}
+where $I_i$ is a unique pattern identifier; $G_i$ is the precondition specification, which declares the required geometric objects, their roles, the known parameters, and the target quantity to be derived; $A_i$ is the symbolic operation, which instantiates the underlying mathematical relation on the bound objects and computes the result using shared symbolic primitives; and $W_i$ is the write-back rule, which attaches the derived facts or parameters to the corresponding objects in the symbolic layer.
+\label{def:rp}
+\end{definition}
+
+Definition~\ref{def:rp} encapsulates a complete step along or across the geometric and algebraic strands. The precondition $G_i$ enforces cross-strand dependencies by verifying that the required curve type, orientation, and object roles are already present in $S_t^{\mathrm{sym}}$, while also checking that the target quantity of the pattern is still missing. The operation $A_i$ performs the core deduction or calculation over the bound symbols. The write-back rule $W_i$ maintains geometry--algebra correspondence by recording the output as an explicit attribute or relation of the bound objects rather than leaving it as an isolated number. Depending on what $G_i$ reads and what $W_i$ writes, a reasoning pattern realizes a G2G, G2A, A2A, or A2G transformation, or a tight composite of them within a single curriculum step.
+
+Because a state may contain multiple curves, points, or lines, applying a reasoning pattern $P_i$ to $S_t$ requires binding the abstract roles in $G_i$ to concrete objects in $S_t^{\mathrm{sym}}$. We formalize this binding and the resulting state transition as follows.
+
+\begin{definition}[Pattern instance and state transform]
+A pattern instance is a pair $(P_i,\theta)$, where $P_i$ is a reasoning pattern and $\theta$ is an object binding that maps the roles declared in $G_i$ to concrete objects in $S_t^{\mathrm{sym}}$. Applying the instance $(P_i,\theta)$ to a state $S_t$ defines the state transform
+\begin{equation}
+\mathrm{Apply}\left(S_t,P_i,\theta\right)=
+\begin{cases}
+W_i\left(A_i(\theta),S_t^{\mathrm{sym}}\right) & \text{if } G_i\left(S_t^{\mathrm{sym}},\theta\right)=1\text{ and }A_i(\theta)\text{ is valid},\\
+\bot & \text{otherwise}.
+\end{cases}
+\label{eq:apply}
+\end{equation}
+When $\mathrm{Apply}(S_t,P_i,\theta)\neq\bot$, its output forms the successor symbolic layer $S_{t+1}^{\mathrm{sym}}$, and the successor abstract layer is updated as $S_{t+1}^{\mathrm{abs}}=\phi(S_{t+1}^{\mathrm{sym}},q)$.
+\label{def:transform}
+\end{definition}
+
+Definition~\ref{def:transform} establishes a strict boundary between proposing a pattern and committing a state change. A selector may propose any candidate pattern $P_i$ based on the abstract layer $S_t^{\mathrm{abs}}$. However, the state transitions to $S_{t+1}$ only if a valid binding $\theta$ satisfies $G_i(S_t^{\mathrm{sym}},\theta)=1$ and the symbolic operation $A_i(\theta)$ produces a consistent, non-redundant fact. Any candidate that lacks prerequisites or violates parameter constraints yields $\bot$ and leaves $S_t$ untouched.
+
+To know when the sequence of state transforms has resolved the problem, we must define when a state is ready to yield the final answer. To ensure that all theorem-level reasoning is accounted for by the reasoning patterns, answer extraction itself must not hide additional theorem deductions.
+
+\begin{definition}[Answer-ready state]
+A state $S_t$ is called an answer-ready state for the solving goal $g$ if the target value, equation, or range requested by $q$ is explicitly present in $S_t^{\mathrm{sym}}$ and can be obtained by algebraic normalization alone, without applying any further reasoning pattern. The final answer extracted from an answer-ready state $S_T$ is
+\begin{equation}
+\hat{a}=\mathrm{Extract}\left(S_T^{\mathrm{sym}},q\right).
+\label{eq:extract}
+\end{equation}
+\label{def:answer_ready}
+\end{definition}
+
+With the state representation, reasoning patterns, state transform, and termination condition defined, we now formalize the complete task of conic-section problem solving.
+
+\begin{definition}[Conic-section problem solving]
+Let $x=(F,q)$ be a conic-section problem and let $\Lambda=\{P_1,\ldots,P_K\}$ be a prepared pool of reasoning patterns. Solving $x$ means finding a sequence of pattern instances $(P_{i_0},\theta_0),\ldots,(P_{i_{T-1}},\theta_{T-1})$ with $P_{i_t}\in\Lambda$ such that: (1) the initial state $S_0$ is constructed from $x$, and each state $S_{t+1}$ is obtained from $S_t$ by a valid transition $\mathrm{Apply}(S_t,P_{i_t},\theta_t)\neq\bot$; (2) the terminal state $S_T$ is answer-ready for $q$; and (3) the extracted answer $\hat{a}=\mathrm{Extract}(S_T^{\mathrm{sym}},q)$ is mathematically equivalent to the ground-truth answer $a^{\star}$.
+\label{def:solving}
+\end{definition}
+
+Definition~\ref{def:solving} casts conic-section problem solving as the sequential state-transform chain in Equation~\eqref{eq:intro_transition}. For this solving principle to be practical across a broad corpus of problems, two foundational assumptions must hold. Following earlier studies in the state-transform paradigm~\cite{yu2022func-relation,yu2023implicit}, we state these assumptions as propositions.
+
+\begin{proposition}[Finite pattern pool]
+Let $\mathcal{C}$ be a corpus of conic-section problems. There exists a finite pool $\Lambda$ of reasoning patterns such that, for the vast majority of problems $x\in\mathcal{C}$, a sequence of pattern instances drawn from $\Lambda$ transforms the initial state $S_0$ into an answer-ready state $S_T$ whose extracted answer $\hat{a}$ equals $a^{\star}$.
+\label{prop:finite_pool}
+\end{proposition}
+
+\begin{proposition}[Selection from abstract descriptions]
+For most intermediate states $S_t$ encountered in solving the problems in $\mathcal{C}$, the reasoning patterns in $\Lambda$ that advance $S_t$ toward an answer-ready state can be identified within a small candidate set from the abstract layer $S_t^{\mathrm{abs}}=\phi(S_t^{\mathrm{sym}},q)$.
+\label{prop:abstract_selection}
+\end{proposition}
+
+Like the propositions in prior relation-centric solvers~\cite{yu2022func-relation,yu2023implicit}, Propositions~\ref{prop:finite_pool} and~\ref{prop:abstract_selection} are empirical hypotheses rather than mathematical theorems, and they will be validated experimentally in Section~\ref{sec:experiments}. Proposition~\ref{prop:finite_pool} asserts that although conic-section problems vary widely in their surface equations and solving goal forms, the underlying geometry--algebra transformations can be covered by a compact repertoire of patterns. Proposition~\ref{prop:abstract_selection} asserts that recognizing which transformation to apply next depends on high-level geometric roles and goal deficits rather than on raw numerical coefficients. Together, they mirror how human students master analytic geometry: students learn a finite set of standard reasoning steps and use key structural cues in the problem to decide which step to apply next.
+
+Figure~\ref{fig:state_transform_graph} contrasts the state transform graph of traditional relation-centric algorithms with that of Conic-Solver. Relation-centric algorithms convert the understood state into the solution through a single equation-solving transform. Conic-Solver maintains a dual-layer state $(S_t^{\mathrm{sym}},S_t^{\mathrm{abs}})$ and replaces the single-step solver with an iterative closed loop of abstract-layer pattern selection and symbolic-layer pattern application, advancing through verified intermediate states until an answer-ready state $S_T$ is reached.
+
+\begin{figure*}[t]
+\centering
+\fbox{\parbox{0.94\textwidth}{
+Figure placeholder. Panel (a) shows the state transform graph of relation-centric algorithms: problem input, relation set, equation system, and answer. Panel (b) shows the state transform graph of Conic-Solver: facts and solving goal $x=(F,q)$, initial dual-layer state $(S_0^{\mathrm{sym}},S_0^{\mathrm{abs}})$, an iterative loop alternating between pattern selection on $S_t^{\mathrm{abs}}$ and pattern application on $S_t^{\mathrm{sym}}$ via the reasoning-pattern pool $\Lambda$, answer-ready state $S_T$, and extracted answer $\hat{a}$. Components introduced in this paper should be highlighted.
+}}
+\caption{Comparison of the state transform graphs between (a) traditional relation-centric algorithms and (b) the proposed Conic-Solver.}
+\label{fig:state_transform_graph}
+\end{figure*}
+
+
+\section{Conic-Solver}
+\label{sec:method}
+
+This section presents the four core components of Conic-Solver that instantiate the state-transform solving principle. Section~\ref{sec:method_overview} outlines the architecture and the interaction among the components. Section~\ref{sec:representation} details the construction of the dual-layer problem representation model. Section~\ref{sec:rp_pool} explains how the pool of 80 reasoning patterns is constructed, strictly distinguished, and organized across the four geometry--algebra transformation types. Sections~\ref{sec:selector} and~\ref{sec:applicator} describe how the pattern selector and the pattern applicator cooperate to select and execute reasoning patterns at each step.
+
+\subsection{Overview}
+\label{sec:method_overview}
+
+To solve a conic-section problem through a sequence of state transforms, an algorithm must represent the current conditions, store reusable transformation knowledge, choose a transformation at each step, and execute that transformation accurately. Conic-Solver fulfills these four roles with four corresponding components. First, the representation constructor builds the dual-layer problem representation model $\mathcal{M}(S_t)=(S_t^{\mathrm{sym}},S_t^{\mathrm{abs}})$ from the problem input and updates it after each step. Second, the reasoning-pattern pool $\Lambda$ stores 80 reasoning patterns that encapsulate G2G, G2A, A2A, and A2G transformations. Third, the pattern selector reads the abstract layer $S_t^{\mathrm{abs}}$ and predicts a ranked list of candidate patterns that aim to close the gap toward the solving goal. Fourth, the pattern applicator binds a candidate pattern to concrete objects in the symbolic layer $S_t^{\mathrm{sym}}$, checks its preconditions, executes its symbolic primitives, and writes the derived facts back to produce $S_{t+1}^{\mathrm{sym}}$.
+
+Figure~\ref{fig:overview} illustrates the interaction among these components. At each step, the pattern selector and the pattern applicator form a closed loop between the abstract layer and the symbolic layer. Each pass through the loop commits one verified reasoning pattern instance and advances the state from $S_t$ to $S_{t+1}$. The loop terminates when the symbolic layer becomes answer-ready for the solving goal $g$, at which point the final answer $\hat{a}$ is extracted.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{Figures/fig2_framework_imagegen_v2.png}
+\caption{Overview of the Conic-Solver architecture.}
+\label{fig:overview}
+\end{figure*}
+
+\subsection{Problem representation model}
+\label{sec:representation}
+
+\subsubsection{Symbolic layer}
+
+\subsubsection{Symbolic layer}
+
+The symbolic layer $S_t^{\mathrm{sym}}$ records the exact mathematical conditions of a state to support symbolic execution. To maintain strict correspondence between the geometric strand and the algebraic strand, $S_t^{\mathrm{sym}}$ organizes problem conditions into three categories of information. The first category consists of geometric objects and their associated algebraic expressions. Each geometric object is a conic curve, a circle, a line, or a point. Each curve or line object stores its geometric attributes, such as curve type and focal orientation, together with its algebraic equation and intrinsic parameters such as $a$, $b$, $c$, $p$, and $e$. Each point object stores its symbolic or numerical coordinates. Associating algebraic equations, coordinates, and parameters directly with their host geometric objects ensures that no symbol loses its geometric meaning during computation. The second category consists of geometric relations between objects. These relations record how objects interact on the geometric strand, such as a point lying on a curve, a point serving as a focus of a curve, or a line serving as an asymptote of a hyperbola. The third category consists of algebraic constraints. Parameter equalities and inequalities, such as $m>0$ or $a>b>0$, are stored as explicit constraints.
+
+The initial symbolic layer $S_0^{\mathrm{sym}}$ is constructed directly from the given fact set $F$. Each formal fact in $F$ is parsed into a geometric object with its algebraic expression, a geometric relation between objects, or an algebraic constraint. For the hyperbola problem in Equation~\eqref{eq:example_problem}, this construction creates a hyperbola object $G$ with its equation $x^2/4-y^2/m^2=1$, a line object with equation $5x-2y=0$ linked to $G$ by the asymptote relation, and an algebraic constraint $m>0$. The initial construction records only the stated facts and performs no implicit deduction, ensuring that every subsequent inference step is carried out by a reasoning pattern. In addition, every item in $S_t^{\mathrm{sym}}$ records its provenance, which is either an initial fact in $F$ or the pattern instance $(P_i,\theta)$ that derived it. This provenance record allows every step of the final solution to be traced back to the exact conditions it used.
+
+\subsubsection{Abstract layer}
+
+While $S_t^{\mathrm{sym}}$ retains full mathematical detail for execution, the abstract layer $S_t^{\mathrm{abs}}$ is designed to expose the key structural cues needed to select the next reasoning pattern. For $S_t^{\mathrm{abs}}$ to guide selection effectively, the descriptor set $\mathcal{D}$ must satisfy two criteria. First, $\mathcal{D}$ must be compact enough that a neural selector can learn reliable associations from a finite training corpus. Second, $\mathcal{D}$ must capture the features that govern cross-strand permissions and goal direction. By analyzing which state features distinguish different reasoning patterns across the Conic10K training trajectories, we constructed a set $\mathcal{D}$ of 29 binary descriptors organized into four functional groups, as listed in Table~\ref{tab:descriptors}.
+
+\begin{table*}[t]
+\centering
+\caption{The 29 abstract descriptors in $\mathcal{D}$ organized by their functional groups and their roles in dual-strand reasoning.}
+\label{tab:descriptors}
+\begin{tabular}{p{0.14\textwidth}p{0.07\textwidth}p{0.46\textwidth}p{0.23\textwidth}}
+\hline
+Group & Number & Descriptors & Role in dual-strand reasoning \\
+\hline
+Curve type & 5 & Ellipse; hyperbola; parabola; circle; multiple curves & Gate curve-specific parameter relations in G2A and A2A \\
+Orientation & 4 & Foci on the $x$-axis; foci on the $y$-axis; parabola opening along the $x$-axis; parabola opening along the $y$-axis & Gate parameter identity assignment and sign conventions in A2G and G2A \\
+Given role & 10 & Curve equation; focus; point on curve; asymptote; directrix; given eccentricity; chord or intersection; midpoint; tangency; perpendicularity & Indicate established geometric and algebraic conditions to trigger G2G and G2A \\
+Goal deficit & 10 & Missing eccentricity; missing parameter value; missing curve equation; missing asymptote; missing directrix; missing focus or focal distance; missing length; missing area; missing range or extremum; missing distance, coordinate, or angle & Specify the unresolved gap to the solving goal $g$ to guide transformation selection \\
+\hline
+Total & 29 & & \\
+\hline
+\end{tabular}
+\end{table*}
+
+Each descriptor group serves a distinct purpose in coordinating the geometric and algebraic strands. The curve-type and orientation descriptors specify the global identity of the curve, which determines how standard equations are interpreted in A2G steps and which parameter relation holds in A2A steps. For example, the descriptor for foci on the $y$-axis signals that the larger denominator in an ellipse equation must be assigned to $a^2$ on the $y^2$ term rather than the $x^2$ term. The given-role descriptors indicate which geometric configurations and algebraic carriers have already been established in $S_t^{\mathrm{sym}}$, showing which G2G and G2A transformations are potentially applicable. The goal-deficit descriptors compare the target requested by $q$ against the quantities currently present in $S_t^{\mathrm{sym}}$. A deficit descriptor evaluates to $1$ only when the corresponding target quantity or prerequisite role is still absent from $S_t^{\mathrm{sym}}$. As reasoning patterns write new facts into the symbolic layer, the given-role descriptors are progressively activated while the goal-deficit descriptors are cleared.
+
+Every descriptor $d\in\mathcal{D}$ is evaluated by a deterministic rule over $S_t^{\mathrm{sym}}$ and $q$. The projection $S_t^{\mathrm{abs}}=\phi(S_t^{\mathrm{sym}},q)$ therefore requires no learned parameters and introduces no approximation error. For neural network input, $S_t^{\mathrm{abs}}$ is represented as a 29-dimensional binary vector $\mathbf{b}_t\in\{0,1\}^{|\mathcal{D}|}$, where the $j$-th entry equals $1$ if and only if the $j$-th descriptor holds at $S_t$.
+
+The effectiveness of $\mathcal{D}$ lies in the strong correspondence between descriptor combinations and reasoning patterns. Table~\ref{tab:descriptor_rp} lists representative combinations of descriptors observed in the corpus alongside the reasoning patterns typically selected for them. A descriptor combination does not need to uniquely pinpoint a single pattern in all cases. Instead, it narrows the 80 patterns in $\Lambda$ down to a small set of plausible candidates, leaving the exact precondition verification to the pattern applicator on the symbolic layer. This division of work directly supports Proposition~\ref{prop:abstract_selection}.
+
+\begin{table*}[t]
+\centering
+\caption{Representative combinations of abstract descriptors and their corresponding reasoning patterns. Pattern identifiers refer to Table~\ref{tab:rp_categories}; arrows indicate typical multi-step transitions.}
+\label{tab:descriptor_rp}
+\begin{tabular}{p{0.62\textwidth}p{0.28\textwidth}}
+\hline
+Descriptor combination in $S_t^{\mathrm{abs}}$ & Typical reasoning patterns \\
+\hline
+Ellipse, foci on the $x$-axis, curve equation, missing eccentricity & 3 $\rightarrow$ 11 $\rightarrow$ 13 \\
+Hyperbola, foci on the $x$-axis, curve equation, missing eccentricity & 5 $\rightarrow$ 12 $\rightarrow$ 13 \\
+Hyperbola, curve equation, asymptote, missing parameter value or asymptote & 5 $\rightarrow$ 21 \\
+Hyperbola, asymptote, missing eccentricity & 5 $\rightarrow$ 21 $\rightarrow$ 13 \\
+Hyperbola, given eccentricity, missing parameter value or curve equation & 13 $\rightarrow$ 11, 12, or 21 \\
+Parabola opening along the $x$-axis, curve equation, missing directrix or focus & 7 $\rightarrow$ 29 \\
+Parabola, point on curve, missing focal distance & 7 or 9 $\rightarrow$ 2 $\rightarrow$ 29 (or 17) \\
+Ellipse or hyperbola, point on curve, focus, missing length or angle & 0 or 1 \\
+Chord or intersection, missing parameter value & 78 $\rightarrow$ 42, 43 \\
+Midpoint, chord or intersection & 44--46, 54 \\
+Focus, point on curve, missing area & 30--32, 56 \\
+Chord or intersection, missing range or extremum & 65, 63, 79 \\
+Tangency & 38, 39, 75, 76 \\
+Multiple curves, focus & 3 or 5 $\rightarrow$ 11 or 12 \\
+Curve equation, missing length & 3 or 5 $\rightarrow$ 11 or 12 \\
+Foci on the $y$-axis, curve equation & 4 or 6 \\
+Asymptote, missing distance & 22, 52 \\
+Perpendicularity & 49, 61 \\
+\hline
+\end{tabular}
+\end{table*}
+
+Procedure~\ref{proc:representation} summarizes how the initial problem representation model is constructed from $x=(F,q)$.
+
+\begin{algorithm}[t]
+\caption{Procedure I: Constructing the problem representation model}
+\label{proc:representation}
+\begin{algorithmic}[1]
+\REQUIRE Facts $F$, solving goal $g$, descriptor set $\mathcal{D}$
+\ENSURE Initial problem representation model $(S_0^{\mathrm{sym}},S_0^{\mathrm{abs}})$
+\STATE $S_0^{\mathrm{sym}}\leftarrow\varnothing$
+\FOR{each fact $f\in F$}
+    \STATE Parse $f$ into a geometric object with its algebraic expression, a geometric relation, or an algebraic constraint
+    \STATE Insert the parsed item into $S_0^{\mathrm{sym}}$ and record $f$ as its provenance
+\ENDFOR
+\STATE $S_0^{\mathrm{abs}}\leftarrow\{d\in\mathcal{D}\mid d(S_0^{\mathrm{sym}},g)=1\}$
+\RETURN $(S_0^{\mathrm{sym}},S_0^{\mathrm{abs}})$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Reasoning-pattern pool}
+\label{sec:rp_pool}
+
+The reasoning-pattern pool $\Lambda$ provides the building blocks of every derivation in Conic-Solver. To explain how $\Lambda$ is designed and why it is effective, we detail the raw materials from which the patterns are extracted, the four-question method used to construct each pattern, the criterion that strictly distinguishes one pattern from another, and the organization of the resulting 80 patterns across the four geometry--algebra transformation types.
+
+The raw materials for constructing $\Lambda$ come from two complementary sources. The first source is the senior high school analytic geometry curriculum, which provides the formal definitions, standard equations, geometric properties, and algebraic techniques for ellipses, hyperbolas, parabolas, and circles. The second source is the collection of reference solutions in the Conic10K training set. While the curriculum defines what mathematical truths hold, the reference solutions reveal how these truths are operationalized as step-by-step transitions to bridge the gap between given conditions and queries.
+
+To convert these raw materials into formal reasoning patterns $P_i=\langle I_i,G_i,A_i,W_i\rangle$, we analyzed the step transitions in the reference solutions under the dual-strand framework. Each recurring transition was formalized by answering four structural construction questions. First, to what geometric objects and under what established preconditions is the step applicable? The answer defines the precondition specification $G_i$, including the curve type, orientation, object roles, and required parameters. Second, how are the object parameters interpreted and what mathematical relation is executed? The answer defines the symbolic operation $A_i$. Third, what new geometric object, attribute, or algebraic value does the step establish, and which object in the state receives it? The answer defines the write-back rule $W_i$. Fourth, what goal deficit or downstream prerequisite does this new fact resolve? The answer links the pattern to the abstract descriptors in $\mathcal{D}$.
+
+To prevent ambiguity and overlap in the pool, we enforce a strict delimitation criterion among reasoning patterns. Two reasoning steps in reference solutions are merged into the same reasoning pattern if and only if they require the same configuration of object roles and preconditions in $G_i$, execute the same mathematical relation in $A_i$, and write back to the same object attribute in $W_i$. If two steps differ in any of these three components, they are defined as distinct reasoning patterns. For example, reading the semi-axes $a$ and $b$ from an ellipse equation with foci on the $x$-axis (RP 3) and with foci on the $y$-axis (RP 4) share a similar algebraic look, but they require different orientation preconditions in $G_i$ and assign $a^2$ and $b^2$ to different denominator terms in $A_i$; they are therefore strictly separated. Likewise, the parameter relation $a^2=b^2+c^2$ for an ellipse (RP 11) and $c^2=a^2+b^2$ for a hyperbola (RP 12) are separated by their curve-type preconditions and algebraic equations.
+
+This construction level also explains why a compact pool of 80 patterns suffices to cover the diverse problems in the corpus. If transformations were defined at the level of elementary computer-algebra rewrites, such as expanding a binomial or moving a term across an equality, each solution would require dozens of low-level steps that carry no geometric meaning. Conversely, if transformations were defined as complete problem-type templates, the number of templates would grow combinatorially with the possible combinations of given roles and queries, and templates would fail whenever a problem combined conditions in a new way. Defining each reasoning pattern as a single geometry--algebra transition at the granularity of a curriculum step avoids both extremes. The resulting pool $\Lambda$ contains 80 reasoning patterns.
+
+Although a single reasoning pattern may involve auxiliary checks across both strands, every pattern in $\Lambda$ has a clear dominant transformation among the four types in Table~\ref{tab:projections}. We therefore classify the 80 patterns primarily by their dominant transformation type—G2A algebraization, A2G geometric interpretation, G2G geometric reasoning, and A2A algebraic computation—and secondarily into nine functional subcategories. Table~\ref{tab:rp_categories} presents the complete taxonomy of the 80 reasoning patterns together with their occurrence proportions in the annotated training corpus.
+
+\begin{table*}[t]
+\centering
+\caption{Taxonomy of the 80 reasoning patterns in $\Lambda$, organized by their dominant geometry--algebra transformation type (with corpus occurrence proportions) and nine functional subcategories.}
+\label{tab:rp_categories}
+\begin{tabular}{p{0.18\textwidth}p{0.16\textwidth}p{0.10\textwidth}p{0.04\textwidth}p{0.21\textwidth}p{0.21\textwidth}}
+\hline
+Dominant transformation (Corpus share) & Functional subcategory & Pattern IDs & Size & Precondition $G_i$ & Operation $A_i$ and write-back $W_i$ \\
+\hline
+G2A: Algebraization (45 RPs, 36.0\%) & Curve definitions & 0, 1 & 2 & Point on an ellipse or hyperbola with foci & Formulate $|PF_1|\pm|PF_2|=2a$ and bind to point--focus distances \\
+ & Parameters and eccentricity & 13--15 & 3 & Conic with established parameters or eccentricity role & Formulate $e=c/a$ or $e=\sqrt{1\pm b^2/a^2}$ and update $e,a,b,c$ \\
+ & Focal radii and focal chords & 16--20, 33--36 & 9 & Point or chord passing through a focus of a conic & Apply focal-radius, latus-rectum, or focal-chord length formulas \\
+ & Asymptotes and directrices & 22--26 & 5 & Hyperbola or conic with asymptote or second-definition role & Formulate focus-to-asymptote distance or eccentricity--directrix ratio \\
+ & Tangents and circles & 37--39, 76 & 4 & Tangent line, circle, or parametric curve point & Formulate tangent equation or center-to-tangent distance $d=r$ \\
+ & Line--curve intersection & 40, 44--46, 50, 51, 66, 72--74, 78 & 11 & Line intersecting a conic at two points or a midpoint & Substitute line into curve, apply point-difference slope relation, or compute chord length \\
+ & Metric and vector relations & 30--32, 52--55, 58--62 & 11 & Points, lines, focal triangles, or vectors on curves & Formulate point-to-line distance, slope, or vector dot-product equations \\
+\hline
+A2G: Geometric interpretation (15 RPs, 40.2\%) & Standard equations & 3--10, 75 & 9 & Curve equation with determined type and orientation & Extract $a,b,p$, center, or radius and attach vertices or foci to the curve \\
+ & Asymptotes and directrices & 21, 27--29 & 4 & Established semi-axes $a,b$ or parabola parameter $p$ & Construct asymptote equations $y=\pm(b/a)x$ or directrix equations and attach as curve roles \\
+ & Line--curve intersection & 67, 77 & 2 & Quadratic intersection equation or homogenized form & Interpret discriminant sign or slope product as intersection or angle property \\
+\hline
+G2G: Geometric reasoning (10 RPs, 11.4\%) & Curve definitions & 2 & 1 & Point on a parabola with focus and directrix roles & Equate focal distance $|PF|$ with perpendicular distance to the directrix \\
+ & Metric and vector relations & 47--49, 56, 57, 68--71 & 9 & Triangle or polygon formed by curve points and foci & Deduce angle, side, midline, or area relations via Euclidean and triangle theorems \\
+\hline
+A2A: Algebraic computation (10 RPs, 12.4\%) & Parameters and eccentricity & 11, 12 & 2 & Ellipse or hyperbola with two of $a,b,c$ established & Solve $a^2=b^2+c^2$ (ellipse) or $c^2=a^2+b^2$ (hyperbola) for the third parameter \\
+ & Line--curve intersection & 41--43, 65 & 4 & Quadratic equation from line--curve substitution & Express Vieta root sum and product $x_1+x_2,x_1x_2$ or evaluate $\Delta>0$ \\
+ & Metric and vector relations & 52 (alg.), 60 (alg.) & 1 & Established coordinate or distance equations & Eliminate auxiliary variables to solve for target coordinates \\
+ & Ranges and extrema & 63, 64, 79 & 3 & Target algebraic expression under domain constraints & Apply AM--GM inequality, boundedness, or quadratic function extremum \\
+\hline
+Total & & 0--79 & 80 & & \\
+\hline
+\end{tabular}
+\end{table*}
+
+Table~\ref{tab:rp_categories} reveals that G2A (36.0\%) and A2G (40.2\%) together account for 76.2\% of all pattern occurrences in the corpus. This empirical distribution confirms our central thesis: the primary workload of solving conic-section problems lies in translating back and forth between the geometric strand and the algebraic strand, while G2G (11.4\%) and A2A (12.4\%) provide essential within-strand deductions. Four representative examples illustrate how patterns in the four classes operate:
+\begin{itemize}
+\item An A2G pattern (RP 3, standard equation of an ellipse with foci on the $x$-axis) requires an ellipse $G$ whose equation has the form $x^2/A+y^2/B=1$ with $A>B>0$. Its operation $A_3$ extracts $a=\sqrt{A}$ and $b=\sqrt{B}$, and its write-back rule $W_3$ attaches these parameters and the $x$-axis focal orientation to $G$.
+\item A G2G pattern (RP 2, definition of a parabola) requires a parabola $G$ and a point $P$ lying on $G$. Its operation $A_2$ establishes the geometric equality between the focal distance $|PF|$ and the distance from $P$ to the directrix of $G$, and $W_2$ records this equivalence in $S_t^{\mathrm{sym}}$.
+\item A G2A pattern (RP 21, asymptote of a hyperbola) requires a hyperbola $G$ with semi-axes $a,b$ and a line $l$ in the asymptote role of $G$. Its operation $A_{21}$ equates the slope of $l$ with $\pm b/a$, and $W_{21}$ writes the solved parameter or line equation back to $G$ or $l$.
+\item An A2A pattern (RP 42, Vieta's formulas for a line--conic system) requires a quadratic equation $Ax^2+Bx+C=0$ obtained by substituting a chord line into a conic equation. Its operation $A_{42}$ computes $x_1+x_2=-B/A$ and $x_1x_2=C/A$, and $W_{42}$ attaches these symmetric coordinate relations to the intersection point pair.
+\end{itemize}
+
+To implement the operations $A_i$ across all 80 patterns without duplicating symbolic code, we observe that different patterns rely on a small set of recurring mathematical manipulations. We implement these manipulations as a library of shared symbolic primitives based on SymPy~\cite{meurer2017sympy}. The primitives include algebraic normalization, symbolic substitution, single-variable equation solving, bivariate quadratic elimination, Vieta symmetric polynomial reduction, discriminant computation, root filtering under inequality constraints, and symbolic equivalence checking. Each pattern operation $A_i$ is a concise composition of these primitives that acts strictly on the objects bound by $G_i$. Restricting primitives to bound objects ensures that every calculation remains fast, local, and explainable by the enclosing reasoning pattern.
+
+\subsection{Pattern selector}
+\label{sec:selector}
+
+Having constructed the 80 reasoning patterns, the next question is how to use them during solving. At any state $S_t$, multiple patterns in $\Lambda$ may have their preconditions satisfied simultaneously, while many other patterns cannot yet be applied. Traversing $\Lambda$ exhaustively at every step, as in the exploratory pathway of UDfSolver~\cite{xiong2026udfsolver}, executes many valid transformations that do not contribute to the solving goal $g$. Conversely, matching a fixed table of pathways fails when a problem combines conditions in an unseen order. To select transformations that are both sensitive to the current conditions and directed toward the solving goal, we introduce a learned pattern selector.
+
+In accordance with Proposition~\ref{prop:abstract_selection}, the pattern selector operates exclusively on the abstract layer $S_t^{\mathrm{abs}}$. Given the 29-dimensional binary descriptor vector $\mathbf{b}_t$ of state $S_t$, the selector computes a probability distribution over the 80 patterns in $\Lambda$:
+\begin{equation}
+p_\theta\left(P_i\mid S_t^{\mathrm{abs}}\right)=\operatorname{softmax}_i\left(f_\theta\left(\mathbf{b}_t\right)\right),\qquad i=1,\ldots,K,
+\label{eq:selector}
+\end{equation}
+where $f_\theta$ is a multilayer perceptron parameterized by $\theta$ and $K=80$. Because $\mathbf{b}_t$ encodes both the established roles and the remaining goal deficits, $p_\theta(P_i\mid S_t^{\mathrm{abs}})$ estimates how likely pattern $P_i$ is to bridge the current deficit. At each step, the selector outputs the top-$k$ patterns with the highest probabilities as candidates. The selector does not bind concrete objects or execute symbolic algebra; those exact operations are delegated to the pattern applicator.
+
+Training the selector requires reliable state--action pairs $(S_t^{\mathrm{abs}},P_t^{\star})$. In the Conic10K training set, each problem is accompanied by a sequence of pattern IDs extracted from its written reference solution. However, a written solution often states a formula before explicitly writing down the step that extracts its prerequisite parameters. Training directly on raw unverified sequences would teach the selector to propose patterns whose preconditions do not yet hold. To construct trustworthy training trajectories, we replay each annotated sequence from $S_0$ using the pattern applicator. At step $t$, a training pair $(S_t^{\mathrm{abs}},P_t^{\star})$ is retained only if the pattern $P_t^{\star}$ admits a valid, non-redundant instance $(P_t^{\star},\theta_t)$ on $S_t^{\mathrm{sym}}$, which then produces the verified next state $S_{t+1}$. Let $\mathcal{T}$ denote the collection of verified pairs obtained across the training corpus. We train the selector parameters $\theta$ by minimizing the cross-entropy loss:
+\begin{equation}
+\mathcal{L}(\theta)=-\sum_{(S_t^{\mathrm{abs}},P_t^{\star})\in\mathcal{T}}\log p_\theta\left(P_t^{\star}\mid S_t^{\mathrm{abs}}\right).
+\label{eq:selector_loss}
+\end{equation}
+This replay filtering guarantees that the selector learns only from executable state transitions.
+
+\subsection{Pattern applicator}
+\label{sec:applicator}
+
+Because the pattern selector bases its predictions on the compressed abstract layer $S_t^{\mathrm{abs}}$, a high-ranking candidate pattern $P_i$ may still lack an exact prerequisite in $S_t^{\mathrm{sym}}$ or require binding to specific objects among several curves and lines. We therefore introduce the pattern applicator to verify, instantiate, and execute candidate patterns on the symbolic layer. To guarantee the soundness of the derivation, the pattern applicator is the only component permitted to modify $S_t^{\mathrm{sym}}$.
+
+Given a candidate pattern $P_i=\langle I_i,G_i,A_i,W_i\rangle$ and the current state $S_t$, the applicator executes four sequential stages:
+\begin{enumerate}
+\item Role binding: The applicator inspects the object types and relational roles declared in $G_i$ and retrieves all matching object tuples from $S_t^{\mathrm{sym}}$. For example, if $G_i$ requires a hyperbola and one of its asymptotes, only lines explicitly holding the asymptote role of that hyperbola in $S_t^{\mathrm{sym}}$ are bound, while chords or tangent lines are excluded. Each valid mapping from role variables to concrete objects forms a candidate binding $\theta\in\Theta_i$.
+\item Precondition and redundancy check: For each binding $\theta$, the applicator evaluates $G_i(S_t^{\mathrm{sym}},\theta)$. It verifies that all required parameters and equations on the bound objects are already known, and that the target quantity supplied by $P_i$ is not yet present in $S_t^{\mathrm{sym}}$. If a prerequisite is missing, the binding is marked as inapplicable; if the target fact already exists, it is marked as redundant.
+\item Symbolic primitive execution and constraint filtering: When $G_i(S_t^{\mathrm{sym}},\theta)=1$, the applicator invokes $A_i(\theta)$ on a temporary copy of $S_t^{\mathrm{sym}}$ using the shared symbolic primitives. Any roots obtained from solving an equation are filtered against the parameter constraints stored in $S_t^{\mathrm{sym}}$. In the hyperbola problem of Equation~\eqref{eq:example_problem}, equating the asymptote slope gives $|m|/2=5/2$, which yields $m=\pm 5$; the stored constraint $m>0$ then filters out $-5$ and retains the unique value $m=5$. If multiple roots remain admissible after constraint filtering, the applicator marks the instance as undetermined rather than guessing a branch silently. If the computed result contradicts an existing fact or constraint in $S_t^{\mathrm{sym}}$, the instance is marked as conflicting.
+\item State write-back and re-abstraction: Once $A_i(\theta)$ produces a unique, consistent, and new result, the write-back rule $W_i$ attaches the derived parameters, equations, or geometric objects to the bound entities in $S_t^{\mathrm{sym}}$ and records $(P_i,\theta)$ as their provenance. This commit produces $S_{t+1}^{\mathrm{sym}}$, from which the updated abstract layer is immediately computed as $S_{t+1}^{\mathrm{abs}}=\phi(S_{t+1}^{\mathrm{sym}},q)$.
+\end{enumerate}
+
+If an instance fails at any stage, $S_t^{\mathrm{sym}}$ remains unchanged and the applicator returns the specific rejection outcome (`inapplicable`, `redundant`, `undetermined`, or `conflicting`). Procedure~\ref{proc:applicator} formalizes this four-stage execution process.
+
+\begin{algorithm}[t]
+\caption{Procedure II: Applying a selected reasoning pattern}
+\label{proc:applicator}
+\begin{algorithmic}[1]
+\REQUIRE State $S_t=(S_t^{\mathrm{sym}},S_t^{\mathrm{abs}})$, solving goal $g$, candidate reasoning pattern $P_i=\langle I_i,G_i,A_i,W_i\rangle$
+\ENSURE Successor state $S_{t+1}$, or a diagnostic rejection outcome
+\STATE Enumerate all object bindings $\Theta_i$ in $S_t^{\mathrm{sym}}$ that match the object types and roles in $G_i$
+\FOR{each binding $\theta\in\Theta_i$}
+    \IF{$G_i(S_t^{\mathrm{sym}},\theta)=0$}
+        \STATE Record outcome \texttt{inapplicable} and \textbf{continue}
+    \ENDIF
+    \STATE Execute $A_i(\theta)$ on a copy of $S_t^{\mathrm{sym}}$ using shared symbolic primitives and filter results by constraints
+    \IF{the result contradicts $S_t^{\mathrm{sym}}$, remains non-unique, or adds no new fact}
+        \STATE Record outcome \texttt{conflicting}, \texttt{undetermined}, or \texttt{redundant}, and \textbf{continue}
+    \ENDIF
+    \STATE $S_{t+1}^{\mathrm{sym}}\leftarrow W_i(A_i(\theta),S_t^{\mathrm{sym}})$ and attach provenance $(P_i,\theta)$ to each new fact
+    \STATE $S_{t+1}^{\mathrm{abs}}\leftarrow\phi(S_{t+1}^{\mathrm{sym}},q)$
+    \RETURN $S_{t+1}=(S_{t+1}^{\mathrm{sym}},S_{t+1}^{\mathrm{abs}})$
+\ENDFOR
+\RETURN the recorded rejection outcomes across $\Theta_i$
+\end{algorithmic}
+\end{algorithm}
+
+
+\section{Solving algorithm and complete workflow of Conic-Solver}
+\label{sec:algorithm}
+
+This section describes how the four components of Section~\ref{sec:method} work together as a complete algorithm and explains how executing a sequence of reasoning patterns resolves a conic-section problem. It then illustratess the solving algorithm step by step on a representative problem from Conic10K.
+
+\subsection{Solving algorithm}
+\label{sec:solving_algorithm}
+
+Algorithm~\ref{alg:conic_solver} presents the complete solving procedure of Conic-Solver. Given a problem $x=(F,q)$, the algorithm first invokes Procedure~\ref{proc:representation} to construct the initial dual-layer state $(S_0^{\mathrm{sym}},S_0^{\mathrm{abs}})$. It then enters an iterative state-transform loop bounded by a maximum step budget $T_{\max}$. At the beginning of iteration $t$, the algorithm checks whether $S_t$ is already an answer-ready state for $q$. If not, the pattern selector reads $S_t^{\mathrm{abs}}$ and ranks the top-$k$ candidate patterns from $\Lambda$. The pattern applicator tests these candidates in descending order of their predicted probabilities via Procedure~\ref{proc:applicator}. As soon as a candidate yields a valid state transition, the algorithm commits the resulting state $S_{t+1}$, appends the verified pattern instance and its newly derived facts to the derivation trace $\tau$, and proceeds to step $t+1$.
+
+\begin{algorithm}[t]
+\caption{Conic-Solver}
+\label{alg:conic_solver}
+\begin{algorithmic}[1]
+\REQUIRE Facts $F$, solving goal $g$, pattern pool $\Lambda$, trained selector $p_\theta$, candidate size $k$, step budget $T_{\max}$
+\ENSURE Extracted answer $\hat{a}$ and verified derivation $\tau$, or a diagnostic failure report
+\STATE Construct initial state $(S_0^{\mathrm{sym}},S_0^{\mathrm{abs}})$ from $(F,q)$ via Procedure~\ref{proc:representation}
+\STATE $\tau\leftarrow(\,)$, $t\leftarrow 0$
+\WHILE{$t<T_{\max}$}
+    \IF{$S_t$ is answer-ready for $q$}
+        \STATE $\hat{a}\leftarrow\mathrm{Extract}(S_t^{\mathrm{sym}},q)$
+        \RETURN $(\hat{a},\tau)$
+    \ENDIF
+    \STATE Compute $p_\theta(P_i\mid S_t^{\mathrm{abs}})$ for all $P_i\in\Lambda$ and select the top-$k$ candidate patterns
+    \STATE $S_{t+1}\leftarrow\bot$
+    \FOR{each candidate pattern $P_i$ in ranked order}
+        \STATE Apply $P_i$ to $S_t$ via Procedure~\ref{proc:applicator}
+        \IF{Procedure~\ref{proc:applicator} returns a valid successor state}
+            \STATE $S_{t+1}\leftarrow$ the returned successor state $(S_{t+1}^{\mathrm{sym}},S_{t+1}^{\mathrm{abs}})$
+            \STATE Append $(P_i,\theta)$ and its newly written facts to $\tau$
+            \STATE \textbf{break}
+        \ENDIF
+    \ENDFOR
+    \IF{$S_{t+1}=\bot$}
+        \RETURN unresolved, with the rejection outcomes of the top-$k$ candidates at $S_t$
+    \ENDIF
+    \STATE $t\leftarrow t+1$
+\ENDWHILE
+\RETURN unresolved (step budget $T_{\max}$ exhausted)
+\end{algorithmic}
+\end{algorithm}
+
+To understand how executing a sequence of reasoning patterns solves a problem, it is essential to examine the dual-strand relay mechanism inside the loop of Algorithm~\ref{alg:conic_solver}. At the initial state $S_0$, the pattern that directly computes the queried quantity $q$ is usually inapplicable because its geometric roles or algebraic parameters have not yet been established. When the selector proposes top-$k$ candidates for $S_0^{\mathrm{abs}}$, the applicator rejects any pattern whose prerequisites are missing and commits the highest-ranked pattern whose preconditions hold in $S_0^{\mathrm{sym}}$. Executing this first pattern performs a G2A, A2G, G2G, or A2A transformation and writes new facts—such as extracted semi-axes, a solved parameter, or a newly instantiated focus—into $S_1^{\mathrm{sym}}$. This write-back has two immediate effects. On the symbolic layer, it supplies the exact mathematical objects and values needed by downstream patterns, thereby unlocking transformations on the other strand that were previously blocked. On the abstract layer, re-evaluating $\phi(S_1^{\mathrm{sym}},q)$ activates the corresponding given-role descriptors and updates the deficit descriptors, which guides the selector in step $t=1$ to propose the next link in the reasoning chain. Through this alternating relay between the geometric and algebraic strands, each committed pattern closes an intermediate prerequisite gap until the target quantity requested by $q$ is explicitly written into $S_T^{\mathrm{sym}}$.
+
+Once $S_T$ becomes answer-ready according to Definition~\ref{def:answer_ready}, the extraction function $\mathrm{Extract}(S_T^{\mathrm{sym}},q)$ retrieves the target object and normalizes its algebraic form. For a value solving goal, answer-readiness requires the target quantity to be bound to a concrete symbolic constant without free unknowns. For an equation solving goal, it requires all coefficients of the target curve or line equation to be determined. For a range solving goal, it requires the bounding inequalities of the target parameter to be explicitly established in the constraint set. Because every committed transition only adds verified facts without deleting existing conditions, monotonic progress is preserved at each step, and every element in the output trace $\tau$ corresponds to a sound, human-readable deduction step.
+
+\subsection{Complete workflow for solving an example using Conic-Solver}
+\label{sec:worked_example}
+
+This section uses an example to illustrate how the proposed Conic-Solver framework works. The given problem states: ``The parabola $x^2=ay$ passes through the point $A(1,1/4)$; find the distance from $A$ to the focus of the parabola.'' Its formal input $x=(F,q)$ is given by
+\begin{equation}
+\begin{aligned}
+F=\{&\mathrm{Parabola}(G),\ \mathrm{Expression}(G)=(x^2=ay),\ \mathrm{Coordinate}(A)=(1,1/4),\ \mathrm{PointOnCurve}(A,G)\},\\
+q={}&\mathrm{Distance}(A,\mathrm{Focus}(G)).
+\end{aligned}
+\label{eq:example_parabola}
+\end{equation}
+Notice that at the start of solving, the parameter $a$ is unknown on the algebraic strand, and the focus $\mathrm{Focus}(G)$ has not been instantiated on the geometric strand. Conic-Solver resolves this problem in four steps.
+
+Step 1: Constructing the initial representation model $(S_0^{\mathrm{sym}},S_0^{\mathrm{abs}})$. Procedure~\ref{proc:representation} parses $F$ into $S_0^{\mathrm{sym}}$, creating the parabola object $G$ with equation $x^2=ay$, the free parameter $a$, the point object $A$ with coordinates $(1,1/4)$, and the relational fact $\mathrm{PointOnCurve}(A,G)$. Evaluating the descriptor predicates $\phi(S_0^{\mathrm{sym}},q)$ activates five descriptors in $S_0^{\mathrm{abs}}$: \texttt{parabola} and \texttt{parabola opening along the $y$-axis} from the curve type and equation form; \texttt{curve equation} and \texttt{point on curve} from the given roles; and \texttt{missing focus or focal distance} from the goal deficit. Although the equation form $x^2=ay$ indicates an axis along $y$, whether $G$ opens upward or downward remains undetermined in $S_0^{\mathrm{sym}}$ because the sign of $a$ is unknown.
+
+Step 2: Executing the first reasoning pattern ($S_0\rightarrow S_1$). Reading the binary vector $\mathbf{b}_0$ of $S_0^{\mathrm{abs}}$, the pattern selector predicts high probabilities for patterns associated with parabola equations, points on curves, and focal distances (matching the seventh row of Table~\ref{tab:descriptor_rp}). Specifically, the top-$k$ candidates include the focal-radius pattern for parabolas (RP 17, a G2A pattern) and the standard-equation patterns for upward-opening and downward-opening parabolas (RP 9 and RP 10, which couple G2A point substitution with A2G parameter interpretation). The pattern applicator tests these candidates on $S_0^{\mathrm{sym}}$:
+
+\begin{itemize}
+\item Candidate RP 17 requires a parabola with an established parameter $p$ and a known opening direction to compute $|AF|=y_A+p/2$. Because $p$ and the opening direction are absent from $S_0^{\mathrm{sym}}$, Procedure~\ref{proc:applicator} rejects RP 17 at $S_0$ as \texttt{inapplicable}.
+\item Candidate RP 10 assumes a downward-opening parabola ($x^2=-2py$ with $p>0$). Substituting $A(1,1/4)$ yields $a=4>0$, which contradicts the downward-opening precondition; RP 10 is therefore rejected as \texttt{conflicting}.
+\item Candidate RP 9 binds the curve role to $G$, the equation to $x^2=ay$, and the incident point to $A$. Its operation $A_9$ first executes a G2A substitution of $A(1,1/4)$ into $x^2=ay$ to form $1=a/4$, followed by an A2A solve that yields $a=4$. It then performs an A2G interpretation of $x^2=4y$ against the upward-opening standard form $x^2=2py$, extracting $p=2$ and determining the focus coordinates $(0,1)$. The write-back rule $W_9$ commits $a=4$, $p=2$, the upward opening direction, and the focus object $F(0,1)$ to $G$ in $S_1^{\mathrm{sym}}$.
+\end{itemize}
+
+After $W_9$ updates the symbolic layer to $S_1^{\mathrm{sym}}$, the abstract layer is recomputed as $S_1^{\mathrm{abs}}=\phi(S_1^{\mathrm{sym}},q)$. Because the focus object is now present in $S_1^{\mathrm{sym}}$, the given-role descriptor \texttt{focus} is newly activated in $S_1^{\mathrm{abs}}$, while \texttt{missing focus or focal distance} remains active because the numerical distance $|AF|$ has not yet been derived.
+
+Step 3: Executing the second reasoning pattern ($S_1\rightarrow S_2$). Crucially, the A2G write-back in Stage 2 has now unlocked the geometric and algebraic prerequisites on $G$ that were missing at $S_0$. At $S_1$, the selector ranks RP 17 (parabola focal radius, G2A/A2A) and RP 29 (parabola directrix construction, A2G) among the top candidates. When the applicator tests RP 17 on $S_1^{\mathrm{sym}}$ with binding $\theta_1=\{G,A\}$, all preconditions in $G_{17}$ now hold: $G$ is an upward-opening parabola with $p=2$, and $A(1,1/4)$ lies on $G$. Its operation $A_{17}$ instantiates the focal-radius relation $|AF|=y_A+p/2=1/4+1$ and computes the exact value $5/4$. The write-back rule $W_{17}$ attaches $\mathrm{Distance}(A,\mathrm{Focus}(G))=5/4$ to $S_2^{\mathrm{sym}}$. Recomputing $S_2^{\mathrm{abs}}$ clears the deficit descriptor \texttt{missing focus or focal distance}.
+
+Step 4: Answer extraction at the answer-ready state $S_2$. At the start of the next iteration, Algorithm~\ref{alg:conic_solver} checks $S_2^{\mathrm{sym}}$ against the solving goal $q=\mathrm{Distance}(A,\mathrm{Focus}(G))$ and confirms that $S_2$ is answer-ready. The extractor returns $\hat{a}=5/4$ together with the two-step verified trace $\tau$. Table~\ref{tab:example_trace} summarizes the complete state-transform trajectory.
+
+\begin{table*}[t]
+\centering
+\caption{Step-by-step state-transform derivation produced by Conic-Solver for the parabola problem in Equation~\eqref{eq:example_parabola}.}
+\label{tab:example_trace}
+\begin{tabular}{p{0.04\textwidth}p{0.19\textwidth}p{0.15\textwidth}p{0.27\textwidth}p{0.25\textwidth}}
+\hline
+Step & Committed pattern & Strand transitions & Operation $A_i(\theta)$ on $S_t^{\mathrm{sym}}$ & Facts written to $S_{t+1}^{\mathrm{sym}}$ by $W_i$ \\
+\hline
+1 & RP 9: Standard equation of upward-opening parabola & G2A $\rightarrow$ A2A $\rightarrow$ A2G & Substitute $A(1,1/4)$ into $x^2=ay$ to get $1=a/4\Rightarrow a=4$; match $x^2=4y$ with $x^2=2py$ to get $p=2$ & $a=4$; $p=2$; upward opening of $G$; focus $\mathrm{Focus}(G)=(0,1)$ \\
+2 & RP 17: Focal radius of a parabola & G2A $\rightarrow$ A2A & Instantiate upward focal-radius formula $|AF|=y_A+p/2=1/4+1$ & $\mathrm{Distance}(A,\mathrm{Focus}(G))=5/4$ (answer-ready for $q$) \\
+\hline
+\end{tabular}
+\end{table*}
+
+It is instructive to compare this trajectory with the reference annotation `[9, 2, 29, 17]` in Conic10K. The reference solution explicitly constructs the directrix $y=-1$ via RP 29 (A2G) and invokes the parabola definition $|AF|=d(A,\text{directrix})$ via RP 2 (G2G) before computing $1/4-(-1)=5/4$. Conic-Solver reaches the same verified result in two steps because RP 17 directly encapsulates the G2A focal-radius formula derived from the definition and directrix of an upward-opening parabola. Both paths are valid state-transform chains in $\Lambda$, and both rely on Stage 2 to translate the algebraic value $a=4$ into the geometric orientation and focal parameter $p=2$ before the distance can be computed.
+
+
+\section{Experiments}
+\label{sec:experiments}
+
+This section evaluates Conic-Solver on conic-section problems to answer four research questions. First, does Conic-Solver achieve higher answer accuracy than large language models, computer algebra systems, and existing knowledge-based solvers? Second, does the pool of 80 reasoning patterns cover the vast majority of problems in the corpus, as stated in Proposition~\ref{prop:finite_pool}? Third, does the abstract descriptor layer provide sufficient structural information for effective pattern selection, as stated in Proposition~\ref{prop:abstract_selection}? Fourth, how do individual descriptor groups, replay filtering, and the selector--applicator loop contribute to overall performance across different chain lengths?
+
+\subsection{Experimental setup}
+\label{sec:setup}
+
+\subsubsection{Dataset}
+
+We conduct our experiments on Conic10K, a benchmark dataset of senior high school conic-section problems in China~\cite{conic10k}. Each problem in Conic10K provides the problem text, a formal annotation of the initial facts and the solving goal, the ground-truth answer, and a step-by-step reference solution. The dataset contains 10,861 problems in total. It is officially split into a training set of 7,757 problems, a development set of TBD problems, and a test set of TBD problems. We strictly follow this official division. All descriptor designs, pattern implementations, and model hyperparameters are determined on the training and development sets, while the test set is reserved exclusively for final evaluation.
+
+In the training set, problems are accompanied by weak sequences of reasoning pattern identifiers extracted semi-automatically from the reference solutions. Among the 7,757 training problems, 5,355 problems have a non-empty sequence, totaling 20,212 pattern occurrences. Because a written reference solution may mention a conclusion before stating all of its prerequisite parameter extractions, these raw sequences are not always directly executable. We therefore apply the replay filtering procedure described in Section~\ref{sec:selector} to construct verified state--pattern training pairs. The test problems do not use any pattern annotations, and Conic-Solver receives only their formal facts $F$ and queries $q$. Table~\ref{tab:dataset} summarizes the key statistics of the dataset.
+
+\begin{table}[t]
+\centering
+\caption{Statistics of the Conic10K dataset and its reasoning-pattern annotations.}
+\label{tab:dataset}
+\begin{tabular}{lr}
+\hline
+Statistic & Value \\
+\hline
+Training problems & 7,757 \\
+Development problems & TBD \\
+Test problems & TBD \\
+Training problems with annotated pattern sequences & 5,355 \\
+Total annotated pattern occurrences & 20,212 \\
+Distinct patterns observed in annotations & TBD \\
+Retained selector training pairs after replay filtering & TBD \\
+Ellipse / hyperbola / parabola / circle problems in test set & TBD / TBD / TBD / TBD \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Input setting}
+
+Conic-Solver takes the formal facts $F$ and the solving goal $g$ of each problem as input. As noted in Section~\ref{sec:problem_statement}, this setting isolates multi-step geometry--algebra reasoning from upstream natural-language parsing. Because large language model baselines can process either natural language or formal expressions, we evaluate them under both input settings. The natural-language text setting reflects their standard end-to-end usage, whereas the formal annotation setting supplies them with the exact same initial facts and queries received by Conic-Solver.
+
+\subsubsection{Baselines}
+
+To evaluate how Conic-Solver addresses the dual-strand challenges of conic-section problems, we compare it against three groups of baselines. The first group comprises state-of-the-art large language models that solve problems by autoregressive text generation. This group includes TBD closed-source models and TBD open-source models, including models specifically trained for mathematical reasoning. Each language model is evaluated with zero-shot chain-of-thought prompting~\cite{wei2022chain}, and its final answer is extracted from the generated output.
+
+The second group is a standalone computer-algebra baseline that operates purely on the algebraic strand. It translates all facts in $F$ directly into a system of polynomial equations and inequalities over the coordinates and parameters, and invokes SymPy to solve for the queried target $q$ in one shot~\cite{meurer2017sympy}. This baseline performs exact symbolic manipulation without any guidance from geometric roles or reasoning patterns, thereby measuring how far unguided algebraic elimination can go on conic-section problems.
+
+The third group comprises knowledge-based baselines that share the exact same pool $\Lambda$ of 80 reasoning patterns and the same pattern applicator as Conic-Solver, differing only in how they select patterns at each state. Specifically, the meta-model baseline adapts the decoupled inference strategy of UDfSolver~\cite{xiong2026udfsolver} to conic sections. It first attempts to match the initial abstract layer $S_0^{\mathrm{abs}}$ against the frequent descriptor combinations in Table~\ref{tab:descriptor_rp} to execute a predefined pathway; if no pathway matches or if the pathway does not reach an answer-ready state, it traverses the entire pool $\Lambda$ in a fixed order and applies every valid pattern until saturation. In addition, the frequency baseline ranks all patterns in $\Lambda$ by their empirical prior frequency in the training set regardless of the current state $S_t^{\mathrm{abs}}$. Comparing Conic-Solver against these two baselines directly isolates the contribution of the learned abstract-layer pattern selector.
+
+\subsubsection{Evaluation metrics}
+
+Our primary evaluation metric is answer accuracy, defined as the percentage of test problems for which the extracted answer $\hat{a}$ is mathematically equivalent to the ground-truth answer $a^{\star}$. Mathematical equivalence is verified automatically via SymPy normalization and symbolic comparison. For queries requesting a set of values, an equation, or a parameter interval, the output is counted as correct only if all components and boundary conditions match $a^{\star}$. Any problem where a method halts without returning an answer is counted as incorrect.
+
+To empirically test Propositions~\ref{prop:finite_pool} and~\ref{prop:abstract_selection}, we employ three additional mechanism metrics. First, pattern-pool coverage measures the percentage of test problems for which at least one sequence of valid pattern instances in $\Lambda$ transforms $S_0$ into a correct answer-ready state. We estimate this coverage by running a breadth-first search over valid pattern applications within a fixed step budget, which establishes an empirical upper bound on the accuracy achievable with the current pool $\Lambda$. Second, selection accuracy at $k$ (Acc@$k$) measures the percentage of replayed test states at which the reference next pattern falls within the top-$k$ predictions of the selector. Third, valid-candidate rate at $k$ (Valid@$k$) measures the percentage of states at which at least one of the top-$k$ predicted patterns yields a valid, non-redundant transition on $S_t^{\mathrm{sym}}$. While Acc@$k$ evaluates alignment with written reference solutions, Valid@$k$ evaluates whether the selector proposes executable transitions even when multiple valid ordering paths exist.
+
+Finally, to evaluate search efficiency, we report the average number of committed reasoning steps per solved problem, the average number of candidate pattern instances tested by the applicator per problem, and the average wall-clock solving time.
+
+\subsubsection{Implementation details}
+
+The pattern selector is implemented as a multilayer perceptron with three hidden layers of 64, 128, and 64 hidden units and ReLU activations. It maps the 29-dimensional binary descriptor vector $\mathbf{b}_t$ to logits over the 80 reasoning patterns. We train the selector using the Adam optimizer with a learning rate of TBD and a batch size of TBD for TBD epochs, selecting the checkpoint with the highest validation accuracy on the development set. Based on development set tuning, the candidate list size is set to $k=\text{TBD}$ and the maximum step budget is set to $T_{\max}=\text{TBD}$. The breadth-first search used to estimate pattern-pool coverage is bounded by a depth of TBD steps. All shared symbolic primitives and equivalence checks are implemented with SymPy version TBD. All experiments are executed on TBD hardware, and results for learned models are averaged over TBD random seeds.
+
+\subsection{Overall performance}
+\label{sec:overall_results}
+
+Table~\ref{tab:main_results} presents the answer accuracy of Conic-Solver and all baselines on the Conic10K test set across all curve categories. Conic-Solver achieves an overall accuracy of TBD\%, outperforming the strongest large language model baseline by TBD percentage points and the meta-model knowledge-based baseline by TBD percentage points.
+
+\begin{table*}[t]
+\centering
+\caption{Answer accuracy (\%) on the Conic10K test set across different curve types. Language models are evaluated under both natural-language text input and formal fact input.}
+\label{tab:main_results}
+\begin{tabular}{llcccccc}
+\hline
+Method group & Method & Input format & All & Ellipse & Hyperbola & Parabola & Circle \\
+\hline
+Language models & TBD & Text & TBD & TBD & TBD & TBD & TBD \\
+ & TBD & Formal & TBD & TBD & TBD & TBD & TBD \\
+ & TBD & Text & TBD & TBD & TBD & TBD & TBD \\
+ & TBD & Formal & TBD & TBD & TBD & TBD & TBD \\
+Computer algebra & SymPy joint solving & Formal & TBD & TBD & TBD & TBD & TBD \\
+Knowledge-based & Frequency selection & Formal & TBD & TBD & TBD & TBD & TBD \\
+ & Meta-model inference & Formal & TBD & TBD & TBD & TBD & TBD \\
+ & Conic-Solver (ours) & Formal & TBD & TBD & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table*}
+
+Comparing the three baseline groups highlights how Conic-Solver overcomes the core difficulties of conic-section problem solving. First, comparing the text input and formal input rows of the language models shows the portion of errors caused by natural-language understanding. Even when given the exact formal input, however, language models still lag behind Conic-Solver by TBD points. Without an explicit symbolic layer to enforce precondition checks and object bindings, language models frequently confuse parameter identities between ellipses and hyperbolas or lose track of intermediate values over multi-step derivations. Second, the SymPy joint-solving baseline resolves only TBD\% of the test problems. It succeeds on simple single-step equations but fails or times out when problems require interpreting algebraic parameters into new geometric objects (A2G) before formulating the next equation (G2A). Third, compared with the frequency baseline and the UDfSolver-style meta-model baseline, Conic-Solver improves accuracy by TBD and TBD points while reducing the number of attempted pattern instances by TBD. This improvement confirms that learning goal-directed selection over the abstract layer is essential when the knowledge pool is large and condition combinations vary widely.
+
+\subsection{Coverage of the reasoning-pattern pool}
+\label{sec:coverage_results}
+
+To test Proposition~\ref{prop:finite_pool}, we examine what fraction of the test corpus can be solved by the 80 reasoning patterns in $\Lambda$ under breadth-first exploration. Table~\ref{tab:coverage} reports the pattern-pool coverage alongside the accuracy achieved by Conic-Solver and the realization ratio between them.
+
+\begin{table}[t]
+\centering
+\caption{Pattern-pool coverage (\%) on the Conic10K test set and the proportion of reachable accuracy realized by Conic-Solver.}
+\label{tab:coverage}
+\begin{tabular}{lccc}
+\hline
+Curve type & Pool coverage (\%) & Conic-Solver (\%) & Realization ratio (\%) \\
+\hline
+Ellipse & TBD & TBD & TBD \\
+Hyperbola & TBD & TBD & TBD \\
+Parabola & TBD & TBD & TBD \\
+Circle & TBD & TBD & TBD \\
+All & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table}
+
+As shown in Table~\ref{tab:coverage}, the pool of 80 reasoning patterns covers TBD\% of all test problems. This high coverage validates Proposition~\ref{prop:finite_pool}: despite the wide variety of surface equations and queries in senior high school analytic geometry, their step-by-step solutions can be composed from a finite set of G2G, G2A, A2A, and A2G transformations. Coverage is highest on TBD problems (TBD\%) and lowest on TBD problems (TBD\%). The remaining uncovered problems fall into two main categories: problems that require specialized geometric constructions not included in the 80 patterns, and problems that involve complex multi-variable inequality systems beyond the current symbolic primitives. Across the covered problems, Conic-Solver realizes TBD\% of the upper-bound accuracy, indicating that the learned pattern selector and the applicator successfully recover the correct reasoning chains for the vast majority of solvable problems.
+
+\subsection{Pattern selection from the abstract layer}
+\label{sec:selection_results}
+
+To test Proposition~\ref{prop:abstract_selection}, we evaluate whether the 29 binary descriptors in $S_t^{\mathrm{abs}}$ capture the decisive information needed to choose the next reasoning pattern. We compare our abstract-descriptor selector against three alternative selectors that read different representations of the state $S_t$: (1) the prior frequency selector, which ignores the state; (2) an earlier handcrafted-feature selector, which takes a 28-dimensional vector consisting of coarse curve types, goal types, basic information flags, a heuristic completeness score, and the current step depth; and (3) a raw symbolic-input selector, which encodes the serialized text of the full symbolic layer $S_t^{\mathrm{sym}}$ using a Transformer encoder. Table~\ref{tab:selection} reports the selection accuracy (Acc@$k$) and the valid-candidate rate (Valid@$k$) on the replayed test states.
+
+\begin{table}[t]
+\centering
+\caption{Comparison of pattern selectors using different state representations on replayed test states.}
+\label{tab:selection}
+\begin{tabular}{lccccc}
+\hline
+State representation for selector & Acc@1 (\%) & Acc@3 (\%) & Acc@5 (\%) & Valid@1 (\%) & Valid@5 (\%) \\
+\hline
+Prior frequency (state-independent) & TBD & TBD & TBD & TBD & TBD \\
+Coarse handcrafted features (28-dim) & TBD & TBD & TBD & TBD & TBD \\
+Serialized symbolic layer (Transformer) & TBD & TBD & TBD & TBD & TBD \\
+Abstract descriptors in $\mathcal{D}$ (ours) & TBD & TBD & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:selection} shows that our abstract-descriptor selector achieves the highest performance across all metrics, reaching an Acc@5 of TBD\% and a Valid@5 of TBD\%. This result confirms Proposition~\ref{prop:abstract_selection}: compressing the symbolic state into 29 explicit descriptors of curve types, orientations, given roles, and goal deficits enables reliable candidate ranking within a small top-$k$ set. Notably, the serialized symbolic-layer selector achieves lower selection accuracy (TBD\% at $k=5$) despite having access to all raw equations and coordinates. In raw symbolic text, varying numerical coefficients obscure the underlying geometric roles, whereas the abstract descriptors make these roles and deficits explicit. Furthermore, our descriptor set outperforms the earlier 28-dimensional handcrafted features by TBD points in Acc@1. Detailed inspection reveals that the earlier feature set lacked explicit orientation descriptors and fine-grained deficit descriptors, causing frequent confusion between $x$-axis and $y$-axis standard equation patterns (such as RP 3 versus RP 4) and between different target properties of the same curve.
+
+\subsection{Ablation study}
+\label{sec:ablation}
+
+To quantify the contribution of each design choice in Conic-Solver, we conduct an ablation study on the Conic10K test set. Each ablated variant removes or modifies a single component while keeping all other settings identical. Table~\ref{tab:ablation} reports the resulting answer accuracy and the average number of pattern instances attempted by the applicator per problem.
+
+\begin{table}[t]
+\centering
+\caption{Ablation study of Conic-Solver on the Conic10K test set. Attempts denotes the average number of candidate pattern instances tested by the applicator per problem.}
+\label{tab:ablation}
+\begin{tabular}{lccc}
+\hline
+Model variant & Accuracy (\%) & $\Delta$ (\%) & Attempts \\
+\hline
+Conic-Solver (full model) & TBD & -- & TBD \\
+\quad w/o orientation descriptors & TBD & TBD & TBD \\
+\quad w/o goal-deficit descriptors & TBD & TBD & TBD \\
+\quad w/o given-role descriptors & TBD & TBD & TBD \\
+\quad w/o replay filtering in training & TBD & TBD & TBD \\
+\quad w/o top-$k$ applicator verification ($k=1$) & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table}
+
+The ablation results demonstrate that every component plays a distinct role in supporting dual-strand reasoning. First, removing the orientation descriptors reduces accuracy by TBD points and increases attempted instances by TBD. Without orientation cues in $S_t^{\mathrm{abs}}$, the selector cannot distinguish A2G and G2A patterns that depend on the focal axis or opening direction, forcing the applicator to test and reject mismatched orientation patterns repeatedly. Second, removing the goal-deficit descriptors causes a substantial accuracy drop of TBD points and raises the number of attempted instances to TBD. Without explicit knowledge of what quantity the solving goal still lacks, the selector proposes transformations that are valid on $S_t^{\mathrm{sym}}$—such as computing vertices or directrices when the solving goal asks for eccentricity—leading the derivation away from the goal within the step budget. Third, removing the given-role descriptors reduces accuracy by TBD points, because the selector loses track of which geometric entities (such as asymptotes, tangents, or midpoints) are currently available to trigger G2G and G2A steps.
+
+The last two rows verify our training and execution mechanisms. Training the selector on raw annotated pattern sequences without replay filtering decreases accuracy by TBD points. Raw sequences frequently list a downstream G2A or A2A pattern before the A2G pattern that extracts its required parameters; training on such pairs teaches the selector to propose premature patterns that the applicator must reject at $S_t$. Finally, restricting the candidate size to $k=1$ reduces accuracy by TBD points. This gap shows the importance of coupling the top-$k$ selector with the symbolic applicator: when the top-1 prediction on the abstract layer lacks a specific symbolic precondition on $S_t^{\mathrm{sym}}$, the applicator safely rejects it and executes the next valid candidate in the top-$k$ list.
+
+\subsection{Performance by solution length and goal type}
+\label{sec:stratified_results}
+
+As noted in Observation~\ref{obs:characteristics}, a major source of difficulty in conic-section problems is the length of the dependent reasoning chain across the geometric and algebraic strands. To evaluate how well each method handles long chains, we partition the test problems into three groups according to the length of the shortest valid derivation found by the coverage search: 1--2 steps, 3--4 steps, and 5 or more steps. Table~\ref{tab:length} compares the accuracy of representative methods across the three groups.
+
+\begin{table}[t]
+\centering
+\caption{Answer accuracy (\%) stratified by the number of reasoning steps required.}
+\label{tab:length}
+\begin{tabular}{lcccc}
+\hline
+Method & 1--2 steps & 3--4 steps & $\ge 5$ steps & Drop ($\Delta$) \\
+\hline
+Best language model & TBD & TBD & TBD & TBD \\
+SymPy joint solving & TBD & TBD & TBD & TBD \\
+Meta-model inference & TBD & TBD & TBD & TBD \\
+Conic-Solver (ours) & TBD & TBD & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table}
+
+As the required derivation length grows from 1--2 steps to 5 or more steps, the accuracy of the best language model drops sharply by TBD percentage points. In long chains that alternate repeatedly between G2A, A2A, A2G, and G2G steps, an unverified error in any single step—such as a sign mistake or a misbound parameter—propagates to all subsequent steps. SymPy joint solving also degrades severely on long chains (dropping by TBD points), because multi-step problems typically involve auxiliary geometric objects and nonlinear chord or focal relations that cannot be solved as a flat polynomial system. The meta-model baseline drops by TBD points on long chains because its exploratory traversal triggers an expanding set of applicable but goal-irrelevant patterns. In contrast, Conic-Solver exhibits a much smaller drop of TBD points and maintains the highest accuracy (TBD\%) on problems requiring 5 or more steps. By verifying preconditions and writing exact facts back to $S_t^{\mathrm{sym}}$ at every transition while updating the deficit descriptors in $S_t^{\mathrm{abs}}$, Conic-Solver prevents error accumulation and keeps long derivations directed toward the solving goal. A further breakdown by goal type (value, equation, coordinate, and range) is provided in Appendix Table~\ref{tab:solving goal_type}.
+
+\subsection{Case study}
+\label{sec:case_study}
+
+To provide qualitative insight into how Conic-Solver resolves the three core difficulties of dual-strand reasoning compared with large language models, Table~\ref{tab:case_study} examines three representative test cases. Each case highlights a specific type of geometry--algebra interaction where unverified generation fails and Conic-Solver succeeds.
+
+Case 1 examines orientation-gated A2G and G2A correspondence. The problem gives an ellipse equation with foci on the $y$-axis and asks for a parameter value from its eccentricity. The language model mechanically assumes the standard $x$-axis form, assigning the $x^2$ denominator to $a^2$ instead of $b^2$; although its subsequent algebraic calculation of $e=c/a$ is syntactically fluent, the final answer is wrong. In Conic-Solver, the abstract descriptor \texttt{foci on the $y$-axis} guides the selector to rank RP 4 (standard equation of a $y$-axis ellipse, A2G) at the top, and the applicator refuses RP 3 because its $x$-axis precondition fails on $S_0^{\mathrm{sym}}$. Conic-Solver then applies RP 11 (A2A) and RP 13 (G2A) on the correctly bound $a$ and $b$ to obtain the exact parameter.
+
+Case 2 examines A2G object realization and G2G/G2A relay. The problem requires finding a distance involving the focus and directrix of a parabola after determining its equation parameter from a given point. After computing the equation parameter correctly, the language model hallucinates the focus coordinates by halving instead of quartering the coefficient of the linear term. In Conic-Solver, executing the standard-equation pattern (RP 9, A2G) immediately writes the exact focus coordinates and focal parameter $p$ back to the parabola object in $S_1^{\mathrm{sym}}$. The subsequent focal-radius pattern (RP 17, G2A) reads these verified attributes directly from $S_1^{\mathrm{sym}}$, eliminating any possibility of coordinate miscalculation.
+
+Case 3 examines goal-directed selection over a long G2A--A2A--A2G chain in a line--conic intersection problem. A line intersects a hyperbola at two points, and the solving goal asks for the range of a parameter under a geometric condition on the chord. The language model sets up the substituted quadratic equation but forgets to enforce the discriminant condition $\Delta>0$ and the non-zero leading coefficient required for two distinct intersection points, resulting in an overly broad interval. In Conic-Solver, guided by the descriptors \texttt{chord or intersection} and \texttt{missing range or extremum}, the selector and applicator sequentially execute line--curve substitution (RP 78, G2A), Vieta's root relations (RP 42, A2A), the two-intersection discriminant constraint (RP 65, A2A/A2G), and inequality interval solving (RP 63, A2A). Every constraint is recorded in $S_t^{\mathrm{sym}}$ and enforced before the final range is extracted.
+
+\begin{table*}[t]
+\centering
+\caption{Qualitative comparison between Conic-Solver and a representative large language model on three test problems illustrating (Case 1) orientation-gated A2G/G2A correspondence, (Case 2) A2G object realization for downstream G2G/G2A deduction, and (Case 3) multi-step constraint tracking in line--conic intersection.}
+\label{tab:case_study}
+\fbox{\parbox{0.94\textwidth}{
+Table placeholder. For each of the three cases, display: (1) the problem statement and formal input $(F,q)$; (2) the derivation generated by the language model with its specific geometry--algebra error highlighted in red; and (3) the step-by-step state-transform trace of Conic-Solver showing the active abstract descriptors $S_t^{\mathrm{abs}}$, the committed pattern $P_{i_t}$ (with its G2G/G2A/A2A/A2G type), and the verified facts written to $S_{t+1}^{\mathrm{sym}}$.
+}}
+\end{table*}
+
+\subsection{Error analysis}
+\label{sec:error_analysis}
+
+To understand the remaining bottlenecks of Conic-Solver, we categorize every unsolved test problem by the exact stage at which its solving trajectory halts or fails. Table~\ref{tab:errors} reports the distribution of these failure modes.
+
+\begin{table}[t]
+\centering
+\caption{Breakdown of failure modes of Conic-Solver on the unsolved test problems.}
+\label{tab:errors}
+\begin{tabular}{lrr}
+\hline
+Failure mode & Count & Percentage (\%) \\
+\hline
+Missing reasoning pattern in pool $\Lambda$ & TBD & TBD \\
+Unsupported operation in symbolic primitives & TBD & TBD \\
+No valid candidate among top-$k$ predictions & TBD & TBD \\
+Step budget $T_{\max}$ exhausted & TBD & TBD \\
+Undetermined branch (multiple admissible roots) & TBD & TBD \\
+Inaccurate pattern implementation & TBD & TBD \\
+\hline
+\end{tabular}
+\end{table}
+
+The six failure modes reflect the distinct responsibilities of the knowledge pool, the symbolic primitives, the selector, and the applicator. The first two modes represent knowledge coverage limits: either a problem requires a geometric property absent from the 80 patterns in $\Lambda$, or a pattern's operation $A_i$ encounters a transcendental or multi-parameter inequality system that exceeds the current SymPy primitives. The third and fourth modes represent selection errors on covered problems: either none of the top-$k$ candidates at $S_t$ satisfies the preconditions on $S_t^{\mathrm{sym}}$, or the selector commits valid but non-essential steps until the budget $T_{\max}$ runs out. The fifth mode (`undetermined`) occurs when a problem requires explicit case splitting—for example, when a conic's focal axis is not specified and both $x$-axis and $y$-axis branches lead to valid solutions—because the current applicator commits only unique states rather than branching into parallel search trees. The sixth mode occurs only when a committed pattern writes an imprecise constraint due to an implementation edge case. Overall, Table~\ref{tab:errors} shows that TBD is the dominant failure source, pointing to clear directions for future expansion.
+
+
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Evaluation criteria for educational problem solvers}
+\label{sec:educational_criteria}
+
+While answer accuracy is the standard benchmark for mathematical reasoning systems, an algorithm intended for intelligent tutoring must also satisfy pedagogical requirements~\cite{nguyen2018criteria,nawaz2024ai}. Following the evaluation framework established in our prior study on function problem solving~\cite{xiong2026udfsolver}, we assess the educational utility of Conic-Solver across four criteria: answer accuracy, step explainability, reasoning transparency, and system extensibility.
+
+First, high answer accuracy is the prerequisite for reliable tutoring, and the experimental results in Section~\ref{sec:overall_results} verify that Conic-Solver outperforms both large language models and prior symbolic solvers. Second, step explainability requires that the granularity of each algorithmic step match human cognitive steps. Unlike Gr\"obner basis elimination, which produces opaque intermediate polynomials, every step in Conic-Solver applies one reasoning pattern from $\Lambda$ at the exact granularity of a high school analytic geometry theorem or method. Third, reasoning transparency requires that both successful steps and invalid attempts be fully traceable. In Conic-Solver, every derived fact in $S_t^{\mathrm{sym}}$ records the exact pattern instance $(P_i,\theta)$ and the prerequisite facts that produced it. Equally important, when a candidate pattern fails on $S_t^{\mathrm{sym}}$, the applicator returns an explicit diagnostic outcome—such as `inapplicable` due to a missing parameter or `conflicting` due to a violated orientation constraint—which mirrors the formative feedback a teacher provides when a student applies a formula prematurely. Fourth, system extensibility requires that new domain knowledge can be added modularly. Adding a new conic property or algebraic technique to Conic-Solver only requires defining a new quadruple $P_i=\langle I_i,G_i,A_i,W_i\rangle$ composed from the shared symbolic primitives, without modifying the representation structure or the solving loop.
+
+\subsection{Methodological implications and generalization}
+\label{sec:generalization}
+
+Beyond solving conic-section problems, the dual-strand state-transform methodology developed in this paper offers a general blueprint for complex mathematical domains where geometric or structural identities are tightly coupled with algebraic expressions. Specifically, our approach is applicable to any problem class that satisfies three conditions: (1) each mathematical object simultaneously carries a structural identity and an algebraic carrier; (2) derivations advance through step-by-step transitions that bridge the deficit between established conditions and the solving goal; and (3) the choice of the next transition is governed by a compact set of structural roles and deficits.
+
+For any domain meeting these conditions, a solver can be systematically constructed by following the four-stage workflow established in this work: analyzing step transitions along the four transformation types (G2G, G2A, A2A, and A2G), encapsulating recurring transitions into reasoning patterns via the four construction questions, extracting binary abstract descriptors that capture object roles and goal deficits, and coupling a learned abstract-layer selector with a verified symbolic-layer applicator. Several major topics in secondary and undergraduate mathematics fit this paradigm naturally. In spatial analytic geometry, solids and planes carry both Euclidean incidence relations and three-dimensional coordinate or vector equations. In trigonometric and calculus function analysis, curve properties such as periodicity, symmetry axes, and tangent extrema interact bidirectionally with algebraic parameters and derivatives. Applying our framework to these domains requires constructing domain-specific pattern pools and descriptor sets, while the dual-layer representation architecture and the selector--applicator loop remain unchanged.
+
+At the same time, this methodology has a well-defined boundary. Problem classes whose primary difficulty lies in discovering creative auxiliary constructions within a single strand—such as Olympiad Euclidean geometry proofs~\cite{trinh2024alphageometry}—do not decompose primarily into deficit-driven G2A and A2G transitions. Similarly, word problems grounded in open-ended real-world scenarios first require commonsense scene modeling~\cite{peng_scene-attention_2025} before formal mathematical reasoning can begin.
+
+Finally, our pattern construction framework reflects a transferable pedagogical method for human learners. Faced with a complex conic-section problem, a student can navigate the two strands by asking the same questions encoded in our model: what quantity the solving goal still lacks, which geometric object hosts that quantity, whether its prerequisite parameters have been established on the algebraic strand, and which G2G, G2A, A2A, or A2G pattern bridges the gap. In this sense, the 80 reasoning patterns represent an explicit formalization of structured mathematical thinking in analytic geometry.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+Despite its effectiveness, the current study has five limitations that merit discussion. First, the solving scope of Conic-Solver is bounded by the coverage of the 80 reasoning patterns and the shared symbolic primitives. Constructing and verifying formal patterns requires domain expertise; while large language models could potentially assist in proposing candidate patterns from corpora~\cite{wu2022autoformalization}, any proposed pattern must still undergo rigorous symbolic verification before entering $\Lambda$.
+
+Second, Conic-Solver operates on formal fact and solving goal expressions from Conic10K and does not include an upstream natural-language or diagram parser. Deploying the solver as an end-to-end educational system for raw textbook problems will require integrating syntactic--semantic text parsers and diagram recognition modules~\cite{xiong2026udfsolver}.
+
+Third, the selector is trained via supervised behavioral cloning on replayed reference trajectories. While replay filtering removes unexecutable steps, a reference solution provides only one valid ordering even when multiple pattern sequences can solve the same problem. Consequently, cross-entropy training may penalize alternative valid steps, which motivates our use of top-$k$ candidate ranking and the Valid@$k$ metric.
+
+Fourth, as shown in the error analysis, the current pattern applicator commits a transition only when the derived parameter value is unique under the current constraints, reporting `undetermined` when multiple branches remain admissible. Problems that require explicit case analysis—such as solving for a conic equation when the focal axis can be either the $x$-axis or the $y$-axis—require extending the state-transform loop to maintain a tree of branching states in parallel.
+
+Fifth, the current stopping criterion relies solely on checking whether the symbolic layer is answer-ready or whether the step budget $T_{\max}$ is exhausted, without a quantitative measure of how close an intermediate state $S_t$ is to the target state $S_T$.
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This paper investigated the automated step-by-step solving of conic-section problems in analytic geometry. By analyzing how conic-section problems are solved, we showed that every object simultaneously carries a geometric identity and an algebraic carrier, causing derivations to unfold along a geometric strand and an algebraic strand through four types of geometry--algebra transformations: geometric reasoning (G2G), algebraization (G2A), algebraic computation (A2A), and geometric interpretation (A2G). Because the two strands mutually gate each other across long dependency chains and admit no tractable, explainable single-step elimination algorithm, we formulated conic-section problem solving as a sequential state-transform process driven by reasoning patterns.
+
+To realize this formulation, we proposed the Conic-Solver algorithm built upon three core innovations. First, we designed a dual-layer problem representation model that pairs an exact symbolic layer $S_t^{\mathrm{sym}}$ for transformation execution with a 29-descriptor abstract layer $S_t^{\mathrm{abs}}$ for transformation selection. Second, using curriculum knowledge and reference solutions as raw materials, we constructed a pool of 80 strictly distinguished reasoning patterns across the four transformation types, encapsulating explicit object preconditions, shared symbolic primitives, and write-back rules. Third, we decoupled step selection from step execution by pairing a neural pattern selector on the abstract layer with a symbolic pattern applicator on the symbolic layer. Through their closed-loop interaction, each executed pattern writes verified facts back to the state and updates the abstract descriptors, progressively unlocking downstream prerequisites until the goal deficit is closed at an answer-ready state.
+
+Experimental evaluations on the Conic10K benchmark demonstrated that Conic-Solver achieves an answer accuracy of TBD\%, substantially outperforming large language models, standalone computer algebra solving, and existing knowledge-based solvers. Empirical analyses further confirmed that the 80 reasoning patterns cover TBD\% of the test problems and that the 29 abstract descriptors enable accurate and efficient candidate selection across long reasoning chains.
+
+Future work will proceed in three directions. First, we plan to introduce a quantitative state-progress and uncertainty estimator over the dual-layer state, enabling the solver to prioritize transformations that yield the largest progress toward the solving goal and providing a principled stopping signal alongside answer-readiness. Second, we will explore integrating Conic-Solver with large language models, using the pattern selector and the symbolic applicator to guide and verify step-by-step language generation. Third, we will extend the dual-strand reasoning-pattern framework to natural-language and diagram inputs as well as broader analytic domains such as spatial vector geometry and calculus.

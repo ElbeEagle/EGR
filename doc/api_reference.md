@@ -143,3 +143,7 @@ assert result.status == "solved" and result.answer == 5
 - `src/reasoning/bound_slice.py`：`solve_point_difference_slice(facts,query)`固定RM3/4→RM54→RM45，CLI为point-difference；原查询只读逻辑不变。
 
 RM54可在标准模型之前执行；RM45需要标准模型及同对坐标和。中心／非内点处理、现有线核验和有限范围见[规格35](../docs/开发规格/35_ID4795端点和与点差路径.md)。
+
+## 下一批命名端点契约（尚未实现）
+
+已选择5644、3682、6164：将Intersection(l,G)={A,B}关联到现有匿名pair_id，复合中点按无序点对绑定，再复用RM3→RM54→RM45及独立RM40。来源分别保留，模型前核验已有端点坐标；不生成端点坐标或根序。本批仅审查，现有解析尚不支持这些原题。7439线段对象及RM46另批，7300结构化输入与参考答案差异待审。详见[规格36](../docs/开发规格/36_命名端点候选与身份核验契约.md)。

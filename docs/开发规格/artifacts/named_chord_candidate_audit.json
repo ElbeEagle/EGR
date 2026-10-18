@@ -1,0 +1,208 @@
+{
+  "stage": "design_audit_only",
+  "data_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "method": "Manual numeric transcription; independent SymPy probe; no solver success claim",
+  "cases": [
+    {
+      "id": 5644,
+      "scope": "first_batch",
+      "facts": "l: Line;G: Ellipse;Expression(G) = (x^2/2 + y^2 = 1);Intersection(l, G) = {A, B};A: Point;B: Point;Coordinate(MidPoint(LineSegmentOf(A,B))) = (1,1/2)",
+      "query": "Expression(l)",
+      "weak_models": [
+        3,
+        44,
+        54
+      ],
+      "reference_answer": "2*x+2*y-3=0",
+      "current_parser": "Intersection requires Line, Parabola and two distinct points",
+      "manual_numeric_probe": {
+        "quadratic_coefficients": [
+          "1/2",
+          "1"
+        ],
+        "midpoint": [
+          "1",
+          "1/2"
+        ],
+        "candidate_line_lhs": "x + y - 3/2",
+        "intersection_polynomial": "3*t**2/8 - 1/4",
+        "discriminant": "3/8",
+        "two_distinct_real_intersections": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 3682,
+      "scope": "first_batch",
+      "facts": "l: Line;G: Ellipse;B: Point;A: Point;Expression(G) = (x^2/4 + y^2 = 1);Intersection(l, G) = {A, B};Coordinate(MidPoint(LineSegmentOf(A,B)))=(-4/5,1/5)",
+      "query": "Expression(l)",
+      "weak_models": [
+        3,
+        45,
+        54,
+        55,
+        72
+      ],
+      "reference_answer": "y=x+1",
+      "current_parser": "Intersection requires Line, Parabola and two distinct points",
+      "manual_numeric_probe": {
+        "quadratic_coefficients": [
+          "1/4",
+          "1"
+        ],
+        "midpoint": [
+          "-4/5",
+          "1/5"
+        ],
+        "candidate_line_lhs": "x - y + 1",
+        "intersection_polynomial": "t**2/20 - 4/5",
+        "discriminant": "4/25",
+        "two_distinct_real_intersections": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 6164,
+      "scope": "first_batch",
+      "facts": "l: Line;E: Ellipse;B: Point;A: Point;Expression(E) = (x^2/4 + y^2/2 = 1);Intersection(l, E) = {A, B};Coordinate(MidPoint(LineSegmentOf(A,B)))=(1/2,-1)",
+      "query": "Expression(l)",
+      "weak_models": [
+        3,
+        44,
+        54
+      ],
+      "reference_answer": "2*x-8*y-9=0",
+      "current_parser": "Intersection requires Line, Parabola and two distinct points",
+      "manual_numeric_probe": {
+        "quadratic_coefficients": [
+          "1/4",
+          "1/2"
+        ],
+        "midpoint": [
+          "1/2",
+          "-1"
+        ],
+        "candidate_line_lhs": "x - 4*y - 9/2",
+        "intersection_polynomial": "9*t**2/128 - 7/16",
+        "discriminant": "63/512",
+        "two_distinct_real_intersections": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 7439,
+      "scope": "defer_segment_identity",
+      "facts": "G: Ellipse;H: LineSegment;Expression(G) = (x^2/4 + y^2/2 = 1);Coordinate(MidPoint(H)) = (1,1);IsChordOf(H,G)",
+      "query": "Expression(OverlappingLine(H))",
+      "weak_models": [
+        3,
+        44,
+        54
+      ],
+      "reference_answer": "x+2*y-3=0",
+      "current_parser": "Unsupported or undeclared query target",
+      "manual_numeric_probe": {
+        "quadratic_coefficients": [
+          "1/4",
+          "1/2"
+        ],
+        "midpoint": [
+          "1",
+          "1"
+        ],
+        "candidate_line_lhs": "x + 2*y - 3",
+        "intersection_polynomial": "3*t**2/32 - 1/4",
+        "discriminant": "3/32",
+        "two_distinct_real_intersections": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 7300,
+      "scope": "defer_named_midpoint",
+      "facts": "l: Line;G: Ellipse;A: Point;B: Point;M: Point;Expression(G) = (x^2/4 + y^2/3 = 1);Coordinate(M) = (1, 1);PointOnCurve(M, l);MidPoint(LineSegmentOf(A, B)) = M;Intersection(l,G)={A,B}",
+      "query": "Expression(l)",
+      "weak_models": [
+        3,
+        44,
+        54
+      ],
+      "reference_answer": "4*x+3*y-7=0",
+      "current_parser": "Unsupported arithmetic syntax or undeclared symbol",
+      "manual_numeric_probe": {
+        "quadratic_coefficients": [
+          "1/4",
+          "1/3"
+        ],
+        "midpoint": [
+          "1",
+          "1"
+        ],
+        "candidate_line_lhs": "x + 4*y/3 - 7/3",
+        "intersection_polynomial": "7*t**2/144 - 5/12",
+        "discriminant": "35/432",
+        "two_distinct_real_intersections": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 4359,
+      "scope": "defer_hyperbola",
+      "facts": "G: Hyperbola;H: Line;B: Point;A: Point;P: Point;Expression(G) = (x^2 - 4*y^2 = 4);Coordinate(P) = (4, 1);Intersection(H, G) = {A, B};MidPoint(LineSegmentOf(A,B))=P",
+      "query": "Expression(H)",
+      "weak_models": [
+        5,
+        44,
+        42,
+        75
+      ],
+      "reference_answer": "x-y-3=0",
+      "current_parser": "Intersection requires Line, Parabola and two distinct points",
+      "manual_numeric_probe": {
+        "quadratic_coefficients": [
+          "1/4",
+          "-1"
+        ],
+        "midpoint": [
+          "4",
+          "1"
+        ],
+        "candidate_line_lhs": "x - y - 3",
+        "intersection_polynomial": "2 - 3*t**2/4",
+        "discriminant": "6",
+        "two_distinct_real_intersections": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 3119,
+      "scope": "defer_hyperbola_no_chord",
+      "facts": "l: Line;G: Hyperbola;Expression(G) = (x^2/4 - y^2 = 1);A: Point;B: Point;Intersection(l, G) = {A, B};P: Point;Coordinate(P) = (6, 3);MidPoint(LineSegmentOf(A, B)) = P",
+      "query": "Expression(l)",
+      "weak_models": [
+        5,
+        44,
+        55,
+        72,
+        21
+      ],
+      "reference_answer": "直线不存在",
+      "current_parser": "Intersection requires Line, Parabola and two distinct points",
+      "manual_numeric_probe": {
+        "quadratic_coefficients": [
+          "1/4",
+          "-1"
+        ],
+        "midpoint": [
+          "6",
+          "3"
+        ],
+        "candidate_line_lhs": "x - 2*y",
+        "intersection_polynomial": "-1",
+        "discriminant": "0",
+        "two_distinct_real_intersections": false,
+        "midpoint_verified": false
+      }
+    }
+  ]
+}
