@@ -22,11 +22,17 @@ def check_midpoint_binding(state, action):
             or not set(midpoint.sources).issubset(chord.sources) or pair.sources!=chord.sources):
         raise TransitionError('inapplicable','Missing or mismatched anonymous endpoint identity')
     names = state.chord_endpoint_names.get(chord.pair_id)
-    if names is None and set(midpoint.sources)!=set(chord.sources):
-        raise TransitionError('inapplicable','Missing named endpoint association')
+    relations = [r for r in state.segment_chords.values() if r.line==chord.line]
+    identity_sources = set(names.sources) if names else set()
+    for relation in relations:
+        if (relation.curve!=chord.curve or state.entities.get(relation.segment)!='LineSegment'
+                or relation.line!=f'@overlap:{relation.segment}'):
+            raise TransitionError('inapplicable','Mismatched segment chord association')
+        identity_sources.update(relation.sources)
+    if set(chord.sources)!=identity_sources | set(midpoint.sources):
+        raise TransitionError('inapplicable','Missing or mismatched chord identity sources')
     if names and (names.pair_id!=chord.pair_id or len(set(names.points))!=2
-                  or any(state.entities.get(p)!='Point' for p in names.points)
-                  or set(chord.sources)!=set((*names.sources,*midpoint.sources))):
+                  or any(state.entities.get(p)!='Point' for p in names.points)):
         raise TransitionError('inapplicable','Mismatched named endpoint association')
     return chord
 

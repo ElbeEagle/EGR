@@ -105,4 +105,12 @@ ID4795已接入复合中点、弦身份与匿名无序端点对；独立Line的E
 
 `src/solver/midpoint_operations.py`新增verify_chord_endpoints核验已有数值端点的曲线／直线归属及两点不同、中点一致；`src/theorems/midpoint_proposals.py`扩展绑定与chord_line_proposal，记录已读坐标来源后交原应用器提交。符号坐标未定，身份／数值矛盾不静默处理。RM54只提出坐标和，RM40不依赖它。旧抛物线named_intersections未扩展。
 
-详情及证据见[规格37](../docs/开发规格/37_命名端点中点弦实现.md)。7439线段对象、命名中点别名及RM46仍后置，7300数据差异待审；未接自主选择器。
+详情及证据见[规格37](../docs/开发规格/37_命名端点中点弦实现.md)。7439线段对象现已接入（见下节）；命名中点别名及RM46仍后置，7300数据差异待审；未接自主选择器。
+
+## ID7439线段弦（有限模式）
+
+`src/state/segment_chord_facts.py`新增SegmentChord及collect_segment_chords，保存已声明线段H、内部所在直线@overlap:H、椭圆及来源，收集IsChordOf(H,G)和数值Coordinate(MidPoint(H))。`src/state/chord_facts.py`抽提store_chord_midpoint复用匿名弦／端点对，不生成端点坐标。
+
+`src/state/transition_state.py`新增segment_chords容器、LineSegment声明及Expression(OverlappingLine(H))入口，复用只读NamedLineQuery；`src/theorems/midpoint_proposals.py`扩展身份和来源核验，公共计算、模型提案提交沿用原路径。
+
+7439两条固定链均得x+2y−3=0。仅支持显式数值复合中点；命名中点别名、显式所在直线别名、RM46后置。见[规格38](../docs/开发规格/38_ID7439线段弦对象实现.md)。

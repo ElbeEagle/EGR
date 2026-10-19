@@ -731,3 +731,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 
 - **效果／验证**：三原题均完成RM3→RM40和RM3→RM54→RM45，结果依次2x+2y−3=0、y=x+1、2x−8y−9=0；新增32项通过，相关回归626项通过。保存三个初态与六条轨迹，同步维护文档和导航索引。
 - **边界／下一步**：数值椭圆有限关联，已有符号坐标未定，不生成端点坐标；未接自主选择器。回到职责表选型，7439线段语法、命名中点别名与RM46另批。
+
+
+## 2026-10-19｜ID7439线段弦对象与原题闭环
+
+- **开发记录**：[docs/开发规格/38_ID7439线段弦对象实现.md](docs/开发规格/38_ID7439线段弦对象实现.md)
+- `src/state/segment_chord_facts.py`（新增）→ 有限线段输入关联。SegmentChord保存segment、line、curve及IsChordOf来源；collect_segment_chords两遍收集关系／中点，创建内部直线身份，返回已处理事实位置供主解析跳过，不做几何计算。
+- `src/state/chord_facts.py` → 中点存储。抽提store_chord_midpoint，在对象已解析后核验数值坐标、合并来源并复用既有弦／匿名对；原parse_chord_midpoint转交该函数，保留原语法。
+- `src/state/transition_state.py` → 状态与查询入口。新增segment_chords字典、LineSegment声明识别和前置收集；Expression(OverlappingLine(H))定位既有NamedLineQuery，查询不求解方程。
+- `src/theorems/midpoint_proposals.py` → 绑定提案。扩展check_midpoint_binding，校验线段类型、内部直线、曲线及关系来源；允许来源为中点与身份声明并集，丢失／错绑关系则拒绝。公共计算和状态提交未新增。
+- `tests/test_bound_segment_chord.py`（新增）→ 22项验证，覆盖原题两链、初态、独立交点核验、重排／重复、来源、对象隔离、退化与延期语法拒绝。
+
+- **效果／验证**：原始7439固定RM3→RM40和RM3→RM54→RM45均得x+2y−3=0。新增22项、相关回归648项通过，保存初态及两条轨迹；同步三份维护文档、导航和模型索引。
+- **边界／下一步**：仅数值椭圆复合中点，不生成端点坐标；命名中点／显式所在直线别名和RM46后置。下一批可审查命名中点的来源关联；未接自主选择器，未修改用户论文。

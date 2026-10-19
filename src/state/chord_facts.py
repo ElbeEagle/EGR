@@ -33,7 +33,12 @@ def parse_chord_midpoint(state, text: str, fact_id: str) -> bool:
     match = re.fullmatch(pattern, text)
     if not match:
         return False
-    line, curve, xt, yt = match.groups()
+    store_chord_midpoint(state, *match.groups(), fact_id)
+    return True
+
+
+def store_chord_midpoint(state, line, curve, xt, yt, fact_id):
+    """Store a numeric given midpoint after its object identity is resolved."""
     if state.entities.get(line) != 'Line' or state.entities.get(curve) != 'Ellipse':
         raise ValueError('Chord midpoint requires declared Line and Ellipse')
     values = [parse_expression(t, state.symbols) for t in (xt, yt)]

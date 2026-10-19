@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .segment_chord_facts import SegmentChord, collect_segment_chords
 from .chord_facts import ChordIdentity, AnonymousEndpointPair, ChordMidpoint, parse_chord_midpoint, ChordEndpointNames, collect_named_chords
 
 from dataclasses import dataclass, field
@@ -173,6 +174,7 @@ class TransitionState:
     named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
+    segment_chords: dict[str, SegmentChord] = field(default_factory=dict)
     chord_endpoint_names: dict[str, ChordEndpointNames] = field(default_factory=dict)
     chords: dict[str, ChordIdentity] = field(default_factory=dict)
     chord_endpoint_pairs: dict[str, AnonymousEndpointPair] = field(default_factory=dict)
@@ -197,7 +199,7 @@ class TransitionState:
         parts = [p.strip() for p in facts.split(';') if p.strip()]
         entities = {}
         for part in parts:
-            declaration = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Origin|Number|Real)', part)
+            declaration = re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|LineSegment|Point|Origin|Number|Real)', part)
             if declaration:
                 name, kind = declaration.groups()
                 if name in ('x', 'y') or name in entities:
@@ -214,6 +216,7 @@ class TransitionState:
         eccentricity_query = re.fullmatch(r'Eccentricity\(\s*([A-Za-z]\w*)\s*\)', query_text)
         tangent_query = re.fullmatch(r'Expression\(TangentOnPoint\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
         chord_query = re.fullmatch(r'Length\(InterceptChord\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
+        overlap_query = re.fullmatch(r'Expression\(\s*OverlappingLine\(\s*([A-Za-z]\w*)\s*\)\s*\)', query_text)
         explicit_line_query = re.fullmatch(r'Expression\(\s*([A-Za-z]\w*)\s*\)', query_text)
         named_line_query = re.fullmatch(rf'Expression\(\s*{LINE}\s*\)', query_text)
         dot_query = re.fullmatch(r'DotProduct\(\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*,\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\)', query_text)
@@ -230,7 +233,7 @@ class TransitionState:
             target = OriginDotProductQuery(o,tuple(sorted((a,b))))
         elif explicit_line_query and entities.get(explicit_line_query.group(1)) == 'Line':
             target = NamedLineQuery(explicit_line_query.group(1))
-        elif query is None or named_line_query:
+        elif query is None or named_line_query or overlap_query:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
         elif chord_query and entities.get(chord_query.group(1)) == 'Line' and entities.get(chord_query.group(2)) == 'Parabola':
             target = ChordLengthQuery(*chord_query.groups())
@@ -254,6 +257,12 @@ class TransitionState:
         if named_line_query:
             state.query = NamedLineQuery(register_named_line(state, *named_line_query.groups(), 'query'))
         chord_parts = collect_named_chords(state, parts)
+        chord_parts |= collect_segment_chords(state, parts)
+        if overlap_query:
+            relation = state.segment_chords.get(overlap_query.group(1))
+            if relation is None:
+                raise ValueError('OverlappingLine query requires explicit segment chord')
+            state.query = NamedLineQuery(relation.line)
         for index, part in enumerate(parts):
             if index in chord_parts:
                 continue
@@ -272,7 +281,7 @@ class TransitionState:
                 continue
             if parse_named_line_fact(state, part, fact_id):
                 continue
-            if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|Point|Origin|Number|Real)', part):
+            if re.fullmatch(r'([A-Za-z]\w*)\s*:\s*(Hyperbola|Ellipse|Parabola|Line|LineSegment|Point|Origin|Number|Real)', part):
                 continue
             intersection = re.fullmatch(
                 r'Coordinate\(OneOf\(Intersection\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)\)\s*=\s*\(([^,]+),([^,]+)\)', part)
