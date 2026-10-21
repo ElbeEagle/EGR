@@ -159,3 +159,9 @@ RM54可在标准模型之前执行；RM45需要标准模型及同对坐标和。
 `src/state/transition_state.py`新增segment_chords容器、LineSegment声明及Expression(OverlappingLine(H))入口，复用只读NamedLineQuery；`src/theorems/midpoint_proposals.py`扩展身份和来源核验，公共计算、模型提案提交沿用原路径。
 
 7439两条固定链均得x+2y−3=0。仅支持显式数值复合中点；命名中点别名、显式所在直线别名、RM46后置。见[规格38](../docs/开发规格/38_ID7439线段弦对象实现.md)。
+
+## 命名中点别名下一批契约（未实现）
+
+首批选2227／2324／3337的MidPoint(H)=M，再处理2290／4761的命名端点中点。复用既有弦身份、PointCoordinates和ChordMidpoint，拟保留独立别名记录，连接弦来源、别名声明与原坐标fact_id；全部事实解析后关联数值，执行时重查快照一致性。缺坐标不补算、符号坐标未定，不在查询中推导。
+
+RM46单独设计：中心双曲线αx²+βy²=1的非中心中点，q=αm_x²+βm_y²，实非退化弦要求q<0或q>1；中心方向未定，不能沿用椭圆内点检查。本批只审查，没有新增运行时API，详见[规格39](../docs/开发规格/39_命名中点别名与RM46资格审查.md)。

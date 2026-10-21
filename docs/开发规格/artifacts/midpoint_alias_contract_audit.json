@@ -1,0 +1,347 @@
+{
+  "stage": "design_audit_only",
+  "data_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 2227,
+      "scope": "segment_alias_first",
+      "text": "已知椭圆$\\frac{x^{2}}{2}+\\frac{y^{2}}{4}=1$，则以点$M(1,1)$为中点的弦所在直线方程为?",
+      "facts": "G: Ellipse;H: LineSegment;M: Point;Expression(G) = (x^2/2 + y^2/4 = 1);Coordinate(M) = (1, 1);IsChordOf(H, G);MidPoint(H) = M",
+      "query": "Expression(OverlappingLine(H))",
+      "weak_models": [
+        3,
+        45,
+        54,
+        55,
+        72
+      ],
+      "reference_answer": "2*x+y-3=0",
+      "reference_agrees": true,
+      "current_parser": "Unsupported arithmetic syntax or undeclared symbol",
+      "manual_numeric_input": [
+        "1/2",
+        "1/4",
+        [
+          "1",
+          "1"
+        ]
+      ],
+      "probe": {
+        "q": "3/4",
+        "line": "x + y/2 - 3/2",
+        "intersection_polynomial": "3*t**2/32 - 1/4",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 2324,
+      "scope": "segment_alias_first",
+      "text": "已知椭圆$\\frac{x^{2}}{9}+\\frac{y^{2}}{5}=1$的弦被点$(1,1)$平分，则这条弦所在的直线方程为?",
+      "facts": "G: Ellipse;H: LineSegment;I: Point;Expression(G) = (x^2/9 + y^2/5 = 1);Coordinate(I) = (1, 1);IsChordOf(H,G);MidPoint(H)=I",
+      "query": "Expression(OverlappingLine(H))",
+      "weak_models": [
+        3,
+        45,
+        54,
+        72
+      ],
+      "reference_answer": "5*x+9*y-14=0",
+      "reference_agrees": true,
+      "current_parser": "Unsupported arithmetic syntax or undeclared symbol",
+      "manual_numeric_input": [
+        "1/9",
+        "1/5",
+        [
+          "1",
+          "1"
+        ]
+      ],
+      "probe": {
+        "q": "14/45",
+        "line": "x + 9*y/5 - 14/5",
+        "intersection_polynomial": "14*t**2/2025 - 31/45",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 3337,
+      "scope": "segment_alias_first",
+      "text": "椭圆$\\frac{x^{2}}{4}+y^{2}=1$中，以点$M(1, \\frac{1}{2})$为中点的弦所在直线方程是?",
+      "facts": "G: Ellipse;H: LineSegment;M: Point;Expression(G) = (x^2/4 + y^2 = 1);Coordinate(M) = (1, 1/2);IsChordOf(H, G);MidPoint(H) = M",
+      "query": "Expression(OverlappingLine(H))",
+      "weak_models": [
+        3,
+        45,
+        54,
+        55,
+        72
+      ],
+      "reference_answer": "x + 2*y - 2 = 0",
+      "reference_agrees": true,
+      "current_parser": "Unsupported arithmetic syntax or undeclared symbol",
+      "manual_numeric_input": [
+        "1/4",
+        "1",
+        [
+          "1",
+          "1/2"
+        ]
+      ],
+      "probe": {
+        "q": "1/2",
+        "line": "x + 2*y - 2",
+        "intersection_polynomial": "t**2/8 - 1/2",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 2290,
+      "scope": "endpoint_alias_second",
+      "text": "经过点$M(1,1)$作直线$l$交椭圆$\\frac{x^{2}}{4}+\\frac{y^{2}}{9}=1$于$A$、$B$两点,且$M$为$A B$中点.则直线$l$的方程为?",
+      "facts": "l: Line;G: Ellipse;A: Point;B: Point;M: Point;Expression(G) = (x^2/4 + y^2/9 = 1);Coordinate(M) = (1, 1);PointOnCurve(M, l);Intersection(l, G) = {A, B};MidPoint(LineSegmentOf(A, B)) = M",
+      "query": "Expression(l)",
+      "weak_models": [
+        3,
+        45,
+        54,
+        72
+      ],
+      "reference_answer": "9*x + 4*y - 13 = 0",
+      "reference_agrees": true,
+      "current_parser": "Unsupported arithmetic syntax or undeclared symbol",
+      "manual_numeric_input": [
+        "1/4",
+        "1/9",
+        [
+          "1",
+          "1"
+        ]
+      ],
+      "probe": {
+        "q": "13/36",
+        "line": "x + 4*y/9 - 13/9",
+        "intersection_polynomial": "13*t**2/1296 - 23/36",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 4761,
+      "scope": "endpoint_alias_second",
+      "text": "已知椭圆$\\frac{x^{2}}{4}+y^{2}=1 $,过$P(1, \\frac{1}{2})$点作直线$l$交椭圆$C$于$A$、$B$两点，且点$P$是$A B$的中点，则直线$l$的方程是?",
+      "facts": "l: Line;C: Ellipse;A: Point;B: Point;P: Point;Coordinate(P) = (1, 1/2);Expression(C) = (x^2/4 + y^2 = 1);PointOnCurve(P, l);Intersection(l, C) = {A, B};MidPoint(LineSegmentOf(A, B)) = P",
+      "query": "Expression(l)",
+      "weak_models": [
+        3,
+        44,
+        54
+      ],
+      "reference_answer": "x+2*y-2=0",
+      "reference_agrees": true,
+      "current_parser": "Unsupported arithmetic syntax or undeclared symbol",
+      "manual_numeric_input": [
+        "1/4",
+        "1",
+        [
+          "1",
+          "1/2"
+        ]
+      ],
+      "probe": {
+        "q": "1/2",
+        "line": "x + 2*y - 2",
+        "intersection_polynomial": "t**2/8 - 1/2",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 7300,
+      "scope": "reference_conflict",
+      "text": "直线$l$过点$M(1,1)$，与椭圆$\\frac{x^{2}}{4}+\\frac{y^{2}}{3}=1$相交于$A$、$B$两点，若$A B$的中点为$M$，直线$l$的方程?",
+      "facts": "l: Line;G: Ellipse;A: Point;B: Point;M: Point;Expression(G) = (x^2/4 + y^2/3 = 1);Coordinate(M) = (1, 1);PointOnCurve(M, l);MidPoint(LineSegmentOf(A, B)) = M;Intersection(l,G)={A,B}",
+      "query": "Expression(l)",
+      "weak_models": [
+        3,
+        44,
+        54
+      ],
+      "reference_answer": "4*x+3*y-7=0",
+      "reference_agrees": false,
+      "current_parser": "Unsupported arithmetic syntax or undeclared symbol",
+      "manual_numeric_input": [
+        "1/4",
+        "1/3",
+        [
+          "1",
+          "1"
+        ]
+      ],
+      "probe": {
+        "q": "7/12",
+        "line": "x + 4*y/3 - 7/3",
+        "intersection_polynomial": "7*t**2/144 - 5/12",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 1801,
+      "scope": "rm46_deferred",
+      "text": "点$P(4,1)$平分双曲线$x^{2}-4 y^{2}=4$的一条弦, 则这条弦所在的直线方程是?",
+      "facts": "G: Hyperbola;H: LineSegment;P: Point;Expression(G) = (x^2 - 4*y^2 = 4);Coordinate(P) = (4, 1);IsChordOf(H,G);MidPoint(H)=P",
+      "query": "Expression(OverlappingLine(H))",
+      "weak_models": [
+        5,
+        46,
+        54,
+        55,
+        72
+      ],
+      "reference_answer": "x-y-3=0",
+      "reference_agrees": true,
+      "current_parser": "Segment chord requires declared LineSegment and Ellipse",
+      "manual_numeric_input": [
+        "1/4",
+        "-1",
+        [
+          "4",
+          "1"
+        ]
+      ],
+      "probe": {
+        "q": "3",
+        "line": "x - y - 3",
+        "intersection_polynomial": "2 - 3*t**2/4",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "id": 3119,
+      "scope": "rm46_deferred",
+      "text": "已知直线$l$与双曲线$\\frac{x^{2}}{4}-y^{2}=1$相交于$A$、$B$两点，若点$P(6,3)$为线段$A B$的中点，则直线$l$的方程是?",
+      "facts": "l: Line;G: Hyperbola;Expression(G) = (x^2/4 - y^2 = 1);A: Point;B: Point;Intersection(l, G) = {A, B};P: Point;Coordinate(P) = (6, 3);MidPoint(LineSegmentOf(A, B)) = P",
+      "query": "Expression(l)",
+      "weak_models": [
+        5,
+        44,
+        55,
+        72,
+        21
+      ],
+      "reference_answer": "直线不存在",
+      "reference_agrees": null,
+      "current_parser": "Intersection requires Line, Parabola and two distinct points",
+      "manual_numeric_input": [
+        "1/4",
+        "-1",
+        [
+          "6",
+          "3"
+        ]
+      ],
+      "probe": {
+        "q": "0",
+        "line": "x - 2*y",
+        "intersection_polynomial": "-1",
+        "degree": 0,
+        "two_distinct_real_points": false,
+        "midpoint_verified": false
+      }
+    }
+  ],
+  "hyperbola_boundary_probes": [
+    {
+      "midpoint": [
+        "4",
+        "1"
+      ],
+      "probe": {
+        "q": "3",
+        "line": "x - y - 3",
+        "intersection_polynomial": "2 - 3*t**2/4",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "midpoint": [
+        "0",
+        "1"
+      ],
+      "probe": {
+        "q": "-1",
+        "line": "y - 1",
+        "intersection_polynomial": "t**2/4 - 2",
+        "degree": 2,
+        "two_distinct_real_points": true,
+        "midpoint_verified": true
+      }
+    },
+    {
+      "midpoint": [
+        "1",
+        "0"
+      ],
+      "probe": {
+        "q": "1/4",
+        "line": "x - 1",
+        "intersection_polynomial": "-t**2/16 - 3/4",
+        "degree": 2,
+        "two_distinct_real_points": false,
+        "midpoint_verified": false
+      }
+    },
+    {
+      "midpoint": [
+        "2",
+        "0"
+      ],
+      "probe": {
+        "q": "1",
+        "line": "x - 2",
+        "intersection_polynomial": "-t**2/4",
+        "degree": 2,
+        "two_distinct_real_points": false,
+        "midpoint_verified": false
+      }
+    },
+    {
+      "midpoint": [
+        "2",
+        "1"
+      ],
+      "probe": {
+        "q": "0",
+        "line": "x - 2*y",
+        "intersection_polynomial": "-1",
+        "degree": 0,
+        "two_distinct_real_points": false,
+        "midpoint_verified": false
+      }
+    },
+    {
+      "midpoint": [
+        "0",
+        "0"
+      ],
+      "probe": {
+        "q": "0",
+        "status": "undetermined_center",
+        "line": null
+      }
+    }
+  ]
+}

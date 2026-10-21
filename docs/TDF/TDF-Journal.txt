@@ -1,4 +1,4 @@
-
+\title{UDfSolver: Uniform Representation and Decoupled Inference Strategy for Text-Diagram Function Problems Solving}
 
 \begin{highlights}
 \hlsection{Highlights}
@@ -13,7 +13,7 @@ Developing generalized algorithms for solving diverse Text-Diagram Function (TDF
 \end{abstract}
 
 \begin{keyword}
-Function \del{P}\ins{p}roblem \del{S}\ins{s}olving \sep  Uniform \del{R}\ins{r}epresentation \sep  Symbolic \del{S}\ins{s}olver \sep  Decoupled \del{I}\ins{i}nference \del{S}\ins{s}trategy \sep  Meta-model \del{I}\ins{i}nference
+Function problem solving \sep  Uniform representation \sep  Symbolic solver \sep  Decoupled inference strategy \sep  Meta-model inference
 \end{keyword}
 
 \end{frontmatter}
@@ -47,12 +47,12 @@ The remainder of this paper is structured as follows:
 \linkref[Section]{\ref{sec:discussion}} discusses the generalization and scalability of UDfSolver.
 \linkref[Section]{\ref{sec:conlusions}} concludes the paper with key findings and future directions. \looseness1
 
-\section{Related \del{W}\ins{w}ork}\label{Xsec2-2}
+\section{Related work}\label{Xsec2-2}
 \label{sec:related-work}
 
 This section starts with a review of existing approaches for solving TDF problems. The algorithm proposed in this paper consists of two stages: problem recognizance and symbolic  solving. Therefore, the subsequent content will also review the related work in function problem recognizance and symbolic solver.
 
-\subsection{Function \del{P}\ins{p}roblem \del{S}\ins{s}olving}\label{Xsec3-2.1}
+\subsection{Function problem solving}\label{Xsec3-2.1}
 Research in function problem solving can be divided into two approaches: (1) relation-flow and (2) LLM-based.
 
 \textbf{Relation-flow Approach}
@@ -67,7 +67,7 @@ Intelligent problem solvers (IPS) designed for educational settings provide impo
 
 Currently, research on LLMs in TDF problem solving is primarily limited to performance evaluations involving function-related benchmarks, rather than the development of specialized algorithms. As a result, their capabilities remain distant from the precision and reliability required for practical educational applications. Conversely, the customized relation-flow approach has demonstrated robust performance across a series of mathematical problem domains. Motivated by this success, this paper continues to advance the relation-flow approach, further extending and refining existing algorithms to address the complexities of diverse TDF problems.
 
-\subsection{Text-diagram \del{F}\ins{f}unction \del{P}\ins{p}roblem \del{R}\ins{r}ecognizance}\label{Xsec4-2.2}
+\subsection{Text-diagram function problem recognizance}\label{Xsec4-2.2}
 \label{sec:related-Problem-Recognizance}
 Existing relation-flow approaches regard problem recognizance as the process of acquiring relations from problem, and the outcome of problem recognizance is a group of relations. This part reviews the problem recognizance methods of some relation-flow approaches related to TDF problem, including text understanding method and diagram understanding method. In diagram understanding, there is an additional diagram parsing task. As this parsing process is not the primary focus of our algorithmic research, we briefly introduce the existing methods we have adopted in this work.
 
@@ -81,7 +81,7 @@ In addition, current recognizance methods typically derive a group of relations.
 
 \textbf{Diagram Parsing} is an upstream stage of diagram understanding. To clarify the role of diagram parsing within our framework, we introduce a terminology distinction regarding the format of the input diagram: image-version diagram and vector-version diagram. The raw problem diagram is in image-version. However, the actual input to problem understanding module is assumed to be the vector-version, which represents the diagram using structured function primitives such as points, coordinate axes, and function segments. The transition from image-version to vector-version is handled by computer vision diagram parsing module. Therefore, as diagram parsing is not the primary focus of our algorithmic research, we adopt an off-the-shelf vectorized parsing pipeline \citep{de_hierarchical_2017}. In this pipeline, a pre-trained RetinaNet \citep{lin2017retinanet} object detector is directly utilized to locate textual labels and key geometric primitives (e.g., the origin $O$) via bounding boxes. Concurrently, the Hough transform is applied for geometric vectorization, accurately extracting straight coordinate axes and linear segments. These elements are then synergized through spatial anchoring: the system computes the spatial Euclidean distance to anchor the RetinaNet-detected text labels to the nearest Hough-extracted geometric primitives. This synergized vectorized representation forms the basis for subsequent feature extraction without requiring any domain-specific neural network training.
 
-\subsection{Symbolic \del{S}\ins{s}olver}\label{Xsec5-2.3}
+\subsection{Symbolic solver}\label{Xsec5-2.3}
 
 In algorithms adopting the relation-flow approach, the core tasks of symbolic solver are inferring on the extracted group of relations to derive a system of equations and subsequently resolving these equations to generate the final solution. Researchers have developed specialized symbolic solvers for various problem-solving domains \citep{yu2019framework, yu2022func-relation, jian_circuit_2019, lyu_vector_2023, peng_scene-attention_2025}.
 For instance, \cite{yu2022func-relation} developed a specific symbolic solver capable of generating and solving mixture relation groups through an equation-function interaction method for piecewise linear function problems.
@@ -90,10 +90,10 @@ Despite these advances, existing symbolic solvers face two significant challenge
 
 To overcome these challenges, this paper proposes a decoupled inference strategy (DIS) that separates the solver into two distinct layers: a meta-model inference layer and a procedural inference layer. The meta-model inference layer encapsulates type-specific computational operations, and the procedural inference layer manages the overall inference process. This decoupled design ensures that the symbolic solver remains structurally concise while possessing the flexibility to handle the mathematical complexity of diverse TDF problems.
 
-\section{Problem \del{F}\ins{f}ormulation and \del{A}\ins{a}lgorithm \del{O}\ins{o}verview}\label{Xsec6-3}
+\section{Problem formulation and algorithm overview}\label{Xsec6-3}
 \label{sec:problem-formulation}
 
-\subsection{Problem \del{F}\ins{f}ormulation}\label{Xsec7-3.1}
+\subsection{Problem formulation}\label{Xsec7-3.1}
 
 A Text-Diagram Function (TDF) problem is defined as a pair \(P = \{T, D\}\), comprising a textual description \(T\) and a function diagram \(D\). The core task is to derive a final solution \(S\) from \(P\).
 
@@ -150,7 +150,7 @@ Diagram & {\includegraphics{fx9}}
    \label{fig:TDF-approach}\vspace*{12pt}
 \end{figure*}
 
-\subsection{Algorithm \del{O}\ins{o}verview}\label{Xsec8-3.2}
+\subsection{Algorithm overview}\label{Xsec8-3.2}
 
 As shown in \linkref[Fig.]{\ref{fig:TDF-approach}}, the proposed algorithm is structured into two main stages, directly corresponding to the processes of problem recognizance and symbolic solver.
 
@@ -179,7 +179,7 @@ By structuring our approach in this decoupled manner, we create a system that is
 \end{imageonly}
     \end{algorithm}
 
-\section{Problem \del{R}\ins{r}ecognizance}\label{Xsec9-4}
+\section{Problem recognizance}\label{Xsec9-4}
 \label{sec:problem-recognizance}
 
 This section presents methods to conduct the problem recognizance of six types of TDF problems. The novelty of this recognizance process lies in that we use a uniform representation model to represent the recognizanced result of any given problem. Besides, a $\mathrm{S^{2}F}$ (syntax-semantics for function) model method and a $\mathrm{F^2}$ (function feature) model method is proposed to conduct the recognizance process.
@@ -193,7 +193,7 @@ As illustrated in \linkref[Fig.]{\ref{fig:Problem-Recognizance}}, we decompose t
     \label{fig:Problem-Recognizance}\vspace*{16pt}
 \end{figure*}
 
-\subsection{Uniform \del{R}\ins{r}epresentation of \del{U}\ins{u}nderstood \del{S}\ins{s}tate}\label{Xsec10-4.1}
+\subsection{Uniform representation of understood state}\label{Xsec10-4.1}
 
 We first introduce and formalize the uniform representation model (URM), which serves as the understood state of a given TDF problem. The URM provides a unified structure that consistently represents six function types.
 
@@ -222,11 +222,11 @@ This URM model, illustrated in \linkref[Fig.]{\ref{fig:Representation-Model}}, p
     \label{fig:Representation-Model}
 \end{figure}
 
-\subsection{Problem \del{R}\ins{r}ecognizance \del{P}\ins{p}rocess}\label{Xsec11-4.2}
+\subsection{Problem recognizance process}\label{Xsec11-4.2}
 
 Problem recognizance process consists of three steps: (1) text understanding, (2) diagram understanding, and (3) filling URM with extracted relations. Before delving into text understanding and diagram understanding, it is crucial to preprocess the raw text and diagram separately to obtain structured tokens and primitives. For text understanding, we utilize the NLPIR-Parser~\citep{zhang_nlpir-parser_2020} and LangExtract~\citep{goel_langextract_2025} to segment the raw input into a token sequence labeled with Part-Of-Speech (POS) tags. This structured sequence serves as the input for the text understanding. For diagram understanding, as discussed in \linkref[Section]{\ref{sec:related-Problem-Recognizance}}, we employ an off-the-shelf vectorized parsing pipeline (combining RetinaNet and Hough transform) to parse the raw image into discrete geometric primitives anchored with textual labels. These preprocessed structured sequences and vectorized primitives serve as the direct inputs for our proposed $\mathrm{S^{2}F}$ and $\mathrm{F^2}$ models, respectively.
 
-\subsubsection{Text \del{U}\ins{u}nderstanding}\label{Xsec12-4.2.1}
+\subsubsection{Text understanding}\label{Xsec12-4.2.1}
 
 \begin{table*}
   \tbl{Representative $\mathrm{S^{2}F}$ models in $\Omega$ for each relation category. Each entry specifies the model structure comprising syntactic pattern $(\mathcal{K} \& \mathcal{P})$ and relation template $(\mathcal{R})$, and the examples for each listed model.}{%
@@ -308,7 +308,7 @@ Let $T$ be the input problem text. The system first segments $T$ into a sequence
 \end{imageonly}
 \end{procedure}
 
-\subsubsection{Diagram \del{U}\ins{u}nderstanding}\label{Xsec13-4.2.2}
+\subsubsection{Diagram understanding}\label{Xsec13-4.2.2}
 
 \begin{table*}
    \tbl{Representative $\mathrm{F^2}$ models in $\overline{\Omega}$ for each function type. Each entry specifies the model structure comprising feature pattern $\mathcal{F}$ and relation template $\mathcal{R}$, and the examples for each listed model.}{%
@@ -391,7 +391,7 @@ The extraction process (\linkref{Procedure} \ref{proc:diagram_understanding}) in
 \end{imageonly}
 \end{procedure}
 
-\subsubsection{Filling URM with \del{E}\ins{e}xtracted \del{R}\ins{r}elations}\label{Xsec14-4.2.3}
+\subsubsection{Filling URM with extracted relations}\label{Xsec14-4.2.3}
 
 This step integrates the heterogeneous relations acquired from text and diagrams into the structured components of URM through three sequential actions. The URM instantiation process (\linkref{Procedure} \ref{proc:ufr_instantiation}) is formalized as a mapping process $\Psi: \mathcal{R}_{all} \to \mathcal{U}$, where $\mathcal{R}_{all} = \mathcal{R}_T \cup \mathcal{R}_D$.
 
@@ -464,12 +464,12 @@ Finally, the system anchors explicit quantitative values ($\mathcal{R}_{num}$) t
 \end{imageonly}
 \end{procedure}
 
-\section{Symbolic \del{S}\ins{s}olver}\label{Xsec15-5}
+\section{Symbolic solver}\label{Xsec15-5}
 \label{sec:symbolic-solving}
 
 This section introduces the decoupled inference strategy (DIS) and DIS-enabled symbolic solver to address text-diagram function problems. The procedure, outlined as \linkref{Procedure} \ref{proc:decoupled_inference}, is first presented, followed by a detailed explanation of its two core components: the procedural inference layer (responsible for strategic planning of the inference process) and the meta-model inference layer (dedicated to type-specific mathematical execution). These layers form the foundation of the decoupled inference strategy.
 
-\subsection{Overview of \del{D}\ins{d}ecoupled \del{I}\ins{i}nference \del{S}\ins{s}trategy}\label{Xsec16-5.1}
+\subsection{Overview of decoupled inference strategy}\label{Xsec16-5.1}
 
 Assume the problem recognition stage converts multimodal input into URM instances. The symbolic solver stage then processes these instances, denoted as $\Phi = \{ \mathcal{U}_1, \mathcal{U}_2, \dots, \mathcal{U}_n \}$, where each $\mathcal{U}_i$ corresponds to a distinct function object derived from the problem.
 
@@ -510,7 +510,7 @@ The primary goal is to infer the final solution $S$ from $\Phi$. However, creati
     \end{imageonly}
 \end{procedure}
 
-\subsection{Procedural \del{I}\ins{i}nference \del{L}\ins{l}ayer}\label{Xsec17-5.2}
+\subsection{Procedural inference layer}\label{Xsec17-5.2}
 
 The procedural inference layer acts as the strategic controller, determining the sequence of function meta-model applications. We \nobreak{construct} a knowledge base $\mathbb{K}$ that stores pre-defined inference pathways, mapping problem patterns to solving sequences. The layer employs two distinct rules to manage the inference process.
 
@@ -521,15 +521,15 @@ The second rule, \textit{inference with exploratory pathway} (IEP), is activated
     \Phi_{k+1} = \Phi_k \cup \{ \text{Apply}(\mathcal{U}, m) \mid \mathcal{U} \in \Phi_k, m \in \Lambda, \mathcal{S}_m(\mathcal{U}) \}
 \label{Xeqn6-6}
 \end{equation}
-In this formulation, $m$ denotes a function meta-model in the model pool $\Lambda$, and $\mathcal{S}_m(\mathcal{U})$ represents the structural matching predicate, which verifies whether the URM instance $\mathcal{U}$ satisfies the prerequisites of model $m$. The formal definitions of these components ($m, \Lambda, \mathcal{S}$) are provided in the subsequent \linkref[\del{section}\ins{Section}]{\ref{sec:fmm_layer}}.
+In this formulation, $m$ denotes a function meta-model in the model pool $\Lambda$, and $\mathcal{S}_m(\mathcal{U})$ represents the structural matching predicate, which verifies whether the URM instance $\mathcal{U}$ satisfies the prerequisites of model $m$. The formal definitions of these components ($m, \Lambda, \mathcal{S}$) are provided in the subsequent \linkref[Section]{\ref{sec:fmm_layer}}.
 
 This iterative cycle continues until the solving goal is satisfied or the state converges ($\Phi_{k+1} = \Phi_k$), ensuring the exhaustive extraction of derivable knowledge from the provided conditions.
 
-\subsection{Function \del{M}\ins{m}eta-model \del{I}\ins{i}nference \del{L}\ins{l}ayer}\label{Xsec18-5.3}
+\subsection{Function meta-model inference layer}\label{Xsec18-5.3}
 \label{sec:fmm_layer}
 The function meta-model encapsulates  the involved type-specific operations.
 
-\subsubsection{Definition of \del{F}\ins{f}unction \del{M}\ins{m}eta-model}\label{Xsec19-5.3.1}
+\subsubsection{Definition of function meta-model}\label{Xsec19-5.3.1}
 
 \begin{definition}[Function Meta-Model]
 A function meta-model is defined as a quadruple $\mathcal{M} = \langle I, \mathcal{S}, \mathcal{O}, \mathcal{T} \rangle$. In this tuple, $I$ serves as the unique identifier. $\mathcal{S}$ denotes the matching structures, defined as a logical predicate on the URM substructures used for pattern matching. $\mathcal{O}$ represents the type-specific operations, encapsulating the distinct algebraic logic required to construct and solve equations for each function type. $\mathcal{T}$ specifies the transformation logic for updating the URM state upon execution.
@@ -547,7 +547,7 @@ Formally, the application of a model $\mathcal{M}$ to a URM $\mathcal{U}$ is gov
 \end{equation}
 This design enables a uniform interface where the solver matches models based solely on structural states (e.g., "has two points"), while the internal $\mathcal{O}$ dynamically adapts to the specific function type (e.g., linear vs. quadratic).
 
-\subsubsection{The \del{P}\ins{p}ool of \del{F}\ins{f}unction \del{M}\ins{m}eta-models}\label{Xsec20-5.3.2}
+\subsubsection{The pool of function meta-models}\label{Xsec20-5.3.2}
 
 This work constructs a pool of function meta-models, denoted as $\Lambda$, to cover the diverse mathematical operations required for TDF problems. The meta-model pool $\Lambda$ encompasses 27 core computational models. This pool is organized into three subsets based on their functional utility: $\Lambda = \Lambda_1 \cup \Lambda_2 \cup \Lambda_3$. The specific meaning of each subsets are detailed in the subsequent paragraphs.
 
@@ -557,7 +557,7 @@ The second category, \textit{function property models} ($\Lambda_2$), focuses on
 
 The third category, \textit{function interaction models} ($\Lambda_3$), manages the reasoning regarding interactions between multiple functions. The primary model in this group is the intersection solver, which is activated when two distinct URMs both possess determined expressions. It constructs an algebraic equation by equating the two expressions, $f_i(x) = f_j(x)$, to find the common roots. This category is essential for solving composite problems where the solution depends on the structural relationship between different function objects.
 
-\section{The \del{C}\ins{c}omplete \del{W}\ins{w}orkflow for solving \del{A}\ins{a}n \del{E}\ins{e}xample \del{U}\ins{u}sing UDfSolver}\label{Xsec21-6}
+\section{The complete workflow for solving an example using UDfSolver}\label{Xsec21-6}
 \label{sec:workflow}
 
 This section uses an example to illustrate how the proposed UDfSolver framework works. The given problem has a text description and a diagram. The problem text provides the function definition $y=ax^2+bx+c$, the vertex $V(1, -4)$, and one intersection point between function and x-axis $A(-1, 0)$.
@@ -629,14 +629,14 @@ Following the pathway, the solver applies function meta-model $\mathcal{M}_1$ us
     \end{tabnote}
 \end{table*}
 
-\subsection{Experimental \del{S}\ins{s}etup}\label{Xsec23-7.1}
+\subsection{Experimental setup}\label{Xsec23-7.1}
 
 Three popularly used datasets are chosen to evaluate the proposed algorithm and they are: TDF2K, MultiMath-Func and CMM-Func. \linkref[Table]{\ref{tab:dataset_distribution}} lists the prepared three datasets and the function type distribution about them.
 
 \begin{itemize}
     \item \textbf{TDF2K}: A manually collected dataset comprising 2,049 text-diagram function (TDF) problems, systematically covering six fundamental function types. This dataset integrates problems from two primary sources: (1) the TnD1K dataset originally prepared by \citet{yu2022func-relation}, which consists of 1,000 linear function problems collected from middle school textbooks published by People's Education Press (PEP), Beijing Normal University Press (BNU), and Jiangsu Phoneix Science Press (JPS), as well as entrance examination papers from major Chinese cities during 2016-2020; and (2) an additional 1,049 problems newly collected from supplementary educational materials, including "Yiben for Middle School Mathematics: Functions" published by Hunan Education Press and "Zuoyebang: Functions in Middle School Mathematics" published by Xi'an Publishing House. The dataset is designed to provide a comprehensive representation of TDF problem diversity, with 60.5\% text-only problems and 39.5\% text-diagram problems.
 
-    \item \textbf{MultiMath-Func}: A sub-dataset of MultiMath-300K \citep{peng2024multimath}, which is a comprehensive multimodal mathematical dataset with 298,670\del{ }\ins{\thinspace }K-12 problems featuring bilingual descriptions and step-by-step solutions. This subset covers all six function types and serves as a standardized benchmark for assessing multimodal reasoning capabilities, with particular emphasis on problems requiring both problem understanding and mathematical reasoning across diverse educational levels.
+    \item \textbf{MultiMath-Func}: A sub-dataset of MultiMath-300K \citep{peng2024multimath}, which is a comprehensive multimodal mathematical dataset with 298,670\thinspace K-12 problems featuring bilingual descriptions and step-by-step solutions. This subset covers all six function types and serves as a standardized benchmark for assessing multimodal reasoning capabilities, with particular emphasis on problems requiring both problem understanding and mathematical reasoning across diverse educational levels.
 
     \item \textbf{CMM-Func}: A function-focused subset extracted from CMM-Math \citep{liu_cmm-math_2025}, a Chinese multimodal mathematics dataset with over 28,000 problems spanning 12 grade levels. This work filtered the data item that focuses exclusively on function-related problems spanning the selected six function types (Linear, Quadratic, Inverse Proportional, Exponential, Logarithmic, and Power functions). Therefore the CMM-Func dataset is particularly suitable for evaluating the performance of function problem solving methods.
 \end{itemize}
@@ -667,7 +667,7 @@ The proposed algorithm will be compared with the following four state-of-the-art
     \item \textbf{Qwen3-VL-8B} \citep{bai2025qwen3}: The latest iteration of the Qwen-VL series developed by Alibaba Cloud, representing the cutting edge of open-source general-purpose MLLMs. Qwen3-VL-8B features significant architectural advancements in dynamic resolution and visual perception, enabling it to comprehend complex charts, geometric diagrams, and dense mathematical texts with remarkable accuracy.
 \end{itemize}
 
-\subsection{Overall \del{P}\ins{p}erformance \del{E}\ins{e}valuation}\label{Xsec24-7.2}
+\subsection{Overall performance evaluation}\label{Xsec24-7.2}
 
 The overall performance of our algorithm is summarized in \linkref[Table]{\ref{tab:experiment}}, demonstrating consistent and significant superiority across three diverse benchmarks and six function types. We analyze the results from multiple perspectives to provide a comprehensive understanding of the proposed method's advantages.
 
@@ -689,7 +689,7 @@ Examining performance trends across datasets reveals interesting insights into g
 \textbf{Margin of Improvement.}
 The performance improvements of UDfSolver over the strongest baseline (MultiMath-7B) are substantial and statistically significant. The relative improvements of 21.5\% (TDF2K), 15.6\% (MultiMath-Func), and 9.9\% (CMM-Func) represent major advances in TDF problem-solving capabilities. These gains are particularly impressive considering that MultiMath-7B represents the state-of-the-art among domain-specific math MLLMs with specialized training on mathematical reasoning tasks. The consistent superiority across all evaluation dimensions--overall accuracy, individual function types, and different datasets--demonstrates the fundamental advantages of our decoupled symbolic reasoning approach over end-to-end neural methods.
 
-\subsection{Case \del{S}\ins{s}tudy \del{A}\ins{a}nalysis}\label{Xsec25-7.3}
+\subsection{Case study analysis}\label{Xsec25-7.3}
 \label{sec:case_study}
 
 To provide a deeper insight into the problem-solving mechanisms of UDfSolver compared to baseline methods, we conducted a qualitative analysis on three representative cases. These cases were selected to evaluate the system's performance across three critical dimensions of TDF problem solving: (1) \textit{multimodal alignment}, testing the ability to integrate visual and textual cues; (2) \textit{cross-type inference}, evaluating the logic required to solve interactions between heterogeneous function types; and (3) \textit{property constraint reasoning}, assessing the rigor in handling definition-based parameter problems. \linkref[Table]{\ref{tab:case_study}} details the problem descriptions, the reasoning processes of different models, and the final outcomes.
@@ -739,16 +739,16 @@ To provide a deeper insight into the problem-solving mechanisms of UDfSolver com
  \label{tab:case_study}\vspace{12pt}
  \end{table*}
 
-\subsubsection{Multimodal \del{A}\ins{a}lignment (Case 1)}\label{Xsec26-7.3.1}
+\subsubsection{Multimodal alignment (Case 1)}\label{Xsec26-7.3.1}
 Case 1 illustrates the challenge of aligning information from different modalities. The problem provides the vertex $V(1,-2)$ in the diagram and a passing point $P(3,2)$ in the text description. Traditional methods like Yu-Relation fail here because their representation schema is rigid, treating points merely as isolated coordinates without semantic roles. While GPT-4V successfully recognized the pattern, MultiMath-7B failed due to a calculation error in the final step, a common pitfall in end-to-end neural models. In contrast, UDfSolver demonstrated robust multimodal alignment. The URM explicitly categorized $V$ as a \textit{Vertex} object within the quadratic function schema. This triggered the specific "Vertex Form" meta-model ($y=a(x-h)^2+k$), which is structurally more efficient than the general form, thereby simplifying the subsequent symbolic computation and guaranteeing the correct solution.
 
-\subsubsection{Cross-type \del{I}\ins{i}nference (Case 2)}\label{Xsec27-7.3.2}
+\subsubsection{Cross-type inference (Case 2)}\label{Xsec27-7.3.2}
 Case 2 examines the system's ability to handle interactions between heterogeneous function types--specifically, the intersection of a quadratic function and a linear function. This case highlights the limitations of specialized solvers like Yu-Relation, which lacks the ontology to represent non-linear objects. Both large language models (GPT-4V and MultiMath-7B) solved this problem correctly, leveraging their broad pre-trained knowledge of algebra. However, UDfSolver achieved the same success through a more explainable mechanism. The DIS activated the relational interaction model ($\Lambda_3$), which constructs a joint equation system regardless of the underlying function types. This modularity ensures that the correct intersection logic is consistently applied, whether the functions are linear-linear, linear-quadratic, or other combinations.\looseness1
 
-\subsubsection{Property \del{C}\ins{c}onstraint \del{R}\ins{r}easoning (Case 3)}\label{Xsec28-7.3.3}
+\subsubsection{Property constraint reasoning (Case 3)}\label{Xsec28-7.3.3}
 Case 3 presents the most significant challenge: reasoning about property constraints involving parameters. The task is to determine values for $m$ and $n$ such that $y=(m+1)x^{2-|m|}+n-4$ becomes a linear function. This requires rigorous adherence to mathematical definitions, specifically the non-zero coefficient constraint ($m+1 \neq 0$). As shown in \linkref[Table]{\ref{tab:case_study}}, both GPT-4V and MultiMath-7B failed this test. GPT-4V correctly identified the degree constraint ($2-|m|=1$) but neglected the coefficient constraint, leading to an extraneous solution ($m=-1$). MultiMath-7B hallucinated an unnecessary constraint on the constant term ($n=4$), restricting the solution space incorrectly. UDfSolver, however, successfully avoided these traps. Its knowledge base encodes the strict definition of function types as logical rules. When the "Linear Function" target was identified, the system automatically enforced both necessary conditions--exponent equality and non-zero coefficient--demonstrating the superiority of symbolic constraints over probabilistic generation in tasks requiring rigorous logic.\looseness1
 
-\subsection{Component \del{A}\ins{a}blation \del{S}\ins{s}tudy}\label{Xsec29-7.4}
+\subsection{Component ablation study}\label{Xsec29-7.4}
 \label{sec:component_analysis}
 To quantify the impact of each UDfSolver module, we conducted a component-level evaluation on the TDF2K dataset. To ensure a fair comparison across all six function types, all configurations utilize our proposed perception modules ($\mathrm{S^{2}F}$ and $\mathrm{F^2}$) to extract relations. As summarized in \linkref[Table]{\ref{tab:ablation}}, removing either the URM or the DIS results in a substantial degradation in overall accuracy.\looseness1
 
@@ -771,7 +771,7 @@ To quantify the impact of each UDfSolver module, we conducted a component-level 
 \end{tabnote}
 \end{table}
 
-\subsection{Difficulty \del{S}\ins{s}tratification \del{A}\ins{a}nalysis}\label{Xsec30-7.5}
+\subsection{Difficulty stratification analysis}\label{Xsec30-7.5}
 \label{sec:difficulty_stratification}
 
 To fully characterize the robustness of the proposed method across varying complexity levels, we conducted a difficulty stratification analysis on the TDF2K dataset. For difficulty classification, we use an objective, LLM-as-a-Judge metric. Specifically, three MLLMs were prompted to independently assess the complexity of each problem and directly classify it as either ``easy'' or ``hard''. The final difficulty label was then determined via a majority voting mechanism.
@@ -795,7 +795,7 @@ MultiMath-7B & 84.8 & 25.4 & $\downarrow$ 59.4 \\
 \end{tabnote}
 \end{table}
 
-\subsection{Performance and \del{E}\ins{e}rror \del{A}\ins{a}nalysis}\label{Xsec31-7.6}
+\subsection{Performance and error analysis}\label{Xsec31-7.6}
 \label{sec:error_analysis}
 
 As previously mentioned, the actual input to UDfSolver and problem understanding module is assumed to be vector-version diagram, and the transition from image version to vector version is handled by existing diagram parsing tools. Therefore, to quantitatively isolate the solving ability of the UDfSolver from upstream diagram parsing errors, we conducted a ground truth analysis on a manually annotated subset of 360 representative cases from the TDF2K dataset.  Specifically, we compared the performance under two testing scenarios. In the first scenario, the input is raw image version diagram. UDfSolver processes it through the automated parsing pipeline. In the second scenario, UDfSolver is directly inputted with accurately annotated vector-version diagram and structured text tokens. Under this ground truth setting, the UDfSolver achieved accuracy of 87.2\%, compared to the original accuracy of 75.0\% on the same subset, as shown in \linkref[Table]{\ref{tab:oracle_analysis}}. This contrast demonstrates that the current performance bottleneck lies partially in the multimodal parsing process, rather than the symbolic reasoning process.
@@ -833,7 +833,7 @@ UDfSolver & 75.0\% & -- \\
 \section{Discussion}\label{Xsec32-8}
 \label{sec:discussion}
 
-\subsection{Evaluation \del{C}\ins{c}riteria for UDfSolver in \del{E}\ins{e}ducation}\label{Xsec33-8.1}
+\subsection{Evaluation criteria for UDfSolver in education}\label{Xsec33-8.1}
 
 While end-to-end accuracy is the conventional metric for evaluating solving ability, intelligent problem solvers intended for education require broader evaluation criteria. It is necessary to explicitly state that the proposed UDfSolver focuses on the algorithmic framework for solving middle-school TDF problems, rather than directly evaluating student comprehension or pedagogical effectiveness. However, as this algorithm aims to provide the core technological engine for educational services, it possesses potential for teaching applications. Therefore, drawing inspiration from existing criteria for educational knowledge models \citep{nguyen2018criteria, nawaz2024ai}, we propose the evaluation criteria for mathematical problem solving system to assess and validate their potential effectiveness in educational scenarios.
 
@@ -860,7 +860,7 @@ Regarding the manual expert effort associated with constructing these rule libra
 
 Fundamentally, discovering implicit problem-solving patterns from mathematical problems conceptually aligns with the broader field of knowledge mining. However, while the macro-level goals are similar, applying advanced mining algorithms to our symbolic framework would require significant future research, particularly in defining exactly what mathematical patterns to look for and how to guide the artificial intelligence models effectively. A notable distinction between mathematical problem-solving pattern extraction and conventional knowledge mining is that the latter often focuses on high-frequency co-occurrence patterns. In contrast, certain mathematical patterns may appear with extremely low frequency yet play a decisive, critical role in solving specific classes of problems. Enabling models to capture these low-frequency but highly critical patterns poses a major challenge. Addressing this challenge represents a key focus for our future research, as we explore ways to realize the aforementioned neuro-symbolic integration.
 
-\section{Conclusions and \del{F}\ins{f}uture \del{W}\ins{w}ork}\label{Xsec36-9}
+\section{Conclusions and future work}\label{Xsec36-9}
 \label{sec:conlusions}
 
 This paper has introduced UDfSolver, a knowledge-driven system that effectively addresses the long-standing challenge of solving diverse Text-Diagram Function (TDF) problems. Our core contribution is a novel architecture that achieves two key innovations: (1) a uniform representation model (URM) that abstracts multimodal inputs into a standardized domain ontology, overcoming the knowledge fragmentation of prior methods; and (2) a decoupled inference strategy that separates procedural execution from domain-specific knowledge while maintaining a unified inference framework.
