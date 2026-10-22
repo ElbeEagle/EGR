@@ -1,0 +1,23 @@
++---------------------------------------------------------------------------------------------------+
+|  Stage 1: Initialization      |        Stage 2: Iterative State-Transform Loop          | Stage 3 |
+|                               |                                                         |         |
+|                +-----------> [ Abstract Layer S_t^abs (Binary Vector b_t) ]             |         |
+|                |                   ^                               |                    |         |
+|                |                   | \phi(S_t^sym, g)              v                    |         |
+| [Problem Input]|             (Abstraction)               [ Pattern Selector ]           |         |
+|   x = (F, g)   |                   |                        p_\theta(P_i|b_t)           |         |
+|       |        |                   |                               |                    |         |
+|       v        |               Dual-Layer                    Top-k Candidates C_t       |         |
+| [Rep. Constr.] |               State S_t                           |                    |         |
+|       |        |                   |          [ RP Pool \Lambda ]  |                    |         |
+|       |        |                   |          <I_i, G_i, A_i, W_i> |                    |         |
+|       |        |                   |          (G2A/A2G/G2G/A2A)    v                    |         |
+|       |        |                   |                    [ Pattern Applicator ]          |         |
+|       |        |                   v                     Bind -> Check G_i ->           |         |
+|       +--------+-----------> [ Symbolic Layer S_t^sym ]  Exec A_i -> Write W_i          |         |
+|                               (Objects, Relations,                 |                    |         |
+|                                Constraints)  <--- Update S_{t+1} --+                    |         |
+|                                    |                                                    |         |
+|                                    +------------> < Answer-Ready? > --- (Yes: S_T) ---> [Extract] |
+|                                                                                         (\hat{a}) |
++---------------------------------------------------------------------------------------------------+
