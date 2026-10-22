@@ -141,3 +141,7 @@ ID4795已接入复合中点、弦身份与匿名无序端点对；独立Line的E
 RM46动作模式为 `derive_point_difference_chord`，绑定同一curve、equation_id、line、relation_id。只接受RM5/6已提交参数／轴向及RM54同对端点和；缺少前提不自动补算。公共操作按带符号系数和判别式检查两个不同实交点，不复用椭圆内点判断。弦级midpoint_q与intersection_discriminant保存资格结果，查询仅读取已提交方程。
 
 1801／4359固定链得到x−y−3=0，3119无实弦拒绝，不计为原题已解。范围与接口见[规格42](../docs/开发规格/42_RM46双曲线点差与实弦资格.md)；未接自主选择器。
+
+## 下一小批：RM41数值根和积
+
+`scripts/audit/vieta_batch_selection.py`为新增选型审查工具：audit保存6题原始输入及现有链结果；independent_length仅用于独立求交核验。3057得到√15、6347得到8，当前执行仍是RM78→RM42→RM43→RM50。下一批RM41一次输出同对和积及资格，复用既有状态和RM50；RM41尚未接入。见[规格43](../docs/开发规格/43_RM41有限案例选型与输出契约.md)。

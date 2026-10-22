@@ -186,3 +186,7 @@ RM54可在标准模型之前执行；RM45需要标准模型及同对坐标和。
 RM46动作模式为 `derive_point_difference_chord`，绑定同一curve、equation_id、line、relation_id。只接受RM5/6已提交参数／轴向及RM54同对端点和；缺少前提不自动补算。公共操作按带符号系数和判别式检查两个不同实交点，不复用椭圆内点判断。弦级midpoint_q与intersection_discriminant保存资格结果，查询仅读取已提交方程。
 
 1801／4359固定链得到x−y−3=0，3119无实弦拒绝，不计为原题已解。范围与接口见[规格42](../docs/开发规格/42_RM46双曲线点差与实弦资格.md)；未接自主选择器。
+
+## RM41下一批契约（尚未实现）
+
+拟用`derive_root_relations`读取同一IntersectionReduction，一次提出root_sum、root_product、discriminant、distinct_real_roots，复用RM42/43属性键与公共计算；由应用器原子提交。首版限数值二次式，RM50仍独立要求两个不同实根；查询不扩展否定答案。此处为规划，当前不存在该绑定入口，见[规格43](../docs/开发规格/43_RM41有限案例选型与输出契约.md)。

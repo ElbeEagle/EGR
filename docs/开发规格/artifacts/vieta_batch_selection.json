@@ -1,0 +1,128 @@
+{
+  "stage": "selection_audit_only",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "proposed_chain": [
+    78,
+    41,
+    50
+  ],
+  "cases": [
+    {
+      "id": 3057,
+      "scope": "first_new_case",
+      "text": "抛物线$y^{2}=12 x$截直线$y=2 x+1$所得弦长等于?",
+      "facts": "G: Parabola;H: Line;Expression(G) = (y^2 = 12*x);Expression(H) = (y = 2*x + 1)",
+      "query": "Length(InterceptChord(H,G))",
+      "weak_models": [
+        7,
+        72,
+        42,
+        51
+      ],
+      "existing_chain_status": "solved",
+      "diagnostic": "",
+      "answer": "sqrt(15)",
+      "executed_models": [
+        78,
+        42,
+        43,
+        50
+      ],
+      "independent_length": "sqrt(15)"
+    },
+    {
+      "id": 6347,
+      "scope": "regression",
+      "text": "直线$y=x-1$被抛物线$y^{2}=4 x$截得线段长是?",
+      "facts": "G: Parabola;H: Line;Expression(G) = (y^2 = 4*x);Expression(H) = (y = x - 1)",
+      "query": "Length(InterceptChord(H, G))",
+      "weak_models": [
+        7,
+        78,
+        42,
+        51
+      ],
+      "existing_chain_status": "solved",
+      "diagnostic": "",
+      "answer": "8",
+      "executed_models": [
+        78,
+        42,
+        43,
+        50
+      ],
+      "independent_length": "8"
+    },
+    {
+      "id": 1827,
+      "scope": "defer_midpoint_output",
+      "text": "若直线$y=x+1$与抛物线$x^{2}=2 y$相交于$A$ , $B$两点，则线段$AB$的中点坐标是?",
+      "facts": "A: Point;B: Point;G: Parabola;H: Line;Expression(G) = (x^2 = 2*y);Expression(H) = (y = x + 1);Intersection(H, G) = {A, B}",
+      "query": "Coordinate(MidPoint(LineSegmentOf(A, B)))",
+      "weak_models": [
+        7,
+        72,
+        41,
+        54
+      ],
+      "existing_chain_status": "failed",
+      "diagnostic": "Unsupported or undeclared query target",
+      "answer": null,
+      "executed_models": []
+    },
+    {
+      "id": 1010,
+      "scope": "defer_ellipse_elimination",
+      "text": "已知椭圆$x^{2}+\\frac{y^{2}}{2}=1$，则椭圆截直线$y=2 x-1$所得的弦长为?",
+      "facts": "G: Ellipse;H: Line;Expression(G) = (x^2 + y^2/2 = 1);Expression(H) = (y = 2*x - 1)",
+      "query": "Length(InterceptChord(H,G))",
+      "weak_models": [
+        3,
+        72,
+        78,
+        41,
+        42,
+        51
+      ],
+      "existing_chain_status": "failed",
+      "diagnostic": "Unsupported or undeclared query target",
+      "answer": null,
+      "executed_models": []
+    },
+    {
+      "id": 1249,
+      "scope": "defer_hyperbola_elimination",
+      "text": "求双曲线$x^{2}-\\frac{y^{2}}{4}=1$被直线$y=x+1$截得的弦长?",
+      "facts": "G: Hyperbola;H: Line;Expression(G) = (x^2 - y^2/4 = 1);Expression(H) = (y = x + 1)",
+      "query": "Length(InterceptChord(H, G))",
+      "weak_models": [
+        5,
+        72,
+        78,
+        41,
+        42,
+        51
+      ],
+      "existing_chain_status": "failed",
+      "diagnostic": "Unsupported or undeclared query target",
+      "answer": null,
+      "executed_models": []
+    },
+    {
+      "id": 813,
+      "scope": "defer_generic_curve_type",
+      "text": "直线$y=x+\\frac{3}{2}$被曲线$y=\\frac{1}{2} x^{2}$截得的线段长为?",
+      "facts": "G: Line;Expression(G) = (y = x + 3/2);H: Curve;Expression(H) = (y = (1/2)*x^2)",
+      "query": "Length(InterceptChord(G, H))",
+      "weak_models": [
+        41,
+        53,
+        51
+      ],
+      "existing_chain_status": "failed",
+      "diagnostic": "Unsupported or undeclared query target",
+      "answer": null,
+      "executed_models": []
+    }
+  ]
+}
