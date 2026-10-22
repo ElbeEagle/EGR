@@ -1,4 +1,4 @@
-"""Declared segment midpoint aliases and immutable input-coordinate snapshots."""
+"""Segment and named-endpoint midpoint aliases and immutable input-coordinate snapshots."""
 from dataclasses import dataclass, replace
 import re
 import sympy as sp
@@ -9,29 +9,49 @@ from src.solver.transition_primitives import TransitionError
 @dataclass(frozen=True)
 class ChordMidpointAlias:
     chord_id: str
-    segment: str
+    segment: str | None
     point: str
     sources: tuple[str, ...]
     coordinate_id: str | None = None
     xy: tuple[sp.Expr, sp.Expr] | None = None
+    pair_id: str | None = None
+    endpoints: tuple[str, str] | None = None
 
 
 def collect_midpoint_aliases(state, parts):
     consumed = set()
     for i,text in enumerate(parts):
         match = re.fullmatch(r'MidPoint\(\s*([A-Za-z]\w*)\s*\)\s*=\s*([A-Za-z]\w*)',text)
-        if not match:
-            continue
-        segment,point = match.groups()
-        relation = state.segment_chords.get(segment)
-        if relation is None or state.entities.get(point)!='Point':
-            raise ValueError('Midpoint alias requires a segment chord and declared Point')
-        key = f'@chord:{relation.line}:{relation.curve}'
+        pair_id = None
+        endpoints = None
+        if match:
+            segment,point = match.groups()
+            relation = state.segment_chords.get(segment)
+            if relation is None:
+                raise ValueError('Midpoint alias requires a segment chord')
+            key = f'@chord:{relation.line}:{relation.curve}'
+        else:
+            named = re.fullmatch(r'MidPoint\(\s*LineSegmentOf\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\s*\)\s*=\s*([A-Za-z]\w*)',text)
+            if not named:
+                continue
+            a,b,point = named.groups()
+            endpoints = tuple(sorted((a,b)))
+            if a==b or point in endpoints:
+                raise ValueError('Midpoint must differ from two distinct chord endpoints')
+            matches = [c for c in state.chords.values()
+                       if c.pair_id in state.chord_endpoint_names
+                       and state.chord_endpoint_names[c.pair_id].points==endpoints]
+            if len(matches)!=1:
+                raise ValueError('Midpoint alias requires unique named endpoint chord')
+            key,pair_id = matches[0].chord_id,matches[0].pair_id
+            segment = None
+        if state.entities.get(point)!='Point':
+            raise ValueError('Midpoint alias requires declared Point')
         old = state.midpoint_aliases.get(key)
-        if old and old.point!=point:
+        if old and (old.point!=point or old.segment!=segment or old.pair_id!=pair_id or old.endpoints!=endpoints):
             raise ValueError('Conflicting midpoint aliases for one chord')
         sources = (*old.sources,f'f{i}') if old else (f'f{i}',)
-        state.midpoint_aliases[key] = ChordMidpointAlias(key,segment,point,sources)
+        state.midpoint_aliases[key] = ChordMidpointAlias(key,segment,point,sources, pair_id=pair_id,endpoints=endpoints)
         consumed.add(i)
     return consumed
 
@@ -61,11 +81,20 @@ def check_midpoint_alias(state, chord):
         if midpoint and midpoint.alias_point is not None:
             raise TransitionError('inapplicable','Missing midpoint alias record')
         return
-    relation = state.segment_chords.get(alias.segment)
-    if (alias.chord_id!=chord.chord_id or relation is None
-            or (relation.line,relation.curve)!=(chord.line,chord.curve)
-            or state.entities.get(alias.point)!='Point' or not alias.sources):
+    if alias.chord_id!=chord.chord_id or state.entities.get(alias.point)!='Point' or not alias.sources:
         raise TransitionError('inapplicable','Mismatched midpoint alias binding')
+    if alias.segment is not None:
+        relation = state.segment_chords.get(alias.segment)
+        if (relation is None or (relation.line,relation.curve)!=(chord.line,chord.curve)
+                or alias.pair_id is not None or alias.endpoints is not None):
+            raise TransitionError('inapplicable','Mismatched segment midpoint alias')
+    else:
+        names = state.chord_endpoint_names.get(chord.pair_id)
+        if (names is None or alias.pair_id!=chord.pair_id or names.pair_id!=chord.pair_id
+                or alias.endpoints!=names.points or len(set(names.points))!=2
+                or alias.point in names.points
+                or any(state.entities.get(p)!='Point' for p in names.points)):
+            raise TransitionError('inapplicable','Mismatched named endpoint midpoint alias')
     coordinate = state.coordinates.get(alias.point)
     if coordinate is None:
         raise TransitionError('inapplicable','Missing midpoint coordinate')

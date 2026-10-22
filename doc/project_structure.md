@@ -121,4 +121,10 @@ ID4795已接入复合中点、弦身份与匿名无序端点对；独立Line的E
 
 `src/state/transition_state.py`新增midpoint_aliases容器和前后解析入口；`src/state/chord_facts.py`扩展ChordMidpoint.alias_point，标记来源点；`src/theorems/midpoint_proposals.py`在绑定阶段执行检查，沿用原计算／提案／提交。缺坐标不可应用、符号坐标未定、过期或矛盾快照拒绝；查询保持只读。
 
-见[规格40](../docs/开发规格/40_线段命名中点别名实现.md)。命名端点中点别名2290／4761仍待实现；RM46实弦资格仅有[设计契约](../docs/开发规格/39_命名中点别名与RM46资格审查.md)，未接运行时。未接自主选择器。
+见[规格40](../docs/开发规格/40_线段命名中点别名实现.md)。命名端点中点别名2290／4761已实现（见下节）；RM46实弦资格仅有[设计契约](../docs/开发规格/39_命名中点别名与RM46资格审查.md)，未接运行时。未接自主选择器。
+
+## 命名端点中点别名（2290／4761）
+
+`src/state/midpoint_alias_facts.py`扩展既有ChordMidpointAlias：声明线段用segment，命名端点用segment=None、pair_id和无序endpoints快照；collect_midpoint_aliases接受MidPoint(LineSegmentOf(A,B))=M并关联唯一弦，check_midpoint_alias重新核验点对与弦身份。原坐标快照解析／检查、RM40／54／45提案、应用器及只读查询复用。
+
+两题已完成两条独立固定链；2290用RM4得9x+4y−13=0，4761用RM3得x+2y−2=0。反序／重排支持，缺坐标不可应用、符号未定、错绑／过期快照拒绝。仍不支持RM46与自主选择，详见[规格41](../docs/开发规格/41_命名端点中点别名实现.md)。
