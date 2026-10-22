@@ -26,6 +26,7 @@ class ChordMidpoint:
     chord_id: str
     xy: tuple[sp.Expr, sp.Expr]
     sources: tuple[str, ...]
+    alias_point: str | None = None
 
 
 def parse_chord_midpoint(state, text: str, fact_id: str) -> bool:

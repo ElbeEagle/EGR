@@ -754,3 +754,17 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/39_命名中点别名与RM46资格审查.md`（新增）→ 规定弦身份、别名声明、点坐标的来源关联、解析顺序、冲突和快照复查；单列RM46有限实弦资格。三份维护文档与导航／索引同步未实现边界。
 - **效果／验证**：2227／2324／3337／2290／4761独立核验与答案一致；7300原文和事实支持3x+4y−7=0，与答案不同，保留隔离。双曲线6类边界通过，1801有实弦、3119无实弦。未修改运行时或数据，不更新历史648项回归统计。
 - **下一步**：仅实现三个线段命名中点别名案例及来源链核验；命名端点中点别名和RM46另批。
+
+
+## 2026-10-22｜线段命名中点别名首批实现
+
+- **开发记录**：[docs/开发规格/40_线段命名中点别名实现.md](docs/开发规格/40_线段命名中点别名实现.md)
+- `src/state/midpoint_alias_facts.py`（新增）→ 别名关联与快照检查。ChordMidpointAlias保存chord_id、segment、point、声明sources及coordinate_id／xy快照。collect_midpoint_aliases收集线段别名；resolve_midpoint_aliases在原事实解析后只关联已给数值；check_midpoint_alias在绑定时核对当前记录，过期返回conflict、缺失不可应用、符号未定，均不补推坐标。
+- `src/state/chord_facts.py` → 既有中点记录。扩展ChordMidpoint的可选alias_point字段，标明值来自哪个命名点，供绑定时检测别名丢失；不是新增坐标对象。
+- `src/state/transition_state.py` → 状态与解析编排。新增midpoint_aliases容器，from_facts先收集别名、末尾解析坐标关联，复用PointCoordinates、弦／匿名对及只读查询。
+- `src/theorems/midpoint_proposals.py` → 模型绑定。check_midpoint_binding在读取中点前调用别名快照检查；RM40／54／45计算、提案和原应用器提交不变，读取已有来源并集。
+- `tests/test_bound_midpoint_alias.py`（新增）→ 48项测试，覆盖三题两链、来源、重排、缺／符号坐标、冲突、共享点隔离和三模型快照篡改回滚。
+- `tests/test_bound_segment_chord.py` → 移除已过时的“命名中点必须拒绝”用例，其成功行为由新测试覆盖；其他拒绝边界保留。
+
+- **效果／验证**：2227使用RM4，2324／3337使用RM3；两条独立链分别得到2x+y−3=0、5x+9y−14=0、x+2y−2=0。新增48项、线段相关69项、相关回归695项通过，保存三个初态及六条轨迹，维护文档和导航同步。
+- **边界／下一步**：仅数值线段中点别名，缺坐标不可应用、符号未定、过期快照不自动刷新。下一批命名端点中点别名2290／4761，RM46另批；查询仍只读，未接自主选择器。

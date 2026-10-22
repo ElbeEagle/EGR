@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .midpoint_alias_facts import ChordMidpointAlias, collect_midpoint_aliases, resolve_midpoint_aliases
 from .segment_chord_facts import SegmentChord, collect_segment_chords
 from .chord_facts import ChordIdentity, AnonymousEndpointPair, ChordMidpoint, parse_chord_midpoint, ChordEndpointNames, collect_named_chords
 
@@ -174,6 +175,7 @@ class TransitionState:
     named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
+    midpoint_aliases: dict[str, ChordMidpointAlias] = field(default_factory=dict)
     segment_chords: dict[str, SegmentChord] = field(default_factory=dict)
     chord_endpoint_names: dict[str, ChordEndpointNames] = field(default_factory=dict)
     chords: dict[str, ChordIdentity] = field(default_factory=dict)
@@ -258,6 +260,7 @@ class TransitionState:
             state.query = NamedLineQuery(register_named_line(state, *named_line_query.groups(), 'query'))
         chord_parts = collect_named_chords(state, parts)
         chord_parts |= collect_segment_chords(state, parts)
+        chord_parts |= collect_midpoint_aliases(state, parts)
         if overlap_query:
             relation = state.segment_chords.get(overlap_query.group(1))
             if relation is None:
@@ -373,6 +376,7 @@ class TransitionState:
                 guards = guards_l + guards_r
             for i, guard in enumerate(guards):
                 state.constraints[f'{fact_id}:domain:{i}'] = guard
+        resolve_midpoint_aliases(state)
         validate_coordinate_product_input(state)
         return state
 

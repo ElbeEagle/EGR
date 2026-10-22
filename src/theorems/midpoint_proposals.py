@@ -3,6 +3,7 @@ import sympy as sp
 from src.solver.transition_primitives import TransitionError
 from src.solver.midpoint_operations import ellipse_midpoint_chord, canonical_numeric_line, midpoint_coordinate_sums, ellipse_point_difference, verify_chord_endpoints
 from src.state.transition_state import EquationFact
+from src.state.midpoint_alias_facts import check_midpoint_alias
 from .bound_application import Proposal, bound_parameters, bound_axis
 
 
@@ -15,6 +16,7 @@ def check_midpoint_binding(state, action):
             or any(v is not None for v in (action.line_equation_id,action.point,action.coordinate_id,
                 action.peer_curve,action.peer_equation_id,action.point_role,action.incidence_id,action.slope_sum_id))):
         raise TransitionError('inapplicable','Chord midpoint binding mismatch')
+    check_midpoint_alias(state, chord)
     midpoint = state.chord_midpoints.get(chord.chord_id)
     pair = state.chord_endpoint_pairs.get(chord.pair_id)
     if (midpoint is None or midpoint.chord_id!=chord.chord_id or pair is None
