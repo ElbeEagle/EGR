@@ -187,6 +187,8 @@ RM46动作模式为 `derive_point_difference_chord`，绑定同一curve、equati
 
 1801／4359固定链得到x−y−3=0，3119无实弦拒绝，不计为原题已解。范围与接口见[规格42](../docs/开发规格/42_RM46双曲线点差与实弦资格.md)；未接自主选择器。
 
-## RM41下一批契约（尚未实现）
+## RM41数值联合根关系
 
-拟用`derive_root_relations`读取同一IntersectionReduction，一次提出root_sum、root_product、discriminant、distinct_real_roots，复用RM42/43属性键与公共计算；由应用器原子提交。首版限数值二次式，RM50仍独立要求两个不同实根；查询不扩展否定答案。此处为规划，当前不存在该绑定入口，见[规格43](../docs/开发规格/43_RM41有限案例选型与输出契约.md)。
+`derive_root_relations`绑定已提交IntersectionReduction的曲线、直线、两个方程ID及relation_id。一次提出root_sum、root_product、discriminant、distinct_real_roots，复用RM42/43属性键与公共计算，由应用器原子提交。部分一致属性可补齐，冲突全部回滚。
+
+首版限有限实数系数二次式；重根／非实根可记录代数关系，但RM50仍要求两个不同实根。符号未定，非二次不可应用，查询不输出否定答案。`solve_chord_length_slice(..., joint_roots=True)`启用78→41→50，默认分步链不变。见[规格44](../docs/开发规格/44_RM41数值根关系联合提案.md)。

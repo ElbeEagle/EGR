@@ -144,4 +144,14 @@ RM46动作模式为 `derive_point_difference_chord`，绑定同一curve、equati
 
 ## 下一小批：RM41数值根和积
 
-`scripts/audit/vieta_batch_selection.py`为新增选型审查工具：audit保存6题原始输入及现有链结果；independent_length仅用于独立求交核验。3057得到√15、6347得到8，当前执行仍是RM78→RM42→RM43→RM50。下一批RM41一次输出同对和积及资格，复用既有状态和RM50；RM41尚未接入。见[规格43](../docs/开发规格/43_RM41有限案例选型与输出契约.md)。
+`scripts/audit/vieta_batch_selection.py`为新增选型审查工具：audit保存6题原始输入及现有链结果；independent_length仅用于独立求交核验。3057得到√15、6347得到8，当前执行仍是RM78→RM42→RM43→RM50。RM41现已接入，最新实现见下节。见[规格43](../docs/开发规格/43_RM41有限案例选型与输出契约.md)。
+
+## RM41联合根关系（有限实现）
+
+- `src/theorems/intersection_proposals.py` → 根关系模型提案。新增derive_root_relations，读取已绑定消元记录，复用韦达和实根分类计算，一次提出root_sum、root_product、discriminant、distinct_real_roots；不直接修改状态。
+- `src/theorems/models/model_041.py` → RM41入口。新增propose_bound，转交联合提案；旧apply保留。
+- `src/theorems/bound_application.py` → 绑定、候选与提交编排。扩展check_binding和enumerate_actions支持RM41，按同一曲线、直线、方程及消元记录绑定；原应用器继续负责原子提交、幂等及冲突回滚。
+- `src/reasoning/bound_slice.py` → 固定链诊断。扩展solve_chord_length_slice的joint_roots选项，选择78→41→50，默认仍为78→42→43→50；CLI新增joint-root-chord。查询继续只读。
+- `tests/test_bound_joint_roots.py`（新增）→ 联合提案验证。覆盖两题等价性、来源、重复执行、部分属性补齐、冲突原子性、错绑／多直线隔离及重根、非实根、退化和符号拒绝。
+
+3057／6347固定78→41→50分别得√15／8；仍保留分步链。未接自主选择器，范围见[规格44](../docs/开发规格/44_RM41数值根关系联合提案.md)。

@@ -214,3 +214,7 @@ class VietaTheorem(TheoremModel):
             
             state.geometric_relations.append(f"韦达定理: {var}₁ + {var}₂ = {sum_expr}")
             state.geometric_relations.append(f"韦达定理: {var}₁ · {var}₂ = {prod_expr}")
+
+    def propose_bound(self, state, action):
+        from ..intersection_proposals import derive_root_relations
+        return derive_root_relations(state, action)

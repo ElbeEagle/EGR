@@ -54,6 +54,28 @@ def derive_root_relation(state, action):
                                  'distinct_real_roots': status.distinct_real_roots}])
 
 
+def derive_root_relations(state, action):
+    """Propose both numeric quadratic relations and real-root qualification atomically."""
+    import sympy as sp
+    from src.solver.intersection_operations import quadratic_root_relation, classify_quadratic_roots
+    fact = check_binding(state, action)
+    if action.mode != 'derive_root_relations':
+        raise TransitionError('inapplicable', 'Unsupported joint root relation mode')
+    # No allowed symbolic parameters: RM41's first mode is strictly numeric.
+    total = quadratic_root_relation(fact.polynomial, fact.variable, 'sum')
+    product = quadratic_root_relation(fact.polynomial, fact.variable, 'product')
+    status = classify_quadratic_roots(fact.polynomial, fact.variable)
+    return Proposal(properties={(fact.fact_id, 'root_sum'): total,
+                                (fact.fact_id, 'root_product'): product,
+                                (fact.fact_id, 'discriminant'): status.discriminant,
+                                (fact.fact_id, 'distinct_real_roots'): sp.Integer(status.distinct_real_roots)},
+                    read_facts=(fact.fact_id,),
+                    operations=[{'operation': 'vieta_sum', 'variable': fact.variable, 'value': total},
+                                {'operation': 'vieta_product', 'variable': fact.variable, 'value': product},
+                                {'operation': 'classify_real_roots', 'discriminant': status.discriminant,
+                                 'distinct_real_roots': status.distinct_real_roots}])
+
+
 def derive_chord_length(state, action):
     import sympy as sp
     from src.solver.intersection_operations import quadratic_coefficients, chord_length_from_relations

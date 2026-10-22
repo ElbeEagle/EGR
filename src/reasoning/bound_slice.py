@@ -362,7 +362,7 @@ def solve_parabola_tangent_slice(facts: str, query: str) -> SliceResult:
     return SliceResult(failure.status, state, [failure], failure.diagnostic)
 
 
-def solve_chord_length_slice(facts: str, query: str) -> SliceResult:
+def solve_chord_length_slice(facts: str, query: str, *, joint_roots: bool = False) -> SliceResult:
     try:
         state = TransitionState.from_facts(facts, query)
     except (ValueError, SyntaxError) as exc:
@@ -375,8 +375,10 @@ def solve_chord_length_slice(facts: str, query: str) -> SliceResult:
         return SliceResult('undetermined', state, diagnostic='Requires a unique curve/line equation pair')
     first = actions[0]
     key = f'derived:intersection:{first.equation_id}:{first.line_equation_id}'
+    root_steps = ((41, 'derive_root_relations'),) if joint_roots else (
+        (42, 'derive_root_sum'), (43, 'derive_root_product'))
     following = [replace(first, model_id=mid, mode=mode, relation_id=key) for mid, mode in
-                 ((42, 'derive_root_sum'), (43, 'derive_root_product'), (50, 'derive_chord_length'))]
+                 (*root_steps, (50, 'derive_chord_length'))]
     return replay_actions(state, [first, *following])
 
 
@@ -498,7 +500,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot', 'symbolic-focal-product', 'ellipse-tangent', 'midpoint-chord', 'point-difference', 'hyperbola-chord'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot', 'symbolic-focal-product', 'ellipse-tangent', 'midpoint-chord', 'point-difference', 'hyperbola-chord', 'joint-root-chord'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -512,6 +514,7 @@ if __name__ == '__main__':
              'eccentricity': solve_eccentricity_slice,
              'parabola-tangent': solve_parabola_tangent_slice,
              'chord-length': solve_chord_length_slice,
+             'joint-root-chord': lambda facts, query: solve_chord_length_slice(facts, query, joint_roots=True),
              'named-slope': solve_named_slope_slice,
              'focal-chord': solve_focal_chord_slice, 'origin-dot': solve_origin_dot_slice, 'symbolic-focal-product': solve_symbolic_focal_product_slice, 'ellipse-tangent': solve_ellipse_tangent_slice, 'midpoint-chord': solve_midpoint_chord_slice, 'point-difference': solve_point_difference_slice, 'hyperbola-chord': solve_hyperbola_chord_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
@@ -525,7 +528,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v16' if args.mode == 'hyperbola-chord' else 'bound-slice-v15' if args.mode == 'point-difference' else 'bound-slice-v14' if args.mode == 'midpoint-chord' else 'bound-slice-v13' if args.mode == 'ellipse-tangent' else 'bound-slice-v12' if args.mode == 'symbolic-focal-product' else 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v17' if args.mode == 'joint-root-chord' else 'bound-slice-v16' if args.mode == 'hyperbola-chord' else 'bound-slice-v15' if args.mode == 'point-difference' else 'bound-slice-v14' if args.mode == 'midpoint-chord' else 'bound-slice-v13' if args.mode == 'ellipse-tangent' else 'bound-slice-v12' if args.mode == 'symbolic-focal-product' else 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

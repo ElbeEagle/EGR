@@ -802,3 +802,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/vieta_batch_selection.json`（新增）→ 保存数据哈希、原始事实／查询、实际执行模型与结果；明确是选型证据，不是RM41轨迹。
 - **效果／验证**：审查命令通过，现有78→42→43→50分别得到√15、8，与独立计算一致。选定下一批78→41→50；其余4题因中点查询或曲线类型扩展后置。规格、实现地图、API规划与导航索引同步。
 - **边界／下一步**：运行时未改，757项是上一批结果，不作本批新回归。下一批实现RM41数值二次和积原子提案与边界测试；符号模式及否定答案契约后置。
+
+
+## 2026-10-22｜RM41数值根关系联合提案
+
+- **开发记录**：[docs/开发规格/44_RM41数值根关系联合提案.md](docs/开发规格/44_RM41数值根关系联合提案.md)
+- `src/theorems/intersection_proposals.py` → 根关系模型提案。新增derive_root_relations，读取已绑定消元记录，复用韦达和实根分类计算，一次提出root_sum、root_product、discriminant、distinct_real_roots；不直接修改状态。
+- `src/theorems/models/model_041.py` → RM41入口。新增propose_bound，转交联合提案；旧apply保留。
+- `src/theorems/bound_application.py` → 绑定、候选与提交编排。扩展check_binding和enumerate_actions支持RM41，按同一曲线、直线、方程及消元记录绑定；原应用器继续负责原子提交、幂等及冲突回滚。
+- `src/reasoning/bound_slice.py` → 固定链诊断。扩展solve_chord_length_slice的joint_roots选项，选择78→41→50，默认仍为78→42→43→50；CLI新增joint-root-chord。查询继续只读。
+- `tests/test_bound_joint_roots.py`（新增）→ 联合提案验证。覆盖两题等价性、来源、重复执行、部分属性补齐、冲突原子性、错绑／多直线隔离及重根、非实根、退化和符号拒绝。
+
+- **效果／验证**：3057／6347原题固定78→41→50分别得√15／8，与原分步链一致；新增21项、针对性48项、相关回归778项通过。两题轨迹另存，维护文档及规格导航同步。
+- **边界／下一步**：数值二次模式，重根／非实根仅记录代数关系；符号联合模式和否定答案后置。回到职责表选择有限案例，中点查询需单独制定契约。
