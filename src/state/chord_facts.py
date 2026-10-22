@@ -40,8 +40,8 @@ def parse_chord_midpoint(state, text: str, fact_id: str) -> bool:
 
 def store_chord_midpoint(state, line, curve, xt, yt, fact_id):
     """Store a numeric given midpoint after its object identity is resolved."""
-    if state.entities.get(line) != 'Line' or state.entities.get(curve) != 'Ellipse':
-        raise ValueError('Chord midpoint requires declared Line and Ellipse')
+    if state.entities.get(line) != 'Line' or state.entities.get(curve) not in ('Ellipse','Hyperbola'):
+        raise ValueError('Chord midpoint requires declared Line and Ellipse/Hyperbola')
     values = [parse_expression(t, state.symbols) for t in (xt, yt)]
     if any(any(g is not sp.true for g in guards) or v.free_symbols or v.is_real is not True or v.is_finite is not True for v,guards in values):
         raise ValueError('Chord midpoint currently requires finite numeric coordinates')
@@ -69,7 +69,7 @@ class ChordEndpointNames:
 
 
 def collect_named_chords(state, parts):
-    """Resolve ellipse endpoint names before parsing facts; never assign coordinates."""
+    """Resolve centered-conic endpoint names before parsing facts; never assign coordinates."""
     consumed = set()
     name = r'([A-Za-z]\w*)'
     pattern = rf'Intersection\(\s*{name}\s*,\s*{name}\s*\)\s*=\s*\{{\s*{name}\s*,\s*{name}\s*\}}'
@@ -78,10 +78,10 @@ def collect_named_chords(state, parts):
         if not match:
             continue
         left,right,a,b = match.groups()
-        if 'Ellipse' not in (state.entities.get(left),state.entities.get(right)):
+        if not {'Ellipse','Hyperbola'}.intersection((state.entities.get(left),state.entities.get(right))):
             continue
-        if sorted(state.entities.get(v,'') for v in (left,right)) != ['Ellipse','Line'] or a==b or any(state.entities.get(v)!='Point' for v in (a,b)):
-            raise ValueError('Ellipse intersection requires Line and two declared distinct points')
+        if sorted(state.entities.get(v,'') for v in (left,right)) not in (['Ellipse','Line'],['Hyperbola','Line']) or a==b or any(state.entities.get(v)!='Point' for v in (a,b)):
+            raise ValueError('Conic intersection requires Line and two declared distinct points')
         line,curve = (left,right) if state.entities[left]=='Line' else (right,left)
         key = f'@chord:{line}:{curve}'
         pair = f'{key}:endpoints'
@@ -106,7 +106,7 @@ def collect_named_chords(state, parts):
         matches = [c for c in state.chords.values() if c.pair_id in state.chord_endpoint_names
                    and state.chord_endpoint_names[c.pair_id].points==tuple(sorted((a,b)))]
         if len(matches)!=1:
-            raise ValueError('Named midpoint requires unique ellipse chord association')
+            raise ValueError('Named midpoint requires unique conic chord association')
         chord = matches[0]
         parse_chord_midpoint(state,
             f'Coordinate(MidPoint(InterceptChord({chord.line},{chord.curve})))=({xt},{yt})',f'f{i}')

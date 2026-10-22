@@ -1,17 +1,18 @@
-"""Anonymous midpoint chord proposals for RM40/54/45; no endpoint solving."""
+"""Anonymous midpoint chord proposals for RM40/54/45/46; no endpoint solving."""
 import sympy as sp
 from src.solver.transition_primitives import TransitionError
-from src.solver.midpoint_operations import ellipse_midpoint_chord, canonical_numeric_line, midpoint_coordinate_sums, ellipse_point_difference, verify_chord_endpoints
+from src.solver.midpoint_operations import ellipse_midpoint_chord, canonical_numeric_line, midpoint_coordinate_sums, ellipse_point_difference, verify_chord_endpoints, hyperbola_point_difference
 from src.state.transition_state import EquationFact
 from src.state.midpoint_alias_facts import check_midpoint_alias
 from .bound_application import Proposal, bound_parameters, bound_axis
 
 
 def check_midpoint_binding(state, action):
+    allowed = ('Ellipse','Hyperbola') if action.model_id==54 else (('Hyperbola',) if action.model_id==46 else ('Ellipse',))
     chord = state.chords.get(action.relation_id)
     equation = state.equations.get(action.equation_id)
     if (chord is None or (chord.line,chord.curve)!=(action.line,action.curve)
-            or state.entities.get(action.curve)!='Ellipse' or state.entities.get(action.line)!='Line'
+            or state.entities.get(action.curve) not in allowed or state.entities.get(action.line)!='Line'
             or equation is None or equation.owner!=action.curve or equation.role!='curve'
             or any(v is not None for v in (action.line_equation_id,action.point,action.coordinate_id,
                 action.peer_curve,action.peer_equation_id,action.point_role,action.incidence_id,action.slope_sum_id))):
@@ -69,7 +70,7 @@ def derive_endpoint_sums(state, action):
 def derive_point_difference_chord(state, action):
     chord = check_midpoint_binding(state,action)
     if action.mode != 'derive_point_difference_chord':
-        raise TransitionError('inapplicable','Unsupported RM45 mode')
+        raise TransitionError('inapplicable','Unsupported point-difference mode')
     keys = [(chord.pair_id,k) for k in ('x_sum','y_sum')]
     sources = tuple(f'property:{owner}:{name}' for owner,name in keys)
     if any(k not in state.properties for k in keys):
@@ -82,6 +83,16 @@ def derive_point_difference_chord(state, action):
         raise TransitionError('conflict','Endpoint sums contradict bound midpoint')
     a,b = bound_parameters(state,action.curve,action.equation_id)
     axis = bound_axis(state,action.curve,action.equation_id)
+    if action.model_id==46:
+        alpha,beta = (1/a,-1/b) if axis=='x' else (-1/b,1/a)
+        q,normal,line,quadratic,delta = hyperbola_point_difference(
+            state.symbols['x'],state.symbols['y'],alpha.subs(state.values),beta.subs(state.values),sums)
+        proposal = chord_line_proposal(state,action,chord,q,normal,line,
+            [{'operation':'hyperbola_point_difference','pair':chord.pair_id,'sums':sums,
+              'alpha':alpha,'beta':beta,'q':q,'intersection_coefficients':quadratic,
+              'discriminant':delta,'equation':line}],sources)
+        proposal.properties.update({(chord.chord_id,'intersection_discriminant'):delta})
+        return proposal
     dx,dy = (a,b) if axis=='x' else (b,a)
     rho,normal,line,coefficients = ellipse_point_difference(
         state.symbols['x'],state.symbols['y'],dx.subs(state.values),dy.subs(state.values),sums)
@@ -111,7 +122,7 @@ def chord_line_proposal(state, action, chord, rho, normal, line, operations, ext
     key = f'derived:{chord.chord_id}:line'
     equations = {} if existing else {key:EquationFact(key,chord.line,'line',line,f'RM{action.model_id}')}
     return Proposal(equations=equations,
-        properties={(chord.chord_id,'midpoint_rho'):rho,(chord.chord_id,'normal_x'):normal[0],
+        properties={(chord.chord_id,'midpoint_q' if action.model_id==46 else 'midpoint_rho'):rho,(chord.chord_id,'normal_x'):normal[0],
                     (chord.chord_id,'normal_y'):normal[1],(chord.chord_id,'distinct_real_intersections'):sp.Integer(2)},
         read_facts=(action.equation_id,chord.chord_id,chord.pair_id,*chord.sources,
                     f'frame:{chord.curve}',*(f'property:{chord.curve}:{k}' for k in ('a_sq','b_sq')),

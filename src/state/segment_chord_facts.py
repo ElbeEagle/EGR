@@ -1,4 +1,4 @@
-"""Limited declared-segment ellipse chords; no midpoint aliases or endpoint solving."""
+"""Limited declared-segment ellipse/hyperbola chords; no midpoint aliases or endpoint solving."""
 from dataclasses import dataclass
 import re
 from .chord_facts import ChordIdentity, AnonymousEndpointPair, store_chord_midpoint
@@ -21,8 +21,8 @@ def collect_segment_chords(state, parts):
         if not match:
             continue
         segment,curve = match.groups()
-        if state.entities.get(segment)!='LineSegment' or state.entities.get(curve)!='Ellipse':
-            raise ValueError('Segment chord requires declared LineSegment and Ellipse')
+        if state.entities.get(segment)!='LineSegment' or state.entities.get(curve) not in ('Ellipse','Hyperbola'):
+            raise ValueError('Segment chord requires declared LineSegment and Ellipse/Hyperbola')
         old = state.segment_chords.get(segment)
         if old and old.curve!=curve:
             raise ValueError('Ambiguous segment chord curve')

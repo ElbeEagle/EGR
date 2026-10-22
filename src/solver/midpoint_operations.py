@@ -1,4 +1,4 @@
-"""Numeric centered-ellipse chord direction and affine line normalization."""
+"""Numeric centered-conic chord direction and affine line normalization."""
 import sympy as sp
 from .transition_primitives import TransitionError
 
@@ -69,3 +69,28 @@ def verify_chord_endpoints(curve, line, x, y, midpoint, coordinates):
             raise TransitionError('conflict','Chord endpoints must be distinct')
         if any(sp.simplify((a+b)/2-m)!=0 for a,b,m in zip(first,second,midpoint)):
             raise TransitionError('conflict','Endpoint midpoint contradicts given midpoint')
+
+
+def hyperbola_point_difference(x, y, alpha, beta, sums):
+    """Independent finite real chord qualification for alpha*x² + beta*y² = 1."""
+    if any(v.free_symbols or v.is_real is not True or v.is_finite is not True
+           for v in (alpha,beta,*sums)):
+        raise TransitionError('undetermined','Finite numeric hyperbola coefficients and sums required')
+    if (alpha*beta).is_negative is not True:
+        raise TransitionError('inapplicable','Hyperbola requires opposite coefficient signs')
+    mx,my = (v/2 for v in sums)
+    if mx==0 and my==0:
+        raise TransitionError('undetermined','Center midpoint does not determine a unique direction')
+    q = sp.simplify(alpha*mx**2+beta*my**2)
+    normal = (alpha*mx,beta*my)
+    # X=M+t*(-beta*my,alpha*mx): the linear coefficient vanishes.
+    leading,constant = sp.simplify(alpha*beta*q),sp.simplify(q-1)
+    if leading==0:
+        raise TransitionError('conflict','Noncentral q=0 direction has no intersection')
+    discriminant = sp.simplify(-4*leading*constant)
+    if discriminant==0:
+        raise TransitionError('conflict','Tangent gives a repeated intersection, not a chord')
+    if discriminant.is_positive is not True:
+        raise TransitionError('conflict','Candidate line has no two distinct real intersections')
+    line = canonical_numeric_line(normal[0]*(x-mx)+normal[1]*(y-my),x,y)
+    return q,normal,line,(leading,sp.S.Zero,constant),discriminant

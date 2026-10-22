@@ -779,3 +779,17 @@ Value成功率: 93.0%  ← v1: 90.1%
 
 - **效果／验证**：2290采用RM4、4761采用RM3，两条独立链分别得到9x+4y−13=0和x+2y−2=0。新增37项、相关回归732项通过，保存两初态及四轨迹，同步三份维护文档、导航和索引。
 - **边界／下一步**：数值椭圆唯一点对绑定，符号中点未定，查询不补推；RM46另批按独立实弦资格推进，未接自主选择器。
+
+
+## 2026-10-22｜RM46有限双曲线点差实现
+
+- **开发记录**：[docs/开发规格/42_RM46双曲线点差与实弦资格.md](docs/开发规格/42_RM46双曲线点差与实弦资格.md)
+- `src/state/chord_facts.py`、`src/state/segment_chord_facts.py` → 输入身份关联。扩展既有中点／交点及线段收集函数，允许双曲线，复用弦身份、无序端点对及别名来源，不生成端点坐标。
+- `src/solver/midpoint_operations.py` → 公共计算。新增 `hyperbola_point_difference`，读取带符号系数和端点坐标和，返回方向、直线、代入二次式与判别式；独立检查实弦资格，不修改状态。
+- `src/theorems/midpoint_proposals.py` → 模型提案。扩展 `check_midpoint_binding` 和 `derive_point_difference_chord`，核验双曲线绑定、同对坐标和及来源；按轴向选择正负系数，提出直线及弦级 `midpoint_q`、`intersection_discriminant`，供提交和轨迹复核。
+- `src/theorems/models/model_046.py`、`src/theorems/bound_application.py` → 模型入口与状态提交。新增 RM46 的 `propose_bound` 转交公共提案；扩展候选、类型隔离及派生直线提交许可，应用器沿用事务提交与冲突回滚。RM54兼容双曲线，RM40／45仍限椭圆。
+- `src/reasoning/bound_slice.py` → 固定链诊断。新增 `solve_hyperbola_chord_slice` 和 `hyperbola-chord` 模式，回放 RM5/6→RM54→RM46，再读取已提交直线；不是自主选择器。
+- `tests/test_bound_hyperbola_chord.py`（新增）、`tests/test_bound_segment_chord.py` → 行为验证。新增25项覆盖真实题、轴向符号、独立交点核验、退化、前提缺失、错绑与回滚；旧线段拒绝测试改用仍不支持的抛物线类型。
+
+- **效果／验证**：1801／4359固定链得x−y−3=0；3119无实弦拒绝，不计原题已解。新增25项、针对性46项、相关回归757项通过；保存三题轨迹，同步实现地图、API、规格导航与模型索引。
+- **边界／下一步**：限原点中心、坐标轴向数值双曲线；中心方向未定，未接自主选择器。回到职责表选择下一组有限案例；不存在直线的答案表达另行定契约。

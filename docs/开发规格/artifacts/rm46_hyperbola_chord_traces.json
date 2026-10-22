@@ -1,0 +1,538 @@
+{
+  "schema_version": "bound-slice-v16",
+  "mode": "hyperbola-chord",
+  "cases": [
+    {
+      "problem_id": 1801,
+      "facts": "G: Hyperbola;H: LineSegment;P: Point;Expression(G) = (x^2 - 4*y^2 = 4);Coordinate(P) = (4, 1);IsChordOf(H,G);MidPoint(H)=P",
+      "query": "Expression(OverlappingLine(H))",
+      "status": "solved",
+      "answer": "x - y - 3",
+      "diagnostic": "",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 5,
+            "mode": "extract_parameters",
+            "curve": "G",
+            "equation_id": "f3",
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": null,
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('G', 'a_sq')": "4",
+              "('G', 'b_sq')": "1"
+            },
+            "values": {},
+            "frames": {
+              "G": {
+                "equation_id": "f3",
+                "center": [
+                  "0",
+                  "0"
+                ],
+                "axis": "x",
+                "direction": null
+              }
+            }
+          },
+          "read_facts": [
+            "f3",
+            "entity:G"
+          ],
+          "operations": [
+            {
+              "operation": "standard_hyperbola_x",
+              "equation": "f3",
+              "axis": "x",
+              "a_sq": "4",
+              "b_sq": "1"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 54,
+            "mode": "derive_endpoint_sums",
+            "curve": "G",
+            "equation_id": "f3",
+            "line_equation_id": null,
+            "relation_id": "@chord:@overlap:H:G",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "@overlap:H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('@chord:@overlap:H:G:endpoints', 'x_sum')": "8",
+              "('@chord:@overlap:H:G:endpoints', 'y_sum')": "2"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "@chord:@overlap:H:G",
+            "@chord:@overlap:H:G:endpoints",
+            "f5",
+            "f6",
+            "f4"
+          ],
+          "operations": [
+            {
+              "operation": "midpoint_coordinate_sums",
+              "pair": "@chord:@overlap:H:G:endpoints",
+              "midpoint": [
+                "4",
+                "1"
+              ],
+              "sums": [
+                "8",
+                "2"
+              ]
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 46,
+            "mode": "derive_point_difference_chord",
+            "curve": "G",
+            "equation_id": "f3",
+            "line_equation_id": null,
+            "relation_id": "@chord:@overlap:H:G",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "@overlap:H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 2,
+          "after_revision": 3,
+          "delta": {
+            "properties": {
+              "('@chord:@overlap:H:G', 'midpoint_q')": "3",
+              "('@chord:@overlap:H:G', 'normal_x')": "1",
+              "('@chord:@overlap:H:G', 'normal_y')": "-1",
+              "('@chord:@overlap:H:G', 'distinct_real_intersections')": "2",
+              "('@chord:@overlap:H:G', 'intersection_discriminant')": "6"
+            },
+            "values": {},
+            "equations": {
+              "derived:@chord:@overlap:H:G:line": {
+                "fact_id": "derived:@chord:@overlap:H:G:line",
+                "owner": "@overlap:H",
+                "role": "line",
+                "expression": "x - y - 3",
+                "source": "RM46"
+              }
+            }
+          },
+          "read_facts": [
+            "f3",
+            "@chord:@overlap:H:G",
+            "@chord:@overlap:H:G:endpoints",
+            "f5",
+            "f6",
+            "f4",
+            "frame:G",
+            "property:G:a_sq",
+            "property:G:b_sq",
+            "property:@chord:@overlap:H:G:endpoints:x_sum",
+            "property:@chord:@overlap:H:G:endpoints:y_sum"
+          ],
+          "operations": [
+            {
+              "operation": "hyperbola_point_difference",
+              "pair": "@chord:@overlap:H:G:endpoints",
+              "sums": [
+                "8",
+                "2"
+              ],
+              "alpha": "1/4",
+              "beta": "-1",
+              "q": "3",
+              "intersection_coefficients": [
+                "-3/4",
+                "0",
+                "2"
+              ],
+              "discriminant": "6",
+              "equation": "x - y - 3"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ]
+    },
+    {
+      "problem_id": 4359,
+      "facts": "G: Hyperbola;H: Line;B: Point;A: Point;P: Point;Expression(G) = (x^2 - 4*y^2 = 4);Coordinate(P) = (4, 1);Intersection(H, G) = {A, B};MidPoint(LineSegmentOf(A,B))=P",
+      "query": "Expression(H)",
+      "status": "solved",
+      "answer": "x - y - 3",
+      "diagnostic": "",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 5,
+            "mode": "extract_parameters",
+            "curve": "G",
+            "equation_id": "f5",
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": null,
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('G', 'a_sq')": "4",
+              "('G', 'b_sq')": "1"
+            },
+            "values": {},
+            "frames": {
+              "G": {
+                "equation_id": "f5",
+                "center": [
+                  "0",
+                  "0"
+                ],
+                "axis": "x",
+                "direction": null
+              }
+            }
+          },
+          "read_facts": [
+            "f5",
+            "entity:G"
+          ],
+          "operations": [
+            {
+              "operation": "standard_hyperbola_x",
+              "equation": "f5",
+              "axis": "x",
+              "a_sq": "4",
+              "b_sq": "1"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 54,
+            "mode": "derive_endpoint_sums",
+            "curve": "G",
+            "equation_id": "f5",
+            "line_equation_id": null,
+            "relation_id": "@chord:H:G",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('@chord:H:G:endpoints', 'x_sum')": "8",
+              "('@chord:H:G:endpoints', 'y_sum')": "2"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "@chord:H:G",
+            "@chord:H:G:endpoints",
+            "f7",
+            "f8",
+            "f6"
+          ],
+          "operations": [
+            {
+              "operation": "midpoint_coordinate_sums",
+              "pair": "@chord:H:G:endpoints",
+              "midpoint": [
+                "4",
+                "1"
+              ],
+              "sums": [
+                "8",
+                "2"
+              ]
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 46,
+            "mode": "derive_point_difference_chord",
+            "curve": "G",
+            "equation_id": "f5",
+            "line_equation_id": null,
+            "relation_id": "@chord:H:G",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 2,
+          "after_revision": 3,
+          "delta": {
+            "properties": {
+              "('@chord:H:G', 'midpoint_q')": "3",
+              "('@chord:H:G', 'normal_x')": "1",
+              "('@chord:H:G', 'normal_y')": "-1",
+              "('@chord:H:G', 'distinct_real_intersections')": "2",
+              "('@chord:H:G', 'intersection_discriminant')": "6"
+            },
+            "values": {},
+            "equations": {
+              "derived:@chord:H:G:line": {
+                "fact_id": "derived:@chord:H:G:line",
+                "owner": "H",
+                "role": "line",
+                "expression": "x - y - 3",
+                "source": "RM46"
+              }
+            }
+          },
+          "read_facts": [
+            "f5",
+            "@chord:H:G",
+            "@chord:H:G:endpoints",
+            "f7",
+            "f8",
+            "f6",
+            "frame:G",
+            "property:G:a_sq",
+            "property:G:b_sq",
+            "property:@chord:H:G:endpoints:x_sum",
+            "property:@chord:H:G:endpoints:y_sum",
+            "f7"
+          ],
+          "operations": [
+            {
+              "operation": "hyperbola_point_difference",
+              "pair": "@chord:H:G:endpoints",
+              "sums": [
+                "8",
+                "2"
+              ],
+              "alpha": "1/4",
+              "beta": "-1",
+              "q": "3",
+              "intersection_coefficients": [
+                "-3/4",
+                "0",
+                "2"
+              ],
+              "discriminant": "6",
+              "equation": "x - y - 3"
+            },
+            {
+              "operation": "verify_named_endpoints",
+              "pair": "@chord:H:G:endpoints",
+              "points": [
+                "A",
+                "B"
+              ],
+              "checked_coordinates": []
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ]
+    },
+    {
+      "problem_id": 3119,
+      "facts": "l: Line;G: Hyperbola;Expression(G) = (x^2/4 - y^2 = 1);A: Point;B: Point;Intersection(l, G) = {A, B};P: Point;Coordinate(P) = (6, 3);MidPoint(LineSegmentOf(A, B)) = P",
+      "query": "Expression(l)",
+      "status": "conflict",
+      "answer": null,
+      "diagnostic": "Noncentral q=0 direction has no intersection",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 5,
+            "mode": "extract_parameters",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": null,
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('G', 'a_sq')": "4",
+              "('G', 'b_sq')": "1"
+            },
+            "values": {},
+            "frames": {
+              "G": {
+                "equation_id": "f2",
+                "center": [
+                  "0",
+                  "0"
+                ],
+                "axis": "x",
+                "direction": null
+              }
+            }
+          },
+          "read_facts": [
+            "f2",
+            "entity:G",
+            "f2:domain:0"
+          ],
+          "operations": [
+            {
+              "operation": "standard_hyperbola_x",
+              "equation": "f2",
+              "axis": "x",
+              "a_sq": "4",
+              "b_sq": "1"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 54,
+            "mode": "derive_endpoint_sums",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": null,
+            "relation_id": "@chord:l:G",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "l",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('@chord:l:G:endpoints', 'x_sum')": "12",
+              "('@chord:l:G:endpoints', 'y_sum')": "6"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "@chord:l:G",
+            "@chord:l:G:endpoints",
+            "f5",
+            "f8",
+            "f7"
+          ],
+          "operations": [
+            {
+              "operation": "midpoint_coordinate_sums",
+              "pair": "@chord:l:G:endpoints",
+              "midpoint": [
+                "6",
+                "3"
+              ],
+              "sums": [
+                "12",
+                "6"
+              ]
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "conflict",
+          "action": {
+            "model_id": 46,
+            "mode": "derive_point_difference_chord",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": null,
+            "relation_id": "@chord:l:G",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "l",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 2,
+          "after_revision": 2,
+          "delta": {},
+          "read_facts": [],
+          "operations": [],
+          "candidates": [],
+          "diagnostic": "Noncentral q=0 direction has no intersection"
+        }
+      ]
+    }
+  ]
+}

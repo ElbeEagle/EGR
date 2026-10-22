@@ -285,7 +285,7 @@ def solve_point_difference_slice(facts: str, query: str) -> SliceResult:
     if not isinstance(state.query, NamedLineQuery):
         return SliceResult('inapplicable', state, diagnostic='Requires named line query')
     actions = [a for a in enumerate_actions(state, 54)
-               if a.line == state.query.line]
+               if a.line == state.query.line and state.entities[a.curve]=='Ellipse']
     if len(actions) != 1:
         return SliceResult('undetermined', state, diagnostic='Unique ellipse/chord binding required')
     chord = actions[0]
@@ -295,6 +295,28 @@ def solve_point_difference_slice(facts: str, query: str) -> SliceResult:
         return SliceResult(exc.status, state, diagnostic=str(exc))
     return replay_actions(state, (standard, chord,
         replace(chord,model_id=45,mode='derive_point_difference_chord')))
+
+
+def solve_hyperbola_chord_slice(facts: str, query: str) -> SliceResult:
+    """Fixed RM5/6 -> RM54 -> RM46 diagnostic; standard axis is verified before replay."""
+    from src.state.named_line_facts import NamedLineQuery
+    try:
+        state = TransitionState.from_facts(facts, query)
+    except (ValueError, SyntaxError) as exc:
+        return SliceResult('failed', diagnostic=str(exc))
+    if not isinstance(state.query, NamedLineQuery):
+        return SliceResult('inapplicable', state, diagnostic='Requires named line query')
+    actions = [a for a in enumerate_actions(state, 54)
+               if a.line == state.query.line and state.entities[a.curve]=='Hyperbola']
+    if len(actions) != 1:
+        return SliceResult('undetermined', state, diagnostic='Unique hyperbola/chord binding required')
+    chord = actions[0]
+    try:
+        standard = select_standard_action(state, chord.curve, chord.equation_id)
+    except TransitionError as exc:
+        return SliceResult(exc.status, state, diagnostic=str(exc))
+    return replay_actions(state, (standard, chord,
+        replace(chord,model_id=46,mode='derive_point_difference_chord')))
 
 
 def solve_ellipse_tangent_slice(facts: str, query: str) -> SliceResult:
@@ -476,7 +498,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data', default='data/train_with_models_v3.json')
     parser.add_argument('--problem-id', type=int, default=2)
-    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot', 'symbolic-focal-product', 'ellipse-tangent', 'midpoint-chord', 'point-difference'), default='asymptote')
+    parser.add_argument('--mode', choices=('asymptote', 'shared-focus', 'asymptote-forward', 'parabola-focal', 'parabola-definition', 'point-line-distance', 'directrix-alias-distance', 'intersection-focus-distance', 'eccentricity', 'parabola-tangent', 'chord-length', 'named-slope', 'focal-chord', 'origin-dot', 'symbolic-focal-product', 'ellipse-tangent', 'midpoint-chord', 'point-difference', 'hyperbola-chord'), default='asymptote')
     args = parser.parse_args()
     records = json.loads(Path(args.data).read_text())
     problem = next(item for item in records if item['id'] == args.problem_id)
@@ -491,7 +513,7 @@ if __name__ == '__main__':
              'parabola-tangent': solve_parabola_tangent_slice,
              'chord-length': solve_chord_length_slice,
              'named-slope': solve_named_slope_slice,
-             'focal-chord': solve_focal_chord_slice, 'origin-dot': solve_origin_dot_slice, 'symbolic-focal-product': solve_symbolic_focal_product_slice, 'ellipse-tangent': solve_ellipse_tangent_slice, 'midpoint-chord': solve_midpoint_chord_slice, 'point-difference': solve_point_difference_slice}[args.mode]
+             'focal-chord': solve_focal_chord_slice, 'origin-dot': solve_origin_dot_slice, 'symbolic-focal-product': solve_symbolic_focal_product_slice, 'ellipse-tangent': solve_ellipse_tangent_slice, 'midpoint-chord': solve_midpoint_chord_slice, 'point-difference': solve_point_difference_slice, 'hyperbola-chord': solve_hyperbola_chord_slice}[args.mode]
     result = solve(problem['fact_expressions'], problem['query_expressions'])
 
     def serializable(value):
@@ -503,7 +525,7 @@ if __name__ == '__main__':
             return value
         return str(value)
 
-    print(json.dumps(serializable({'schema_version': 'bound-slice-v15' if args.mode == 'point-difference' else 'bound-slice-v14' if args.mode == 'midpoint-chord' else 'bound-slice-v13' if args.mode == 'ellipse-tangent' else 'bound-slice-v12' if args.mode == 'symbolic-focal-product' else 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
+    print(json.dumps(serializable({'schema_version': 'bound-slice-v16' if args.mode == 'hyperbola-chord' else 'bound-slice-v15' if args.mode == 'point-difference' else 'bound-slice-v14' if args.mode == 'midpoint-chord' else 'bound-slice-v13' if args.mode == 'ellipse-tangent' else 'bound-slice-v12' if args.mode == 'symbolic-focal-product' else 'bound-slice-v11' if args.mode == 'origin-dot' else 'bound-slice-v10' if args.mode == 'focal-chord' else 'bound-slice-v9' if args.mode == 'named-slope' else 'bound-slice-v8' if args.mode == 'chord-length' else 'bound-slice-v7', 'mode': args.mode,
                                   'problem_id': args.problem_id, 'status': result.status,
                                   'facts': problem['fact_expressions'], 'query': problem['query_expressions'],
                                   'answer': result.answer, 'diagnostic': result.diagnostic,

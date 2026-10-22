@@ -87,3 +87,7 @@ class PointDifferenceMethodHyperbola(TheoremModel):
 
         except Exception:
             return False
+
+    def propose_bound(self, state, action):
+        from ..midpoint_proposals import derive_point_difference_chord
+        return derive_point_difference_chord(state, action)

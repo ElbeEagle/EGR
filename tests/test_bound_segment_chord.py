@@ -49,7 +49,7 @@ def test_order_and_duplicates(facts):
  (FACTS+';Coordinate(MidPoint(H))=(0,1)',QUERY),
  (FACTS, 'Expression(OverlappingLine(G))'),
  (FACTS.replace('IsChordOf(H,G)','IsChordOf(H,G)=False'),QUERY),
- (FACTS.replace('G: Ellipse','G: Hyperbola'),QUERY)])
+ (FACTS.replace('G: Ellipse','G: Parabola'),QUERY)])
 def test_unsupported_or_conflicting_inputs(facts,query):
     with pytest.raises(ValueError):TransitionState.from_facts(facts,query)
 
