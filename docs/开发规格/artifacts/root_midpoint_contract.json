@@ -1,0 +1,60 @@
+{
+  "stage": "design_audit_only",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 1827,
+      "scope": "first_case",
+      "facts": "A: Point;B: Point;G: Parabola;H: Line;Expression(G) = (x^2 = 2*y);Expression(H) = (y = x + 1);Intersection(H, G) = {A, B}",
+      "query": "Coordinate(MidPoint(LineSegmentOf(A, B)))",
+      "text": "若直线$y=x+1$与抛物线$x^{2}=2 y$相交于$A$ , $B$两点，则线段$AB$的中点坐标是?",
+      "current_parser": "Unsupported or undeclared query target",
+      "probe": {
+        "variable": "y",
+        "polynomial": "y**2 - 4*y + 1",
+        "lift": [
+          "y - 1",
+          "y"
+        ],
+        "root_sum": "4",
+        "midpoint": [
+          "1",
+          "2"
+        ],
+        "independent_midpoint": [
+          "1",
+          "2"
+        ],
+        "existing_subchain": [
+          78,
+          41
+        ],
+        "missing_reduction_name_link": true
+      }
+    },
+    {
+      "id": 5270,
+      "scope": "defer_vertex_and_inclination",
+      "facts": "C: Parabola;O: Origin;Vertex(C) = O;F: Point;Coordinate(F) = (1, 0);Focus(C) = F;l: Line;PointOnCurve(F, l);A: Point;B: Point;Intersection(l, C) = {A, B};Inclination(l) = ApplyUnit(45, degree);IsChordOf(LineSegmentOf(A, B), C)",
+      "query": "Coordinate(MidPoint(LineSegmentOf(A, B)))",
+      "text": "已知抛物线$C$的顶点在坐标原点，焦点为$F(1,0)$，过焦点$F$的直线$l$与抛物线$C$相交于$A$, $B$两点，若直线$l$的倾斜角为$45^{\\circ}$，则弦$AB$的中点坐标为?",
+      "current_parser": "Unsupported or undeclared query target"
+    },
+    {
+      "id": 1524,
+      "scope": "defer_focal_distance_sum",
+      "facts": "G: Parabola;Expression(G) = (y^2 = 4*x);A: Point;B: Point;PointOnCurve(A, G);PointOnCurve(B, G);Distance(A, F) + Distance(B, F) = 5;F: Point;Focus(G) = F",
+      "query": "XCoordinate(MidPoint(LineSegmentOf(A,B)))",
+      "text": "抛物线$y^{2}=4 x$上的两点$A$、$B$到焦点$F$的距离之和为$5$，则线段$A B$的中点的横坐标是?",
+      "current_parser": "Unsupported or undeclared query target"
+    },
+    {
+      "id": 4309,
+      "scope": "defer_focal_chord_length_inverse",
+      "facts": "l: Line;C: Parabola;B: Point;A: Point;Expression(C) = (y^2 = 6*x);PointOnCurve(Focus(C), l);Intersection(l, C) = {A, B};Abs(LineSegmentOf(A, B)) = 9",
+      "query": "XCoordinate(MidPoint(LineSegmentOf(A, B)))",
+      "text": "过抛物线$C$: $y^{2}=6 x$的焦点的直线$l$交$C$于$A$、$B$两点，若$|A B|=9$，则线段$A B$中点的横坐标为?",
+      "current_parser": "Unsupported or undeclared query target"
+    }
+  ]
+}

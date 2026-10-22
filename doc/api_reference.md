@@ -192,3 +192,7 @@ RM46动作模式为 `derive_point_difference_chord`，绑定同一curve、equati
 `derive_root_relations`绑定已提交IntersectionReduction的曲线、直线、两个方程ID及relation_id。一次提出root_sum、root_product、discriminant、distinct_real_roots，复用RM42/43属性键与公共计算，由应用器原子提交。部分一致属性可补齐，冲突全部回滚。
 
 首版限有限实数系数二次式；重根／非实根可记录代数关系，但RM50仍要求两个不同实根。符号未定，非二次不可应用，查询不输出否定答案。`solve_chord_length_slice(..., joint_roots=True)`启用78→41→50，默认分步链不变。见[规格44](../docs/开发规格/44_RM41数值根关系联合提案.md)。
+
+## 正向中点接口规划（未实现）
+
+ID1827拟新增MidpointCoordinateQuery，按无序端点对定位唯一消元记录，仅读取midpoint_x／midpoint_y；RM54的derive_midpoint_from_roots模式负责从已提交根和与仿射回代提出两坐标，由应用器提交。复用IntersectionReduction命名关联字段，但需区分数值关联与现有符号参数化路径；不强制依赖根积。详见[规格45](../docs/开发规格/45_ID1827根关系到中点契约.md)。
