@@ -59,6 +59,8 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id==54 and action.mode=="derive_midpoint_from_roots":
+        return check_binding(state,replace(action,model_id=41))
     if action.model_id in (40,45,46,54):
         from .midpoint_proposals import check_midpoint_binding
         return check_midpoint_binding(state, action)
@@ -233,6 +235,8 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id==54 and mode=="derive_midpoint_from_roots":
+        return [replace(a,model_id=54,mode=mode) for a in enumerate_actions(state,41) if state.intersection_reductions[a.relation_id].named_points]
     if model_id in (40,45,46,54):
         name = {40:'derive_midpoint_chord',54:'derive_endpoint_sums',45:'derive_point_difference_chord',46:'derive_point_difference_chord'}[model_id]
         actions = [BoundAction(model_id, name, c.curve, f.fact_id,

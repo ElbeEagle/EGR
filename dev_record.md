@@ -824,3 +824,15 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/root_midpoint_contract.json`（新增）→ 保存数据哈希、4题入口诊断及1827计算证据；不是新RM54轨迹。
 - **效果／验证**：审查命令通过；1827主变量为y、根和4，仿射平均与独立求交均得(1,2)，反序／重排通过。规格45明确命名关联、同源资格、原子提交和只读查询，维护文档及导航同步。
 - **边界／下一步**：运行时未改，原查询尚不支持；778项为上一批结果。下一批接数值命名根关联、查询及RM54正向中点；兼容原端点和与符号根关系，其他曲线／符号联合／否定答案另批。
+
+## 2026-11-20｜ID1827正向中点
+
+- **开发记录**：[docs/开发规格/46_ID1827正向中点实现.md](docs/开发规格/46_ID1827正向中点实现.md)
+- `src/theorems/root_midpoint_proposals.py` → 数值根中点核验与提案。MidpointCoordinateQuery保存无序点对；verify_numeric_association重查命名身份及原式回代；derive_midpoint_from_roots读取有来源的根和／资格，提出midpoint_x/y；read_midpoint只读取完整结果，不推导。
+- `src/state/transition_state.py` → 查询入口。扩展复合中点坐标查询解析与只读结果分派，不创建虚构端点或命名中点坐标。
+- `src/theorems/intersection_proposals.py` → 消元与韦达提案。数值RM78填写已有命名关联字段并记录所有重复声明来源；多点对歧义拒绝。RM42/43区分数值关联与原符号参数化路径，RM41核验数值关联。
+- `src/theorems/bound_application.py`、`src/theorems/models/model_054.py` → 模型编排。增加derive_midpoint_from_roots显式模式候选与入口，沿用原子属性提交；旧derive_endpoint_sums保持不变。
+- `tests/test_bound_root_midpoint.py` → 新增13项验证，覆盖原题／轴交换、重排／重复、来源缺失、过期原式、非仿射回代、幂等、部分补齐、冲突和退化。
+
+- **验证**：新增13项通过，相关回归791项通过；原题得到(1,2)，另验证RM42替代路径。
+- **限制／下一步**：固定回放，未接自主选择器；抛物线给定中点事实入口、符号联合、其他曲线消元及否定答案后置。

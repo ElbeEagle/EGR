@@ -196,3 +196,13 @@ RM46动作模式为 `derive_point_difference_chord`，绑定同一curve、equati
 ## 正向中点接口规划（未实现）
 
 ID1827拟新增MidpointCoordinateQuery，按无序端点对定位唯一消元记录，仅读取midpoint_x／midpoint_y；RM54的derive_midpoint_from_roots模式负责从已提交根和与仿射回代提出两坐标，由应用器提交。复用IntersectionReduction命名关联字段，但需区分数值关联与现有符号参数化路径；不强制依赖根积。详见[规格45](../docs/开发规格/45_ID1827根关系到中点契约.md)。
+
+## ID1827正向中点已接入
+
+- `src/theorems/root_midpoint_proposals.py` → 数值根中点核验与提案。MidpointCoordinateQuery保存无序点对；verify_numeric_association重查命名身份及原式回代；derive_midpoint_from_roots读取有来源的根和／资格，提出midpoint_x/y；read_midpoint只读取完整结果，不推导。
+- `src/state/transition_state.py` → 查询入口。扩展复合中点坐标查询解析与只读结果分派，不创建虚构端点或命名中点坐标。
+- `src/theorems/intersection_proposals.py` → 消元与韦达提案。数值RM78填写已有命名关联字段并记录所有重复声明来源；多点对歧义拒绝。RM42/43区分数值关联与原符号参数化路径，RM41核验数值关联。
+- `src/theorems/bound_application.py`、`src/theorems/models/model_054.py` → 模型编排。增加derive_midpoint_from_roots显式模式候选与入口，沿用原子属性提交；旧derive_endpoint_sums保持不变。
+- `tests/test_bound_root_midpoint.py` → 新增13项验证，覆盖原题／轴交换、重排／重复、来源缺失、过期原式、非仿射回代、幂等、部分补齐、冲突和退化。
+
+原题固定78→41→54得(1,2)，显式模式derive_midpoint_from_roots与旧端点和模式并存；查询只读两项已提交属性。此前规划状态由[规格46](../docs/开发规格/46_ID1827正向中点实现.md)更新，符号模式另批。

@@ -94,5 +94,8 @@ class MidpointFormula(TheoremModel):
             return False
 
     def propose_bound(self, state, action):
+        if action.mode=="derive_midpoint_from_roots":
+            from ..root_midpoint_proposals import derive_midpoint_from_roots
+            return derive_midpoint_from_roots(state,action)
         from ..midpoint_proposals import derive_endpoint_sums
         return derive_endpoint_sums(state, action)

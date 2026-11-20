@@ -15,7 +15,13 @@ def substitute_bound_line(state, action):
     key = f'derived:intersection:{curve.fact_id}:{line.fact_id}'
     fact = IntersectionReduction(key, action.curve, action.line, curve.fact_id, line.fact_id,
                                  reduction.variable, reduction.xy, reduction.polynomial, 'RM78')
-    reads = (f'entity:{action.curve}', f'entity:{action.line}', curve.fact_id, line.fact_id,
+    matches=[n for n in state.named_intersections.values() if (n.curve,n.line)==(action.curve,action.line)]
+    if len({n.points for n in matches})>1:
+        raise TransitionError('conflict','Ambiguous named endpoint pairs')
+    if matches:
+        from dataclasses import replace
+        fact=replace(fact,named_points=matches[0].points,intersection_id=matches[0].fact_id)
+    reads = (*(n.fact_id for n in matches), f'entity:{action.curve}', f'entity:{action.line}', curve.fact_id, line.fact_id,
              *(f'value:{s}' for s in sorted((curve.expression.free_symbols | line.expression.free_symbols)
                                            & state.values.keys(), key=str)))
     return Proposal(intersection_reductions={key: fact}, read_facts=reads,
@@ -33,7 +39,10 @@ def derive_root_relation(state, action):
         raise TransitionError('inapplicable', 'Unsupported root relation mode')
     fact = state.intersection_reductions[action.relation_id]
     parameters, extra_reads = (), ()
-    if fact.named_points:
+    if fact.named_points and fact.line not in state.parameterizations:
+        from .root_midpoint_proposals import verify_numeric_association
+        extra_reads=verify_numeric_association(state,fact)
+    elif fact.named_points:
         local = state.parameterizations.get(fact.line)
         named = state.named_intersections.get(fact.intersection_id)
         if (local is None or named is None or named.points != fact.named_points
@@ -61,6 +70,9 @@ def derive_root_relations(state, action):
     fact = check_binding(state, action)
     if action.mode != 'derive_root_relations':
         raise TransitionError('inapplicable', 'Unsupported joint root relation mode')
+    if fact.named_points and fact.line not in state.parameterizations:
+        from .root_midpoint_proposals import verify_numeric_association
+        verify_numeric_association(state,fact)
     # No allowed symbolic parameters: RM41's first mode is strictly numeric.
     total = quadratic_root_relation(fact.polynomial, fact.variable, 'sum')
     product = quadratic_root_relation(fact.polynomial, fact.variable, 'product')

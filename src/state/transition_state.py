@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from src.theorems.root_midpoint_proposals import MidpointCoordinateQuery, read_midpoint
 from .midpoint_alias_facts import ChordMidpointAlias, collect_midpoint_aliases, resolve_midpoint_aliases
 from .segment_chord_facts import SegmentChord, collect_segment_chords
 from .chord_facts import ChordIdentity, AnonymousEndpointPair, ChordMidpoint, parse_chord_midpoint, ChordEndpointNames, collect_named_chords
@@ -223,7 +224,13 @@ class TransitionState:
         named_line_query = re.fullmatch(rf'Expression\(\s*{LINE}\s*\)', query_text)
         dot_query = re.fullmatch(r'DotProduct\(\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*,\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\)', query_text)
         product_query = re.fullmatch(r'\s*([A-Za-z]\w*)\s*\*\s*([A-Za-z]\w*)\s*', query_text)
-        if product_query:
+        midpoint_query = re.fullmatch(r'Coordinate\(MidPoint\(LineSegmentOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\)\)', query_text)
+        if midpoint_query:
+            points=tuple(sorted(midpoint_query.groups()))
+            if points[0]==points[1] or any(entities.get(p)!='Point' for p in points):
+                raise ValueError('Midpoint requires distinct declared points')
+            target=MidpointCoordinateQuery(points)
+        elif product_query:
             names = product_query.groups()
             if any(entities.get(n) not in ('Number', 'Real') for n in names):
                 raise ValueError('Product query requires declared scalars')
@@ -396,6 +403,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, MidpointCoordinateQuery):
+            return read_midpoint(self,self.query)
         if isinstance(self.query, CoordinateProductQuery):
             return read_coordinate_product(self, self.query)
         if isinstance(self.query, OriginDotProductQuery):
