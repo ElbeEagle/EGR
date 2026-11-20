@@ -1,0 +1,104 @@
+{
+  "stage": "design_audit_only",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 3174,
+      "text": "已知$P$是椭圆$\\frac{x^{2}}{4}+y^{2}=1$上的一点，$F_{1}$、$F_{2}$是椭圆的两个焦点，当$\\angle F_{1} P F_{2}=\\frac{\\pi}{3}$时，则$\\Delta P F_{1} F_{2}$的面积为?",
+      "facts": "G: Ellipse;P: Point;F1: Point;F2: Point;Expression(G) = (x^2/4 + y^2 = 1);PointOnCurve(P, G);Focus(G) = {F1, F2};AngleOf(F1,P,F2)=pi/3",
+      "query": "Area(TriangleOf(P, F1, F2))",
+      "weak_models": [
+        3,
+        11,
+        0,
+        47,
+        57
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "independent_probe": {
+        "area": "sqrt(3)/3",
+        "point": [
+          "4*sqrt(2)/3",
+          "1/3"
+        ],
+        "cosine": "1/2",
+        "attainability_margin": "2"
+      }
+    },
+    {
+      "id": 3900,
+      "text": "设$F_{1}$、$F_{2}$是椭圆$\\frac{x^{2}}{4}+y^{2}=1$的两个焦点，点$P$在椭圆上，且满足$\\angle F_{1} P F_{2}=\\frac{\\pi}{2}$，则$\\Delta F_{1} P F_{2}$的面积等于?",
+      "facts": "G: Ellipse;F1: Point;P: Point;F2: Point;Expression(G) = (x^2/4 + y^2 = 1);Focus(G) = {F1, F2};PointOnCurve(P, G);AngleOf(F1, P, F2) = pi/2",
+      "query": "Area(TriangleOf(F1, P, F2))",
+      "weak_models": [
+        0,
+        32,
+        56
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "independent_probe": {
+        "area": "1",
+        "point": [
+          "2*sqrt(6)/3",
+          "sqrt(3)/3"
+        ],
+        "cosine": "0",
+        "attainability_margin": "1"
+      }
+    },
+    {
+      "id": 6748,
+      "text": "已知$P$是椭圆$\\frac{x^{2}}{10}+y^{2}=1$上的一点，$F_{1}$、$F_{2}$是椭圆的两个焦点，当$\\angle F_{1} P F_{2}=\\frac{2 \\pi}{3}$时，则$\\Delta P F_{1} F_{2}$的面积为?",
+      "facts": "G: Ellipse;P: Point;F1: Point;F2: Point;Expression(G) = (x^2/10 + y^2 = 1);PointOnCurve(P, G);Focus(G) = {F1, F2};AngleOf(F1,P,F2)=2*pi/3",
+      "query": "Area(TriangleOf(P, F1, F2))",
+      "weak_models": [
+        3,
+        1,
+        0,
+        32,
+        57,
+        56
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "independent_probe": {
+        "area": "sqrt(3)",
+        "point": [
+          "2*sqrt(15)/3",
+          "sqrt(3)/3"
+        ],
+        "cosine": "-1/2",
+        "attainability_margin": "3/2"
+      }
+    },
+    {
+      "id": 2571,
+      "text": "若点$P$在椭圆$\\frac{x^{2}}{2}+y^{2}=1$上，$F_{1}$、$F_{2}$分别是椭圆的两焦点，且$\\angle F_{1} P F_{2}=90^{\\circ}$，则$\\Delta F_{1} P F_{2}$的面积是?",
+      "facts": "G: Ellipse;F1: Point;P: Point;F2: Point;Expression(G) = (x^2/2 + y^2 = 1);PointOnCurve(P, G);Focus(G)={F1,F2};AngleOf(F1, P, F2) = ApplyUnit(90, degree)",
+      "query": "Area(TriangleOf(F1, P, F2))",
+      "weak_models": [
+        3,
+        11,
+        0,
+        49,
+        57
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "scope": "defer_degree_unit_conversion"
+    },
+    {
+      "id": 1156,
+      "text": "已知$P$是椭圆$\\frac{y^{2}}{5}+\\frac{x^{2}}{4}=1$上的一点，$F_{1}$、$F_{2}$是椭圆的两个焦点，且$\\angle F_{1} P F_{2}=30^{\\circ}$，则$\\Delta F_{1} P F_{2}$的面积是?",
+      "facts": "G: Ellipse;F1: Point;P: Point;F2: Point;Expression(G) = (x^2/4 + y^2/5 = 1);PointOnCurve(P, G);Focus(G) = {F1, F2};AngleOf(F1, P, F2) = ApplyUnit(30, degree)",
+      "query": "Area(TriangleOf(F1, P, F2))",
+      "weak_models": [
+        4,
+        11,
+        0,
+        47,
+        57
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "scope": "defer_degree_unit_conversion"
+    }
+  ]
+}
