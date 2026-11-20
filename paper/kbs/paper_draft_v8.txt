@@ -604,23 +604,42 @@ The pattern selector is implemented as a multilayer perceptron with three hidden
 
 Table~\ref{tab:main_results} presents the answer accuracy of Conic-Solver and all baselines on the Conic10K test set across all curve categories. Conic-Solver achieves an overall accuracy of TBD\%, outperforming the strongest large language model baseline by TBD percentage points and the meta-model knowledge-based baseline by TBD percentage points.
 
-\begin{table*}[t]
+\begin{table*}[tb]
 \centering
-\caption{Answer accuracy (\%) on the Conic10K test set across different curve types. Language models are evaluated under both natural-language text input and formal condition input.}
+\caption{Results on mathQA in Conic10K dataset. \textbf{ChatGLM-6B} achieves the best overall accuracy after finetuning using LoRA among all the models. In fully finetuning setting, \textbf{mT0-xl} shows strongest performance. In the zero-shot CoT setting, \textbf{GPT-4} has the highest overall accuracy. However, the performances of the above models are significantly lower than human expert's performance. \textbf{GPT-4} is evaluated on 200 randomly sampled problems. \textbf{Human Expert} is evaluated on 50 randomly sampled problems. The \textbf{Text} accuracy of \textbf{Human Expert} is empty because the sampled problems do not contain answers of category \textbf{Text}.}
 \label{tab:main_results}
-\begin{tabular}{llcccccc}
-\hline
-Method group & Method & Input format & All & Ellipse & Hyperbola & Parabola & Circle \\
-\hline
-Language models & TBD & Text & TBD & TBD & TBD & TBD & TBD \\
- & TBD & Formal & TBD & TBD & TBD & TBD & TBD \\
- & TBD & Text & TBD & TBD & TBD & TBD & TBD \\
- & TBD & Formal & TBD & TBD & TBD & TBD & TBD \\
-Computer algebra & SymPy joint solving & Formal & TBD & TBD & TBD & TBD & TBD \\
-Knowledge-based & Frequency selection & Formal & TBD & TBD & TBD & TBD & TBD \\
- & Meta-model inference & Formal & TBD & TBD & TBD & TBD & TBD \\
- & Conic-Solver (ours) & Formal & TBD & TBD & TBD & TBD & TBD \\
-\hline
+\renewcommand{\arraystretch}{1}
+\begin{tabular}{lcccccccc} \toprule
+\multirow{2}{*}{\bf Model} & \bf Trainable & \multicolumn{6}{c}{\bf Accuracy of Answer Category} \\ \cline{3-9}
+\rule{0pt}{2.5ex}  & \bf Param. & \bf Simple Num.  & \bf Complex Num. & \bf Expression & \bf Coordinate & \bf Interval \& Set & \bf Text & \bf All \\ \midrule 
+\multicolumn{4}{l}{\emph{Finetuning PLM}} \\
+\bf mT5-base & 580M & 5.1 & 11.5 & 8.4 &\underline{5.0} & 1.6 & 0.0 & 7.2 \\
+\bf mT0-base & 580M & 22.8 & 13.6 & 7.3 & 2.5 & 4.9 & 0.0 & 13.0 \\
+\bf mT5-large & 1.3B & 21.0 & 14.8 & 8.1 & 3.7 & 4.9 & 0.0 & 13.0 \\
+\bf mT0-large & 1.3B & 16.7 & 17.0 & 12.5 & 3.7 &\underline{6.6} & 0.0 & 13.8 \\
+\bf mT5-xl & 3.7B &\underline{19.9} &\underline{17.6} &\underline{11.0} &\underline{5.0} & \underline{6.6} & 0.0 & \underline{14.8} \\
+\bf mT0-xl & 3.7B & 18.1 & 13.6 & 10.3 & 2.5 &\underline{6.6} & 0.0 & 12.5 \\ \midrule
+\multicolumn{4}{l}{\emph{Finetuning LLM using LoRA}}      \\
+\bf Bloomz-1b7  & 7M & 23.2 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 6.3 \\
+\bf Bloomz-3b  & 7M & 26.1 & 7.6 & 8.1 & 3.7 & 1.6 & 0.0 & 12.0 \\
+\bf Falcon-7b & 16M & 31.5 & 4.8 & 8.4 & \underline{15.0} & 8.2 & 0.0 & 14.0 \\
+\bf Bloomz-7b1  & 8M & 27.9 & 11.8 & 12.5 & 6.2 & 3.3 & 0.0 & 15.4 \\
+\bf LLaMA-7b  & 8M & 34.1 & 9.1 & 9.9 & 8.7 & 4.9 & 0.0 & 15.8 \\
+\bf Vicuna-7b & 8M & 37.7 & 9.4 & 12.8 & 10.0 & 8.2 & 0.0 & 17.9 \\
+\bf ChatGLM-6b & 8M & \bf \underline{39.3} &\bf \underline{23.1} & \underline{13.1} & 10.6 & \bf \underline{6.5} & 0.0 &\bf \underline{22.5} \\ \midrule
+\multicolumn{4}{l}{\emph{Zero-shot CoT}}\\
+\bf Bloomz-7b1 & - & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\  
+\bf Falcon-7b-inst & - & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\
+\bf Vicuna-7b & - & 1.5 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.4 \\
+\bf Vicuna-13b & - & 3.1 & 0.4 & 0.0 & 0.0 & 0.0 & 0.0 & 0.9 \\
+\bf Ziya-13b & - &2.8 & 0.9 & 0.7 & 0.0 & 0.0 & 0.0 & 1.1 \\
+\bf ChatGLM-6b & - & 4.0 & 0.7 & 0.2 & 1.3 & 0.0 & \bf \underline{14.3} & 1.5 \\
+\bf GPT-3.5-turbo & - & 8.5 & 4.6 & 4.0 & 12.3 & 0.6 & \bf \underline{14.3} & 6.2 \\
+\bf GPT-4 & - & \underline{17.8} & \underline{11.8} & \underline{\bf 20.4} & \underline{\bf 21.4} & \underline{5.3} & 0.0 &\underline{15.5} \\\midrule
+\multicolumn{4}{l}{\emph{References}} \\
+\bf Guessing `2' & - & 18.1 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 4.5 \\
+\bf Human Expert & -  & 62.5 &56.3&50.0&50.0 & 66.7& - & 57.5 \\ 
+\bottomrule
 \end{tabular}
 \end{table*}
 

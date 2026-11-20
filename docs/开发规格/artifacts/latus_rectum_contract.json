@@ -1,0 +1,76 @@
+{
+  "stage": "design_audit_only",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 6057,
+      "scope": "first_rm19",
+      "text": "过双曲线$\\frac{x^{2}}{3}-\\frac{y^{2}}{4}=1$的焦点且与$x$轴垂直的弦的长度为?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2/3 - y^2/4 = 1);L: LineSegment;IsChordOf(L,G) = True;PointOnCurve(Focus(G),L) = True;IsPerpendicular(L,xAxis) = True",
+      "query": "Length(L)",
+      "weak_models": [
+        5,
+        19
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "independent_probe": {
+        "equation": "x**2/3 - y**2/4 - 1",
+        "focus_x": "sqrt(7)",
+        "endpoints_y": [
+          "-4*sqrt(3)/3",
+          "4*sqrt(3)/3"
+        ],
+        "length": "8*sqrt(3)/3"
+      }
+    },
+    {
+      "id": 6770,
+      "scope": "first_rm20",
+      "text": "过抛物线$y^{2}=4 x$的焦点且与对称轴垂直的弦长为?",
+      "facts": "G: Parabola;Expression(G) = (y^2 = 4*x);L: LineSegment;IsChordOf(L, G) = True;PointOnCurve(Focus(G), L) = True;IsPerpendicular(L, SymmetryAxis(G)) = True",
+      "query": "Length(L)",
+      "weak_models": [
+        7,
+        19
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "independent_probe": {
+        "equation": "-4*x + y**2",
+        "focus_x": "1",
+        "endpoints_y": [
+          "-2",
+          "2"
+        ],
+        "length": "4"
+      }
+    },
+    {
+      "id": 598,
+      "scope": "defer_inclination",
+      "text": "抛物线$y^{2}=4 x$的焦点为$F$，过$F$且倾斜角为$\\frac{\\pi}{2}$的直线与抛物线交于$A$、$B$两点，则$|A B|$=?",
+      "facts": "G: Parabola;H: Line;A: Point;B: Point;F: Point;Expression(G) = (y^2 = 4*x);Focus(G) = F;PointOnCurve(F, H);Inclination(H) = pi/2;Intersection(H, G) = {A, B}",
+      "query": "Abs(LineSegmentOf(A, B))",
+      "weak_models": [
+        7,
+        19
+      ],
+      "current_parser": "Unsupported or undeclared query target"
+    },
+    {
+      "id": 1378,
+      "scope": "defer_circle_chord",
+      "text": "已知抛物线$C$: $y^{2}=2 x$的焦点为$F$，过$F$且垂直于$x$轴的直线$l$与$C$交于$A$、$B$两点，则以线段$A B$为直径的圆被$y$轴所截得的弦长为?",
+      "facts": "C: Parabola;Expression(C) = (y^2 = 2*x);F: Point;Focus(C) = F;l: Line;PointOnCurve(F,l);IsPerpendicular(l,xAxis);B: Point;A: Point;Intersection(l, C) = {A, B};G: Circle;IsDiameter(LineSegmentOf(A,B),G)",
+      "query": "Length(InterceptChord(yAxis,G))",
+      "weak_models": [
+        7,
+        29,
+        20,
+        69,
+        76,
+        51
+      ],
+      "current_parser": "Unsupported or undeclared query target"
+    }
+  ]
+}
