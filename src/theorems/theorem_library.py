@@ -115,6 +115,8 @@ class TheoremLibrary:
         self.register_model(ParabolaFocalRadius())
         self.register_model(EllipseLatusRectum())
         self.register_model(HyperbolaLatusRectum())
+        from .models.model_020 import ParabolaLatusRectum
+        self.register_model(ParabolaLatusRectum())
         self.register_model(HyperbolaAsymptote())
         self.register_model(HyperbolaFocusToAsymptoteDistance())
         self.register_model(HyperbolaEqualAxis())

@@ -21,7 +21,7 @@ def collect_segment_chords(state, parts):
         if not match:
             continue
         segment,curve = match.groups()
-        if state.entities.get(segment)!='LineSegment' or state.entities.get(curve) not in ('Ellipse','Hyperbola'):
+        if state.entities.get(segment)!='LineSegment' or state.entities.get(curve) not in ('Ellipse','Hyperbola','Parabola'):
             raise ValueError('Segment chord requires declared LineSegment and Ellipse/Hyperbola')
         old = state.segment_chords.get(segment)
         if old and old.curve!=curve:
@@ -45,6 +45,8 @@ def collect_segment_chords(state, parts):
         relation = state.segment_chords.get(segment)
         if relation is None:
             raise ValueError('Segment midpoint requires explicit chord relation')
+        if state.entities[relation.curve]=='Parabola':
+            raise ValueError('Parabola given midpoint remains unsupported')
         store_chord_midpoint(state,relation.line,relation.curve,xt,yt,f'f{i}')
         consumed.add(i)
     return consumed

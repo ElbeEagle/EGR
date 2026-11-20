@@ -845,3 +845,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 
 - **效果／验证**：审查命令通过，6057独立得8√3/3，6770得4；发现6770标签19错位，应使用20，未改数据。
 - **边界／下一步**：本批无运行时扩展；先实现RM19资格与长度查询，再RM20。四项后置范围保持不变。同步维护文档和规格导航。
+
+## 2026-11-20｜RM19／RM20通径实现
+
+- **开发记录**：[docs/开发规格/48_RM19_RM20通径实现.md](docs/开发规格/48_RM19_RM20通径实现.md)
+- `src/state/latus_facts.py` → 新增有限资格解析。LatusEvidence保存线段、焦点／垂直目标和来源；collect_latus_facts读取原始关系，拒绝跨曲线绑定；SegmentLengthQuery只表达线段长度目标。
+- `src/state/segment_chord_facts.py`、`src/state/transition_state.py` → 扩展抛物线线段弦身份、资格容器和Length(L)只读查询；给定抛物线中点仍拒绝。
+- `src/solver/latus_operations.py` → 新增公共计算。latus_length核验有限正参数，返回2b²/a或2p，不写状态。
+- `src/theorems/latus_proposals.py` → 新增模型资格及提案。check_latus_binding核对弦与方程；derive_latus读取标准参数、轴向和关系来源，验证过焦点且垂直正确轴，提出弦级chord_length。
+- `src/theorems/models/model_019.py`、`src/theorems/models/model_020.py`、`src/theorems/theorem_library.py`、`src/theorems/bound_application.py` → 扩展RM19绑定入口，新增并注册RM20，生成候选；实际属性写入继续由原应用器原子提交。
+- `tests/test_bound_latus.py` → 新增真实题与方向、缺资格、重排重复、冲突回滚测试。
+
+- **效果／验证**：两题固定链分别8√3/3、4，新增12项通过；此前相关回归801项通过，保存两条轨迹。
+- **下一步**：回到职责表选型；倾角和圆相关路径另批，原四项后置范围保持不变。

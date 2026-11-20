@@ -88,3 +88,7 @@ class HyperbolaLatusRectum(TheoremModel):
 
         except Exception:
             return False
+
+    def propose_bound(self,state,action):
+        from ..latus_proposals import derive_latus
+        return derive_latus(state,action)

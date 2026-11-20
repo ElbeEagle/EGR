@@ -1,0 +1,228 @@
+[
+  {
+    "id": 6057,
+    "facts": "G: Hyperbola;Expression(G) = (x^2/3 - y^2/4 = 1);L: LineSegment;IsChordOf(L,G) = True;PointOnCurve(Focus(G),L) = True;IsPerpendicular(L,xAxis) = True",
+    "query": "Length(L)",
+    "answer": "8*sqrt(3)/3",
+    "transitions": [
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 5,
+          "mode": "extract_parameters",
+          "curve": "G",
+          "equation_id": "f1",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('G', 'a_sq')": "3",
+            "('G', 'b_sq')": "4"
+          },
+          "values": {},
+          "frames": {
+            "G": {
+              "equation_id": "f1",
+              "center": [
+                "0",
+                "0"
+              ],
+              "axis": "x",
+              "direction": null
+            }
+          }
+        },
+        "read_facts": [
+          "f1",
+          "entity:G",
+          "f1:domain:0",
+          "f1:domain:1"
+        ],
+        "operations": [
+          {
+            "operation": "standard_hyperbola_x",
+            "equation": "f1",
+            "axis": "x",
+            "a_sq": "3",
+            "b_sq": "4"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 19,
+          "mode": "derive_latus_length",
+          "curve": "G",
+          "equation_id": "f1",
+          "line_equation_id": null,
+          "relation_id": "@chord:@overlap:L:G",
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": "@overlap:L",
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 1,
+        "after_revision": 2,
+        "delta": {
+          "properties": {
+            "('@chord:@overlap:L:G', 'chord_length')": "8*sqrt(3)/3"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "f1",
+          "frame:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "@chord:@overlap:L:G",
+          "f3",
+          "f4",
+          "f5"
+        ],
+        "operations": [
+          {
+            "operation": "latus_length",
+            "model": 19,
+            "axis": "x",
+            "length": "8*sqrt(3)/3"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      }
+    ]
+  },
+  {
+    "id": 6770,
+    "facts": "G: Parabola;Expression(G) = (y^2 = 4*x);L: LineSegment;IsChordOf(L, G) = True;PointOnCurve(Focus(G), L) = True;IsPerpendicular(L, SymmetryAxis(G)) = True",
+    "query": "Length(L)",
+    "answer": "4",
+    "transitions": [
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 7,
+          "mode": "extract_parameters",
+          "curve": "G",
+          "equation_id": "f1",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('G', 'p')": "2",
+            "('G', 'focus_x')": "1",
+            "('G', 'focus_y')": "0"
+          },
+          "values": {},
+          "frames": {
+            "G": {
+              "equation_id": "f1",
+              "center": [
+                "0",
+                "0"
+              ],
+              "axis": "x",
+              "direction": "right"
+            }
+          }
+        },
+        "read_facts": [
+          "f1",
+          "entity:G"
+        ],
+        "operations": [
+          {
+            "operation": "standard_parabola",
+            "direction": "right",
+            "coefficient": "4",
+            "p": "2",
+            "focus": [
+              "1",
+              "0"
+            ]
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 20,
+          "mode": "derive_latus_length",
+          "curve": "G",
+          "equation_id": "f1",
+          "line_equation_id": null,
+          "relation_id": "@chord:@overlap:L:G",
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": "@overlap:L",
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 1,
+        "after_revision": 2,
+        "delta": {
+          "properties": {
+            "('@chord:@overlap:L:G', 'chord_length')": "4"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "f1",
+          "entity:G",
+          "frame:G",
+          "property:G:p",
+          "property:G:focus_x",
+          "property:G:focus_y",
+          "@chord:@overlap:L:G",
+          "f3",
+          "f4",
+          "f5"
+        ],
+        "operations": [
+          {
+            "operation": "latus_length",
+            "model": 20,
+            "axis": "x",
+            "length": "4"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      }
+    ]
+  }
+]

@@ -59,6 +59,9 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id in (19,20):
+        from .latus_proposals import check_latus_binding
+        return check_latus_binding(state,action)
     if action.model_id==54 and action.mode=="derive_midpoint_from_roots":
         return check_binding(state,replace(action,model_id=41))
     if action.model_id in (40,45,46,54):
@@ -235,6 +238,11 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id in (19,20):
+        return [BoundAction(model_id,'derive_latus_length',c.curve,f.fact_id,line=c.line,relation_id=c.chord_id)
+                for c in state.chords.values() for f in state.equations.values()
+                if state.entities.get(c.curve)=={19:'Hyperbola',20:'Parabola'}[model_id] and f.owner==c.curve and f.role=='curve'
+                and mode in (None,'derive_latus_length')]
     if model_id==54 and mode=="derive_midpoint_from_roots":
         return [replace(a,model_id=54,mode=mode) for a in enumerate_actions(state,41) if state.intersection_reductions[a.relation_id].named_points]
     if model_id in (40,45,46,54):

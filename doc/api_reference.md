@@ -210,3 +210,14 @@ ID1827拟新增MidpointCoordinateQuery，按无序端点对定位唯一消元记
 ## 下一批通径契约（未实现）
 
 RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点在线段上、垂直轴资格及Length(L)只读查询。6770弱标签19需另记正确执行模型20，原数据不改。规格见[47](../docs/开发规格/47_RM19_RM20通径有限案例契约.md)。
+
+## RM19／RM20通径已接入
+
+- `src/state/latus_facts.py` → 新增有限资格解析。LatusEvidence保存线段、焦点／垂直目标和来源；collect_latus_facts读取原始关系，拒绝跨曲线绑定；SegmentLengthQuery只表达线段长度目标。
+- `src/state/segment_chord_facts.py`、`src/state/transition_state.py` → 扩展抛物线线段弦身份、资格容器和Length(L)只读查询；给定抛物线中点仍拒绝。
+- `src/solver/latus_operations.py` → 新增公共计算。latus_length核验有限正参数，返回2b²/a或2p，不写状态。
+- `src/theorems/latus_proposals.py` → 新增模型资格及提案。check_latus_binding核对弦与方程；derive_latus读取标准参数、轴向和关系来源，验证过焦点且垂直正确轴，提出弦级chord_length。
+- `src/theorems/models/model_019.py`、`src/theorems/models/model_020.py`、`src/theorems/theorem_library.py`、`src/theorems/bound_application.py` → 扩展RM19绑定入口，新增并注册RM20，生成候选；实际属性写入继续由原应用器原子提交。
+- `tests/test_bound_latus.py` → 新增真实题与方向、缺资格、重排重复、冲突回滚测试。
+
+模式derive_latus_length输出弦级chord_length，Length(L)只读；6057／6770已验证固定链。先前规划由[规格48](../docs/开发规格/48_RM19_RM20通径实现.md)更新，后置范围不变。

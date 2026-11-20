@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .latus_facts import SegmentLengthQuery, LatusEvidence, collect_latus_facts
 from src.theorems.root_midpoint_proposals import MidpointCoordinateQuery, read_midpoint
 from .midpoint_alias_facts import ChordMidpointAlias, collect_midpoint_aliases, resolve_midpoint_aliases
 from .segment_chord_facts import SegmentChord, collect_segment_chords
@@ -177,6 +178,7 @@ class TransitionState:
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
     midpoint_aliases: dict[str, ChordMidpointAlias] = field(default_factory=dict)
+    latus_evidence: dict[str, LatusEvidence] = field(default_factory=dict)
     segment_chords: dict[str, SegmentChord] = field(default_factory=dict)
     chord_endpoint_names: dict[str, ChordEndpointNames] = field(default_factory=dict)
     chords: dict[str, ChordIdentity] = field(default_factory=dict)
@@ -225,7 +227,11 @@ class TransitionState:
         dot_query = re.fullmatch(r'DotProduct\(\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*,\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\)', query_text)
         product_query = re.fullmatch(r'\s*([A-Za-z]\w*)\s*\*\s*([A-Za-z]\w*)\s*', query_text)
         midpoint_query = re.fullmatch(r'Coordinate\(MidPoint\(LineSegmentOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\)\)', query_text)
-        if midpoint_query:
+        segment_length = re.fullmatch(r'Length\(\s*(\w+)\s*\)',query_text)
+        if segment_length:
+            if entities.get(segment_length[1])!='LineSegment':raise ValueError('Length requires declared segment')
+            target=SegmentLengthQuery(segment_length[1])
+        elif midpoint_query:
             points=tuple(sorted(midpoint_query.groups()))
             if points[0]==points[1] or any(entities.get(p)!='Point' for p in points):
                 raise ValueError('Midpoint requires distinct declared points')
@@ -267,6 +273,7 @@ class TransitionState:
             state.query = NamedLineQuery(register_named_line(state, *named_line_query.groups(), 'query'))
         chord_parts = collect_named_chords(state, parts)
         chord_parts |= collect_segment_chords(state, parts)
+        chord_parts |= collect_latus_facts(state, parts)
         chord_parts |= collect_midpoint_aliases(state, parts)
         if overlap_query:
             relation = state.segment_chords.get(overlap_query.group(1))
@@ -403,6 +410,10 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, SegmentLengthQuery):
+            seg=self.segment_chords.get(self.query.segment)
+            matches=[c for c in self.chords.values() if seg and (c.line,c.curve)==(seg.line,seg.curve)]
+            return self.properties.get((matches[0].chord_id,'chord_length')) if len(matches)==1 else None
         if isinstance(self.query, MidpointCoordinateQuery):
             return read_midpoint(self,self.query)
         if isinstance(self.query, CoordinateProductQuery):
