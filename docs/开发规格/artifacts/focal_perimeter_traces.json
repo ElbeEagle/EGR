@@ -1,0 +1,324 @@
+[
+  {
+    "id": 998,
+    "facts": "C: Ellipse;P: Point;F1: Point;F2: Point;Expression(C) = (x^2/25 + y^2/16 = 1);Focus(C)={F1,F2};PointOnCurve(P,C)",
+    "query": "Perimeter(TriangleOf(P, F1, F2))",
+    "answer": "16",
+    "transitions": [
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 3,
+          "mode": "extract_parameters",
+          "curve": "C",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('C', 'a_sq')": "25",
+            "('C', 'b_sq')": "16"
+          },
+          "values": {},
+          "frames": {
+            "C": {
+              "equation_id": "f4",
+              "center": [
+                "0",
+                "0"
+              ],
+              "axis": "x",
+              "direction": null
+            }
+          }
+        },
+        "read_facts": [
+          "f4",
+          "entity:C",
+          "f4:domain:0",
+          "f4:domain:1"
+        ],
+        "operations": [
+          {
+            "operation": "standard_ellipse_x",
+            "equation": "f4",
+            "axis": "x",
+            "a_sq": "25",
+            "b_sq": "16"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 11,
+          "mode": "derive_c_sq",
+          "curve": "C",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 1,
+        "after_revision": 2,
+        "delta": {
+          "properties": {
+            "('C', 'c_sq')": "9"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "entity:C",
+          "property:C:a_sq",
+          "property:C:b_sq",
+          "f4:domain:0",
+          "f4:domain:1",
+          "f4",
+          "frame:C"
+        ],
+        "operations": [
+          {
+            "operation": "parameter_relation",
+            "curve": "C",
+            "kind": "Ellipse",
+            "inputs": {
+              "a_sq": "25",
+              "b_sq": "16"
+            },
+            "target": "c_sq",
+            "result": "9"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 32,
+          "mode": "derive_focal_perimeter",
+          "curve": "C",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": "perimeter:C:F1:F2:P",
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": "P",
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": "f6",
+          "slope_sum_id": null
+        },
+        "before_revision": 2,
+        "after_revision": 3,
+        "delta": {
+          "properties": {
+            "('perimeter:C:F1:F2:P', 'perimeter')": "16"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "f4",
+          "f6",
+          "f5",
+          "frame:C",
+          "property:C:a_sq",
+          "property:C:b_sq",
+          "property:C:c_sq"
+        ],
+        "operations": [
+          {
+            "operation": "focal_triangle_perimeter",
+            "a_sq": "25",
+            "c_sq": "9",
+            "perimeter": "16"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      }
+    ]
+  },
+  {
+    "id": 1552,
+    "facts": "G: Ellipse;Expression(G) = (x^2/25 + y^2/9 = 1);M:Point;F1:Point;F2:Point;PointOnCurve(M,G);Focus(G)={F1,F2}",
+    "query": "Perimeter(TriangleOf(M,F1,F2))",
+    "answer": "18",
+    "transitions": [
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 3,
+          "mode": "extract_parameters",
+          "curve": "G",
+          "equation_id": "f1",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('G', 'a_sq')": "25",
+            "('G', 'b_sq')": "9"
+          },
+          "values": {},
+          "frames": {
+            "G": {
+              "equation_id": "f1",
+              "center": [
+                "0",
+                "0"
+              ],
+              "axis": "x",
+              "direction": null
+            }
+          }
+        },
+        "read_facts": [
+          "f1",
+          "entity:G",
+          "f1:domain:0",
+          "f1:domain:1"
+        ],
+        "operations": [
+          {
+            "operation": "standard_ellipse_x",
+            "equation": "f1",
+            "axis": "x",
+            "a_sq": "25",
+            "b_sq": "9"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 11,
+          "mode": "derive_c_sq",
+          "curve": "G",
+          "equation_id": "f1",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 1,
+        "after_revision": 2,
+        "delta": {
+          "properties": {
+            "('G', 'c_sq')": "16"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "entity:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "f1:domain:0",
+          "f1:domain:1",
+          "f1",
+          "frame:G"
+        ],
+        "operations": [
+          {
+            "operation": "parameter_relation",
+            "curve": "G",
+            "kind": "Ellipse",
+            "inputs": {
+              "a_sq": "25",
+              "b_sq": "9"
+            },
+            "target": "c_sq",
+            "result": "16"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 32,
+          "mode": "derive_focal_perimeter",
+          "curve": "G",
+          "equation_id": "f1",
+          "line_equation_id": null,
+          "relation_id": "perimeter:G:F1:F2:M",
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": "M",
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": "f5",
+          "slope_sum_id": null
+        },
+        "before_revision": 2,
+        "after_revision": 3,
+        "delta": {
+          "properties": {
+            "('perimeter:G:F1:F2:M', 'perimeter')": "18"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "f1",
+          "f5",
+          "f6",
+          "frame:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "property:G:c_sq"
+        ],
+        "operations": [
+          {
+            "operation": "focal_triangle_perimeter",
+            "a_sq": "25",
+            "c_sq": "16",
+            "perimeter": "18"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      }
+    ]
+  }
+]

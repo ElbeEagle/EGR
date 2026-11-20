@@ -59,6 +59,9 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id==32:
+        from .focal_perimeter_proposals import check_perimeter_binding
+        return check_perimeter_binding(state,action)
     if action.model_id in (19,20):
         from .latus_proposals import check_latus_binding
         return check_latus_binding(state,action)
@@ -238,6 +241,11 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id==32:
+        from src.state.focal_perimeter_facts import perimeter_owner
+        return [BoundAction(32,'derive_focal_perimeter',pair.curve,f.fact_id,point=i.point,incidence_id=i.fact_id,relation_id=perimeter_owner(pair,i.point))
+                for pair in state.focus_pairs.values() for f in state.equations.values() for i in state.incidences.values()
+                if f.owner==pair.curve and f.role=='curve' and i.curve==pair.curve and i.point not in pair.points and mode in (None,'derive_focal_perimeter')]
     if model_id in (19,20):
         return [BoundAction(model_id,'derive_latus_length',c.curve,f.fact_id,line=c.line,relation_id=c.chord_id)
                 for c in state.chords.values() for f in state.equations.values()

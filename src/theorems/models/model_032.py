@@ -111,3 +111,7 @@ class EllipseFocalTrianglePerimeter(TheoremModel):
 
         except Exception:
             return False
+
+    def propose_bound(self,state,action):
+        from ..focal_perimeter_proposals import derive_focal_perimeter
+        return derive_focal_perimeter(state,action)

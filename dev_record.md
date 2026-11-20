@@ -638,7 +638,7 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `src/state/coordinate_product_facts.py`（新增）→ 保存给定分量身份、计数和查询目标。CoordinateComponentAlias 保存标量／点／轴向及来源；IntersectionCount 保存给定交点数；CoordinateProductQuery 表达两分量乘积。parse_coordinate_product_fact 记录结构，validate_coordinate_product_input 检查声明矛盾与查询绑定，read_coordinate_product 只定位唯一命名点对的已有坐标积，不计算。
 - `src/state/transition_state.py`（扩展）→ 接入新输入与答案读取。coordinate_aliases／intersection_counts 保存解析结果；from_facts 增加入口及末尾校验，extract_answer 调用只读定位。复用已有 NamedIntersection 与 properties，不修改模型提案或应用器。
 - `tests/test_bound_coordinate_products.py`（新增）→ 验证原始初态、正性边界、数值查询衔接与冲突／歧义；`docs/开发规格/artifacts/id1833_coordinate_input.json` 保存 parsed_only 初态，供后续开发复核，不是执行轨迹。
-- **效果／验证**：新增16项、针对性46项、相关509项通过。1833原始输入解析成功，revision=0、answer=None；显式p>0诊断可执行已有RM7，但RM35仍拒绝符号参数。数值构造输入经RM7→RM35读得−4。差异空白、文档链接及初态证据检查通过。
+- **效果／验证**：新增17项、针对性46项、相关509项通过。1833原始输入解析成功，revision=0、answer=None；显式p>0诊断可执行已有RM7，但RM35仍拒绝符号参数。数值构造输入经RM7→RM35读得−4。差异空白、文档链接及初态证据检查通过。
 - **文件／边界**：新增规格30、输入模块、测试和证据；更新状态、三份维护文档、规格导航／索引。原始数据未改，原题未求解；不将已有数值接口说成符号支持。
 - **下一步**：明确符号焦点弦条件来源、原式系数与正几何参数区别；正参数诊断须显式p>0，原始1833则需非退化且方向无关的处理，不能默认正性。
 
@@ -867,3 +867,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 
 - **效果／验证**：审查命令通过，两题RM3→RM11事实投影及距离求和得到16／18；不是原题闭环。维护文档同步待实现边界。
 - **下一步**：焦点对／查询身份后接RM32，保留用户后置范围；运行时未改，不更新历史回归数。
+
+## 2026-11-20｜RM32数值周长实现
+
+- **开发记录**：[docs/开发规格/50_RM32焦点三角形周长实现.md](docs/开发规格/50_RM32焦点三角形周长实现.md)
+- `src/state/focal_perimeter_facts.py` → 新增焦点身份及查询。FocusPair保存曲线、无序焦点对和声明来源；collect_focus_pairs合并反序重复、拒绝歧义；FocalPerimeterQuery保存三个顶点，read_perimeter只读取唯一角色绑定的结果。
+- `src/state/transition_state.py` → 扩展焦点对容器、事实收集和周长查询分派，不求焦点坐标。
+- `src/solver/focal_perimeter_operations.py` → 新增公共计算与核验。focal_perimeter返回2√a²+2√c²；verify_coordinates核验已有点在椭圆上、焦点属于标准焦点集合且两焦点不重合，不写状态。
+- `src/theorems/focal_perimeter_proposals.py` → 新增绑定和提案。check_perimeter_binding核对曲线、焦点对、第三点及归属；derive_focal_perimeter读取已提交参数与来源，提出角色身份键下perimeter，交应用器提交。
+- `src/theorems/bound_application.py`、`src/theorems/models/model_032.py` → 扩展RM32候选和绑定入口，复用原子提交与回滚，保留旧模型入口。
+- `tests/test_bound_focal_perimeter.py` → 新增17项，覆盖真实题、换轴、反序重复重排、缺c²／来源、错绑、已有坐标、退化求和、幂等及冲突回滚。
+
+- **效果／验证**：998／1552固定链得16／18；17项新测试通过，补充隔离测试前相关回归819项通过，保存两题轨迹。1552参考为空，不计匹配。
+- **下一步**：回到职责表选有限案例；原后置范围不变，非自主选择器。

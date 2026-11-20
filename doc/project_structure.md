@@ -185,6 +185,17 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 模式derive_latus_length输出弦级chord_length，Length(L)只读；6057／6770已验证固定链。先前规划由[规格48](../docs/开发规格/48_RM19_RM20通径实现.md)更新，后置范围不变。
 
-## 下一批RM32（未实现）
+## RM32设计入口（后续实现见下节）
 
 选998／1552数值椭圆焦点三角形周长，复用标准参数／RM11，新增无序焦点对身份和只读周长查询。需先提交c²，不强制执行RM0；周长为三段距离和，不产生非退化资格。见[规格49](../docs/开发规格/49_RM32焦点三角形周长契约.md)。
+
+## RM32数值周长已接入
+
+- `src/state/focal_perimeter_facts.py` → 新增焦点身份及查询。FocusPair保存曲线、无序焦点对和声明来源；collect_focus_pairs合并反序重复、拒绝歧义；FocalPerimeterQuery保存三个顶点，read_perimeter只读取唯一角色绑定的结果。
+- `src/state/transition_state.py` → 扩展焦点对容器、事实收集和周长查询分派，不求焦点坐标。
+- `src/solver/focal_perimeter_operations.py` → 新增公共计算与核验。focal_perimeter返回2√a²+2√c²；verify_coordinates核验已有点在椭圆上、焦点属于标准焦点集合且两焦点不重合，不写状态。
+- `src/theorems/focal_perimeter_proposals.py` → 新增绑定和提案。check_perimeter_binding核对曲线、焦点对、第三点及归属；derive_focal_perimeter读取已提交参数与来源，提出角色身份键下perimeter，交应用器提交。
+- `src/theorems/bound_application.py`、`src/theorems/models/model_032.py` → 扩展RM32候选和绑定入口，复用原子提交与回滚，保留旧模型入口。
+- `tests/test_bound_focal_perimeter.py` → 新增17项，覆盖真实题、换轴、反序重复重排、缺c²／来源、错绑、已有坐标、退化求和、幂等及冲突回滚。
+
+模式derive_focal_perimeter读取同曲线标准参数、c²及来源，输出角色级perimeter；Perimeter(TriangleOf(...))只读取唯一匹配结果。详情见[规格50](../docs/开发规格/50_RM32焦点三角形周长实现.md)。

@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .focal_perimeter_facts import FocusPair, FocalPerimeterQuery, collect_focus_pairs, read_perimeter
 from .latus_facts import SegmentLengthQuery, LatusEvidence, collect_latus_facts
 from src.theorems.root_midpoint_proposals import MidpointCoordinateQuery, read_midpoint
 from .midpoint_alias_facts import ChordMidpointAlias, collect_midpoint_aliases, resolve_midpoint_aliases
@@ -178,6 +179,7 @@ class TransitionState:
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
     midpoint_aliases: dict[str, ChordMidpointAlias] = field(default_factory=dict)
+    focus_pairs: dict[str, FocusPair] = field(default_factory=dict)
     latus_evidence: dict[str, LatusEvidence] = field(default_factory=dict)
     segment_chords: dict[str, SegmentChord] = field(default_factory=dict)
     chord_endpoint_names: dict[str, ChordEndpointNames] = field(default_factory=dict)
@@ -228,7 +230,12 @@ class TransitionState:
         product_query = re.fullmatch(r'\s*([A-Za-z]\w*)\s*\*\s*([A-Za-z]\w*)\s*', query_text)
         midpoint_query = re.fullmatch(r'Coordinate\(MidPoint\(LineSegmentOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\)\)', query_text)
         segment_length = re.fullmatch(r'Length\(\s*(\w+)\s*\)',query_text)
-        if segment_length:
+        perimeter_query=re.fullmatch(r'Perimeter\(TriangleOf\(\s*(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*\)\)',query_text)
+        if perimeter_query:
+            points=tuple(sorted(perimeter_query.groups()))
+            if len(set(points))!=3 or any(entities.get(p)!='Point' for p in points):raise ValueError('Perimeter requires three distinct points')
+            target=FocalPerimeterQuery(points)
+        elif segment_length:
             if entities.get(segment_length[1])!='LineSegment':raise ValueError('Length requires declared segment')
             target=SegmentLengthQuery(segment_length[1])
         elif midpoint_query:
@@ -271,7 +278,8 @@ class TransitionState:
         state = cls(entities, symbols, {}, {}, target)
         if named_line_query:
             state.query = NamedLineQuery(register_named_line(state, *named_line_query.groups(), 'query'))
-        chord_parts = collect_named_chords(state, parts)
+        chord_parts = collect_focus_pairs(state, parts)
+        chord_parts |= collect_named_chords(state, parts)
         chord_parts |= collect_segment_chords(state, parts)
         chord_parts |= collect_latus_facts(state, parts)
         chord_parts |= collect_midpoint_aliases(state, parts)
@@ -410,6 +418,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, FocalPerimeterQuery):
+            return read_perimeter(self,self.query)
         if isinstance(self.query, SegmentLengthQuery):
             seg=self.segment_chords.get(self.query.segment)
             matches=[c for c in self.chords.values() if seg and (c.line,c.curve)==(seg.line,seg.curve)]
