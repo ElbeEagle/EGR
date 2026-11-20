@@ -1,0 +1,118 @@
+{
+  "stage": "design_audit_only",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 998,
+      "text": "已知椭圆$C$:$ \\frac{x^{2}}{25}+\\frac{y^{2}}{16}=1$的两个焦点为$F_{1}$、$F_{2}$、$P$为椭圆$C$上一点，则$\\Delta P F_{1} F_{2}$的周长为?",
+      "facts": "C: Ellipse;P: Point;F1: Point;F2: Point;Expression(C) = (x^2/25 + y^2/16 = 1);Focus(C)={F1,F2};PointOnCurve(P,C)",
+      "query": "Perimeter(TriangleOf(P, F1, F2))",
+      "weak_models": [
+        3,
+        11,
+        0,
+        32
+      ],
+      "reference_answer": "16",
+      "current_parser": "Unsupported or undeclared query target",
+      "probe": {
+        "stage": "fact_projection_3_11_only",
+        "c_sq": "9",
+        "expected": "16",
+        "distance_checks": [
+          {
+            "point": [
+              "0",
+              "4"
+            ],
+            "perimeter": "16"
+          },
+          {
+            "point": [
+              "3",
+              "16/5"
+            ],
+            "perimeter": "16"
+          },
+          {
+            "point": [
+              "5",
+              "0"
+            ],
+            "perimeter": "16"
+          }
+        ]
+      }
+    },
+    {
+      "id": 1552,
+      "text": "椭圆$\\frac{x^{2}}{25}+\\frac{y^{2}}{9}=1$上一点$M$与两个焦点构成的三角形周长为?",
+      "facts": "G: Ellipse;Expression(G) = (x^2/25 + y^2/9 = 1);M:Point;F1:Point;F2:Point;PointOnCurve(M,G);Focus(G)={F1,F2}",
+      "query": "Perimeter(TriangleOf(M,F1,F2))",
+      "weak_models": [
+        3,
+        11,
+        0,
+        32
+      ],
+      "reference_answer": "",
+      "current_parser": "Unsupported or undeclared query target",
+      "probe": {
+        "stage": "fact_projection_3_11_only",
+        "c_sq": "16",
+        "expected": "18",
+        "distance_checks": [
+          {
+            "point": [
+              "0",
+              "3"
+            ],
+            "perimeter": "18"
+          },
+          {
+            "point": [
+              "3",
+              "12/5"
+            ],
+            "perimeter": "18"
+          },
+          {
+            "point": [
+              "5",
+              "0"
+            ],
+            "perimeter": "18"
+          }
+        ]
+      }
+    },
+    {
+      "id": 3272,
+      "text": "设椭圆$C$:$ \\frac{x^{2}}{25}+\\frac{y^{2}}{9}=1$的左、右焦点分别为$F_{1}$、$F_{2}$、$A$是$C$上任意一点，则$\\Delta A F_{1} F_{2}$的周长为?",
+      "facts": "C: Ellipse;A: Point;F1: Point;F2: Point;Expression(C) = (x^2/25 + y^2/9 = 1);LeftFocus(C)=F1;RightFocus(C)=F2;PointOnCurve(A,C)",
+      "query": "Perimeter(TriangleOf(A, F1, F2))",
+      "weak_models": [
+        3,
+        0,
+        32
+      ],
+      "reference_answer": "18",
+      "current_parser": "Unsupported or undeclared query target"
+    },
+    {
+      "id": 3703,
+      "text": "已知$F$是抛物线$y^{2}=4 x$的焦点，$P$是抛物线上的一个动点，$A(3 , 1)$，则$\\triangle A P F$周长的最小值为?",
+      "facts": "G: Parabola;Expression(G) = (y^2 = 4*x);F: Point;Focus(G) = F;P: Point;PointOnCurve(P, G);A: Point;Coordinate(A) = (3, 1)",
+      "query": "Min(Perimeter(TriangleOf(A, P, F)))",
+      "weak_models": [
+        7,
+        2,
+        29,
+        53,
+        32
+      ],
+      "reference_answer": "4+sqrt(5)",
+      "current_parser": "Unsupported or undeclared query target"
+    }
+  ]
+}
