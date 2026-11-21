@@ -123,6 +123,8 @@ class TheoremLibrary:
         self.register_model(EllipseDirectrix())
         self.register_model(ParabolaDirectrix())
         self.register_model(EllipseFocalTrianglePerimeter())
+        from .models.model_030 import EllipseFocalTriangleArea
+        self.register_model(EllipseFocalTriangleArea())
         self.register_model(EllipseTangentLine())
         self.register_model(EllipseMidpointChord())
         self.register_model(EllipsePointDifference())

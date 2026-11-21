@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .focal_area_facts import AngleFact,FocalAreaQuery,collect_angles,read_area
 from .focal_perimeter_facts import FocusPair, FocalPerimeterQuery, collect_focus_pairs, read_perimeter
 from .latus_facts import SegmentLengthQuery, LatusEvidence, collect_latus_facts
 from src.theorems.root_midpoint_proposals import MidpointCoordinateQuery, read_midpoint
@@ -179,6 +180,7 @@ class TransitionState:
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
     midpoint_aliases: dict[str, ChordMidpointAlias] = field(default_factory=dict)
+    angle_facts: dict[tuple, AngleFact] = field(default_factory=dict)
     focus_pairs: dict[str, FocusPair] = field(default_factory=dict)
     latus_evidence: dict[str, LatusEvidence] = field(default_factory=dict)
     segment_chords: dict[str, SegmentChord] = field(default_factory=dict)
@@ -231,7 +233,12 @@ class TransitionState:
         midpoint_query = re.fullmatch(r'Coordinate\(MidPoint\(LineSegmentOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\)\)', query_text)
         segment_length = re.fullmatch(r'Length\(\s*(\w+)\s*\)',query_text)
         perimeter_query=re.fullmatch(r'Perimeter\(TriangleOf\(\s*(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*\)\)',query_text)
-        if perimeter_query:
+        area_query=re.fullmatch(r'Area\(TriangleOf\(\s*(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*\)\)',query_text)
+        if area_query:
+            points=tuple(sorted(area_query.groups()))
+            if len(set(points))!=3 or any(entities.get(p)!='Point' for p in points):raise ValueError('Area requires three distinct points')
+            target=FocalAreaQuery(points)
+        elif perimeter_query:
             points=tuple(sorted(perimeter_query.groups()))
             if len(set(points))!=3 or any(entities.get(p)!='Point' for p in points):raise ValueError('Perimeter requires three distinct points')
             target=FocalPerimeterQuery(points)
@@ -279,6 +286,7 @@ class TransitionState:
         if named_line_query:
             state.query = NamedLineQuery(register_named_line(state, *named_line_query.groups(), 'query'))
         chord_parts = collect_focus_pairs(state, parts)
+        chord_parts |= collect_angles(state, parts)
         chord_parts |= collect_named_chords(state, parts)
         chord_parts |= collect_segment_chords(state, parts)
         chord_parts |= collect_latus_facts(state, parts)
@@ -418,6 +426,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, FocalAreaQuery):
+            return read_area(self,self.query)
         if isinstance(self.query, FocalPerimeterQuery):
             return read_perimeter(self,self.query)
         if isinstance(self.query, SegmentLengthQuery):

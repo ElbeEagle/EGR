@@ -59,6 +59,9 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id==30:
+        from .focal_area_proposals import check_area_binding
+        return check_area_binding(state,action)
     if action.model_id==32:
         from .focal_perimeter_proposals import check_perimeter_binding
         return check_perimeter_binding(state,action)
@@ -241,6 +244,11 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id==30:
+        from src.state.focal_area_facts import area_owner
+        return [replace(a,model_id=30,mode='derive_focal_area',relation_id=area_owner(state.focus_pairs[a.curve],a.point))
+                for a in enumerate_actions(state,32) if mode in (None,'derive_focal_area')
+                and (a.point,state.focus_pairs[a.curve].points) in state.angle_facts]
     if model_id==32:
         from src.state.focal_perimeter_facts import perimeter_owner
         return [BoundAction(32,'derive_focal_perimeter',pair.curve,f.fact_id,point=i.point,incidence_id=i.fact_id,relation_id=perimeter_owner(pair,i.point))

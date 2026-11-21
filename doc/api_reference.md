@@ -237,6 +237,17 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 模式derive_focal_perimeter读取同曲线标准参数、c²及来源，输出角色级perimeter；Perimeter(TriangleOf(...))只读取唯一匹配结果。详情见[规格50](../docs/开发规格/50_RM32焦点三角形周长实现.md)。
 
-## 下一批RM30（待实现）
+## RM30设计入口（最新实现见下节）
 
 选3174／3900／6748，复用焦点对、点归属与标准参数，新增顶点明确的弧度夹角事实及只读面积查询。要求0<θ<π且a²sin²(θ/2)≤c²，允许最大角等号；与RM32退化求和分开。见[规格51](../docs/开发规格/51_RM30焦点三角形面积契约.md)。
+
+## RM30面积已接入
+
+- `src/state/focal_area_facts.py` → 新增角度事实和面积目标。AngleFact保留顶点、无序两侧点、弧度值及来源，collect_angles合并反序重复并拒绝矛盾；FocalAreaQuery与read_area只定位、读取唯一面积结果。
+- `src/state/transition_state.py` → 扩展角度容器、解析及面积查询分派，pi仅在角度解析环境中作为常量提供。
+- `src/solver/focal_area_operations.py` → 新增公共资格与计算。focal_area验证非退化和可达性后返回面积及余量；verify_point_angle以已有点坐标核对真实夹角，不提交焦点坐标。
+- `src/theorems/focal_area_proposals.py` → 新增RM30绑定与提案。检查焦点对、归属、参数与角度来源，复用已有坐标归属核验，提出独立area身份下的面积；应用器负责提交。
+- `src/theorems/models/model_030.py`、`src/theorems/theorem_library.py`、`src/theorems/bound_application.py` → 新增并注册RM30绑定入口与候选，沿用原子提交和回滚。
+- `tests/test_bound_focal_area.py` → 新增23项，验证三题、轴向、角身份、来源、可达性、坐标矛盾、歧义、幂等和回滚。
+
+模式derive_focal_area要求已提交参数及匹配角度，输出area属性；只读查询与周长分离。详见[规格52](../docs/开发规格/52_RM30数值焦点面积实现.md)。

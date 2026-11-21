@@ -888,3 +888,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/focal_area_contract.json` → 保存数据哈希、三题几何见证及延期范围，不是模型轨迹。
 - **验证／效果**：三题独立面积√3/3、1、√3；可达最大角和不可达角检查通过。同步资格／输出契约及维护文档，运行时未改。
 - **下一步**：先角度身份与查询，再数值RM30；保留后置范围及RM32退化求和语义。
+
+## 2026-11-21｜RM30数值面积实现
+
+- **开发记录**：[docs/开发规格/52_RM30数值焦点面积实现.md](docs/开发规格/52_RM30数值焦点面积实现.md)
+- `src/state/focal_area_facts.py` → 新增角度事实和面积目标。AngleFact保留顶点、无序两侧点、弧度值及来源，collect_angles合并反序重复并拒绝矛盾；FocalAreaQuery与read_area只定位、读取唯一面积结果。
+- `src/state/transition_state.py` → 扩展角度容器、解析及面积查询分派，pi仅在角度解析环境中作为常量提供。
+- `src/solver/focal_area_operations.py` → 新增公共资格与计算。focal_area验证非退化和可达性后返回面积及余量；verify_point_angle以已有点坐标核对真实夹角，不提交焦点坐标。
+- `src/theorems/focal_area_proposals.py` → 新增RM30绑定与提案。检查焦点对、归属、参数与角度来源，复用已有坐标归属核验，提出独立area身份下的面积；应用器负责提交。
+- `src/theorems/models/model_030.py`、`src/theorems/theorem_library.py`、`src/theorems/bound_application.py` → 新增并注册RM30绑定入口与候选，沿用原子提交和回滚。
+- `tests/test_bound_focal_area.py` → 新增23项，验证三题、轴向、角身份、来源、可达性、坐标矛盾、歧义、幂等和回滚。
+
+- **效果／验证**：三题固定链得√3/3、1、√3，23项新测试、相关回归843项通过，保存三题轨迹。
+- **下一步**：回到职责表选有限案例，后置范围保持不变。

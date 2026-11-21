@@ -1,0 +1,488 @@
+[
+  {
+    "id": 3174,
+    "facts": "G: Ellipse;P: Point;F1: Point;F2: Point;Expression(G) = (x^2/4 + y^2 = 1);PointOnCurve(P, G);Focus(G) = {F1, F2};AngleOf(F1,P,F2)=pi/3",
+    "query": "Area(TriangleOf(P, F1, F2))",
+    "answer": "sqrt(3)/3",
+    "transitions": [
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 3,
+          "mode": "extract_parameters",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('G', 'a_sq')": "4",
+            "('G', 'b_sq')": "1"
+          },
+          "values": {},
+          "frames": {
+            "G": {
+              "equation_id": "f4",
+              "center": [
+                "0",
+                "0"
+              ],
+              "axis": "x",
+              "direction": null
+            }
+          }
+        },
+        "read_facts": [
+          "f4",
+          "entity:G",
+          "f4:domain:0"
+        ],
+        "operations": [
+          {
+            "operation": "standard_ellipse_x",
+            "equation": "f4",
+            "axis": "x",
+            "a_sq": "4",
+            "b_sq": "1"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 11,
+          "mode": "derive_c_sq",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 1,
+        "after_revision": 2,
+        "delta": {
+          "properties": {
+            "('G', 'c_sq')": "3"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "entity:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "f4:domain:0",
+          "f4",
+          "frame:G"
+        ],
+        "operations": [
+          {
+            "operation": "parameter_relation",
+            "curve": "G",
+            "kind": "Ellipse",
+            "inputs": {
+              "a_sq": "4",
+              "b_sq": "1"
+            },
+            "target": "c_sq",
+            "result": "3"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 30,
+          "mode": "derive_focal_area",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": "area:G:F1:F2:P",
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": "P",
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": "f5",
+          "slope_sum_id": null
+        },
+        "before_revision": 2,
+        "after_revision": 3,
+        "delta": {
+          "properties": {
+            "('area:G:F1:F2:P', 'area')": "sqrt(3)/3"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "frame:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "property:G:c_sq"
+        ],
+        "operations": [
+          {
+            "operation": "focal_triangle_area",
+            "a_sq": "4",
+            "c_sq": "3",
+            "theta": "pi/3",
+            "attainability_margin": "2",
+            "area": "sqrt(3)/3"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      }
+    ]
+  },
+  {
+    "id": 3900,
+    "facts": "G: Ellipse;F1: Point;P: Point;F2: Point;Expression(G) = (x^2/4 + y^2 = 1);Focus(G) = {F1, F2};PointOnCurve(P, G);AngleOf(F1, P, F2) = pi/2",
+    "query": "Area(TriangleOf(F1, P, F2))",
+    "answer": "1",
+    "transitions": [
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 3,
+          "mode": "extract_parameters",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('G', 'a_sq')": "4",
+            "('G', 'b_sq')": "1"
+          },
+          "values": {},
+          "frames": {
+            "G": {
+              "equation_id": "f4",
+              "center": [
+                "0",
+                "0"
+              ],
+              "axis": "x",
+              "direction": null
+            }
+          }
+        },
+        "read_facts": [
+          "f4",
+          "entity:G",
+          "f4:domain:0"
+        ],
+        "operations": [
+          {
+            "operation": "standard_ellipse_x",
+            "equation": "f4",
+            "axis": "x",
+            "a_sq": "4",
+            "b_sq": "1"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 11,
+          "mode": "derive_c_sq",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 1,
+        "after_revision": 2,
+        "delta": {
+          "properties": {
+            "('G', 'c_sq')": "3"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "entity:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "f4:domain:0",
+          "f4",
+          "frame:G"
+        ],
+        "operations": [
+          {
+            "operation": "parameter_relation",
+            "curve": "G",
+            "kind": "Ellipse",
+            "inputs": {
+              "a_sq": "4",
+              "b_sq": "1"
+            },
+            "target": "c_sq",
+            "result": "3"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 30,
+          "mode": "derive_focal_area",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": "area:G:F1:F2:P",
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": "P",
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": "f6",
+          "slope_sum_id": null
+        },
+        "before_revision": 2,
+        "after_revision": 3,
+        "delta": {
+          "properties": {
+            "('area:G:F1:F2:P', 'area')": "1"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "f4",
+          "f6",
+          "f5",
+          "f7",
+          "frame:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "property:G:c_sq"
+        ],
+        "operations": [
+          {
+            "operation": "focal_triangle_area",
+            "a_sq": "4",
+            "c_sq": "3",
+            "theta": "pi/2",
+            "attainability_margin": "1",
+            "area": "1"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      }
+    ]
+  },
+  {
+    "id": 6748,
+    "facts": "G: Ellipse;P: Point;F1: Point;F2: Point;Expression(G) = (x^2/10 + y^2 = 1);PointOnCurve(P, G);Focus(G) = {F1, F2};AngleOf(F1,P,F2)=2*pi/3",
+    "query": "Area(TriangleOf(P, F1, F2))",
+    "answer": "sqrt(3)",
+    "transitions": [
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 3,
+          "mode": "extract_parameters",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('G', 'a_sq')": "10",
+            "('G', 'b_sq')": "1"
+          },
+          "values": {},
+          "frames": {
+            "G": {
+              "equation_id": "f4",
+              "center": [
+                "0",
+                "0"
+              ],
+              "axis": "x",
+              "direction": null
+            }
+          }
+        },
+        "read_facts": [
+          "f4",
+          "entity:G",
+          "f4:domain:0"
+        ],
+        "operations": [
+          {
+            "operation": "standard_ellipse_x",
+            "equation": "f4",
+            "axis": "x",
+            "a_sq": "10",
+            "b_sq": "1"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 11,
+          "mode": "derive_c_sq",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null
+        },
+        "before_revision": 1,
+        "after_revision": 2,
+        "delta": {
+          "properties": {
+            "('G', 'c_sq')": "9"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "entity:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "f4:domain:0",
+          "f4",
+          "frame:G"
+        ],
+        "operations": [
+          {
+            "operation": "parameter_relation",
+            "curve": "G",
+            "kind": "Ellipse",
+            "inputs": {
+              "a_sq": "10",
+              "b_sq": "1"
+            },
+            "target": "c_sq",
+            "result": "9"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      {
+        "status": "applied",
+        "action": {
+          "model_id": 30,
+          "mode": "derive_focal_area",
+          "curve": "G",
+          "equation_id": "f4",
+          "line_equation_id": null,
+          "relation_id": "area:G:F1:F2:P",
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": "P",
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": "f5",
+          "slope_sum_id": null
+        },
+        "before_revision": 2,
+        "after_revision": 3,
+        "delta": {
+          "properties": {
+            "('area:G:F1:F2:P', 'area')": "sqrt(3)"
+          },
+          "values": {}
+        },
+        "read_facts": [
+          "f4",
+          "f5",
+          "f6",
+          "f7",
+          "frame:G",
+          "property:G:a_sq",
+          "property:G:b_sq",
+          "property:G:c_sq"
+        ],
+        "operations": [
+          {
+            "operation": "focal_triangle_area",
+            "a_sq": "10",
+            "c_sq": "9",
+            "theta": "2*pi/3",
+            "attainability_margin": "3/2",
+            "area": "sqrt(3)"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      }
+    ]
+  }
+]
