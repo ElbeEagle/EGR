@@ -1,0 +1,175 @@
+{
+  "stage": "design_audit_only",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 3200,
+      "text": "已知双曲线$x^{2}-\\frac{y^{2}}{3}=1$，那么它的焦点到渐近线的距离为?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2/3 = 1)",
+      "query": "Distance(Focus(G),Asymptote(G))",
+      "weak_models": [
+        5,
+        21,
+        22,
+        52
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "probe": {
+        "scope": "standard_model_fact_projection_plus_independent_geometry",
+        "axis": "x",
+        "equation": "x^2/1-y^2/3=1",
+        "checks": [
+          {
+            "focus": [
+              "-2",
+              "0"
+            ],
+            "line": "sqrt(3)*x - y",
+            "distance": "sqrt(3)"
+          },
+          {
+            "focus": [
+              "-2",
+              "0"
+            ],
+            "line": "sqrt(3)*x + y",
+            "distance": "sqrt(3)"
+          },
+          {
+            "focus": [
+              "2",
+              "0"
+            ],
+            "line": "sqrt(3)*x - y",
+            "distance": "sqrt(3)"
+          },
+          {
+            "focus": [
+              "2",
+              "0"
+            ],
+            "line": "sqrt(3)*x + y",
+            "distance": "sqrt(3)"
+          }
+        ]
+      }
+    },
+    {
+      "id": 891,
+      "text": "双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{3}=1$的焦点到其渐近线的距离为?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2/4 - y^2/3 = 1)",
+      "query": "Distance(Focus(G), Asymptote(G))",
+      "weak_models": [
+        5,
+        22
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "probe": {
+        "scope": "standard_model_fact_projection_plus_independent_geometry",
+        "axis": "x",
+        "equation": "x^2/4-y^2/3=1",
+        "checks": [
+          {
+            "focus": [
+              "-sqrt(7)",
+              "0"
+            ],
+            "line": "sqrt(3)*x - 2*y",
+            "distance": "sqrt(3)"
+          },
+          {
+            "focus": [
+              "-sqrt(7)",
+              "0"
+            ],
+            "line": "sqrt(3)*x + 2*y",
+            "distance": "sqrt(3)"
+          },
+          {
+            "focus": [
+              "sqrt(7)",
+              "0"
+            ],
+            "line": "sqrt(3)*x - 2*y",
+            "distance": "sqrt(3)"
+          },
+          {
+            "focus": [
+              "sqrt(7)",
+              "0"
+            ],
+            "line": "sqrt(3)*x + 2*y",
+            "distance": "sqrt(3)"
+          }
+        ]
+      }
+    },
+    {
+      "id": 2417,
+      "text": "双曲线$x^{2}-\\frac{y^{2}}{4}=1$的右焦点到渐近线的距离为?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2/4 = 1)",
+      "query": "Distance(RightFocus(G), Asymptote(G))",
+      "weak_models": [
+        5,
+        12,
+        21,
+        22,
+        52
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "scope": "deferred_specific_focus_or_symbolic"
+    },
+    {
+      "id": 1013,
+      "text": "双曲线$\\frac{x^{2}}{a^{2}}-y^{2}=1(a>0)$的焦点到其渐近线的距离为?",
+      "facts": "G: Hyperbola;a: Number;a>0;Expression(G) = (-y^2 + x^2/a^2 = 1)",
+      "query": "Distance(Focus(G), Asymptote(G))",
+      "weak_models": [
+        5,
+        52,
+        22
+      ],
+      "current_parser": "Unsupported or undeclared query target",
+      "scope": "deferred_specific_focus_or_symbolic"
+    }
+  ],
+  "y_axis_diagnostic": {
+    "scope": "standard_model_fact_projection_plus_independent_geometry",
+    "axis": "y",
+    "equation": "y^2/4-x^2/3=1",
+    "checks": [
+      {
+        "focus": [
+          "0",
+          "-sqrt(7)"
+        ],
+        "line": "2*x - sqrt(3)*y",
+        "distance": "sqrt(3)"
+      },
+      {
+        "focus": [
+          "0",
+          "-sqrt(7)"
+        ],
+        "line": "2*x + sqrt(3)*y",
+        "distance": "sqrt(3)"
+      },
+      {
+        "focus": [
+          "0",
+          "sqrt(7)"
+        ],
+        "line": "2*x - sqrt(3)*y",
+        "distance": "sqrt(3)"
+      },
+      {
+        "focus": [
+          "0",
+          "sqrt(7)"
+        ],
+        "line": "2*x + sqrt(3)*y",
+        "distance": "sqrt(3)"
+      }
+    ]
+  }
+}
