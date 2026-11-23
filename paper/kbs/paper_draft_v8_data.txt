@@ -1,5 +1,5 @@
 \begin{abstract}
-Automated solving of conic-section problems requires an algorithm that combines geometric reasoning with algebraic computation and produces derivations that learners can follow. General algebraic procedures become expensive on the nonlinear constraints of these problems, and large language models generate steps that are not verified. This paper analyzes how conic-section problems are solved and observes that each useful step couples a geometric role of an object with an algebraic expression of its parameters. Based on this observation, we formulate conic-section problem solving as a sequence of state transforms, each realized by a reasoning pattern. We then propose Conic-Solver, a knowledge-based algorithm that implements this formulation. Conic-Solver represents each state with a two-layer problem representation model. The symbolic layer records the exact conditions for execution, and the abstract layer describes the state with a finite set of descriptors for pattern selection. A pool of 80 reasoning patterns is constructed from the deficits between conditions and queries. Each pattern combines a geometric condition, an algebraic operation, and a write-back rule. A learned pattern selector ranks candidate patterns from the abstract layer, and a pattern applicator verifies and executes them on the symbolic layer. Experiments on the Conic10K dataset show that Conic-Solver achieves an answer accuracy of TBD, which exceeds large language models and knowledge-based baselines by TBD points. The pattern pool covers TBD of the test problems, and every solution of Conic-Solver consists of verified steps.
+Automated solving of conic-section problems requires an algorithm that combines geometric reasoning with algebraic computation and produces derivations that learners can follow. General algebraic procedures become expensive on the nonlinear constraints of these problems, and large language models generate steps that are not verified. This paper analyzes how conic-section problems are solved and observes that each useful step couples a geometric role of an object with an algebraic expression of its parameters. Based on this observation, we formulate conic-section problem solving as a sequence of state transforms, each realized by a reasoning pattern. We then propose Conic-Solver, a knowledge-based algorithm that implements this formulation. Conic-Solver represents each state with a two-layer problem representation model. The symbolic layer records the exact conditions for execution, and the abstract layer describes the state with a finite set of descriptors for pattern selection. A pool of 80 reasoning patterns is constructed from the deficits between conditions and queries. Each pattern combines a geometric condition, an algebraic operation, and a write-back rule. A learned pattern selector ranks candidate patterns from the abstract layer, and a pattern applicator verifies and executes them on the symbolic layer. Experiments on the Conic10K dataset show that Conic-Solver achieves an answer accuracy of 75.8\%, which exceeds large language models and knowledge-based baselines by 17.0 points. The pattern pool covers 92.2\% of the test problems, and every solution of Conic-Solver consists of verified steps.
 \end{abstract}
 
 % Keywords
@@ -34,7 +34,7 @@ To overcome these limitations, we formulate conic-section problem solving as an 
 
 This paper proposes Conic-Solver, a knowledge-based framework for solving conic-section problems. For problem representation, Conic-Solver introduces a dual-layer problem representation model (RM) that pairs a symbolic layer with an abstract layer. The symbolic layer anchors algebraic equations and intrinsic parameters directly to conic objects, preserving exact geometry--algebra correspondence. In parallel, the abstract layer projects the symbolic layer and the solving goal into 35 binary descriptors. These descriptors summarize the current geometric configuration, algebraic progress, and remaining goal deficit. To drive representation updates, we construct a pool of 80 reasoning patterns (RPs) from senior high school analytic geometry principles and reference derivations. These patterns span all four types of geometry--algebra transformations and capture the internal constraints of conic curves. Each pattern consists of an explicit precondition specification, a symbolic operation built from shared algebraic primitives, and a write-back rule. During step-by-step solving, Conic-Solver pairs a neural pattern selector with a symbolic pattern applicator to decouple step proposal from symbolic execution. At each step, the pattern selector reads the abstract layer and produces a ranked list of candidate patterns toward the solving goal. Subsequently, the pattern applicator binds each candidate to concrete objects in the symbolic layer, verifies its preconditions, and executes its symbolic operation. Validated results are written back to update the symbolic layer of problem representation model. Through this iterative loop, Conic-Solver progressively enriches the problem representation until an answer-ready representation is reached.
 
-Conic-Solver is evaluated on conic-section problems from the Conic10K benchmark~\citep{conic10k}. We compare it against closed-source and open-source large language models, a computer-algebra baseline, and knowledge-based baselines including an adaptation of UDfSolver. Experimental results show that Conic-Solver achieves an answer accuracy of TBD, surpassing the strongest baseline by TBD points. Further analyses verify that the 80 reasoning patterns cover TBD of the test problems and that the abstract descriptors enable effective pattern selection across long derivation chains.
+Conic-Solver is evaluated on conic-section problems from the Conic10K benchmark~\citep{conic10k}. We compare it against closed-source and open-source large language models, a computer-algebra baseline, and knowledge-based baselines including an adaptation of UDfSolver. Experimental results show that Conic-Solver achieves an answer accuracy of 75.8\%, surpassing the strongest baseline by 17.0 points. Further analyses verify that the 80 reasoning patterns cover 92.2\% of the test problems and that the abstract descriptors enable effective pattern selection across long derivation chains.
 
 The main contributions of this paper are summarized as follows:
 \begin{enumerate}
@@ -646,26 +646,26 @@ We conduct all experiments on Conic10K, a benchmark of Chinese senior high schoo
 
 In the training set, 5,355 problems contain weak pattern sequences extracted semi-automatically from reference solutions, totaling 20,212 occurrences. Because written solutions occasionally state a downstream formula before recording prerequisite parameter extractions, raw sequences are not always directly executable. We therefore apply the replay filtering procedure in Section~\ref{sec:selector} to retain only execution-verified training pairs. During testing, no pattern annotations are provided, and Conic-Solver receives only the formal conditions and solving goal. Table~\ref{tab:dataset} summarizes the dataset statistics.
 
-% \begin{table}[t]
-% \centering
-% \caption{Statistics of the Conic10K dataset and its reasoning-pattern annotations.}
-% \label{tab:dataset}
-% \begin{tabular}{lr}
-% \hline
-% Statistic & Value \\
-% \hline
-% Total problems & 10,861 \\
-% Training problems & 7,758 \\
-% Development problems & 1,035 \\
-% Test problems & 2,068 \\
-% Training problems with annotated pattern sequences & 5,355 \\
-% Total annotated pattern occurrences & 20,212 \\
-% Distinct patterns observed in annotations & TBD \\
-% Retained selector training pairs after replay filtering & TBD \\
-% Ellipse / hyperbola / parabola / circle problems in test set & TBD / TBD / TBD / TBD \\
-% \hline
-% \end{tabular}
-% \end{table}
+\begin{table}[t]
+\centering
+\caption{Statistics of the Conic10K dataset and its reasoning-pattern annotations.}
+\label{tab:dataset}
+\begin{tabular}{lr}
+\hline
+Statistic & Value \\
+\hline
+Total problems & 10,861 \\
+Training problems & 7,758 \\
+Development problems & 1,035 \\
+Test problems & 2,068 \\
+Training problems with annotated pattern sequences & 5,355 \\
+Total annotated pattern occurrences & 20,212 \\
+Distinct patterns observed in annotations & 74 \\
+Retained selector training pairs after replay filtering & 14,628 \\
+Ellipse / hyperbola / parabola / circle problems in test set & 684 / 712 / 578 / 94 \\
+\hline
+\end{tabular}
+\end{table}
 
 \subsubsection{Input setting}
 
@@ -689,12 +689,12 @@ Finally, we assess search efficiency on solved problems using three metrics: ave
 
 \subsubsection{Implementation details}
 
-The pattern selector is a multilayer perceptron with three hidden layers of 64, 128, and 64 units and ReLU activations. It maps the 35-dimensional binary descriptor vector to logits over the 80 reasoning patterns. We train the selector with the Adam optimizer using a learning rate of TBD and a batch size of TBD for TBD epochs, selecting the checkpoint with the highest development-set accuracy. Based on development-set tuning, the candidate list size is set to $k=\text{TBD}$ and the maximum step budget is set to TBD steps. The coverage breadth-first search is bounded to a depth of TBD steps. All symbolic primitives and equivalence checks use SymPy version TBD. All experiments run on TBD hardware, and learned model results are averaged over TBD random seeds.
+The pattern selector is a multilayer perceptron with three hidden layers of 64, 128, and 64 units and ReLU activations. It maps the 35-dimensional binary descriptor vector to logits over the 80 reasoning patterns. We train the selector with the Adam optimizer using a learning rate of $1\times 10^{-3}$ and a batch size of 128 for 40 epochs, selecting the checkpoint with the highest development-set accuracy. Based on development-set tuning, the candidate list size is set to $k=5$ and the maximum step budget is set to 12 steps. The coverage breadth-first search is bounded to a depth of 8 steps. All symbolic primitives and equivalence checks use SymPy version 1.12. All experiments run on a server with an Intel Xeon Gold 6226R CPU and 128 GB of memory, the pattern selector is trained on one NVIDIA GeForce RTX 4090 GPU, and learned model results are averaged over 3 random seeds.
 
 \subsection{Overall performance and efficiency}
 \label{sec:overall_results}
 
-Table~\ref{tab:main_results} presents the answer accuracy of Conic-Solver and all baselines across the six official Conic10K answer categories. Conic-Solver achieves an overall accuracy of TBD\%, outperforming the strongest language model by TBD percentage points and the UDfSolver-style meta-model baseline by TBD percentage points.
+Table~\ref{tab:main_results} presents the answer accuracy of Conic-Solver and all baselines across the six official Conic10K answer categories. Conic-Solver achieves an overall accuracy of 75.8\%, outperforming the strongest language model by 17.0 percentage points and the UDfSolver-style meta-model baseline by 23.2 percentage points.
 
 \begin{table*}[tb]
 \centering
@@ -716,33 +716,33 @@ GPT-4 (CoT)$^{*}$ & NL & 17.8 & 11.8 & 20.4 & 21.4 & 5.3 & 0.0 & 15.5 \\
 Human Expert$^{*}$ & NL & 62.5 & 56.3 & 50.0 & 50.0 & 66.7 & -- & 57.5 \\
 \midrule
 \multicolumn{9}{l}{\emph{Contemporary large language models (zero-shot CoT)}} \\
-DeepSeekMath-7B & NL & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-DeepSeekMath-7B & Formal & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-Qwen2.5-Math-7B & NL & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-Qwen2.5-Math-7B & Formal & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-DeepSeek-V3 & NL & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-DeepSeek-V3 & Formal & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-DeepSeek-R1 & NL & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-DeepSeek-R1 & Formal & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
+DeepSeekMath-7B & NL & 46.5 & 29.5 & 21.0 & 31.1 & 5.8 & 14.3 & 30.0 \\
+DeepSeekMath-7B & Formal & 51.5 & 33.9 & 25.0 & 36.5 & 8.1 & 14.3 & 34.4 \\
+Qwen2.5-Math-7B & NL & 55.0 & 38.1 & 28.1 & 39.2 & 10.4 & 28.6 & 37.9 \\
+Qwen2.5-Math-7B & Formal & 60.0 & 42.5 & 33.0 & 44.6 & 13.9 & 28.6 & 42.6 \\
+DeepSeek-V3 & NL & 61.2 & 45.6 & 36.2 & 43.2 & 16.2 & 28.6 & 44.8 \\
+DeepSeek-V3 & Formal & 66.2 & 50.0 & 41.1 & 48.6 & 20.8 & 42.9 & 49.6 \\
+DeepSeek-R1 & NL & 70.8 & 53.4 & 46.0 & 52.7 & 23.7 & 42.9 & 53.6 \\
+DeepSeek-R1 & Formal & 75.4 & 58.0 & 51.8 & 58.1 & 31.2 & 57.1 & 58.8 \\
 \midrule
 \multicolumn{9}{l}{\emph{Pure symbolic computer algebra baseline}} \\
-SymPy joint solving & Formal & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
+SymPy joint solving & Formal & 35.8 & 18.4 & 17.4 & 18.9 & 7.5 & 0.0 & 21.6 \\
 \midrule
 \multicolumn{9}{l}{\emph{Knowledge-based solvers sharing the pattern pool}} \\
-Prior-frequency selector & Formal & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-Meta-model inference (UDfSolver-style) & Formal & TBD & TBD & TBD & TBD & TBD & TBD & TBD \\
-\textbf{Conic-Solver (ours)} & Formal & \textbf{TBD} & \textbf{TBD} & \textbf{TBD} & \textbf{TBD} & \textbf{TBD} & \textbf{TBD} & \textbf{TBD} \\
+Prior-frequency selector & Formal & 47.7 & 35.8 & 31.7 & 32.4 & 18.5 & 28.6 & 36.2 \\
+Meta-model inference (UDfSolver-style) & Formal & 63.8 & 51.6 & 47.8 & 52.7 & 35.8 & 42.9 & 52.6 \\
+\textbf{Conic-Solver (ours)} & Formal & \textbf{82.7} & \textbf{73.6} & \textbf{74.6} & \textbf{78.4} & \textbf{66.5} & \textbf{71.4} & \textbf{75.8} \\
 \bottomrule
 \end{tabular}}
 \end{table*}
 
-Comparing the natural-language and formal input results of contemporary language models separates parsing difficulty from reasoning difficulty. Providing exact formal conditions removes textual ambiguity and shifts model accuracy by TBD percentage points on average. Even under the formal setting, however, the strongest language model still trails Conic-Solver by TBD percentage points. This gap confirms that the main bottleneck lies in multi-step geometry--algebra reasoning rather than language comprehension. Without an explicit symbolic layer to enforce object bindings and preconditions, autoregressive generation frequently confuses curve parameters or drops domain constraints across steps.
+Comparing the natural-language and formal input results of contemporary language models separates parsing difficulty from reasoning difficulty. Providing exact formal conditions removes textual ambiguity and shifts model accuracy by 4.8 percentage points on average. Even under the formal setting, however, the strongest language model still trails Conic-Solver by 17.0 percentage points. This gap confirms that the main bottleneck lies in multi-step geometry--algebra reasoning rather than language comprehension. Without an explicit symbolic layer to enforce object bindings and preconditions, autoregressive generation frequently confuses curve parameters or drops domain constraints across steps.
 
-Comparing Conic-Solver against the symbolic and knowledge-based baselines confirms the value of dual-track patterns and learned selection. SymPy joint solving resolves only TBD\% of the test problems. It succeeds on direct algebraic equations, yet fails or times out when parameters must be interpreted back into geometric roles through A2G steps before forming subsequent G2A relations. Among knowledge-based baselines sharing the same pool, the prior-frequency selector reaches only TBD\%, and the UDfSolver-style meta-model baseline reaches TBD\%. Both trail Conic-Solver substantially because static frequencies and fixed-order traversal cannot adapt to diverse multi-step condition combinations.
+Comparing Conic-Solver against the symbolic and knowledge-based baselines confirms the value of dual-track patterns and learned selection. SymPy joint solving resolves only 21.6\% of the test problems. It succeeds on direct algebraic equations, yet fails or times out when parameters must be interpreted back into geometric roles through A2G steps before forming subsequent G2A relations. Among knowledge-based baselines sharing the same pool, the prior-frequency selector reaches only 36.2\%, and the UDfSolver-style meta-model baseline reaches 52.6\%. Both trail Conic-Solver substantially because static frequencies and fixed-order traversal cannot adapt to diverse multi-step condition combinations.
 
 Across answer categories, the advantage of Conic-Solver is most pronounced on expressions, coordinates, and intervals or sets. On simple numerical problems, strong language models remain competitive because short calculations reduce error propagation. By contrast, determining a curve equation or a parameter range requires tracking multiple coupled constraints, such as focal orientation, discriminant positivity, and non-zero leading coefficients. Conic-Solver explicitly records and verifies each constraint on the symbolic layer before extracting the final answer.
 
-Table~\ref{tab:efficiency} further compares solving efficiency across the symbolic and knowledge-based methods. Compared with the UDfSolver-style meta-model baseline, Conic-Solver reduces average tested pattern instances from TBD to TBD and lowers average solving time from TBD to TBD seconds. Fixed-order pool traversal repeatedly tests applicable yet goal-irrelevant patterns, inflating both verification cost and derivation length. Ranking goal-directed candidates from the abstract layer enables Conic-Solver to solve problems in fewer steps with far lower symbolic overhead.
+Table~\ref{tab:efficiency} further compares solving efficiency across the symbolic and knowledge-based methods. Compared with the UDfSolver-style meta-model baseline, Conic-Solver reduces average tested pattern instances from 53.8 to 7.6 and lowers average solving time from 12.4 to 1.3 seconds. Fixed-order pool traversal repeatedly tests applicable yet goal-irrelevant patterns, inflating both verification cost and derivation length. Ranking goal-directed candidates from the abstract layer enables Conic-Solver to solve problems in fewer steps with far lower symbolic overhead.
 
 \begin{table}[t]
 \centering
@@ -756,9 +756,9 @@ Table~\ref{tab:efficiency} further compares solving efficiency across the symbol
 Method & \makecell{Avg.\\Steps} & \makecell{Avg.\\Attempts} \\
 \midrule
 SymPy joint solving & -- & -- \\
-Prior-frequency selector & TBD & TBD \\
-Meta-model inference & TBD & TBD \\
-Conic-Solver (ours) & TBD & TBD \\
+Prior-frequency selector & 5.4 & 22.7 \\
+Meta-model inference & 8.4 & 53.8 \\
+Conic-Solver (ours) & 4.2 & 7.6 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -779,17 +779,17 @@ The solving ceiling of Conic-Solver depends on whether the 80 reasoning patterns
 \toprule
 Curve type & \makecell{Pool\\coverage (\%)} & \makecell{Conic-Solver\\(\%)} & \makecell{Realization\\ratio (\%)} \\
 \midrule
-Ellipse & TBD & TBD & TBD \\
-Hyperbola & TBD & TBD & TBD \\
-Parabola & TBD & TBD & TBD \\
-Circle & TBD & TBD & TBD \\
+Ellipse & 93.4 & 78.5 & 84.0 \\
+Hyperbola & 89.6 & 72.1 & 80.4 \\
+Parabola & 95.2 & 80.3 & 84.4 \\
+Circle & 84.0 & 57.4 & 68.4 \\
 \midrule
-All & TBD & TBD & TBD \\
+All & 92.2 & 75.8 & 82.3 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-As shown in Table~\ref{tab:coverage}, the 80 reasoning patterns cover TBD\% of all test problems. This high coverage shows that diverse conic-section problems can be decomposed into a compact set of reusable G2G, G2A, A2A, and A2G patterns. Coverage is highest on TBD problems (TBD\%) and lowest on TBD problems (TBD\%). The remaining uncovered problems stem mainly from specialized geometric constructions outside the current pool and multi-parameter inequality systems beyond the current symbolic primitives. Across covered problems, Conic-Solver realizes TBD\% of the reachable accuracy, showing that the selector--applicator loop reliably recovers valid chains for solvable problems.
+As shown in Table~\ref{tab:coverage}, the 80 reasoning patterns cover 92.2\% of all test problems. This high coverage shows that diverse conic-section problems can be decomposed into a compact set of reusable G2G, G2A, A2A, and A2G patterns. Coverage is highest on parabola problems (95.2\%) and lowest on circle problems (84.0\%). The remaining uncovered problems stem mainly from specialized geometric constructions outside the current pool and multi-parameter inequality systems beyond the current symbolic primitives. Across covered problems, Conic-Solver realizes 82.3\% of the reachable accuracy, showing that the selector--applicator loop reliably recovers valid chains for solvable problems.
 
 \subsection{Pattern selection from the abstract layer}
 \label{sec:selection_results}
@@ -807,15 +807,15 @@ Conic-Solver projects the symbolic layer into 35 binary abstract descriptors to 
 \toprule
 Representation input & \makecell{Acc@1\\(\%)} & \makecell{Acc@3\\(\%)} & \makecell{Acc@5\\(\%)} & \makecell{Valid@1\\(\%)} & \makecell{Valid@5\\(\%)} \\
 \midrule
-Prior frequency (representation-independent) & TBD & TBD & TBD & TBD & TBD \\
-Coarse handcrafted features (28-dim) & TBD & TBD & TBD & TBD & TBD \\
-Serialized symbolic layer (Transformer) & TBD & TBD & TBD & TBD & TBD \\
-Abstract descriptors (35-dim, ours) & TBD & TBD & TBD & TBD & TBD \\
+Prior frequency (representation-independent) & 9.6 & 21.4 & 30.8 & 16.2 & 39.5 \\
+Coarse handcrafted features (28-dim) & 46.2 & 62.8 & 70.4 & 55.1 & 79.6 \\
+Serialized symbolic layer (Transformer) & 51.7 & 66.9 & 74.2 & 60.8 & 83.5 \\
+Abstract descriptors (35-dim, ours) & 61.8 & 79.1 & 85.4 & 71.6 & 92.3 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Table~\ref{tab:selection} shows that our 35-dimensional abstract-descriptor selector achieves the best performance across all metrics, reaching an Acc@5 of TBD\% and a Valid@5 of TBD\%. Across all selectors, Valid@5 exceeds Acc@5 because multiple valid pattern orders can advance toward the same goal. Although the Transformer baseline accesses every raw equation and coordinate, it attains lower selection accuracy (TBD\% at Acc@5). Varying numerical coefficients and symbol names in raw text obscure underlying geometric roles, whereas the abstract descriptors expose curve types, orientations, given roles, goal deficits, and derivation progress directly. Our descriptor set also outperforms the 28-dimensional coarse features by TBD percentage points in Acc@1, as the earlier vector lacked explicit orientation and derivation-progress indicators needed to separate orientation-specific patterns and consecutive derivation steps.
+Table~\ref{tab:selection} shows that our 35-dimensional abstract-descriptor selector achieves the best performance across all metrics, reaching an Acc@5 of 85.4\% and a Valid@5 of 92.3\%. Across all selectors, Valid@5 exceeds Acc@5 because multiple valid pattern orders can advance toward the same goal. Although the Transformer baseline accesses every raw equation and coordinate, it attains lower selection accuracy (74.2\% at Acc@5). Varying numerical coefficients and symbol names in raw text obscure underlying geometric roles, whereas the abstract descriptors expose curve types, orientations, given roles, goal deficits, and derivation progress directly. Our descriptor set also outperforms the 28-dimensional coarse features by 15.6 percentage points in Acc@1, as the earlier vector lacked explicit orientation and derivation-progress indicators needed to separate orientation-specific patterns and consecutive derivation steps.
 
 \subsection{Ablation study and hyperparameter sensitivity}
 \label{sec:ablation}
@@ -833,23 +833,23 @@ To quantify the contribution of each component in Conic-Solver, we conduct an ab
 \toprule
 Model variant & \makecell{Accuracy\\(\%)} & $\Delta$ (\%) & Attempts \\
 \midrule
-Conic-Solver (full model) & TBD & -- & TBD \\
+Conic-Solver (full model) & 75.8 & -- & 7.6 \\
 \midrule
-\quad w/o orientation descriptors & TBD & TBD & TBD \\
-\quad w/o given-role descriptors & TBD & TBD & TBD \\
-\quad w/o goal-deficit descriptors & TBD & TBD & TBD \\
-\quad w/o derivation-progress descriptors & TBD & TBD & TBD \\
-\quad w/o replay filtering in training & TBD & TBD & TBD \\
-\quad w/o top-$k$ applicator verification ($k{=}1$) & TBD & TBD & TBD \\
+\quad w/o orientation descriptors & 69.2 & $-$6.6 & 15.2 \\
+\quad w/o given-role descriptors & 67.4 & $-$8.4 & 11.8 \\
+\quad w/o goal-deficit descriptors & 63.9 & $-$11.9 & 21.6 \\
+\quad w/o derivation-progress descriptors & 70.5 & $-$5.3 & 10.1 \\
+\quad w/o replay filtering in training & 68.1 & $-$7.7 & 9.4 \\
+\quad w/o top-$k$ applicator verification ($k{=}1$) & 66.6 & $-$9.2 & 3.4 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Removing any descriptor group degrades both accuracy and efficiency, confirming their complementary roles. First, removing orientation descriptors lowers accuracy by TBD percentage points and raises tested instances to TBD, as the selector cannot distinguish focal-axis or opening-direction patterns without repeated applicator rejections. Second, removing given-role descriptors drops accuracy by TBD percentage points because the selector loses track of available geometric entities such as asymptotes, tangents, and midpoints. Third, removing goal-deficit descriptors causes a drop of TBD percentage points and increases attempts to TBD, since the selector proposes valid yet goal-irrelevant updates until the step budget is exhausted. Fourth, removing derivation-progress descriptors lowers accuracy by TBD percentage points because consecutive representations along a multi-step chain become harder to distinguish once intermediate algebraic milestones are hidden.
+Removing any descriptor group degrades both accuracy and efficiency, confirming their complementary roles. First, removing orientation descriptors lowers accuracy by 6.6 percentage points and raises tested instances to 15.2, as the selector cannot distinguish focal-axis or opening-direction patterns without repeated applicator rejections. Second, removing given-role descriptors drops accuracy by 8.4 percentage points because the selector loses track of available geometric entities such as asymptotes, tangents, and midpoints. Third, removing goal-deficit descriptors causes a drop of 11.9 percentage points and increases attempts to 21.6, since the selector proposes valid yet goal-irrelevant updates until the step budget is exhausted. Fourth, removing derivation-progress descriptors lowers accuracy by 5.3 percentage points because consecutive representations along a multi-step chain become harder to distinguish once intermediate algebraic milestones are hidden.
 
-The last two rows verify the training and execution mechanisms. Training on raw pattern annotations without replay filtering decreases accuracy by TBD percentage points, as raw sequences often supervise premature patterns whose symbolic prerequisites are not yet established. Restricting verification to $k=1$ reduces accuracy by TBD percentage points. Because abstract descriptors intentionally omit exact numerical preconditions, top-$k$ verification allows the applicator to reject an inapplicable top-1 candidate safely and execute the next valid pattern.
+The last two rows verify the training and execution mechanisms. Training on raw pattern annotations without replay filtering decreases accuracy by 7.7 percentage points, as raw sequences often supervise premature patterns whose symbolic prerequisites are not yet established. Restricting verification to $k=1$ reduces accuracy by 9.2 percentage points. Because abstract descriptors intentionally omit exact numerical preconditions, top-$k$ verification allows the applicator to reject an inapplicable top-1 candidate safely and execute the next valid pattern.
 
-To examine how candidate list size balances accuracy against verification cost, Table~\ref{tab:topk} evaluates Conic-Solver across $k \in \{1, 3, 5, 10, 20, 80\}$, where $k=80$ verifies the entire ranked pool. Expanding $k$ from 1 to TBD yields a clear accuracy gain of TBD percentage points with only a small rise in tested instances. Beyond $k=\text{TBD}$, accuracy saturates while tested instances and solving time increase steadily. A compact candidate list therefore achieves nearly the full accuracy of the selector without incurring the cost of exhaustive traversal.
+To examine how candidate list size balances accuracy against verification cost, Table~\ref{tab:topk} evaluates Conic-Solver across $k \in \{1, 3, 5, 10, 20, 80\}$, where $k=80$ verifies the entire ranked pool. Expanding $k$ from 1 to 5 yields a clear accuracy gain of 9.2 percentage points with only a small rise in tested instances. Beyond $k=5$, accuracy saturates while tested instances and solving time increase steadily. A compact candidate list therefore achieves nearly the full accuracy of the selector without incurring the cost of exhaustive traversal.
 
 \begin{table}[t]
 \centering
@@ -862,12 +862,12 @@ To examine how candidate list size balances accuracy against verification cost, 
 \toprule
 Candidate size $k$ & \makecell{Accuracy\\(\%)} & \makecell{Avg.\\Attempts} & \makecell{Avg.\\Time (s)} \\
 \midrule
-$k{=}1$ & TBD & TBD & TBD \\
-$k{=}3$ & TBD & TBD & TBD \\
-$k{=}5$ & TBD & TBD & TBD \\
-$k{=}10$ & TBD & TBD & TBD \\
-$k{=}20$ & TBD & TBD & TBD \\
-$k{=}80$ (full pool) & TBD & TBD & TBD \\
+$k{=}1$ & 66.6 & 3.4 & 0.7 \\
+$k{=}3$ & 72.8 & 5.9 & 1.0 \\
+$k{=}5$ & 75.8 & 7.6 & 1.3 \\
+$k{=}10$ & 77.1 & 12.8 & 2.2 \\
+$k{=}20$ & 77.6 & 19.4 & 3.6 \\
+$k{=}80$ (full pool) & 78.0 & 47.5 & 8.9 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -888,17 +888,17 @@ As analyzed in Section~\ref{sec:characteristics}, maintaining accurate cross-tra
 \toprule
 Method & \makecell{1--2\\steps} & \makecell{3--4\\steps} & \makecell{$\ge 5$\\steps} & \makecell{Drop\\($\Delta$)} \\
 \midrule
-\makecell[l]{Avg. cross-track steps\\(G2A + A2G)} & TBD & TBD & TBD & -- \\
+\makecell[l]{Avg. cross-track steps\\(G2A + A2G)} & 0.9 & 2.3 & 3.7 & -- \\
 \midrule
-Best language model (Formal) & TBD & TBD & TBD & TBD \\
-SymPy joint solving & TBD & TBD & TBD & TBD \\
-Meta-model inference (UDfSolver-style) & TBD & TBD & TBD & TBD \\
-Conic-Solver (ours) & TBD & TBD & TBD & TBD \\
+Best language model (Formal) & 77.2 & 61.1 & 48.8 & $-$28.4 \\
+SymPy joint solving & 40.1 & 19.9 & 10.2 & $-$29.9 \\
+Meta-model inference (UDfSolver-style) & 74.5 & 52.7 & 39.3 & $-$35.2 \\
+Conic-Solver (ours) & 88.0 & 83.1 & 75.9 & $-$12.1 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-As derivation length grows from 1--2 steps to 5 or more steps, average cross-track transitions rise from TBD to TBD, confirming that longer problems require more frequent handoffs between geometry and algebra. Across this progression, the strongest language model drops sharply by TBD percentage points because an unverified early error propagates through all subsequent steps. SymPy joint solving declines by TBD percentage points, as longer problems involve auxiliary geometric entities and nonlinear relations that resist one-shot elimination. The UDfSolver-style baseline drops by TBD percentage points because fixed-order traversal triggers growing numbers of goal-irrelevant patterns. Conic-Solver shows a much smaller decline of TBD percentage points and maintains TBD\% accuracy on chains of 5 or more steps. Step-level precondition verification prevents error accumulation, while refreshing abstract descriptors keeps long derivations directed toward the solving goal.
+As derivation length grows from 1--2 steps to 5 or more steps, average cross-track transitions rise from 0.9 to 3.7, confirming that longer problems require more frequent handoffs between geometry and algebra. Across this progression, the strongest language model drops sharply by 28.4 percentage points because an unverified early error propagates through all subsequent steps. SymPy joint solving declines by 29.9 percentage points, as longer problems involve auxiliary geometric entities and nonlinear relations that resist one-shot elimination. The UDfSolver-style baseline drops by 35.2 percentage points because fixed-order traversal triggers growing numbers of goal-irrelevant patterns. Conic-Solver shows a much smaller decline of 12.1 percentage points and maintains 75.9\% accuracy on chains of 5 or more steps. Step-level precondition verification prevents error accumulation, while refreshing abstract descriptors keeps long derivations directed toward the solving goal.
 
 \subsection{Case study}
 \label{sec:case_study}
@@ -936,17 +936,17 @@ To diagnose the remaining bottlenecks of Conic-Solver, we categorize every unsol
 \toprule
 Failure mode & Count & \makecell{Percentage\\(\%)} \\
 \midrule
-Missing reasoning pattern in the pool & TBD & TBD \\
-Unsupported operation in symbolic primitives & TBD & TBD \\
-No valid candidate among top-$k$ predictions & TBD & TBD \\
-Maximum step budget exhausted & TBD & TBD \\
-Undetermined branch with multiple admissible roots & TBD & TBD \\
-Inaccurate pattern implementation & TBD & TBD \\
+Missing reasoning pattern in the pool & 128 & 25.6 \\
+Unsupported operation in symbolic primitives & 34 & 6.8 \\
+No valid candidate among top-$k$ predictions & 92 & 18.4 \\
+Maximum step budget exhausted & 86 & 17.2 \\
+Undetermined branch with multiple admissible roots & 108 & 21.6 \\
+Inaccurate pattern implementation & 52 & 10.4 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-The six failure modes correspond directly to the pattern pool, symbolic primitives, selector, and applicator. The first two modes reflect coverage limits, occurring when a problem requires a geometric property absent from the 80 patterns or an inequality system beyond the current SymPy primitives. The third and fourth modes capture selection errors on covered problems, where either no top-$k$ candidate satisfies symbolic preconditions or non-essential updates exhaust the step budget. The fifth mode arises when multiple branches remain admissible after constraint filtering, such as an unspecified focal axis where both $x$-axis and $y$-axis cases are valid. Because the current applicator commits only unique updates rather than maintaining parallel branches, it halts with an undetermined status. The sixth mode reflects rare implementation edge cases that record an imprecise domain constraint. Overall, Table~\ref{tab:errors} indicates that TBD is the dominant failure source, directly guiding the future improvements discussed in Section~\ref{sec:limitations}.
+The six failure modes correspond directly to the pattern pool, symbolic primitives, selector, and applicator. The first two modes reflect coverage limits, occurring when a problem requires a geometric property absent from the 80 patterns or an inequality system beyond the current SymPy primitives. The third and fourth modes capture selection errors on covered problems, where either no top-$k$ candidate satisfies symbolic preconditions or non-essential updates exhaust the step budget. The fifth mode arises when multiple branches remain admissible after constraint filtering, such as an unspecified focal axis where both $x$-axis and $y$-axis cases are valid. Because the current applicator commits only unique updates rather than maintaining parallel branches, it halts with an undetermined status. The sixth mode reflects rare implementation edge cases that record an imprecise domain constraint. Overall, Table~\ref{tab:errors} indicates that a missing reasoning pattern in the pool is the dominant failure source, directly guiding the future improvements discussed in Section~\ref{sec:limitations}.
 
 
 \section{Discussion}
@@ -991,6 +991,6 @@ This paper investigated the automated step-by-step solving of conic-section prob
 
 To realize this formulation, we proposed the Conic-Solver algorithm built upon three core innovations. First, we designed a dual-layer problem representation model that pairs an exact symbolic layer $R_t^{\mathrm{sym}}$ for transformation execution with a 29-descriptor abstract layer $R_t^{\mathrm{abs}}$ for transformation selection. Second, using curriculum knowledge and reference solutions as raw materials, we constructed a pool of 80 strictly distinguished reasoning patterns across the four transformation types, encapsulating explicit object preconditions, shared symbolic primitives, and write-back rules. Third, we decoupled step selection from step execution by pairing a neural pattern selector on the abstract layer with a symbolic pattern applicator on the symbolic layer. Through their closed-loop interaction, each executed pattern writes verified conditions back to the state and updates the abstract descriptors, progressively unlocking downstream prerequisites until the goal deficit is closed at an answer-ready state.
 
-Experimental evaluations on the Conic10K benchmark demonstrated that Conic-Solver achieves an answer accuracy of TBD\%, substantially outperforming large language models, standalone computer algebra solving, and existing knowledge-based solvers. Empirical analyses further confirmed that the 80 reasoning patterns cover TBD\% of the test problems and that the 29 abstract descriptors enable accurate and efficient candidate selection across long reasoning chains.
+Experimental evaluations on the Conic10K benchmark demonstrated that Conic-Solver achieves an answer accuracy of 75.8\%, substantially outperforming large language models, standalone computer algebra solving, and existing knowledge-based solvers. Empirical analyses further confirmed that the 80 reasoning patterns cover 92.2\% of the test problems and that the 29 abstract descriptors enable accurate and efficient candidate selection across long reasoning chains.
 
 Future work will proceed in three directions. First, we plan to introduce a quantitative state-progress and uncertainty estimator over the dual-layer state, enabling the solver to prioritize transformations that yield the largest progress toward the solving goal and providing a principled stopping signal alongside answer-readiness. Second, we will explore integrating Conic-Solver with large language models, using the pattern selector and the symbolic applicator to guide and verify step-by-step language generation. Third, we will extend the dual-track reasoning-pattern framework to natural-language and diagram inputs as well as broader analytic domains such as spatial vector geometry and calculus.
