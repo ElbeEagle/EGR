@@ -1,0 +1,103 @@
+{
+  "stage": "design_audit_only",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 650,
+      "scope": "first_numeric",
+      "text": "双曲线$x^{2}-y^{2}=4$的离心率为?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2 = 4)",
+      "query": "Eccentricity(G)",
+      "weak_models": [
+        5,
+        21,
+        13
+      ],
+      "status": "solved",
+      "answer": "sqrt(2)",
+      "diagnostic": "",
+      "executed_models": [
+        5,
+        12,
+        13
+      ],
+      "a_sq": "4",
+      "b_sq": "4",
+      "equal_axis_eligible": true
+    },
+    {
+      "id": 1412,
+      "scope": "first_numeric",
+      "text": "双曲线$x^{2}-y^{2}=2$的离心率是?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2 = 2)",
+      "query": "Eccentricity(G)",
+      "weak_models": [
+        5,
+        12,
+        13
+      ],
+      "status": "solved",
+      "answer": "sqrt(2)",
+      "diagnostic": "",
+      "executed_models": [
+        5,
+        12,
+        13
+      ],
+      "a_sq": "2",
+      "b_sq": "2",
+      "equal_axis_eligible": true
+    },
+    {
+      "id": 2287,
+      "scope": "reject_not_equal",
+      "text": "双曲线$x^{2}-3 y^{2}=3$的离心率为?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - 3*y^2 = 3)",
+      "query": "Eccentricity(G)",
+      "weak_models": [
+        5,
+        24,
+        13
+      ],
+      "status": "solved",
+      "answer": "2*sqrt(3)/3",
+      "diagnostic": "",
+      "executed_models": [
+        5,
+        12,
+        13
+      ],
+      "a_sq": "3",
+      "b_sq": "1",
+      "equal_axis_eligible": false
+    },
+    {
+      "id": 3316,
+      "scope": "defer_scalar_alias",
+      "text": "双曲线$\\frac{x^{2}}{4}-\\frac{y^{2}}{4}=1$的离心率$e$=?",
+      "facts": "G: Hyperbola;e: Number;Expression(G) = (x^2/4 - y^2/4 = 1);Eccentricity(G) = e",
+      "query": "e",
+      "weak_models": [
+        5,
+        24,
+        13
+      ],
+      "status": "failed",
+      "answer": "None",
+      "diagnostic": "Unsupported arithmetic syntax or undeclared symbol",
+      "executed_models": []
+    },
+    {
+      "id": 799,
+      "scope": "defer_symbolic",
+      "text": "双曲线$x^{2}-y^{2}=a^{2}(a>0)$的离心率为?",
+      "facts": "G: Hyperbola;a: Number;a>0;Expression(G) = (x^2 - y^2 = a^2)",
+      "query": "Eccentricity(G)",
+      "weak_models": [
+        5,
+        12,
+        13
+      ]
+    }
+  ]
+}
