@@ -909,3 +909,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/focus_asymptote_contract.json` → 保存数据哈希、真实输入及独立证据，不是RM22执行轨迹。
 - **效果／验证**：两题与y轴诊断四种距离均√3，审查命令通过；维护文档同步同曲线查询与输出契约。
 - **下一步**：先接查询身份，再数值RM22；用户后置范围保持不变。运行时未改，不更新历史回归数。
+
+## 2026-11-22｜RM22数值共同距离
+
+- **开发记录**：[docs/开发规格/54_RM22数值共同距离实现.md](docs/开发规格/54_RM22数值共同距离实现.md)
+- `src/state/focus_asymptote_query.py` → 新增同曲线查询。FocusAsymptoteDistanceQuery保存双曲线身份；read_focus_asymptote_distance仅从唯一曲线方程且来源匹配的已提交属性读取结果，不进行几何推导。
+- `src/state/transition_state.py` → 扩展查询解析及分派，拒绝跨曲线Focus／Asymptote组合，不扩展通用集合距离。
+- `src/solver/focus_asymptote_operations.py` → 新增公共计算。focus_asymptote_distance检查正数值参数并返回√b²；verify_asymptote用规范化直线核验已有渐近线，不修改状态。
+- `src/theorems/focus_asymptote_proposals.py` → 新增RM22绑定与提案。核验唯一曲线方程、已提交参数／框架和来源；检查已有c²及同曲线渐近线，提出focus_asymptote_distance，交应用器原子提交。
+- `src/theorems/models/model_022.py`、`src/theorems/bound_application.py` → 接入RM22绑定入口和候选，保留旧入口；提交／冲突回滚复用原机制。
+- `tests/test_bound_focus_asymptote.py` → 新增14项，覆盖真实题、换轴、不同a²同b²、多曲线隔离、缺来源、过期原式、渐近线矛盾、幂等和回滚。
+
+- **效果／验证**：两题固定链均√3，14项新测试、相关回归857项通过，保存两题轨迹。
+- **下一步**：回到职责表选有限案例；已有派生核验限c²／渐近线，左右别名及用户后置范围不变。

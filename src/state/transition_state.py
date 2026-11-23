@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .focus_asymptote_query import FocusAsymptoteDistanceQuery,read_focus_asymptote_distance
 from .focal_area_facts import AngleFact,FocalAreaQuery,collect_angles,read_area
 from .focal_perimeter_facts import FocusPair, FocalPerimeterQuery, collect_focus_pairs, read_perimeter
 from .latus_facts import SegmentLengthQuery, LatusEvidence, collect_latus_facts
@@ -234,7 +235,12 @@ class TransitionState:
         segment_length = re.fullmatch(r'Length\(\s*(\w+)\s*\)',query_text)
         perimeter_query=re.fullmatch(r'Perimeter\(TriangleOf\(\s*(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*\)\)',query_text)
         area_query=re.fullmatch(r'Area\(TriangleOf\(\s*(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*\)\)',query_text)
-        if area_query:
+        focus_asymptote_query=re.fullmatch(r'Distance\(\s*Focus\(\s*(\w+)\s*\)\s*,\s*Asymptote\(\s*(\w+)\s*\)\s*\)',query_text)
+        if focus_asymptote_query:
+            left,right=focus_asymptote_query.groups()
+            if left!=right or entities.get(left)!='Hyperbola':raise ValueError('Common distance requires the same hyperbola')
+            target=FocusAsymptoteDistanceQuery(left)
+        elif area_query:
             points=tuple(sorted(area_query.groups()))
             if len(set(points))!=3 or any(entities.get(p)!='Point' for p in points):raise ValueError('Area requires three distinct points')
             target=FocalAreaQuery(points)
@@ -426,6 +432,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, FocusAsymptoteDistanceQuery):
+            return read_focus_asymptote_distance(self,self.query)
         if isinstance(self.query, FocalAreaQuery):
             return read_area(self,self.query)
         if isinstance(self.query, FocalPerimeterQuery):

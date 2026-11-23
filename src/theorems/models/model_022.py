@@ -73,3 +73,7 @@ class HyperbolaFocusToAsymptoteDistance(TheoremModel):
 
         except Exception:
             return False
+
+    def propose_bound(self,state,action):
+        from ..focus_asymptote_proposals import derive_focus_asymptote_distance
+        return derive_focus_asymptote_distance(state,action)

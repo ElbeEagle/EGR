@@ -215,6 +215,17 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 模式derive_focal_area要求已提交参数及匹配角度，输出area属性；只读查询与周长分离。详见[规格52](../docs/开发规格/52_RM30数值焦点面积实现.md)。
 
-## 下一批RM22（未实现）
+## RM22设计入口（最新实现见下节）
 
 选3200／891，复用标准参数和来源，新增同曲线Focus／Asymptote共同距离查询；拟用RM5/6→RM22，输出曲线级focus_asymptote_distance，查询只读。四成员组合距离相同不等于支持通用集合距离。见[规格53](../docs/开发规格/53_RM22焦点到渐近线距离契约.md)。
+
+## RM22数值共同距离已接入
+
+- `src/state/focus_asymptote_query.py` → 新增同曲线查询。FocusAsymptoteDistanceQuery保存双曲线身份；read_focus_asymptote_distance仅从唯一曲线方程且来源匹配的已提交属性读取结果，不进行几何推导。
+- `src/state/transition_state.py` → 扩展查询解析及分派，拒绝跨曲线Focus／Asymptote组合，不扩展通用集合距离。
+- `src/solver/focus_asymptote_operations.py` → 新增公共计算。focus_asymptote_distance检查正数值参数并返回√b²；verify_asymptote用规范化直线核验已有渐近线，不修改状态。
+- `src/theorems/focus_asymptote_proposals.py` → 新增RM22绑定与提案。核验唯一曲线方程、已提交参数／框架和来源；检查已有c²及同曲线渐近线，提出focus_asymptote_distance，交应用器原子提交。
+- `src/theorems/models/model_022.py`、`src/theorems/bound_application.py` → 接入RM22绑定入口和候选，保留旧入口；提交／冲突回滚复用原机制。
+- `tests/test_bound_focus_asymptote.py` → 新增14项，覆盖真实题、换轴、不同a²同b²、多曲线隔离、缺来源、过期原式、渐近线矛盾、幂等和回滚。
+
+模式derive_focus_asymptote_distance输出曲线级距离，同曲线查询只读。详见[规格54](../docs/开发规格/54_RM22数值共同距离实现.md)。

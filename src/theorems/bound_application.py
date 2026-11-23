@@ -59,6 +59,9 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id==22:
+        from .focus_asymptote_proposals import check_focus_asymptote_binding
+        return check_focus_asymptote_binding(state,action)
     if action.model_id==30:
         from .focal_area_proposals import check_area_binding
         return check_area_binding(state,action)
@@ -244,6 +247,9 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id==22:
+        return [BoundAction(22,'derive_focus_asymptote_distance',f.owner,f.fact_id) for f in state.equations.values()
+                if f.role=='curve' and state.entities.get(f.owner)=='Hyperbola' and mode in (None,'derive_focus_asymptote_distance')]
     if model_id==30:
         from src.state.focal_area_facts import area_owner
         return [replace(a,model_id=30,mode='derive_focal_area',relation_id=area_owner(state.focus_pairs[a.curve],a.point))
