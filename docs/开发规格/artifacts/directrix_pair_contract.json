@@ -1,0 +1,96 @@
+{
+  "stage": "design_audit_only",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 2779,
+      "scope": "first_pair_query",
+      "text": "双曲线$x^{2}-\\frac{y^{2}}{3}=1$的准线方程为?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2/3 = 1)",
+      "query": "Expression(Directrix(G))",
+      "weak_models": [
+        5,
+        28
+      ],
+      "query_gap": "Unsupported or undeclared query target",
+      "probe": {
+        "executed_models": [
+          5,
+          12
+        ],
+        "axis": "x",
+        "a_sq": "1",
+        "b_sq": "3",
+        "c_sq": "4",
+        "offsets": [
+          "-1/2",
+          "1/2"
+        ],
+        "vertex_ratio": "2",
+        "kind": "parameter_projection_and_independent_math"
+      }
+    },
+    {
+      "id": 1834,
+      "scope": "defer_right_directrix",
+      "text": "双曲线$x^{2}-y^{2}=1$的右准线方程为?",
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2 = 1)",
+      "query": "Expression(RightDirectrix(G))",
+      "weak_models": [
+        5,
+        28
+      ],
+      "query_gap": "Unsupported or undeclared query target",
+      "probe": {
+        "executed_models": [
+          5,
+          12
+        ],
+        "axis": "x",
+        "a_sq": "1",
+        "b_sq": "1",
+        "c_sq": "2",
+        "offsets": [
+          "-sqrt(2)/2",
+          "sqrt(2)/2"
+        ],
+        "vertex_ratio": "sqrt(2)",
+        "kind": "parameter_projection_and_independent_math"
+      }
+    }
+  ],
+  "diagnostics": {
+    "y_axis": {
+      "executed_models": [
+        6,
+        12
+      ],
+      "axis": "y",
+      "a_sq": "1",
+      "b_sq": "3",
+      "c_sq": "4",
+      "offsets": [
+        "-1/2",
+        "1/2"
+      ],
+      "vertex_ratio": "2",
+      "kind": "parameter_projection_and_independent_math"
+    },
+    "scaled": {
+      "executed_models": [
+        5,
+        12
+      ],
+      "axis": "x",
+      "a_sq": "1",
+      "b_sq": "3",
+      "c_sq": "4",
+      "offsets": [
+        "-1/2",
+        "1/2"
+      ],
+      "vertex_ratio": "2",
+      "kind": "parameter_projection_and_independent_math"
+    }
+  }
+}
