@@ -1,0 +1,239 @@
+{
+  "date": "2026-11-23",
+  "kind": "fixed_action_replay",
+  "data_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 650,
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2 = 4)",
+      "query": "Eccentricity(G)",
+      "models": [
+        5,
+        24
+      ],
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 5,
+            "mode": "extract_parameters",
+            "curve": "G",
+            "equation_id": "f1",
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": null,
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('G', 'a_sq')": "4",
+              "('G', 'b_sq')": "4"
+            },
+            "values": {},
+            "frames": {
+              "G": {
+                "equation_id": "f1",
+                "center": [
+                  "0",
+                  "0"
+                ],
+                "axis": "x",
+                "direction": null
+              }
+            }
+          },
+          "read_facts": [
+            "f1",
+            "entity:G"
+          ],
+          "operations": [
+            {
+              "operation": "standard_hyperbola_x",
+              "equation": "f1",
+              "axis": "x",
+              "a_sq": "4",
+              "b_sq": "4"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 24,
+            "mode": "derive_equal_axis_eccentricity",
+            "curve": "G",
+            "equation_id": "f1",
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": null,
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('G', 'eccentricity')": "sqrt(2)"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "f1",
+            "frame:G",
+            "property:G:a_sq",
+            "property:G:b_sq"
+          ],
+          "operations": [
+            {
+              "operation": "equal_axis_eccentricity",
+              "axis": "x",
+              "a_sq": "4",
+              "b_sq": "4",
+              "equal_axis": true,
+              "eccentricity": "sqrt(2)"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ],
+      "answer": "sqrt(2)",
+      "properties": {
+        "('G', 'a_sq')": "4",
+        "('G', 'b_sq')": "4",
+        "('G', 'eccentricity')": "sqrt(2)"
+      }
+    },
+    {
+      "id": 1412,
+      "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2 = 2)",
+      "query": "Eccentricity(G)",
+      "models": [
+        5,
+        24
+      ],
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 5,
+            "mode": "extract_parameters",
+            "curve": "G",
+            "equation_id": "f1",
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": null,
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {
+              "('G', 'a_sq')": "2",
+              "('G', 'b_sq')": "2"
+            },
+            "values": {},
+            "frames": {
+              "G": {
+                "equation_id": "f1",
+                "center": [
+                  "0",
+                  "0"
+                ],
+                "axis": "x",
+                "direction": null
+              }
+            }
+          },
+          "read_facts": [
+            "f1",
+            "entity:G"
+          ],
+          "operations": [
+            {
+              "operation": "standard_hyperbola_x",
+              "equation": "f1",
+              "axis": "x",
+              "a_sq": "2",
+              "b_sq": "2"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 24,
+            "mode": "derive_equal_axis_eccentricity",
+            "curve": "G",
+            "equation_id": "f1",
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": null,
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('G', 'eccentricity')": "sqrt(2)"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "f1",
+            "frame:G",
+            "property:G:a_sq",
+            "property:G:b_sq"
+          ],
+          "operations": [
+            {
+              "operation": "equal_axis_eccentricity",
+              "axis": "x",
+              "a_sq": "2",
+              "b_sq": "2",
+              "equal_axis": true,
+              "eccentricity": "sqrt(2)"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ],
+      "answer": "sqrt(2)",
+      "properties": {
+        "('G', 'a_sq')": "2",
+        "('G', 'b_sq')": "2",
+        "('G', 'eccentricity')": "sqrt(2)"
+      }
+    }
+  ]
+}

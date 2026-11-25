@@ -230,6 +230,12 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 模式derive_focus_asymptote_distance输出曲线级距离，同曲线查询只读。详见[规格54](../docs/开发规格/54_RM22数值共同距离实现.md)。
 
-## 下一批RM24（未实现）
+## RM24数值等轴性质已接入
 
-选650／1412，复用标准参数与EccentricityQuery。拟新增数值等轴资格后输出eccentricity=√2的独立模式，不强制RM12／13，不新增焦点／渐近线。2287为非等轴拒绝对照；3316标量别名后置。见[规格55](../docs/开发规格/55_RM24数值等轴性质契约.md)。
+- `src/solver/equal_axis_operations.py` → 新增数值资格计算。equal_axis_eccentricity核验有限正半轴平方且a²=b²，返回√2，供模型提案使用，不修改状态。
+- `src/theorems/equal_axis_proposals.py` → 新增RM24绑定与提案。check_equal_axis_binding核对唯一双曲线方程；derive_equal_axis_eccentricity复用参数／框架核验，检查来源及已有c²一致性，提出eccentricity属性和等轴核验证据，交应用器提交。
+- `src/theorems/models/model_024.py` → 扩展模型入口。propose_bound调用严格数值提案，保留旧入口隔离，不复用旧can_apply的放宽资格。
+- `src/theorems/bound_application.py` → 扩展动作编排。enumerate_actions产生绑定曲线／方程的RM24候选，check_binding分派资格检查；属性提交、幂等和冲突回滚复用既有应用器。
+- `tests/test_bound_equal_axis.py` → 新增19项测试。核验两题、换轴、缩放、非等轴、多曲线隔离、来源、过期原式、c²／e矛盾、重复及回滚，并对照既有离心率链。
+
+650／1412固定RM5→RM24均√2，y轴用RM6；复用离心率查询，不生成c²、不依赖RM12／13。详情见[规格56](../docs/开发规格/56_RM24数值等轴性质实现.md)。下一步回到职责表选有限案例，后置范围不变。

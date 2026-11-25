@@ -930,3 +930,15 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/equal_axis_contract.json` → 保存数据哈希、原输入、执行模型及资格结果。
 - **效果／验证**：审查通过，650／1412基线√2；2287拒绝资格、3316别名延期。维护文档同步输入／输出契约。
 - **下一步**：数值RM24独立提案及边界测试，原后置范围保持；运行时未修改。
+
+## 2026-11-23｜RM24数值等轴性质实现
+
+- **开发记录**：[docs/开发规格/56_RM24数值等轴性质实现.md](docs/开发规格/56_RM24数值等轴性质实现.md)
+- `src/solver/equal_axis_operations.py` → 新增数值资格计算。equal_axis_eccentricity核验有限正半轴平方且a²=b²，返回√2，供模型提案使用，不修改状态。
+- `src/theorems/equal_axis_proposals.py` → 新增RM24绑定与提案。check_equal_axis_binding核对唯一双曲线方程；derive_equal_axis_eccentricity复用参数／框架核验，检查来源及已有c²一致性，提出eccentricity属性和等轴核验证据，交应用器提交。
+- `src/theorems/models/model_024.py` → 扩展模型入口。propose_bound调用严格数值提案，保留旧入口隔离，不复用旧can_apply的放宽资格。
+- `src/theorems/bound_application.py` → 扩展动作编排。enumerate_actions产生绑定曲线／方程的RM24候选，check_binding分派资格检查；属性提交、幂等和冲突回滚复用既有应用器。
+- `tests/test_bound_equal_axis.py` → 新增19项测试。核验两题、换轴、缩放、非等轴、多曲线隔离、来源、过期原式、c²／e矛盾、重复及回滚，并对照既有离心率链。
+
+- **效果／验证**：650／1412固定5→24均√2；19项新测试及相关回归876项通过。artifacts/equal_axis_traces.json保存两题真实执行轨迹；独立路径不等于新增可解题数量。
+- **下一步／限制**：回到职责表选择有限案例；符号、别名等用户后置范围保持不变，未接自主选择器。

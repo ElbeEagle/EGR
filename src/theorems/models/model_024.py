@@ -142,3 +142,7 @@ class HyperbolaEqualAxis(TheoremModel):
 
         except Exception:
             return False
+
+    def propose_bound(self,state,action):
+        from ..equal_axis_proposals import derive_equal_axis_eccentricity
+        return derive_equal_axis_eccentricity(state,action)

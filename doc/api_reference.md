@@ -267,6 +267,8 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 模式derive_focus_asymptote_distance输出曲线级距离，同曲线查询只读。详见[规格54](../docs/开发规格/54_RM22数值共同距离实现.md)。
 
-## 下一批RM24（未实现）
+## RM24数值等轴绑定接口
 
-选650／1412，复用标准参数与EccentricityQuery。拟新增数值等轴资格后输出eccentricity=√2的独立模式，不强制RM12／13，不新增焦点／渐近线。2287为非等轴拒绝对照；3316标量别名后置。见[规格55](../docs/开发规格/55_RM24数值等轴性质契约.md)。
+`BoundAction(24, 'derive_equal_axis_eccentricity', curve, equation_id)`要求唯一双曲线方程及已提交、来源匹配的RM5/6参数与框架；不接受额外点线绑定。有限正数值a²=b²才可应用；非等轴inapplicable、未定符号undetermined，已有c²或e矛盾拒绝提交。
+
+公共操作equal_axis_eccentricity只计算；derive_equal_axis_eccentricity提出曲线级eccentricity=√2及核验证据；既有应用器负责提交、幂等和回滚。EccentricityQuery复用只读结果，不生成c²、不隐式调用RM12／13、不新增等轴状态字段。多方程保守拒绝。见[规格56](../docs/开发规格/56_RM24数值等轴性质实现.md)。

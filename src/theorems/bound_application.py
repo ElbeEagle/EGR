@@ -59,6 +59,9 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id==24:
+        from .equal_axis_proposals import check_equal_axis_binding
+        return check_equal_axis_binding(state,action)
     if action.model_id==22:
         from .focus_asymptote_proposals import check_focus_asymptote_binding
         return check_focus_asymptote_binding(state,action)
@@ -247,6 +250,9 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id==24:
+        return [BoundAction(24,'derive_equal_axis_eccentricity',f.owner,f.fact_id) for f in state.equations.values()
+                if f.role=='curve' and state.entities.get(f.owner)=='Hyperbola' and mode in (None,'derive_equal_axis_eccentricity')]
     if model_id==22:
         return [BoundAction(22,'derive_focus_asymptote_distance',f.owner,f.fact_id) for f in state.equations.values()
                 if f.role=='curve' and state.entities.get(f.owner)=='Hyperbola' and mode in (None,'derive_focus_asymptote_distance')]
