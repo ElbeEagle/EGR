@@ -240,9 +240,21 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 650／1412固定RM5→RM24均√2，y轴用RM6；复用离心率查询，不生成c²、不依赖RM12／13。详情见[规格56](../docs/开发规格/56_RM24数值等轴性质实现.md)。下一步回到职责表选有限案例，后置范围不变。
 
-## 下一批RM28双准线（未实现）
+## RM28设计入口（最新实现见下节）
 
 2779拟用RM5→RM12→RM28输出两条准线x=±1/2。复用标准参数、c²及方程提交；新增双准线身份和集合只读查询，不能沿用抛物线单准线键。1834右准线选择延期。输入／输出及失败边界见[规格57](../docs/开发规格/57_RM28数值双准线契约.md)。
 
 - `scripts/audit/directrix_pair_contract.py` → 新增有限审查。CASES保存首批与延期案例；probe执行既有参数子链并独立核验双准线偏移及顶点距离比；audit保存原始输入、查询缺口和数据哈希，供RM28实现核对。
 - `docs/开发规格/artifacts/directrix_pair_contract.json` → 保存参数事实投影及独立数学证据，不是RM28执行轨迹。
+
+## RM28数值双准线已接入
+
+- `src/state/directrix_pair_query.py` → 新增双准线只读身份。DirectrixPairQuery保存曲线；pair_keys区分正负轴侧两条直线；pair_snapshot保存为EquationFact.source中的输入／输出摘要；read_directrix_pair核对来源及快照后返回规范化方程frozenset，不推导准线。
+- `src/state/transition_state.py` → 扩展原始查询解析、方程目标分类和结果分派。Expression(Directrix(G))在G为Hyperbola时定位双准线；初态无结果，抛物线路径不变。
+- `src/solver/directrix_pair_operations.py` → 新增公共计算。directrix_pair核验有限正参数及c²=a²+b²，返回实轴两侧的直线表达式，供提案使用，不提交状态。
+- `src/theorems/directrix_pair_proposals.py` → 新增绑定与提案。check_directrix_binding复用唯一双曲线绑定检查；derive_directrix_pair核验参数来源及已有直线，提出缺失方程；等价已有结果保留，矛盾或过期拒绝。
+- `src/theorems/models/model_028.py`、`src/theorems/theorem_library.py`、`src/theorems/bound_application.py` → 新增并注册RM28绑定入口及候选。propose_bound调用数值提案；原应用器负责双直线原子提交、幂等与回滚，不启用旧状态执行。
+- `tests/test_bound_directrix_pair.py` → 新增23项验证，覆盖原题、换轴、缩放、多曲线、缺参数／来源、过期原式、部分补齐、冲突回滚、只读性和排除范围。
+- `scripts/audit/directrix_pair_contract.py` → 更新既有审查。audit允许记录已支持的查询身份，不再强制断言原始查询失败；仍不执行RM28。
+
+2779固定5→12→28得到x=±1/2；结果为无序直线集合，快照失效拒读。详情见[规格58](../docs/开发规格/58_RM28数值双准线实现.md)，后置范围不变。

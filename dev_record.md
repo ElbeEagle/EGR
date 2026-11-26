@@ -950,3 +950,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/directrix_pair_contract.json` → 保存参数事实投影及独立数学证据，不是RM28执行轨迹。
 - **效果／验证**：审查命令通过，2779独立结果x=±1/2，y轴与缩放诊断一致；1834右准线查询延期。明确唯一曲线绑定、c²来源、双直线原子提案及集合只读契约。
 - **下一步／限制**：先查询身份，再接数值RM28；运行时未改，未更新历史回归统计，用户后置范围不变。
+
+## 2026-11-25｜RM28数值双准线实现
+
+- **开发记录**：[docs/开发规格/58_RM28数值双准线实现.md](docs/开发规格/58_RM28数值双准线实现.md)
+- `src/state/directrix_pair_query.py` → 新增双准线只读身份。DirectrixPairQuery保存曲线；pair_keys区分正负轴侧两条直线；pair_snapshot保存为EquationFact.source中的输入／输出摘要；read_directrix_pair核对来源及快照后返回规范化方程frozenset，不推导准线。
+- `src/state/transition_state.py` → 扩展原始查询解析、方程目标分类和结果分派。Expression(Directrix(G))在G为Hyperbola时定位双准线；初态无结果，抛物线路径不变。
+- `src/solver/directrix_pair_operations.py` → 新增公共计算。directrix_pair核验有限正参数及c²=a²+b²，返回实轴两侧的直线表达式，供提案使用，不提交状态。
+- `src/theorems/directrix_pair_proposals.py` → 新增绑定与提案。check_directrix_binding复用唯一双曲线绑定检查；derive_directrix_pair核验参数来源及已有直线，提出缺失方程；等价已有结果保留，矛盾或过期拒绝。
+- `src/theorems/models/model_028.py`、`src/theorems/theorem_library.py`、`src/theorems/bound_application.py` → 新增并注册RM28绑定入口及候选。propose_bound调用数值提案；原应用器负责双直线原子提交、幂等与回滚，不启用旧状态执行。
+- `tests/test_bound_directrix_pair.py` → 新增23项验证，覆盖原题、换轴、缩放、多曲线、缺参数／来源、过期原式、部分补齐、冲突回滚、只读性和排除范围。
+- `scripts/audit/directrix_pair_contract.py` → 更新既有审查。audit允许记录已支持的查询身份，不再强制断言原始查询失败；仍不执行RM28。
+- **效果／验证**：2779原始查询固定5→12→28得到x=±1/2，23项新增测试、去重相关回归899项通过；保存真实执行轨迹。
+- **下一步／限制**：回到职责表选有限案例；用户后置范围不变，未接自主选择器或旧答案比较器。

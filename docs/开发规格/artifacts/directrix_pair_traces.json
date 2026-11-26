@@ -1,0 +1,177 @@
+{
+  "id": 2779,
+  "kind": "fixed_action_replay",
+  "facts": "G: Hyperbola;Expression(G) = (x^2 - y^2/3 = 1)",
+  "query": "Expression(Directrix(G))",
+  "transitions": [
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 5,
+        "mode": "extract_parameters",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 0,
+      "after_revision": 1,
+      "delta": {
+        "properties": {
+          "('G', 'a_sq')": "1",
+          "('G', 'b_sq')": "3"
+        },
+        "values": {},
+        "frames": {
+          "G": {
+            "equation_id": "f1",
+            "center": [
+              "0",
+              "0"
+            ],
+            "axis": "x",
+            "direction": null
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "entity:G",
+        "f1:domain:0"
+      ],
+      "operations": [
+        {
+          "operation": "standard_hyperbola_x",
+          "equation": "f1",
+          "axis": "x",
+          "a_sq": "1",
+          "b_sq": "3"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 12,
+        "mode": "derive_c_sq",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 1,
+      "after_revision": 2,
+      "delta": {
+        "properties": {
+          "('G', 'c_sq')": "4"
+        },
+        "values": {}
+      },
+      "read_facts": [
+        "entity:G",
+        "property:G:a_sq",
+        "property:G:b_sq",
+        "f1:domain:0",
+        "f1",
+        "frame:G"
+      ],
+      "operations": [
+        {
+          "operation": "parameter_relation",
+          "curve": "G",
+          "kind": "Hyperbola",
+          "inputs": {
+            "a_sq": "1",
+            "b_sq": "3"
+          },
+          "target": "c_sq",
+          "result": "4"
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    },
+    {
+      "status": "applied",
+      "action": {
+        "model_id": 28,
+        "mode": "derive_directrix_pair",
+        "curve": "G",
+        "equation_id": "f1",
+        "line_equation_id": null,
+        "relation_id": null,
+        "peer_curve": null,
+        "peer_equation_id": null,
+        "point": null,
+        "coordinate_id": null,
+        "line": null,
+        "point_role": null,
+        "incidence_id": null,
+        "slope_sum_id": null
+      },
+      "before_revision": 2,
+      "after_revision": 3,
+      "delta": {
+        "properties": {},
+        "values": {},
+        "equations": {
+          "derived:G:directrix:negative": {
+            "fact_id": "derived:G:directrix:negative",
+            "owner": "G",
+            "role": "directrix",
+            "expression": "x + 1/2",
+            "source": "RM28:808860fd0857e7037104f6b88a6bbed2a931d1dfc6ed91a4ccf8459cba013de7"
+          },
+          "derived:G:directrix:positive": {
+            "fact_id": "derived:G:directrix:positive",
+            "owner": "G",
+            "role": "directrix",
+            "expression": "x - 1/2",
+            "source": "RM28:adb9d9960de0830a567e12d16b2f8cdd4d9412e3fc8e8b21f0d44b80eb83e715"
+          }
+        }
+      },
+      "read_facts": [
+        "f1",
+        "frame:G",
+        "property:G:a_sq",
+        "property:G:b_sq",
+        "property:G:c_sq"
+      ],
+      "operations": [
+        {
+          "operation": "directrix_pair",
+          "axis": "x",
+          "equations": [
+            "x + 1/2",
+            "x - 1/2"
+          ]
+        }
+      ],
+      "candidates": [],
+      "diagnostic": ""
+    }
+  ],
+  "answer": [
+    "x + 1/2",
+    "x - 1/2"
+  ]
+}

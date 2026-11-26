@@ -644,38 +644,15 @@ This section evaluates Conic-Solver on conic-section problems to answer five res
 
 We conduct all experiments on Conic10K, a benchmark of Chinese senior high school conic-section problems~\citep{conic10k}. Each problem provides a natural-language statement, formal annotations of initial conditions and the solving goal, a ground-truth answer, and a reference solution. The dataset contains 10,861 problems, officially split into 7,758 training, 1,035 development, and 2,068 test problems. We follow this official split strictly. All descriptor definitions, pattern implementations, and selector hyperparameters are determined on the training and development sets, while the test set is used only for final evaluation.
 
-In the training set, 5,355 problems contain weak pattern sequences extracted semi-automatically from reference solutions, totaling 20,212 occurrences. Because written solutions occasionally state a downstream formula before recording prerequisite parameter extractions, raw sequences are not always directly executable. We therefore apply the replay filtering procedure in Section~\ref{sec:selector} to retain only execution-verified training pairs. During testing, no pattern annotations are provided, and Conic-Solver receives only the formal conditions and solving goal. Table~\ref{tab:dataset} summarizes the dataset statistics.
+% \subsubsection{Input setting}
 
-% \begin{table}[t]
-% \centering
-% \caption{Statistics of the Conic10K dataset and its reasoning-pattern annotations.}
-% \label{tab:dataset}
-% \begin{tabular}{lr}
-% \hline
-% Statistic & Value \\
-% \hline
-% Total problems & 10,861 \\
-% Training problems & 7,758 \\
-% Development problems & 1,035 \\
-% Test problems & 2,068 \\
-% Training problems with annotated pattern sequences & 5,355 \\
-% Total annotated pattern occurrences & 20,212 \\
-% Distinct patterns observed in annotations & TBD \\
-% Retained selector training pairs after replay filtering & TBD \\
-% Ellipse / hyperbola / parabola / circle problems in test set & TBD / TBD / TBD / TBD \\
-% \hline
-% \end{tabular}
-% \end{table}
-
-\subsubsection{Input setting}
-
-Conic-Solver takes formal initial conditions and a formal solving goal as input. As noted in Section~\ref{sec:problem_statement}, this setting isolates multi-step geometry--algebra reasoning from upstream natural-language parsing. In the original Conic10K benchmark, language models were evaluated only on natural-language text~\citep{conic10k}. Comparing a symbolic solver on formal input solely against language models on text input would conflate parsing errors with reasoning errors. Conversely, feeding only an unfamiliar formal syntax to language models could underestimate their reasoning ability. We therefore evaluate our newly tested language models under both settings. The natural-language setting follows the standard Conic10K protocol, whereas the formal setting provides the exact same formal input received by Conic-Solver together with a concise syntax specification.
+% Conic-Solver takes formal initial conditions and a formal solving goal as input. As noted in Section~\ref{sec:problem_statement}, this setting isolates multi-step geometry--algebra reasoning from upstream natural-language parsing. In the original Conic10K benchmark, language models were evaluated only on natural-language text~\citep{conic10k}. Comparing a symbolic solver on formal input solely against language models on text input would conflate parsing errors with reasoning errors. Conversely, feeding only an unfamiliar formal syntax to language models could underestimate their reasoning ability. We therefore evaluate our newly tested language models under both settings. The natural-language setting follows the standard Conic10K protocol, whereas the formal setting provides the exact same formal input received by Conic-Solver together with a concise syntax specification.
 
 \subsubsection{Baselines}
 
 To examine how Conic-Solver addresses the dual-track challenges of conic-section solving, we compare it against three groups of baselines. The first group consists of large language models based on autoregressive generation. We include representative published results from the original Conic10K benchmark on natural-language input as historical references, covering fine-tuned pretrained models, LoRA fine-tuned models, zero-shot chain-of-thought models, and human experts~\citep{conic10k}. We further evaluate contemporary general-purpose, reasoning-enhanced, and math-specialized language models on the full test set, including DeepSeekMath-7B, Qwen2.5-Math-7B, DeepSeek-V3, and DeepSeek-R1. Each contemporary model is evaluated with zero-shot chain-of-thought prompting~\citep{wei2022chain} under both natural-language and formal inputs.
 
-The second group is a pure symbolic computer algebra baseline operating solely on the algebraic track. It translates all initial conditions directly into a system of polynomial equations and inequalities and invokes SymPy to solve for the target in one pass~\citep{meurer2017sympy}. This baseline measures the limits of unguided algebraic elimination without geometric roles or step-by-step pattern transitions.
+The second group is a pure symbolic computer algebra baseline. It translates all initial conditions directly into a system of polynomial equations and inequalities and invokes SymPy to solve for the target in one pass~\citep{meurer2017sympy}. This baseline measures the limits of unguided algebraic elimination without geometric roles or step-by-step pattern transitions.
 
 The third group consists of knowledge-based baselines that share the same pool of 80 reasoning patterns and the same pattern applicator as Conic-Solver, differing only in pattern selection. The prior-frequency baseline ranks all patterns by their empirical training frequency regardless of the current representation. The meta-model baseline adapts the decoupled inference strategy of UDfSolver~\citep{xiong2026udfsolver}. It first matches the initial abstract layer against the frequent descriptor combinations in Table~\ref{tab:descriptor_rp} to execute a predefined pathway. If no pathway matches or reaches an answer-ready representation, it traverses the pattern pool in a fixed order and applies every valid pattern until saturation. Comparing Conic-Solver against these two baselines directly isolates the contribution of learned abstract-layer selection.
 
@@ -689,7 +666,7 @@ Finally, we assess search efficiency on solved problems using three metrics: ave
 
 \subsubsection{Implementation details}
 
-The pattern selector is a multilayer perceptron with three hidden layers of 64, 128, and 64 units and ReLU activations. It maps the 35-dimensional binary descriptor vector to logits over the 80 reasoning patterns. We train the selector with the Adam optimizer using a learning rate of TBD and a batch size of TBD for TBD epochs, selecting the checkpoint with the highest development-set accuracy. Based on development-set tuning, the candidate list size is set to $k=\text{TBD}$ and the maximum step budget is set to TBD steps. The coverage breadth-first search is bounded to a depth of TBD steps. All symbolic primitives and equivalence checks use SymPy version TBD. All experiments run on TBD hardware, and learned model results are averaged over TBD random seeds.
+The pattern selector is a multilayer perceptron with three hidden layers of 64, 128, and 64 units and ReLU activations. It maps the 35-dimensional binary descriptor vector to logits over the 80 reasoning patterns. We train the selector with the Adam optimizer using a learning rate of TBD and a batch size of TBD for TBD epochs, selecting the checkpoint with the highest development-set accuracy. Based on development-set tuning, the candidate list size is set to $k=\text{TBD}$ and the maximum step budget is set to TBD steps. The coverage breadth-first search is bounded to a depth of TBD steps. All symbolic primitives and equivalence checks use SymPy version TBD.
 
 \subsection{Overall performance and efficiency}
 \label{sec:overall_results}

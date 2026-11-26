@@ -272,3 +272,9 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 `BoundAction(24, 'derive_equal_axis_eccentricity', curve, equation_id)`要求唯一双曲线方程及已提交、来源匹配的RM5/6参数与框架；不接受额外点线绑定。有限正数值a²=b²才可应用；非等轴inapplicable、未定符号undetermined，已有c²或e矛盾拒绝提交。
 
 公共操作equal_axis_eccentricity只计算；derive_equal_axis_eccentricity提出曲线级eccentricity=√2及核验证据；既有应用器负责提交、幂等和回滚。EccentricityQuery复用只读结果，不生成c²、不隐式调用RM12／13、不新增等轴状态字段。多方程保守拒绝。见[规格56](../docs/开发规格/56_RM24数值等轴性质实现.md)。
+
+## RM28双准线绑定与只读查询
+
+`BoundAction(28,'derive_directrix_pair',curve,equation_id)`要求唯一标准双曲线和已提交、来源一致的a²,b²,c²，输出正负轴侧两个directrix方程。公共操作计算，模型提案，原应用器原子提交；已有等价缩放结果保留，部分缺失补齐，冲突／过期拒绝。
+
+`DirectrixPairQuery(curve)`表达Expression(Directrix(G))的双曲线集合目标；`read_directrix_pair`只核对来源／快照并返回规范化方程frozenset，初态／缺一条／过期为None。快照保存在EquationFact.source，非新增几何推导。详情见[规格58](../docs/开发规格/58_RM28数值双准线实现.md)。

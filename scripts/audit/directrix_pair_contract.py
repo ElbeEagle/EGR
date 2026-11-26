@@ -44,7 +44,7 @@ def audit():
         except ValueError as exc:
             gap = str(exc)
         else:
-            raise AssertionError('Query capability changed; reassess the contract')
+            gap = None  # Query identity may be implemented after the design audit.
         cases.append(dict(id=pid, scope=scope, text=r['text'], facts=r['fact_expressions'],
                           query=r['query_expressions'], weak_models=r['models'], query_gap=gap,
                           probe=probe(r['fact_expressions'], 5)))
@@ -59,4 +59,4 @@ if __name__ == '__main__':
     report = audit()
     (ROOT/'docs/开发规格/artifacts/directrix_pair_contract.json').write_text(
         json.dumps(report, ensure_ascii=False, indent=2)+'\n')
-    print('2779: x=±1/2; y-axis/scaling verified; original queries unsupported; RM28 not executed')
+    print('2779: x=±1/2; y-axis/scaling verified; query capability recorded live; RM28 not executed')

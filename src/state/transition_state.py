@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .directrix_pair_query import DirectrixPairQuery, read_directrix_pair
 from .focus_asymptote_query import FocusAsymptoteDistanceQuery,read_focus_asymptote_distance
 from .focal_area_facts import AngleFact,FocalAreaQuery,collect_angles,read_area
 from .focal_perimeter_facts import FocusPair, FocalPerimeterQuery, collect_focus_pairs, read_perimeter
@@ -153,7 +154,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: None | sp.Symbol | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery | TangentQuery | ChordLengthQuery | NamedLineQuery
+    query: None | sp.Symbol | DirectrixPairQuery | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery | TangentQuery | ChordLengthQuery | NamedLineQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -236,7 +237,10 @@ class TransitionState:
         perimeter_query=re.fullmatch(r'Perimeter\(TriangleOf\(\s*(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*\)\)',query_text)
         area_query=re.fullmatch(r'Area\(TriangleOf\(\s*(\w+)\s*,\s*(\w+)\s*,\s*(\w+)\s*\)\)',query_text)
         focus_asymptote_query=re.fullmatch(r'Distance\(\s*Focus\(\s*(\w+)\s*\)\s*,\s*Asymptote\(\s*(\w+)\s*\)\s*\)',query_text)
-        if focus_asymptote_query:
+        directrix_pair_query = re.fullmatch(r'Expression\(\s*Directrix\(\s*(\w+)\s*\)\s*\)', query_text)
+        if directrix_pair_query and entities.get(directrix_pair_query.group(1)) == 'Hyperbola':
+            target = DirectrixPairQuery(directrix_pair_query.group(1))
+        elif focus_asymptote_query:
             left,right=focus_asymptote_query.groups()
             if left!=right or entities.get(left)!='Hyperbola':raise ValueError('Common distance requires the same hyperbola')
             target=FocusAsymptoteDistanceQuery(left)
@@ -421,7 +425,7 @@ class TransitionState:
         return AbstractState(
             curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE, 'Parabola': CurveType.PARABOLA}.get(
                 self.entities.get(curve), CurveType.UNKNOWN),
-            query_type=(QueryType.EQUATION if isinstance(self.query, (AsymptoteQuery, TangentQuery, NamedLineQuery)) else
+            query_type=(QueryType.EQUATION if isinstance(self.query, (DirectrixPairQuery, AsymptoteQuery, TangentQuery, NamedLineQuery)) else
                         QueryType.DISTANCE if isinstance(self.query, (FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery, ChordLengthQuery)) else QueryType.VALUE),
             has_equation=any(f.owner == curve and f.role in ('curve', 'line') for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),
@@ -432,6 +436,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, DirectrixPairQuery):
+            return read_directrix_pair(self, self.query)
         if isinstance(self.query, FocusAsymptoteDistanceQuery):
             return read_focus_asymptote_distance(self,self.query)
         if isinstance(self.query, FocalAreaQuery):

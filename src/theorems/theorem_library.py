@@ -52,6 +52,7 @@ class TheoremLibrary:
         from .models.model_021 import HyperbolaAsymptote
         from .models.model_022 import HyperbolaFocusToAsymptoteDistance
         from .models.model_024 import HyperbolaEqualAxis
+        from .models.model_028 import HyperbolaDirectrix
         from .models.model_027 import EllipseDirectrix
         from .models.model_029 import ParabolaDirectrix
         from .models.model_032 import EllipseFocalTrianglePerimeter
@@ -121,6 +122,7 @@ class TheoremLibrary:
         self.register_model(HyperbolaFocusToAsymptoteDistance())
         self.register_model(HyperbolaEqualAxis())
         self.register_model(EllipseDirectrix())
+        self.register_model(HyperbolaDirectrix())
         self.register_model(ParabolaDirectrix())
         self.register_model(EllipseFocalTrianglePerimeter())
         from .models.model_030 import EllipseFocalTriangleArea
