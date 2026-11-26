@@ -1,0 +1,122 @@
+{
+  "stage": "design_audit_only_not_rm51_execution",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 3057,
+      "text": "抛物线$y^{2}=12 x$截直线$y=2 x+1$所得弦长等于?",
+      "facts": "G: Parabola;H: Line;Expression(G) = (y^2 = 12*x);Expression(H) = (y = 2*x + 1)",
+      "query": "Length(InterceptChord(H,G))",
+      "weak_models": [
+        7,
+        72,
+        42,
+        51
+      ],
+      "probe": {
+        "executed_models": [
+          78,
+          41,
+          50
+        ],
+        "variable": "y",
+        "lift": [
+          "y/2 - 1/2",
+          "y"
+        ],
+        "root_sum": "6",
+        "root_product": "6",
+        "finite_slope_eligible": true,
+        "slope": "2",
+        "rm51_independent_length": "sqrt(15)",
+        "coordinate_oracle": "sqrt(15)"
+      }
+    },
+    {
+      "id": 6347,
+      "text": "直线$y=x-1$被抛物线$y^{2}=4 x$截得线段长是?",
+      "facts": "G: Parabola;H: Line;Expression(G) = (y^2 = 4*x);Expression(H) = (y = x - 1)",
+      "query": "Length(InterceptChord(H, G))",
+      "weak_models": [
+        7,
+        78,
+        42,
+        51
+      ],
+      "probe": {
+        "executed_models": [
+          78,
+          41,
+          50
+        ],
+        "variable": "y",
+        "lift": [
+          "y + 1",
+          "y"
+        ],
+        "root_sum": "4",
+        "root_product": "-4",
+        "finite_slope_eligible": true,
+        "slope": "1",
+        "rm51_independent_length": "8",
+        "coordinate_oracle": "8"
+      }
+    }
+  ],
+  "diagnostics": {
+    "swapped": {
+      "executed_models": [
+        78,
+        41,
+        50
+      ],
+      "variable": "y",
+      "lift": [
+        "y - 1",
+        "y"
+      ],
+      "root_sum": "6",
+      "root_product": "1",
+      "finite_slope_eligible": true,
+      "slope": "1",
+      "rm51_independent_length": "8",
+      "coordinate_oracle": "8"
+    },
+    "vertical": {
+      "executed_models": [
+        78,
+        41,
+        50
+      ],
+      "variable": "y",
+      "lift": [
+        "1",
+        "y"
+      ],
+      "root_sum": "0",
+      "root_product": "-4",
+      "finite_slope_eligible": false,
+      "slope": "None",
+      "rm51_independent_length": "None",
+      "coordinate_oracle": "4"
+    },
+    "horizontal": {
+      "executed_models": [
+        78,
+        41,
+        50
+      ],
+      "variable": "x",
+      "lift": [
+        "x",
+        "1"
+      ],
+      "root_sum": "0",
+      "root_product": "-4",
+      "finite_slope_eligible": true,
+      "slope": "0",
+      "rm51_independent_length": "4",
+      "coordinate_oracle": "4"
+    }
+  }
+}
