@@ -1,0 +1,48 @@
+{
+  "deferred": {
+    "id": 6261,
+    "reason": "Numeric sqrt(11) coordinate syntax unsupported; no parser expansion this batch"
+  },
+  "stage": "design_audit_fact_projections_not_original_solves",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 870,
+      "original_facts": "G: Ellipse;H: Point;F1: Point;F2: Point;Coordinate(H) = (2, 3);Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0);PointOnCurve(H, G);Focus(G)={F1,F2}",
+      "original_query": "Eccentricity(G)",
+      "projected_facts": "H: Point;F1: Point;F2: Point;Coordinate(H) = (2, 3);Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0)",
+      "probe": {
+        "diagnostic_query": "Distance(H,LineOf(F1,F2))",
+        "raw_query_gap": "Unsupported or undeclared query target",
+        "internal_typed_query_bypass": true,
+        "baseline_distance": "3",
+        "executed_models": [
+          73,
+          52
+        ],
+        "after_target_coordinate_change_read": "3",
+        "stale_line_application_status": "applied",
+        "stale_line_read": "3"
+      }
+    },
+    {
+      "id": 3239,
+      "original_facts": "G: Ellipse;F1: Point;F2: Point;Z: Point;Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0);Coordinate(Z) = (5/2, -3/2);PointOnCurve(Z, G);Focus(G) = {F1, F2}",
+      "original_query": "Expression(G)",
+      "projected_facts": "F1: Point;F2: Point;Z: Point;Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0);Coordinate(Z) = (5/2, -3/2)",
+      "probe": {
+        "diagnostic_query": "Distance(F1,LineOf(F2,Z))",
+        "raw_query_gap": "Unsupported or undeclared query target",
+        "internal_typed_query_bypass": true,
+        "baseline_distance": "6*sqrt(10)/5",
+        "executed_models": [
+          73,
+          52
+        ],
+        "after_target_coordinate_change_read": "6*sqrt(10)/5",
+        "stale_line_application_status": "applied",
+        "stale_line_read": "6*sqrt(10)/5"
+      }
+    }
+  ]
+}

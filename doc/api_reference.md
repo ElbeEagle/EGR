@@ -290,3 +290,7 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 BoundAction新增可选`coordinate_ids: tuple[str,str]`、`coordinate_snapshot: str`，默认None；仅RM73允许携带。`enumerate_actions(state,73)`为已有NamedLine及当前有来源的双坐标产生derive_line_from_points候选，坐标ID按无序身份的稳定端点顺序绑定。
 
 `two_point_line`只计算有限非重合两点的规范直线；`derive_two_point_line`提出derived:{line}:two_points，原应用器严格分支提交。普通坐标解析补记点声明来源；`fresh_two_point_line`校验结果来源及输入／输出快照，NamedLineQuery对RM73结果过期拒读，不推导直线。已有等价且有来源的直线不重复创建；缺来源／歧义拒绝，矛盾回滚。见[规格62](../docs/开发规格/62_RM73数值两点直线实现.md)。
+
+## RM73派生线距离消费边界（待实现）
+
+当前PointLineDistanceQuery内部可定位派生线，但Distance(P,LineOf(A,B))原始解析未接入；RM52提案与距离读取尚未验证RM73快照／目标点新鲜度。不要以内部类型化查询诊断代替原始输入支持。后续按[规格63](../docs/开发规格/63_RM73_RM52派生直线距离消费契约.md)分别增加消费核验及距离依赖证据；本批未修改接口。
