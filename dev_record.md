@@ -1011,3 +1011,14 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/named_line_distance_contract.json` → 保存原始查询缺口、数值基线及过期状态反例，供后续实现验收；不是原题求解报告，内部查询绕过明确标记。
 - **效果／验证**：审查通过，两题投影距离3、6√10/5；复现原始复合查询未接入、RM52消费旧线及旧距离读取缺口。6261根式坐标解析另批。
 - **下一步／限制**：先复合查询身份，再派生线核验与距离依赖证据原子提交／读取；运行时未改、历史回归未重跑，后置范围不变。
+
+## 2026-11-27｜RM73到RM52派生直线距离实现
+
+- **开发记录**：[docs/开发规格/64_RM73_RM52派生直线距离实现.md](docs/开发规格/64_RM73_RM52派生直线距离实现.md)
+- `src/state/named_distance_evidence.py` → 新增距离依赖证据。DistanceSnapshot保存点／线／坐标／方程ID、依赖摘要及距离值；distance_inputs核验唯一新鲜RM73直线与数值目标坐标；make_distance_snapshot组织证据，read_named_distance只核对来源、快照和结果，不计算距离。
+- `src/state/transition_state.py` → 扩展复合查询及证据容器。Distance(P,LineOf(A,B))复用无序直线身份和PointLineDistanceQuery；distance_snapshots保存已提交证据，相关距离读取经新鲜度检查，初态／过期返回None。
+- `src/theorems/distance_proposals.py` → 扩展RM52消费提案。计算前核验派生线和目标来源，提出距离及匹配证据；已有数值缺证据或依赖过期拒绝补造，数值冲突拒绝，旧显式线／准线分支不变。
+- `src/theorems/bound_application.py` → 扩展事务提交。Proposal增加distance_snapshots；应用器核对模型、绑定键、提案数值与当前依赖摘要，将证据和距离一起写入delta及状态，重复幂等、冲突回滚。
+- `tests/test_bound_named_distance.py` → 新增21项测试。覆盖两题原始诊断查询、反序重排、点在线上为零、竖线／缩放、旧点／旧线／缺证据、多线歧义、隔离及回滚。
+- **效果／验证**：870／3239原始诊断查询投影链得到3、6√10/5，保存双模型实际轨迹；新增21项、相关回归974项通过，过期消费及旧距离缺口已按有限范围修复。
+- **下一步／限制**：回到职责表选案例；原题离心率／方程未解，后置范围不变，旧距离分支未全面迁移。

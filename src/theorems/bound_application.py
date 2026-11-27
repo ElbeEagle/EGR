@@ -45,6 +45,7 @@ class Proposal:
     coordinates: dict[str, PointCoordinates] = field(default_factory=dict)
     intersection_reductions: dict[str, IntersectionReduction] = field(default_factory=dict)
     parameterizations: dict[str, LineParameterization] = field(default_factory=dict)
+    distance_snapshots: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -657,10 +658,28 @@ class BoundApplicator:
             changed_reductions = {k: v for k, v in reductions.items() if state.intersection_reductions.get(k) != v}
             changed_coordinates = {p: c for p, c in coordinates.items() if p not in state.coordinates}
             changed_equations = {k: v for k, v in equations.items() if state.equations.get(k) != v}
-            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates, changed_reductions, changed_parameterizations)):
+            snapshots = dict(state.distance_snapshots)
+            for key, evidence in proposal.distance_snapshots.items():
+                from src.state.named_distance_evidence import make_distance_snapshot
+                expected_key = (action.line, f'point_line_distance:{action.point}:{action.line_equation_id}')
+                if (action.model_id != 52 or action.mode != 'point_line_distance'
+                        or key != expected_key or key not in proposal.properties
+                        or key not in properties):
+                    raise TransitionError('inapplicable', 'Invalid distance evidence binding')
+                expected = make_distance_snapshot(state, action.point, action.line,
+                    state.equations[action.line_equation_id], properties[key])
+                if evidence != expected:
+                    raise TransitionError('inapplicable', 'Invalid distance input snapshot')
+                if key in snapshots and snapshots[key] != evidence:
+                    raise TransitionError('conflict', 'Conflicting distance evidence')
+                snapshots[key] = evidence
+            changed_snapshots = {k:v for k,v in snapshots.items() if state.distance_snapshots.get(k) != v}
+            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates, changed_reductions, changed_parameterizations, changed_snapshots)):
                 result.status = 'no_op'
                 return result
             result.delta = {'properties': changed_properties, 'values': changed_values}
+            if changed_snapshots:
+                result.delta['distance_snapshots'] = changed_snapshots
             if changed_constraints:
                 result.delta['constraints'] = changed_constraints
             if changed_frames:
@@ -695,6 +714,7 @@ class BoundApplicator:
                 provenance[coordinate.fact_id] = (*proposal.read_facts, f'action:{result.after_revision}')
             for line in changed_parameterizations:
                 provenance[f'parameterization:{line}'] = (*proposal.read_facts, f'action:{result.after_revision}')
+            state.distance_snapshots = snapshots
             state.parameterizations = parameterizations
             state.intersection_reductions = reductions
             state.coordinates = coordinates

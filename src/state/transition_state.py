@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .named_distance_evidence import DistanceSnapshot, protected_distance, read_named_distance
 from .directrix_pair_query import DirectrixPairQuery, read_directrix_pair
 from .focus_asymptote_query import FocusAsymptoteDistanceQuery,read_focus_asymptote_distance
 from .focal_area_facts import AngleFact,FocalAreaQuery,collect_angles,read_area
@@ -181,6 +182,8 @@ class TransitionState:
     named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
+    distance_snapshots: dict[tuple[str, str], DistanceSnapshot] = field(default_factory=dict)
+
     midpoint_aliases: dict[str, ChordMidpointAlias] = field(default_factory=dict)
     angle_facts: dict[tuple, AngleFact] = field(default_factory=dict)
     focus_pairs: dict[str, FocusPair] = field(default_factory=dict)
@@ -229,6 +232,7 @@ class TransitionState:
         chord_query = re.fullmatch(r'Length\(InterceptChord\(\s*([A-Za-z]\w*)\s*,\s*([A-Za-z]\w*)\s*\)\)', query_text)
         overlap_query = re.fullmatch(r'Expression\(\s*OverlappingLine\(\s*([A-Za-z]\w*)\s*\)\s*\)', query_text)
         explicit_line_query = re.fullmatch(r'Expression\(\s*([A-Za-z]\w*)\s*\)', query_text)
+        named_distance_query = re.fullmatch(rf'Distance\(\s*([A-Za-z]\w*)\s*,\s*{LINE}\s*\)', query_text)
         named_line_query = re.fullmatch(rf'Expression\(\s*{LINE}\s*\)', query_text)
         dot_query = re.fullmatch(r'DotProduct\(\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*,\s*VectorOf\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\)', query_text)
         product_query = re.fullmatch(r'\s*([A-Za-z]\w*)\s*\*\s*([A-Za-z]\w*)\s*', query_text)
@@ -272,7 +276,7 @@ class TransitionState:
             target = OriginDotProductQuery(o,tuple(sorted((a,b))))
         elif explicit_line_query and entities.get(explicit_line_query.group(1)) == 'Line':
             target = NamedLineQuery(explicit_line_query.group(1))
-        elif query is None or named_line_query or overlap_query:
+        elif query is None or named_line_query or named_distance_query or overlap_query:
             target = None  # Explicit facts-only diagnostic; not a solved problem.
         elif chord_query and entities.get(chord_query.group(1)) == 'Line' and entities.get(chord_query.group(2)) == 'Parabola':
             target = ChordLengthQuery(*chord_query.groups())
@@ -295,6 +299,11 @@ class TransitionState:
         state = cls(entities, symbols, {}, {}, target)
         if named_line_query:
             state.query = NamedLineQuery(register_named_line(state, *named_line_query.groups(), 'query'))
+        if named_distance_query:
+            point, first, second = named_distance_query.groups()
+            if entities.get(point) != 'Point':
+                raise ValueError('Declared target point required')
+            state.query = PointLineDistanceQuery(point, register_named_line(state, first, second, 'query'))
         chord_parts = collect_focus_pairs(state, parts)
         chord_parts |= collect_angles(state, parts)
         chord_parts |= collect_named_chords(state, parts)
@@ -502,6 +511,8 @@ class TransitionState:
             lines = [f for f, _ in self.line_bindings(self.query.line)]
             if len(lines) != 1:
                 return None  # Do not silently choose among equations for the same line.
+            if protected_distance(self, self.query.line, lines[0]):
+                return read_named_distance(self, self.query.point, self.query.line, lines[0])
             key = f'point_line_distance:{self.query.point}:{lines[0].fact_id}'
             return self.properties.get((self.query.line, key))
         if isinstance(self.query, FocalDistanceQuery):

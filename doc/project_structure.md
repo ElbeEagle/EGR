@@ -295,9 +295,19 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 1168／1199完成坐标事实投影，不代表原题求解；快照保护RM73动作及只读结果。详情见[规格62](../docs/开发规格/62_RM73数值两点直线实现.md)。
 
-## 下一批RM73→RM52距离消费（未实现）
+## RM73→RM52距离设计入口（最新实现见下节）
 
 870／3239三点事实投影拟接Distance(P,LineOf(A,B))。复用RM73身份／快照与RM52计算，新增复合查询入口及距离依赖证据。当前RM52未检查RM73快照，距离读取未检查目标点变化，已由审查复现；不能将现有计算能力视为可信消费闭环。见[规格63](../docs/开发规格/63_RM73_RM52派生直线距离消费契约.md)。
 
 - `scripts/audit/named_line_distance_contract.py` → 新增消费链审查。CASES选择870／3239三点投影；probe通过内部类型化查询诊断RM73→RM52，用坐标行列式距离交叉核验，并记录目标点变化及派生直线过期后的当前行为；audit保存原题、投影与数据哈希。
 - `docs/开发规格/artifacts/named_line_distance_contract.json` → 保存原始查询缺口、数值基线及过期状态反例，供后续实现验收；不是原题求解报告，内部查询绕过明确标记。
+
+## RM73→RM52派生直线距离已接入
+
+- `src/state/named_distance_evidence.py` → 新增距离依赖证据。DistanceSnapshot保存点／线／坐标／方程ID、依赖摘要及距离值；distance_inputs核验唯一新鲜RM73直线与数值目标坐标；make_distance_snapshot组织证据，read_named_distance只核对来源、快照和结果，不计算距离。
+- `src/state/transition_state.py` → 扩展复合查询及证据容器。Distance(P,LineOf(A,B))复用无序直线身份和PointLineDistanceQuery；distance_snapshots保存已提交证据，相关距离读取经新鲜度检查，初态／过期返回None。
+- `src/theorems/distance_proposals.py` → 扩展RM52消费提案。计算前核验派生线和目标来源，提出距离及匹配证据；已有数值缺证据或依赖过期拒绝补造，数值冲突拒绝，旧显式线／准线分支不变。
+- `src/theorems/bound_application.py` → 扩展事务提交。Proposal增加distance_snapshots；应用器核对模型、绑定键、提案数值与当前依赖摘要，将证据和距离一起写入delta及状态，重复幂等、冲突回滚。
+- `tests/test_bound_named_distance.py` → 新增21项测试。覆盖两题原始诊断查询、反序重排、点在线上为零、竖线／缩放、旧点／旧线／缺证据、多线歧义、隔离及回滚。
+
+870／3239完成坐标事实投影；原始复合查询解析、消费前核验、证据提交与只读失效检查均接入。详见[规格64](../docs/开发规格/64_RM73_RM52派生直线距离实现.md)，不代表原题求解。

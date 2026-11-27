@@ -1,0 +1,252 @@
+{
+  "kind": "fact_projection_raw_query_fixed_replay",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 870,
+      "original_query": "Eccentricity(G)",
+      "projected_facts": "H: Point;F1: Point;F2: Point;Coordinate(H) = (2, 3);Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0)",
+      "diagnostic_query": "Distance(H,LineOf(F1,F2))",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 73,
+            "mode": "derive_line_from_points",
+            "curve": null,
+            "equation_id": null,
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "@line:F1:F2",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null,
+            "coordinate_ids": [
+              "f4",
+              "f5"
+            ],
+            "coordinate_snapshot": "f60d9713fed7388257b9784c2f4ba571f6a6f789b4b98bfa10bfc85c658a49a5"
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {},
+            "values": {},
+            "equations": {
+              "derived:@line:F1:F2:two_points": {
+                "fact_id": "derived:@line:F1:F2:two_points",
+                "owner": "@line:F1:F2",
+                "role": "line",
+                "expression": "y",
+                "source": "RM73:b9dd434d9d91b79d51999e003ff6e6b64d64198508c75ec067eb94caae48ac19"
+              }
+            }
+          },
+          "read_facts": [
+            "identity:@line:F1:F2",
+            "entity:F1",
+            "f4",
+            "entity:F2",
+            "f5"
+          ],
+          "operations": [
+            {
+              "operation": "two_point_line",
+              "endpoints": [
+                "F1",
+                "F2"
+              ],
+              "equation": "y"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 52,
+            "mode": "point_line_distance",
+            "curve": null,
+            "equation_id": null,
+            "line_equation_id": "derived:@line:F1:F2:two_points",
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": "H",
+            "coordinate_id": "f3",
+            "line": "@line:F1:F2",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null,
+            "coordinate_ids": null,
+            "coordinate_snapshot": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('@line:F1:F2', 'point_line_distance:H:derived:@line:F1:F2:two_points')": "3"
+            },
+            "values": {},
+            "distance_snapshots": {
+              "('@line:F1:F2', 'point_line_distance:H:derived:@line:F1:F2:two_points')": {
+                "point": "H",
+                "line": "@line:F1:F2",
+                "coordinate_id": "f3",
+                "line_equation_id": "derived:@line:F1:F2:two_points",
+                "digest": "ca5d2928f651751126b174ada6b62b864264f4058559e64038b5a44eab964853",
+                "value": "3"
+              }
+            }
+          },
+          "read_facts": [
+            "derived:@line:F1:F2:two_points",
+            "f3",
+            "entity:@line:F1:F2",
+            "entity:H"
+          ],
+          "operations": [
+            {
+              "operation": "point_to_line_distance",
+              "point": "H",
+              "line": "derived:@line:F1:F2:two_points",
+              "result": "3"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ],
+      "answer": "3"
+    },
+    {
+      "id": 3239,
+      "original_query": "Expression(G)",
+      "projected_facts": "F1: Point;F2: Point;Z: Point;Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0);Coordinate(Z) = (5/2, -3/2)",
+      "diagnostic_query": "Distance(F1,LineOf(F2,Z))",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 73,
+            "mode": "derive_line_from_points",
+            "curve": null,
+            "equation_id": null,
+            "line_equation_id": null,
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "@line:F2:Z",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null,
+            "coordinate_ids": [
+              "f4",
+              "f5"
+            ],
+            "coordinate_snapshot": "f0c6c98d16b72571bc2d479d0076e1afe4441e1323036e23d674462c8c685e05"
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {},
+            "values": {},
+            "equations": {
+              "derived:@line:F2:Z:two_points": {
+                "fact_id": "derived:@line:F2:Z:two_points",
+                "owner": "@line:F2:Z",
+                "role": "line",
+                "expression": "x + y/3 - 2",
+                "source": "RM73:8b8ea6d65bad474c9554b546ddaae4b8ce0a3fed9ac9d3ae6571dae76c63c5a7"
+              }
+            }
+          },
+          "read_facts": [
+            "identity:@line:F2:Z",
+            "entity:F2",
+            "f4",
+            "entity:Z",
+            "f5"
+          ],
+          "operations": [
+            {
+              "operation": "two_point_line",
+              "endpoints": [
+                "F2",
+                "Z"
+              ],
+              "equation": "x + y/3 - 2"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 52,
+            "mode": "point_line_distance",
+            "curve": null,
+            "equation_id": null,
+            "line_equation_id": "derived:@line:F2:Z:two_points",
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": "F1",
+            "coordinate_id": "f3",
+            "line": "@line:F2:Z",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null,
+            "coordinate_ids": null,
+            "coordinate_snapshot": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('@line:F2:Z', 'point_line_distance:F1:derived:@line:F2:Z:two_points')": "6*sqrt(10)/5"
+            },
+            "values": {},
+            "distance_snapshots": {
+              "('@line:F2:Z', 'point_line_distance:F1:derived:@line:F2:Z:two_points')": {
+                "point": "F1",
+                "line": "@line:F2:Z",
+                "coordinate_id": "f3",
+                "line_equation_id": "derived:@line:F2:Z:two_points",
+                "digest": "cc6040d08e21af03eef6721b2a85b255a48d78cad4e50cbb53438b15191faaf9",
+                "value": "6*sqrt(10)/5"
+              }
+            }
+          },
+          "read_facts": [
+            "derived:@line:F2:Z:two_points",
+            "f3",
+            "entity:@line:F2:Z",
+            "entity:F1",
+            "f5:domain:0",
+            "f5:domain:1"
+          ],
+          "operations": [
+            {
+              "operation": "point_to_line_distance",
+              "point": "F1",
+              "line": "derived:@line:F2:Z:two_points",
+              "result": "6*sqrt(10)/5"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ],
+      "answer": "6*sqrt(10)/5"
+    }
+  ]
+}
