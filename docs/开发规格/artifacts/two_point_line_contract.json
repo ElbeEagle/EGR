@@ -1,0 +1,76 @@
+{
+  "stage": "design_audit_only_fact_projections",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 1168,
+      "text": "已知$A(0 ,-4)$ , $B(3,2)$，抛物线$y^{2}=x$上的点到直线$A B$的最短距离为?",
+      "original_facts": "A: Point;Coordinate(A) = (0, -4);B: Point;Coordinate(B) = (3, 2);G: Parabola;Expression(G) = (y^2 = x);D: Point;PointOnCurve(D, G) = True",
+      "original_query": "Min(Distance(D, LineOf(A, B)))",
+      "projected_facts": "A: Point;Coordinate(A) = (0, -4);B: Point;Coordinate(B) = (3, 2)",
+      "diagnostic_query": "Expression(LineOf(A,B))",
+      "probe": {
+        "line_identity": "@line:A:B",
+        "endpoints": [
+          "A",
+          "B"
+        ],
+        "coordinate_ids": [
+          "f1",
+          "f3"
+        ],
+        "equation": "x - y/2 - 2",
+        "runtime_answer": null
+      }
+    },
+    {
+      "id": 1199,
+      "text": "已知$A(-1,0)$, $B(2,4)$, $\\triangle A B C$的面积为$10$，则顶点$C$的轨迹方程是?",
+      "original_facts": "A: Point;B: Point;C: Point;Coordinate(A) = (-1, 0);Coordinate(B) = (2, 4);Area(TriangleOf(A, B, C)) = 10",
+      "original_query": "LocusEquation(C)",
+      "projected_facts": "A: Point;B: Point;Coordinate(A) = (-1, 0);Coordinate(B) = (2, 4)",
+      "diagnostic_query": "Expression(LineOf(A,B))",
+      "probe": {
+        "line_identity": "@line:A:B",
+        "endpoints": [
+          "A",
+          "B"
+        ],
+        "coordinate_ids": [
+          "f2",
+          "f3"
+        ],
+        "equation": "x - 3*y/4 + 1",
+        "runtime_answer": null
+      }
+    }
+  ],
+  "diagnostics": {
+    "vertical": {
+      "line_identity": "@line:A:B",
+      "endpoints": [
+        "A",
+        "B"
+      ],
+      "coordinate_ids": [
+        "f2",
+        "f3"
+      ],
+      "equation": "x - 2",
+      "runtime_answer": null
+    },
+    "horizontal": {
+      "line_identity": "@line:A:B",
+      "endpoints": [
+        "A",
+        "B"
+      ],
+      "coordinate_ids": [
+        "f2",
+        "f3"
+      ],
+      "equation": "y - 2",
+      "runtime_answer": null
+    }
+  }
+}
