@@ -1,0 +1,110 @@
+{
+  "stage": "design_audit_only_fact_projections",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 1199,
+      "original_facts": "A: Point;B: Point;C: Point;Coordinate(A) = (-1, 0);Coordinate(B) = (2, 4);Area(TriangleOf(A, B, C)) = 10",
+      "original_query": "LocusEquation(C)",
+      "projected_facts": "A: Point;B: Point;Coordinate(A) = (-1, 0);Coordinate(B) = (2, 4)",
+      "probe": {
+        "query": "Distance(A,B)",
+        "raw_query_gap": "Unsupported or undeclared query target",
+        "points": [
+          "A",
+          "B"
+        ],
+        "coordinate_ids": [
+          "f2",
+          "f3"
+        ],
+        "squared_distance": "25",
+        "distance": "5",
+        "runtime_answer": null
+      }
+    },
+    {
+      "id": 5211,
+      "original_facts": "E: Point;F: Point;M: Point;Coordinate(E) = (1, -2);Coordinate(F) = (-3, 4);Abs(LineSegmentOf(M,E))=(3/2)*Abs(LineSegmentOf(M,F))",
+      "original_query": "LocusEquation(M)",
+      "projected_facts": "E: Point;F: Point;Coordinate(E) = (1, -2);Coordinate(F) = (-3, 4)",
+      "probe": {
+        "query": "Distance(E,F)",
+        "raw_query_gap": "Unsupported or undeclared query target",
+        "points": [
+          "E",
+          "F"
+        ],
+        "coordinate_ids": [
+          "f2",
+          "f3"
+        ],
+        "squared_distance": "52",
+        "distance": "2*sqrt(13)",
+        "runtime_answer": null
+      }
+    }
+  ],
+  "diagnostics": {
+    "horizontal": {
+      "query": "Distance(A,B)",
+      "raw_query_gap": "Unsupported or undeclared query target",
+      "points": [
+        "A",
+        "B"
+      ],
+      "coordinate_ids": [
+        "f2",
+        "f3"
+      ],
+      "squared_distance": "9",
+      "distance": "3",
+      "runtime_answer": null
+    },
+    "vertical": {
+      "query": "Distance(A,B)",
+      "raw_query_gap": "Unsupported or undeclared query target",
+      "points": [
+        "A",
+        "B"
+      ],
+      "coordinate_ids": [
+        "f2",
+        "f3"
+      ],
+      "squared_distance": "16",
+      "distance": "4",
+      "runtime_answer": null
+    },
+    "coincident": {
+      "query": "Distance(A,B)",
+      "raw_query_gap": "Unsupported or undeclared query target",
+      "points": [
+        "A",
+        "B"
+      ],
+      "coordinate_ids": [
+        "f2",
+        "f3"
+      ],
+      "squared_distance": "0",
+      "distance": "0",
+      "runtime_answer": null
+    }
+  },
+  "same_point": {
+    "query": "Distance(A,A)",
+    "raw_query_gap": "Unsupported or undeclared query target",
+    "points": [
+      "A",
+      "A"
+    ],
+    "coordinate_ids": [
+      "f1",
+      "f1"
+    ],
+    "squared_distance": "0",
+    "distance": "0",
+    "runtime_answer": null
+  }
+}
