@@ -205,3 +205,7 @@ class ChordLengthFormulaWithK(TheoremModel):
             state.parameters['chord_length'] = chord_expr
             state.parameters['|AB|'] = chord_expr
             state.geometric_relations.append(f"弦长: |AB| = {chord_expr}")
+
+    def propose_bound(self, state, action):
+        from ..intersection_proposals import derive_slope_chord_length
+        return derive_slope_chord_length(state, action)

@@ -259,9 +259,19 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 2779固定5→12→28得到x=±1/2；结果为无序直线集合，快照失效拒读。详情见[规格58](../docs/开发规格/58_RM28数值双准线实现.md)，后置范围不变。
 
-## 下一批RM51有限斜率弦长（未实现）
+## RM51设计入口（最新实现见下节）
 
 3057／6347拟走RM78→RM41→RM51，复用消元、根关系、弦长属性及只读查询。新增有限斜率资格和根变量到x坐标差转换；RM51不依赖RM50，竖直弦继续由RM50处理。见[规格59](../docs/开发规格/59_RM51有限斜率弦长契约.md)。
 
 - `scripts/audit/slope_chord_contract.py` → 新增有限审查。CASES保存两题ID；probe执行已有RM78→RM41参数子链，独立计算有限斜率弦长，并用显式根坐标距离及RM50结果交叉核验；audit汇总原输入、弱标签、数据哈希及诊断。显式解根只用于审查，不是未来RM51的执行步骤。
 - `docs/开发规格/artifacts/slope_chord_contract.json` → 保存根变量、回代映射、和积、斜率和数值核验证据，供实现时对照；不是RM51轨迹。
+
+## RM51有限斜率弦长已接入
+
+- `src/theorems/intersection_proposals.py` → 扩展弦长模型提案。抽提verified_root_pair供RM50／51检查已有和积、判别式及两实根资格，不补缺失事实；新增derive_slope_chord_length核验来源和当前原式／回代一致性，提出已有chord_length属性，交应用器提交。
+- `src/solver/intersection_operations.py` → 扩展公共计算。新增slope_chord_length，复用数值仿射与根差检查，读取α、γ，计算k=γ/α及|Δx|=|α|√(S²−4P)，返回长度及计算记录；α=0拒绝，不生成点坐标或状态。
+- `src/theorems/bound_application.py` → 扩展动作编排。check_binding与enumerate_actions接入RM51的曲线／直线／消元关系绑定；提交、幂等和回滚复用原机制。
+- `src/theorems/models/model_051.py` → 扩展模型入口。propose_bound调用独立数值提案，保留旧入口，不调用RM50模型。
+- `tests/test_bound_slope_chord.py` → 新增26项验证。覆盖两题、联合／分步韦达、主变量交换、水平与竖直弦、缩放、多曲线、缺来源、过期原式、退化及冲突回滚。
+
+3057／6347固定78→41→51分别√15、8；结果查询复用，竖直弦保持RM50路径。详情见[规格60](../docs/开发规格/60_RM51有限斜率弦长实现.md)。

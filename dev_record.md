@@ -971,3 +971,14 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/slope_chord_contract.json` → 保存根变量、回代映射、和积、斜率和数值核验证据，供实现时对照；不是RM51轨迹。
 - **效果／验证**：审查命令通过，两题√15、8；明确y根到x坐标差转换、有限斜率资格及既有弦长属性复用。只形成独立RM51开发契约，未改运行时、未重跑历史899项回归。
 - **下一步／限制**：先公共资格核验，再RM51绑定；原后置范围不变，竖直弦保留RM50路径。
+
+## 2026-11-26｜RM51有限斜率弦长实现
+
+- **开发记录**：[docs/开发规格/60_RM51有限斜率弦长实现.md](docs/开发规格/60_RM51有限斜率弦长实现.md)
+- `src/theorems/intersection_proposals.py` → 扩展弦长模型提案。抽提verified_root_pair供RM50／51检查已有和积、判别式及两实根资格，不补缺失事实；新增derive_slope_chord_length核验来源和当前原式／回代一致性，提出已有chord_length属性，交应用器提交。
+- `src/solver/intersection_operations.py` → 扩展公共计算。新增slope_chord_length，复用数值仿射与根差检查，读取α、γ，计算k=γ/α及|Δx|=|α|√(S²−4P)，返回长度及计算记录；α=0拒绝，不生成点坐标或状态。
+- `src/theorems/bound_application.py` → 扩展动作编排。check_binding与enumerate_actions接入RM51的曲线／直线／消元关系绑定；提交、幂等和回滚复用原机制。
+- `src/theorems/models/model_051.py` → 扩展模型入口。propose_bound调用独立数值提案，保留旧入口，不调用RM50模型。
+- `tests/test_bound_slope_chord.py` → 新增26项验证。覆盖两题、联合／分步韦达、主变量交换、水平与竖直弦、缩放、多曲线、缺来源、过期原式、退化及冲突回滚。
+- **效果／验证**：两题原始查询78→41→51分别√15、8，保存独立执行轨迹；新增26项、相关回归925项通过。增加独立模型路径，不声明新增可解题数量。
+- **下一步／限制**：回到职责表选有限案例，竖直弦仍走RM50；后置范围不变，未接自主选择器。

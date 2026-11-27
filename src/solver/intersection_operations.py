@@ -112,3 +112,17 @@ def parameterize_through_point(curve, x, y, xy, parameter):
     lift = (sp.expand(parameter*(y-xy[1])+xy[0]), y)
     polynomial = sp.Poly(curve.subs(x, lift[0]), y).monic().as_expr()
     return LineSubstitution(y, lift, polynomial), horizontal.as_expr()
+
+
+def slope_chord_length(root_sum, root_product, xy, variable):
+    """Finite slope formula from supplied root relations and an affine lift."""
+    # Reuse numeric/affine/gap qualification, but expose the RM51 coordinate conversion.
+    chord_length_from_relations(root_sum, root_product, xy, variable)
+    alpha, gamma = (sp.Poly(v, variable).nth(1) for v in xy)
+    if alpha.is_zero is not False:
+        raise TransitionError('inapplicable', 'RM51 excludes vertical chords')
+    slope = sp.simplify(gamma/alpha)
+    gap_sq = sp.simplify(root_sum**2-4*root_product)
+    delta_x = sp.Abs(alpha)*sp.sqrt(gap_sq)
+    length = sp.simplify(delta_x*sp.sqrt(1+slope**2))
+    return length, dict(alpha=alpha, gamma=gamma, slope=slope, gap_sq=gap_sq, delta_x=delta_x)

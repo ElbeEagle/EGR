@@ -278,3 +278,9 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 `BoundAction(28,'derive_directrix_pair',curve,equation_id)`要求唯一标准双曲线和已提交、来源一致的a²,b²,c²，输出正负轴侧两个directrix方程。公共操作计算，模型提案，原应用器原子提交；已有等价缩放结果保留，部分缺失补齐，冲突／过期拒绝。
 
 `DirectrixPairQuery(curve)`表达Expression(Directrix(G))的双曲线集合目标；`read_directrix_pair`只核对来源／快照并返回规范化方程frozenset，初态／缺一条／过期为None。快照保存在EquationFact.source，非新增几何推导。详情见[规格58](../docs/开发规格/58_RM28数值双准线实现.md)。
+
+## RM51有限斜率弦长
+
+`BoundAction(51,'derive_chord_length',curve,equation_id,line=...,line_equation_id=...,relation_id=...)`绑定已有数值抛物线消元。`verified_root_pair`由RM50／51共享，核验已提交根关系和两实根资格；RM51额外检查来源、当前原式和回代一致性。
+
+`slope_chord_length`从仿射回代计算有限斜率与x坐标差，返回长度及记录；`derive_slope_chord_length`提出消元事实级chord_length，原应用器提交，ChordLengthQuery仍只读。竖直弦拒绝，不隐式补韦达或调用RM50模型。见[规格60](../docs/开发规格/60_RM51有限斜率弦长实现.md)。

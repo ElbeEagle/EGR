@@ -88,13 +88,10 @@ def derive_root_relations(state, action):
                                  'distinct_real_roots': status.distinct_real_roots}])
 
 
-def derive_chord_length(state, action):
+def verified_root_pair(state, fact):
+    """Check committed relations and two-real-root qualification; never fill gaps."""
     import sympy as sp
-    from src.solver.intersection_operations import quadratic_coefficients, chord_length_from_relations
-    check_binding(state, action)
-    if action.mode != 'derive_chord_length':
-        raise TransitionError('inapplicable', 'Unsupported chord mode')
-    fact = state.intersection_reductions[action.relation_id]
+    from src.solver.intersection_operations import quadratic_coefficients
     names = ('root_sum', 'root_product', 'discriminant', 'distinct_real_roots')
     if any((fact.fact_id, name) not in state.properties for name in names):
         raise TransitionError('inapplicable', 'Committed root relations and qualification required')
@@ -105,6 +102,17 @@ def derive_chord_length(state, action):
         raise TransitionError('conflict', 'Root properties disagree with source polynomial')
     if count != 2 or discriminant.is_positive is not True:
         raise TransitionError('inapplicable', 'Not a pair of distinct real intersections')
+    return total, product, names
+
+
+def derive_chord_length(state, action):
+    import sympy as sp
+    from src.solver.intersection_operations import quadratic_coefficients, chord_length_from_relations
+    check_binding(state, action)
+    if action.mode != 'derive_chord_length':
+        raise TransitionError('inapplicable', 'Unsupported chord mode')
+    fact = state.intersection_reductions[action.relation_id]
+    total, product, names = verified_root_pair(state, fact)
     length = chord_length_from_relations(total, product, fact.xy, fact.variable)
     return Proposal(properties={(fact.fact_id, 'chord_length'): length},
                     read_facts=(fact.fact_id, *(f'property:{fact.fact_id}:{n}' for n in names)),
@@ -146,3 +154,34 @@ def parameterize_named_line(state, action):
                                 {'operation':'substitute_and_associate_roots', 'polynomial':fact.polynomial,
                                  'unordered_points':n.points, 'coordinate':'y',
                                  'required_distinct_guard':distinct_guard}])
+
+
+def derive_slope_chord_length(state, action):
+    """Finite RM51 consumes scoped root facts and proposes the existing chord property."""
+    import sympy as sp
+    from src.solver.intersection_operations import slope_chord_length
+    fact = check_binding(state, action)
+    if action.mode != 'derive_chord_length':
+        raise TransitionError('inapplicable', 'Unsupported RM51 mode')
+    total, product, names = verified_root_pair(state, fact)
+    reads = (fact.fact_id, *(f'property:{fact.fact_id}:{n}' for n in names))
+    if any(fact.fact_id not in state.provenance.get(k, ()) for k in reads[1:]):
+        raise TransitionError('inapplicable', 'Root relation sources required')
+    if any(k not in state.provenance.get(fact.fact_id, ()) for k in (action.equation_id, action.line_equation_id)):
+        raise TransitionError('inapplicable', 'Reduction equation sources required')
+    curve = state.equations[action.equation_id].expression.subs(state.values)
+    line = state.equations[action.line_equation_id].expression.subs(state.values)
+    x, y = state.symbols['x'], state.symbols['y']
+    substitute_line_in_parabola(curve, line, x, y)  # Restrict to the existing numeric family.
+    length, details = slope_chord_length(total, product, fact.xy, fact.variable)
+    mapping = dict(zip((x, y), fact.xy))
+    if sp.simplify(line.subs(mapping, simultaneous=True)) != 0:
+        raise TransitionError('conflict', 'Lift no longer matches line')
+    current = sp.Poly(curve.subs(mapping, simultaneous=True), fact.variable)
+    recorded = sp.Poly(fact.polynomial, fact.variable)
+    if current.degree() != 2 or sp.simplify(current.monic().as_expr()-recorded.monic().as_expr()) != 0:
+        raise TransitionError('conflict', 'Reduction no longer matches curve')
+    return Proposal(properties={(fact.fact_id, 'chord_length'): length},
+                    read_facts=(*reads, action.equation_id, action.line_equation_id),
+                    operations=[{'operation': 'finite_slope_chord', 'variable': fact.variable,
+                                 **details, 'length': length}])

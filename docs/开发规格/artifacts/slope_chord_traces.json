@@ -1,0 +1,356 @@
+{
+  "kind": "fixed_action_replay",
+  "data_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 3057,
+      "facts": "G: Parabola;H: Line;Expression(G) = (y^2 = 12*x);Expression(H) = (y = 2*x + 1)",
+      "query": "Length(InterceptChord(H,G))",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 78,
+            "mode": "substitute_line",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": "f3",
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {},
+            "values": {},
+            "intersection_reductions": {
+              "derived:intersection:f2:f3": {
+                "fact_id": "derived:intersection:f2:f3",
+                "curve": "G",
+                "line": "H",
+                "curve_equation_id": "f2",
+                "line_equation_id": "f3",
+                "variable": "y",
+                "xy": [
+                  "y/2 - 1/2",
+                  "y"
+                ],
+                "polynomial": "y**2 - 6*y + 6",
+                "source": "RM78",
+                "named_points": [],
+                "intersection_id": null
+              }
+            }
+          },
+          "read_facts": [
+            "entity:G",
+            "entity:H",
+            "f2",
+            "f3"
+          ],
+          "operations": [
+            {
+              "operation": "parameterize_line",
+              "variable": "y",
+              "xy": [
+                "y/2 - 1/2",
+                "y"
+              ]
+            },
+            {
+              "operation": "substitute_and_normalize",
+              "polynomial": "y**2 - 6*y + 6"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 41,
+            "mode": "derive_root_relations",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": "f3",
+            "relation_id": "derived:intersection:f2:f3",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('derived:intersection:f2:f3', 'root_sum')": "6",
+              "('derived:intersection:f2:f3', 'root_product')": "6",
+              "('derived:intersection:f2:f3', 'discriminant')": "12",
+              "('derived:intersection:f2:f3', 'distinct_real_roots')": "2"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "derived:intersection:f2:f3"
+          ],
+          "operations": [
+            {
+              "operation": "vieta_sum",
+              "variable": "y",
+              "value": "6"
+            },
+            {
+              "operation": "vieta_product",
+              "variable": "y",
+              "value": "6"
+            },
+            {
+              "operation": "classify_real_roots",
+              "discriminant": "12",
+              "distinct_real_roots": 2
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 51,
+            "mode": "derive_chord_length",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": "f3",
+            "relation_id": "derived:intersection:f2:f3",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 2,
+          "after_revision": 3,
+          "delta": {
+            "properties": {
+              "('derived:intersection:f2:f3', 'chord_length')": "sqrt(15)"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "derived:intersection:f2:f3",
+            "property:derived:intersection:f2:f3:root_sum",
+            "property:derived:intersection:f2:f3:root_product",
+            "property:derived:intersection:f2:f3:discriminant",
+            "property:derived:intersection:f2:f3:distinct_real_roots",
+            "f2",
+            "f3"
+          ],
+          "operations": [
+            {
+              "operation": "finite_slope_chord",
+              "variable": "y",
+              "alpha": "1/2",
+              "gamma": "1",
+              "slope": "2",
+              "gap_sq": "12",
+              "delta_x": "sqrt(3)",
+              "length": "sqrt(15)"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ],
+      "answer": "sqrt(15)"
+    },
+    {
+      "id": 6347,
+      "facts": "G: Parabola;H: Line;Expression(G) = (y^2 = 4*x);Expression(H) = (y = x - 1)",
+      "query": "Length(InterceptChord(H, G))",
+      "transitions": [
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 78,
+            "mode": "substitute_line",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": "f3",
+            "relation_id": null,
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 0,
+          "after_revision": 1,
+          "delta": {
+            "properties": {},
+            "values": {},
+            "intersection_reductions": {
+              "derived:intersection:f2:f3": {
+                "fact_id": "derived:intersection:f2:f3",
+                "curve": "G",
+                "line": "H",
+                "curve_equation_id": "f2",
+                "line_equation_id": "f3",
+                "variable": "y",
+                "xy": [
+                  "y + 1",
+                  "y"
+                ],
+                "polynomial": "y**2 - 4*y - 4",
+                "source": "RM78",
+                "named_points": [],
+                "intersection_id": null
+              }
+            }
+          },
+          "read_facts": [
+            "entity:G",
+            "entity:H",
+            "f2",
+            "f3"
+          ],
+          "operations": [
+            {
+              "operation": "parameterize_line",
+              "variable": "y",
+              "xy": [
+                "y + 1",
+                "y"
+              ]
+            },
+            {
+              "operation": "substitute_and_normalize",
+              "polynomial": "y**2 - 4*y - 4"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 41,
+            "mode": "derive_root_relations",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": "f3",
+            "relation_id": "derived:intersection:f2:f3",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 1,
+          "after_revision": 2,
+          "delta": {
+            "properties": {
+              "('derived:intersection:f2:f3', 'root_sum')": "4",
+              "('derived:intersection:f2:f3', 'root_product')": "-4",
+              "('derived:intersection:f2:f3', 'discriminant')": "32",
+              "('derived:intersection:f2:f3', 'distinct_real_roots')": "2"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "derived:intersection:f2:f3"
+          ],
+          "operations": [
+            {
+              "operation": "vieta_sum",
+              "variable": "y",
+              "value": "4"
+            },
+            {
+              "operation": "vieta_product",
+              "variable": "y",
+              "value": "-4"
+            },
+            {
+              "operation": "classify_real_roots",
+              "discriminant": "32",
+              "distinct_real_roots": 2
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        },
+        {
+          "status": "applied",
+          "action": {
+            "model_id": 51,
+            "mode": "derive_chord_length",
+            "curve": "G",
+            "equation_id": "f2",
+            "line_equation_id": "f3",
+            "relation_id": "derived:intersection:f2:f3",
+            "peer_curve": null,
+            "peer_equation_id": null,
+            "point": null,
+            "coordinate_id": null,
+            "line": "H",
+            "point_role": null,
+            "incidence_id": null,
+            "slope_sum_id": null
+          },
+          "before_revision": 2,
+          "after_revision": 3,
+          "delta": {
+            "properties": {
+              "('derived:intersection:f2:f3', 'chord_length')": "8"
+            },
+            "values": {}
+          },
+          "read_facts": [
+            "derived:intersection:f2:f3",
+            "property:derived:intersection:f2:f3:root_sum",
+            "property:derived:intersection:f2:f3:root_product",
+            "property:derived:intersection:f2:f3:discriminant",
+            "property:derived:intersection:f2:f3:distinct_real_roots",
+            "f2",
+            "f3"
+          ],
+          "operations": [
+            {
+              "operation": "finite_slope_chord",
+              "variable": "y",
+              "alpha": "1",
+              "gamma": "1",
+              "slope": "1",
+              "gap_sq": "32",
+              "delta_x": "4*sqrt(2)",
+              "length": "8"
+            }
+          ],
+          "candidates": [],
+          "diagnostic": ""
+        }
+      ],
+      "answer": "8"
+    }
+  ]
+}
