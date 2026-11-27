@@ -1,0 +1,136 @@
+{
+  "kind": "fact_projection_fixed_action_replay",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 1168,
+      "original_query": "Min(Distance(D, LineOf(A, B)))",
+      "projected_facts": "A: Point;Coordinate(A) = (0, -4);B: Point;Coordinate(B) = (3, 2)",
+      "diagnostic_query": "Expression(LineOf(A,B))",
+      "transition": {
+        "status": "applied",
+        "action": {
+          "model_id": 73,
+          "mode": "derive_line_from_points",
+          "curve": null,
+          "equation_id": null,
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": "@line:A:B",
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null,
+          "coordinate_ids": [
+            "f1",
+            "f3"
+          ],
+          "coordinate_snapshot": "d860e7628308382b5fd024e07b43d89e63f22582c1a2263b88974bd0d8ce3eae"
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {},
+          "values": {},
+          "equations": {
+            "derived:@line:A:B:two_points": {
+              "fact_id": "derived:@line:A:B:two_points",
+              "owner": "@line:A:B",
+              "role": "line",
+              "expression": "x - y/2 - 2",
+              "source": "RM73:9d5ce2c34c5da40c3f682b28ece8fa48a4b4ab66cc039923c38934993b224e3e"
+            }
+          }
+        },
+        "read_facts": [
+          "identity:@line:A:B",
+          "entity:A",
+          "f1",
+          "entity:B",
+          "f3"
+        ],
+        "operations": [
+          {
+            "operation": "two_point_line",
+            "endpoints": [
+              "A",
+              "B"
+            ],
+            "equation": "x - y/2 - 2"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      "answer": "x - y/2 - 2"
+    },
+    {
+      "id": 1199,
+      "original_query": "LocusEquation(C)",
+      "projected_facts": "A: Point;B: Point;Coordinate(A) = (-1, 0);Coordinate(B) = (2, 4)",
+      "diagnostic_query": "Expression(LineOf(A,B))",
+      "transition": {
+        "status": "applied",
+        "action": {
+          "model_id": 73,
+          "mode": "derive_line_from_points",
+          "curve": null,
+          "equation_id": null,
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": "@line:A:B",
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null,
+          "coordinate_ids": [
+            "f2",
+            "f3"
+          ],
+          "coordinate_snapshot": "95938c3cf465c8e93ef963d0f4228002aff59d3a45b7e40b3b139554a896b53b"
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {},
+          "values": {},
+          "equations": {
+            "derived:@line:A:B:two_points": {
+              "fact_id": "derived:@line:A:B:two_points",
+              "owner": "@line:A:B",
+              "role": "line",
+              "expression": "x - 3*y/4 + 1",
+              "source": "RM73:0d09fb4d7b34a50cb8e03670af8a5a79b47884f4e91d3a648ee48086c96e1a72"
+            }
+          }
+        },
+        "read_facts": [
+          "identity:@line:A:B",
+          "entity:A",
+          "f2",
+          "entity:B",
+          "f3"
+        ],
+        "operations": [
+          {
+            "operation": "two_point_line",
+            "endpoints": [
+              "A",
+              "B"
+            ],
+            "equation": "x - 3*y/4 + 1"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      "answer": "x - 3*y/4 + 1"
+    }
+  ]
+}

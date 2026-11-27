@@ -276,9 +276,21 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 3057／6347固定78→41→51分别√15、8；结果查询复用，竖直弦保持RM50路径。详情见[规格60](../docs/开发规格/60_RM51有限斜率弦长实现.md)。
 
-## 下一批RM73两点直线（未实现）
+## RM73设计入口（最新实现见下节）
 
 1168／1199仅取两点坐标事实投影，诊断构造LineOf(A,B)；原题最值／轨迹另批。复用NamedLine、点坐标与只读直线查询，拟新增双坐标动作绑定、行列式计算与RM73结果快照检查。见[规格61](../docs/开发规格/61_RM73数值两点直线契约.md)。
 
 - `scripts/audit/two_point_line_contract.py` → 新增有限审查。CASES保存两题ID；audit明确抽取A、B声明与坐标并保留原题查询；probe核验既有无序直线身份、独立行列式直线和两端点归属，供RM73实现对照，不提交状态。
 - `docs/开发规格/artifacts/two_point_line_contract.json` → 保存原始输入、事实投影、诊断查询及水平／竖直证据；不是RM73轨迹或原题求解结果。
+
+## RM73数值两点直线已接入
+
+- `src/solver/two_point_line_operations.py` → 新增公共计算。two_point_line核验两组有限实坐标不重合，计算并规范化行列式直线，返回表达式，不改状态。
+- `src/state/two_point_line_facts.py` → 新增双坐标来源与快照核验。point_pair_inputs按无序端点身份读取当前坐标及来源；coordinate_snapshot绑定输入，line_snapshot将输入／输出摘要存入EquationFact.source；fresh_two_point_line仅核对来源和快照，供只读查询使用。
+- `src/state/transition_state.py` → 扩展普通坐标输入和直线读取。坐标解析补记点声明来源；NamedLineQuery对RM73结果检查新鲜度，过期返回None，不重算直线，旧直线读取保持原语义。
+- `src/theorems/two_point_line_proposals.py` → 新增绑定及提案。check_two_point_binding核验双坐标ID与动作快照；derive_two_point_line核对已有线，提出一条缺失直线，等价已有线不重复创建，冲突拒绝。
+- `src/theorems/bound_application.py` → 扩展动作及提交。BoundAction新增可选coordinate_ids和coordinate_snapshot，其他模型拒绝携带；候选保存当前双坐标绑定，提交仅放行RM73正确身份／owner／role及快照的直线，原事务负责幂等与回滚。
+- `src/theorems/models/model_073.py`、`src/theorems/theorem_library.py` → 新增并注册RM73。propose_bound调用数值两点提案，不接入旧状态执行。
+- `tests/test_bound_two_point_line.py` → 新增28项验证，覆盖两题坐标、反序／重排、水平／竖直、缺坐标／来源、旧动作与结果失效、等价／冲突、多线歧义、隔离和幂等。
+
+1168／1199完成坐标事实投影，不代表原题求解；快照保护RM73动作及只读结果。详情见[规格62](../docs/开发规格/62_RM73数值两点直线实现.md)。

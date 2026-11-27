@@ -92,6 +92,7 @@ class TheoremLibrary:
         from .models.model_059 import VectorDotProductAlgebraic
         from .models.model_066 import DiscriminantTangentCondition
         from .models.model_068 import TriangleMidlineTheorem
+        from .models.model_073 import LineTwoPointForm
         from .models.model_072 import LinePointSlopeForm
         from .models.model_076 import CircleTangentCondition
         from .models.model_077 import HomogenizationEccentricity
@@ -164,6 +165,7 @@ class TheoremLibrary:
         self.register_model(DiscriminantTangentCondition())
         self.register_model(TriangleMidlineTheorem())
         self.register_model(LinePointSlopeForm())
+        self.register_model(LineTwoPointForm())
         self.register_model(CircleTangentCondition())
         self.register_model(HomogenizationEccentricity())
     

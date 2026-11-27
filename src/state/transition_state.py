@@ -353,6 +353,7 @@ class TransitionState:
                 px, gx = parse_expression(x_text, symbols)
                 py, gy = parse_expression(y_text, symbols)
                 state.coordinates[point] = PointCoordinates(fact_id, point, (px, py), part)
+                state.provenance[fact_id] = (f'entity:{point}',)
                 for i, guard in enumerate(gx + gy):
                     state.constraints[f'{fact_id}:domain:{i}'] = guard
                 continue
@@ -458,7 +459,12 @@ class TransitionState:
             equations = [f for f in self.equations.values() if f.owner == self.query.line and f.role == 'line']
             if len(equations) != 1:
                 return None
-            expression = equations[0].expression
+            fact = equations[0]
+            if fact.fact_id == f'derived:{self.query.line}:two_points' or fact.source.startswith('RM73:'):
+                from .two_point_line_facts import fresh_two_point_line
+                if not fresh_two_point_line(self, fact):
+                    return None
+            expression = fact.expression
             if expression.free_symbols - {self.symbols['x'], self.symbols['y']}:
                 return None
             return expression

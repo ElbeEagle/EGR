@@ -990,3 +990,16 @@ Value成功率: 93.0%  ← v1: 90.1%
 - `docs/开发规格/artifacts/two_point_line_contract.json` → 保存原始输入、事实投影、诊断查询及水平／竖直证据；不是RM73轨迹或原题求解结果。
 - **效果／验证**：审查命令通过，1168／1199事实投影分别得到2x−y−4=0、4x−3y+4=0，反序身份及水平／竖直诊断通过；原题最值／轨迹未解。
 - **下一步／限制**：先双坐标绑定与快照，再RM73数值入口；运行时未修改，历史回归未重跑，后置范围不变。
+
+## 2026-11-27｜RM73数值两点直线实现
+
+- **开发记录**：[docs/开发规格/62_RM73数值两点直线实现.md](docs/开发规格/62_RM73数值两点直线实现.md)
+- `src/solver/two_point_line_operations.py` → 新增公共计算。two_point_line核验两组有限实坐标不重合，计算并规范化行列式直线，返回表达式，不改状态。
+- `src/state/two_point_line_facts.py` → 新增双坐标来源与快照核验。point_pair_inputs按无序端点身份读取当前坐标及来源；coordinate_snapshot绑定输入，line_snapshot将输入／输出摘要存入EquationFact.source；fresh_two_point_line仅核对来源和快照，供只读查询使用。
+- `src/state/transition_state.py` → 扩展普通坐标输入和直线读取。坐标解析补记点声明来源；NamedLineQuery对RM73结果检查新鲜度，过期返回None，不重算直线，旧直线读取保持原语义。
+- `src/theorems/two_point_line_proposals.py` → 新增绑定及提案。check_two_point_binding核验双坐标ID与动作快照；derive_two_point_line核对已有线，提出一条缺失直线，等价已有线不重复创建，冲突拒绝。
+- `src/theorems/bound_application.py` → 扩展动作及提交。BoundAction新增可选coordinate_ids和coordinate_snapshot，其他模型拒绝携带；候选保存当前双坐标绑定，提交仅放行RM73正确身份／owner／role及快照的直线，原事务负责幂等与回滚。
+- `src/theorems/models/model_073.py`、`src/theorems/theorem_library.py` → 新增并注册RM73。propose_bound调用数值两点提案，不接入旧状态执行。
+- `tests/test_bound_two_point_line.py` → 新增28项验证，覆盖两题坐标、反序／重排、水平／竖直、缺坐标／来源、旧动作与结果失效、等价／冲突、多线歧义、隔离和幂等。
+- **效果／验证**：1168／1199事实投影得到两条预期直线，保存RM73轨迹；新增28项、相关回归953项通过。原题最值／轨迹未求解。
+- **下一步／限制**：回到职责表选案例；若接距离链先核验消费端新鲜度，后置范围不变。

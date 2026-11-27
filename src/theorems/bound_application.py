@@ -28,6 +28,8 @@ class BoundAction:
     point_role: str | None = None
     incidence_id: str | None = None
     slope_sum_id: str | None = None
+    coordinate_ids: tuple[str, str] | None = None
+    coordinate_snapshot: str | None = None
 
 
 @dataclass
@@ -59,6 +61,11 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 73:
+        from .two_point_line_proposals import check_two_point_binding
+        return check_two_point_binding(state, action)
+    if action.coordinate_ids is not None or action.coordinate_snapshot is not None:
+        raise TransitionError('inapplicable', 'Two-coordinate binding only supported by RM73')
     if action.model_id == 28:
         from .directrix_pair_proposals import check_directrix_binding
         return check_directrix_binding(state, action)
@@ -253,6 +260,20 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id == 73:
+        from src.state.two_point_line_facts import point_pair_inputs, coordinate_snapshot
+        actions = []
+        if mode not in (None, 'derive_line_from_points'):
+            return actions
+        for line in state.named_lines:
+            try:
+                points, _ = point_pair_inputs(state, line)
+                actions.append(BoundAction(73, 'derive_line_from_points', line=line,
+                    coordinate_ids=tuple(p.fact_id for p in points),
+                    coordinate_snapshot=coordinate_snapshot(state, line)))
+            except TransitionError:
+                continue
+        return actions
     if model_id == 28:
         return [BoundAction(28, 'derive_directrix_pair', f.owner, f.fact_id) for f in state.equations.values()
                 if f.role == 'curve' and state.entities.get(f.owner) == 'Hyperbola'
@@ -528,6 +549,14 @@ class BoundApplicator:
             changed_frames = {k: v for k, v in frames.items() if k not in state.frames}
             equations = dict(state.equations)
             for key, fact in proposal.equations.items():
+                two_point_line = (action.model_id == 73 and action.mode == 'derive_line_from_points'
+                                  and fact.role == 'line' and fact.owner == action.line
+                                  and key == f'derived:{action.line}:two_points')
+                if two_point_line:
+                    from src.state.two_point_line_facts import line_snapshot
+                    check_binding(state, action)
+                    if fact.source != line_snapshot(state, action.line, fact.expression):
+                        raise TransitionError('inapplicable', 'Invalid two-point line snapshot')
                 tangent = (action.model_id in (38, 39) and fact.role == 'tangent'
                            and key == f'derived:{action.curve}:tangent:{action.point}')
                 named_line = (action.model_id == 78 and action.mode == 'parameterize_named_line'
@@ -539,7 +568,7 @@ class BoundApplicator:
                                  and action.relation_id in state.chords
                                  and fact.role == 'line' and fact.owner == action.line
                                  and key == f'derived:{action.relation_id}:line')
-                if not (named_line or midpoint_line) and (key != fact.fact_id or fact.owner != action.curve or (fact.role not in ('asymptote', 'directrix') and not tangent)):
+                if not (named_line or midpoint_line or two_point_line) and (key != fact.fact_id or fact.owner != action.curve or (fact.role not in ('asymptote', 'directrix') and not tangent)):
                     raise TransitionError('inapplicable', 'Invalid derived equation binding')
                 if key != fact.fact_id:
                     raise TransitionError('inapplicable', 'Invalid derived equation binding')

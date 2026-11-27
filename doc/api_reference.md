@@ -284,3 +284,9 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 `BoundAction(51,'derive_chord_length',curve,equation_id,line=...,line_equation_id=...,relation_id=...)`绑定已有数值抛物线消元。`verified_root_pair`由RM50／51共享，核验已提交根关系和两实根资格；RM51额外检查来源、当前原式和回代一致性。
 
 `slope_chord_length`从仿射回代计算有限斜率与x坐标差，返回长度及记录；`derive_slope_chord_length`提出消元事实级chord_length，原应用器提交，ChordLengthQuery仍只读。竖直弦拒绝，不隐式补韦达或调用RM50模型。见[规格60](../docs/开发规格/60_RM51有限斜率弦长实现.md)。
+
+## RM73两点直线绑定与快照
+
+BoundAction新增可选`coordinate_ids: tuple[str,str]`、`coordinate_snapshot: str`，默认None；仅RM73允许携带。`enumerate_actions(state,73)`为已有NamedLine及当前有来源的双坐标产生derive_line_from_points候选，坐标ID按无序身份的稳定端点顺序绑定。
+
+`two_point_line`只计算有限非重合两点的规范直线；`derive_two_point_line`提出derived:{line}:two_points，原应用器严格分支提交。普通坐标解析补记点声明来源；`fresh_two_point_line`校验结果来源及输入／输出快照，NamedLineQuery对RM73结果过期拒读，不推导直线。已有等价且有来源的直线不重复创建；缺来源／歧义拒绝，矛盾回滚。见[规格62](../docs/开发规格/62_RM73数值两点直线实现.md)。
