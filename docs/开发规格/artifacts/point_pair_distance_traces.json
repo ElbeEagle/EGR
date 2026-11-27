@@ -1,0 +1,186 @@
+{
+  "kind": "fact_projection_fixed_replay",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 1199,
+      "original_query": "LocusEquation(C)",
+      "projected_facts": "A: Point;B: Point;Coordinate(A) = (-1, 0);Coordinate(B) = (2, 4)",
+      "diagnostic_query": "Distance(A,B)",
+      "transition": {
+        "status": "applied",
+        "action": {
+          "model_id": 53,
+          "mode": "derive_point_distance",
+          "curve": null,
+          "equation_id": null,
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null,
+          "points": [
+            "A",
+            "B"
+          ],
+          "coordinate_ids": [
+            "f2",
+            "f3"
+          ],
+          "coordinate_snapshot": "1ca131ce85b723410d93440b0729e933a19864c63c8334825a8fefc3c497ae39"
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('point_pair:A:B', 'distance')": "5"
+          },
+          "values": {},
+          "point_pair_snapshots": {
+            "('point_pair:A:B', 'distance')": {
+              "points": [
+                "A",
+                "B"
+              ],
+              "coordinate_ids": [
+                "f2",
+                "f3"
+              ],
+              "digest": "1ca131ce85b723410d93440b0729e933a19864c63c8334825a8fefc3c497ae39",
+              "value": "5"
+            }
+          }
+        },
+        "read_facts": [
+          "entity:A",
+          "f2",
+          "entity:B",
+          "f3"
+        ],
+        "operations": [
+          {
+            "operation": "point_pair_distance",
+            "points": [
+              "A",
+              "B"
+            ],
+            "coordinates": [
+              [
+                "-1",
+                "0"
+              ],
+              [
+                "2",
+                "4"
+              ]
+            ],
+            "delta": [
+              "3",
+              "4"
+            ],
+            "squared_distance": "25",
+            "distance": "5"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      "answer": "5"
+    },
+    {
+      "id": 5211,
+      "original_query": "LocusEquation(M)",
+      "projected_facts": "E: Point;F: Point;Coordinate(E) = (1, -2);Coordinate(F) = (-3, 4)",
+      "diagnostic_query": "Distance(E,F)",
+      "transition": {
+        "status": "applied",
+        "action": {
+          "model_id": 53,
+          "mode": "derive_point_distance",
+          "curve": null,
+          "equation_id": null,
+          "line_equation_id": null,
+          "relation_id": null,
+          "peer_curve": null,
+          "peer_equation_id": null,
+          "point": null,
+          "coordinate_id": null,
+          "line": null,
+          "point_role": null,
+          "incidence_id": null,
+          "slope_sum_id": null,
+          "points": [
+            "E",
+            "F"
+          ],
+          "coordinate_ids": [
+            "f2",
+            "f3"
+          ],
+          "coordinate_snapshot": "fbab4a76a8591a454c2e6e7308b5928c4a47d08ddad974d3e8d2f480b0331a2d"
+        },
+        "before_revision": 0,
+        "after_revision": 1,
+        "delta": {
+          "properties": {
+            "('point_pair:E:F', 'distance')": "2*sqrt(13)"
+          },
+          "values": {},
+          "point_pair_snapshots": {
+            "('point_pair:E:F', 'distance')": {
+              "points": [
+                "E",
+                "F"
+              ],
+              "coordinate_ids": [
+                "f2",
+                "f3"
+              ],
+              "digest": "fbab4a76a8591a454c2e6e7308b5928c4a47d08ddad974d3e8d2f480b0331a2d",
+              "value": "2*sqrt(13)"
+            }
+          }
+        },
+        "read_facts": [
+          "entity:E",
+          "f2",
+          "entity:F",
+          "f3"
+        ],
+        "operations": [
+          {
+            "operation": "point_pair_distance",
+            "points": [
+              "E",
+              "F"
+            ],
+            "coordinates": [
+              [
+                "1",
+                "-2"
+              ],
+              [
+                "-3",
+                "4"
+              ]
+            ],
+            "delta": [
+              "-4",
+              "6"
+            ],
+            "squared_distance": "52",
+            "distance": "2*sqrt(13)"
+          }
+        ],
+        "candidates": [],
+        "diagnostic": ""
+      },
+      "answer": "2*sqrt(13)"
+    }
+  ]
+}

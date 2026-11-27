@@ -114,3 +114,7 @@ class TwoPointsDistance(TheoremModel):
                 return round(distance, 4)
         except:
             return None
+
+    def propose_bound(self, state, action):
+        from ..point_pair_proposals import derive_point_distance
+        return derive_point_distance(state, action)

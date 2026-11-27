@@ -28,6 +28,7 @@ class BoundAction:
     point_role: str | None = None
     incidence_id: str | None = None
     slope_sum_id: str | None = None
+    points: tuple[str, str] | None = None
     coordinate_ids: tuple[str, str] | None = None
     coordinate_snapshot: str | None = None
 
@@ -46,6 +47,7 @@ class Proposal:
     intersection_reductions: dict[str, IntersectionReduction] = field(default_factory=dict)
     parameterizations: dict[str, LineParameterization] = field(default_factory=dict)
     distance_snapshots: dict = field(default_factory=dict)
+    point_pair_snapshots: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -62,6 +64,11 @@ class TransitionResult:
 
 
 def check_binding(state, action):
+    if action.model_id == 53:
+        from .point_pair_proposals import check_point_pair_binding
+        return check_point_pair_binding(state, action)
+    if action.points is not None:
+        raise TransitionError('inapplicable', 'Point-pair binding only supported by RM53')
     if action.model_id == 73:
         from .two_point_line_proposals import check_two_point_binding
         return check_two_point_binding(state, action)
@@ -261,6 +268,16 @@ def bound_parameters(state, curve, equation_id):
 
 
 def enumerate_actions(state: TransitionState, model_id: int, mode: str | None = None):
+    if model_id == 53:
+        from src.state.point_pair_distance import PointPairDistanceQuery, pair_inputs
+        if not isinstance(state.query, PointPairDistanceQuery) or mode not in (None, 'derive_point_distance'):
+            return []
+        try:
+            coords, _, digest = pair_inputs(state, state.query.points)
+        except TransitionError:
+            return []
+        return [BoundAction(53, 'derive_point_distance', points=state.query.points,
+                            coordinate_ids=tuple(c.fact_id for c in coords), coordinate_snapshot=digest)]
     if model_id == 73:
         from src.state.two_point_line_facts import point_pair_inputs, coordinate_snapshot
         actions = []
@@ -658,6 +675,21 @@ class BoundApplicator:
             changed_reductions = {k: v for k, v in reductions.items() if state.intersection_reductions.get(k) != v}
             changed_coordinates = {p: c for p, c in coordinates.items() if p not in state.coordinates}
             changed_equations = {k: v for k, v in equations.items() if state.equations.get(k) != v}
+            pair_snapshots = dict(state.point_pair_snapshots)
+            for key, evidence in proposal.point_pair_snapshots.items():
+                from src.state.point_pair_distance import PointPairDistanceQuery, pair_snapshot
+                if action.model_id != 53 or action.points is None:
+                    raise TransitionError('inapplicable', 'Invalid point-pair evidence model')
+                check_binding(state, action)
+                expected_key = (PointPairDistanceQuery(action.points).owner, 'distance')
+                if key != expected_key or key not in proposal.properties or key not in properties:
+                    raise TransitionError('inapplicable', 'Invalid point-pair evidence key')
+                if evidence != pair_snapshot(state, action.points, properties[key]):
+                    raise TransitionError('inapplicable', 'Invalid point-pair snapshot')
+                if key in pair_snapshots and pair_snapshots[key] != evidence:
+                    raise TransitionError('conflict', 'Conflicting point-pair evidence')
+                pair_snapshots[key] = evidence
+            changed_pair_snapshots = {k:v for k,v in pair_snapshots.items() if state.point_pair_snapshots.get(k) != v}
             snapshots = dict(state.distance_snapshots)
             for key, evidence in proposal.distance_snapshots.items():
                 from src.state.named_distance_evidence import make_distance_snapshot
@@ -674,10 +706,12 @@ class BoundApplicator:
                     raise TransitionError('conflict', 'Conflicting distance evidence')
                 snapshots[key] = evidence
             changed_snapshots = {k:v for k,v in snapshots.items() if state.distance_snapshots.get(k) != v}
-            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates, changed_reductions, changed_parameterizations, changed_snapshots)):
+            if not any((changed_properties, changed_values, changed_constraints, changed_frames, changed_equations, changed_coordinates, changed_reductions, changed_parameterizations, changed_snapshots, changed_pair_snapshots)):
                 result.status = 'no_op'
                 return result
             result.delta = {'properties': changed_properties, 'values': changed_values}
+            if changed_pair_snapshots:
+                result.delta['point_pair_snapshots'] = changed_pair_snapshots
             if changed_snapshots:
                 result.delta['distance_snapshots'] = changed_snapshots
             if changed_constraints:
@@ -714,6 +748,7 @@ class BoundApplicator:
                 provenance[coordinate.fact_id] = (*proposal.read_facts, f'action:{result.after_revision}')
             for line in changed_parameterizations:
                 provenance[f'parameterization:{line}'] = (*proposal.read_facts, f'action:{result.after_revision}')
+            state.point_pair_snapshots = pair_snapshots
             state.distance_snapshots = snapshots
             state.parameterizations = parameterizations
             state.intersection_reductions = reductions

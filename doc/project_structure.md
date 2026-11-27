@@ -312,9 +312,21 @@ RM19／6057及RM20／6770拟复用标准参数和线段弦身份，新增焦点�
 
 870／3239完成坐标事实投影；原始复合查询解析、消费前核验、证据提交与只读失效检查均接入。详见[规格64](../docs/开发规格/64_RM73_RM52派生直线距离实现.md)，不代表原题求解。
 
-## 下一批RM53数值两点距离（未实现）
+## RM53设计入口（最新实现见下节）
 
 1199／5211仅取双坐标事实投影，诊断目标Distance(A,B)／Distance(E,F)。复用坐标来源与证据事务思路，拟新增点对查询、绑定及独立结果快照；同坐标或同一点距离允许0，不依赖RM73直线身份。见[规格65](../docs/开发规格/65_RM53数值两点距离契约.md)。
 
 - `scripts/audit/point_pair_distance_contract.py` → 新增有限审查。CASES定位1199／5211；probe读取已有坐标与来源，计算距离平方和非负距离，并用独立几何距离核验；audit保留原题、投影及数据哈希，不执行RM53或提交结果。
 - `docs/开发规格/artifacts/point_pair_distance_contract.json` → 保存两题坐标投影、查询入口缺口、反序与零距离等诊断证据，供后续实现验收；非原题求解或RM53轨迹。
+
+## RM53数值两点距离已接入
+
+- `src/state/point_pair_distance.py` → 新增点对查询与证据。PointPairDistanceQuery按排序二元组表达距离目标并保留重复点；pair_inputs核验数值坐标／来源并生成摘要；PointPairDistanceSnapshot保存点对、坐标ID、摘要及结果，read_pair_distance只核验并读取，不推导距离。
+- `src/solver/point_pair_operations.py` → 新增公共计算。point_pair_distance返回非负距离、坐标差及平方和；允许同一点／同坐标为0，不写状态。
+- `src/theorems/point_pair_proposals.py` → 新增RM53绑定及提案。check_point_pair_binding核验双坐标ID和动作快照；derive_point_distance提出距离及证据，拒绝旧值缺证据／依赖过期和冲突，不创建直线。
+- `src/state/transition_state.py` → 扩展类型分派与证据容器。两个声明Point的Distance解析为点对查询；point_pair_snapshots保存提交证据，读取过期返回None，既有点线／焦点查询继续按类型分派。
+- `src/theorems/bound_application.py` → 扩展动作和事务。新增points二元组，仅RM53可用；复用coordinate_ids／coordinate_snapshot，候选由点对查询产生。Proposal增加点对证据映射，应用器核验绑定、键及摘要，将距离与证据原子提交并记录delta。
+- `src/theorems/models/model_053.py` → 扩展已有模型入口。propose_bound调用独立数值点对提案，旧入口保留。
+- `tests/test_bound_point_pair_distance.py` → 新增25项，验证两题、零距离、反序重排、水平／竖直、来源失效、相同距离不同坐标、隔离和回滚；`tests/test_bound_line_distance.py`调整旧语法断言，确认合法同点查询在点线专用切片中为inapplicable。
+
+1199／5211完成双坐标投影，允许零距离；不依赖RM73／RM52。见[规格66](../docs/开发规格/66_RM53数值两点距离实现.md)。

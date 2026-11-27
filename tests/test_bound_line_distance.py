@@ -93,7 +93,7 @@ def test_conflicting_distance_and_constraint_rollback():
     assert r.status=='conflict' and not r.state.history
 
 
-@pytest.mark.parametrize('query',['Distance(l, A)','Distance(A, missing)','Distance(A, A)'])
+@pytest.mark.parametrize('query',['Distance(l, A)','Distance(A, missing)'])
 def test_query_type_guard(query):
     assert solve_point_line_distance_slice(FACTS,query).status=='failed'
 
@@ -111,3 +111,7 @@ def test_real_explicit_fact_projection(pid,point,line,expected):
     assert result.status=='solved' and result.answer==expected
     assert [t.action.model_id for t in result.transitions]==[52]
     assert solve_point_line_distance_slice(row['fact_expressions'],row['query_expressions']).status=='failed'
+
+
+def test_point_pair_query_is_not_point_line_slice():
+    assert solve_point_line_distance_slice(FACTS, 'Distance(A, A)').status == 'inapplicable'

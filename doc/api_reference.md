@@ -296,3 +296,9 @@ BoundAction新增可选`coordinate_ids: tuple[str,str]`、`coordinate_snapshot: 
 Distance(P,LineOf(A,B))复用PointLineDistanceQuery和无序NamedLine身份。仅新鲜、唯一的RM73派生方程进入本协议；普通点坐标须有限数值且有来源，P为端点时允许距离0。
 
 DistanceSnapshot保存点线ID、目标坐标ID、依赖摘要和距离；state／Proposal的distance_snapshots映射与已有距离属性键一致。RM52提出数值与证据，应用器核验并原子提交；read_named_distance只读且检查目标点和派生线依赖，过期／缺证据返回None，不补推导。旧显式线、准线及Focus(G)距离接口保持不变。见[规格64](../docs/开发规格/64_RM73_RM52派生直线距离实现.md)。
+
+## RM53数值点对距离
+
+Distance(A,B)在两对象为Point时解析为PointPairDistanceQuery，排序二元组保留重复点；查询只表达目标。BoundAction新增可选points，RM53配合coordinate_ids／coordinate_snapshot绑定双坐标；旧模型不得携带points。候选由当前点对查询产生。
+
+point_pair_distance计算距离及差分；derive_point_distance提出(owner,'distance')与PointPairDistanceSnapshot，state／Proposal的point_pair_snapshots由应用器原子提交。owner为point_pair:A:B；read_pair_distance核验当前坐标／来源／证据后只读，过期返回None。0合法，不复用RM73非重合资格。见[规格66](../docs/开发规格/66_RM53数值两点距离实现.md)。

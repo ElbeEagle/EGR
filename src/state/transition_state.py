@@ -1,5 +1,6 @@
 """Object-scoped facts and derived information for bound execution slices."""
 from __future__ import annotations
+from .point_pair_distance import PointPairDistanceQuery, PointPairDistanceSnapshot, read_pair_distance
 from .named_distance_evidence import DistanceSnapshot, protected_distance, read_named_distance
 from .directrix_pair_query import DirectrixPairQuery, read_directrix_pair
 from .focus_asymptote_query import FocusAsymptoteDistanceQuery,read_focus_asymptote_distance
@@ -155,7 +156,7 @@ class TransitionState:
     symbols: dict[str, sp.Symbol]
     equations: dict[str, EquationFact]
     constraints: dict[str, Any]
-    query: None | sp.Symbol | DirectrixPairQuery | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery | TangentQuery | ChordLengthQuery | NamedLineQuery
+    query: None | sp.Symbol | PointPairDistanceQuery | DirectrixPairQuery | AsymptoteQuery | FocalDistanceQuery | PointLineDistanceQuery | FocusLineDistanceQuery | EccentricityQuery | TangentQuery | ChordLengthQuery | NamedLineQuery
     properties: dict[tuple[str, str], sp.Expr] = field(default_factory=dict)
     values: dict[sp.Symbol, sp.Expr] = field(default_factory=dict)
     provenance: dict[str, tuple[str, ...]] = field(default_factory=dict)
@@ -182,6 +183,7 @@ class TransitionState:
     named_intersections: dict[str, NamedIntersection] = field(default_factory=dict)
     slope_sums: dict[str, SlopeSum] = field(default_factory=dict)
 
+    point_pair_snapshots: dict[tuple[str, str], PointPairDistanceSnapshot] = field(default_factory=dict)
     distance_snapshots: dict[tuple[str, str], DistanceSnapshot] = field(default_factory=dict)
 
     midpoint_aliases: dict[str, ChordMidpointAlias] = field(default_factory=dict)
@@ -286,6 +288,8 @@ class TransitionState:
             target = EccentricityQuery(eccentricity_query.group(1))
         elif focus_line_query and entities.get(focus_line_query.group(1)) == 'Parabola' and entities.get(focus_line_query.group(2)) == 'Line':
             target = FocusLineDistanceQuery(*focus_line_query.groups())
+        elif line_query and all(entities.get(p) == 'Point' for p in line_query.groups()):
+            target = PointPairDistanceQuery(line_query.groups())
         elif line_query and entities.get(line_query.group(1)) == 'Point' and entities.get(line_query.group(2)) == 'Line':
             target = PointLineDistanceQuery(*line_query.groups())
         elif focal_query and entities.get(focal_query.group(1)) == 'Point' and entities.get(focal_query.group(2)) == 'Parabola':
@@ -436,7 +440,7 @@ class TransitionState:
             curve_type={'Hyperbola': CurveType.HYPERBOLA, 'Ellipse': CurveType.ELLIPSE, 'Parabola': CurveType.PARABOLA}.get(
                 self.entities.get(curve), CurveType.UNKNOWN),
             query_type=(QueryType.EQUATION if isinstance(self.query, (DirectrixPairQuery, AsymptoteQuery, TangentQuery, NamedLineQuery)) else
-                        QueryType.DISTANCE if isinstance(self.query, (FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery, ChordLengthQuery)) else QueryType.VALUE),
+                        QueryType.DISTANCE if isinstance(self.query, (PointPairDistanceQuery, FocalDistanceQuery, PointLineDistanceQuery, FocusLineDistanceQuery, ChordLengthQuery)) else QueryType.VALUE),
             has_equation=any(f.owner == curve and f.role in ('curve', 'line') for f in self.equations.values()),
             has_asymptote_info=any(f.owner == curve and f.role == 'asymptote' for f in self.equations.values()),
             has_parameters={key for owner, key in self.properties if owner == curve},
@@ -446,6 +450,8 @@ class TransitionState:
 
     def extract_answer(self):
         """No solving during extraction; missing or ambiguous answers stay unresolved."""
+        if isinstance(self.query, PointPairDistanceQuery):
+            return read_pair_distance(self, self.query)
         if isinstance(self.query, DirectrixPairQuery):
             return read_directrix_pair(self, self.query)
         if isinstance(self.query, FocusAsymptoteDistanceQuery):
