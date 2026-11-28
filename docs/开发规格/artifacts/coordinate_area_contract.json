@@ -1,0 +1,60 @@
+{
+  "stage": "design_audit_only_fact_projections",
+  "dataset_sha256": "d28f0a9eb1232e1e1240dab8853421a319a358048014859c1e7e24bedf3df23d",
+  "cases": [
+    {
+      "id": 870,
+      "original_facts": "G: Ellipse;H: Point;F1: Point;F2: Point;Coordinate(H) = (2, 3);Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0);PointOnCurve(H, G);Focus(G)={F1,F2}",
+      "original_query": "Eccentricity(G)",
+      "projected_facts": "H: Point;F1: Point;F2: Point;Coordinate(H) = (2, 3);Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0)",
+      "probe": {
+        "query": "Area(TriangleOf(H,F1,F2))",
+        "query_class": "FocalAreaQuery",
+        "area": "6",
+        "determinant": "12",
+        "eligible": true,
+        "runtime_answer": null
+      }
+    },
+    {
+      "id": 3239,
+      "original_facts": "G: Ellipse;F1: Point;F2: Point;Z: Point;Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0);Coordinate(Z) = (5/2, -3/2);PointOnCurve(Z, G);Focus(G) = {F1, F2}",
+      "original_query": "Expression(G)",
+      "projected_facts": "F1: Point;F2: Point;Z: Point;Coordinate(F1) = (-2, 0);Coordinate(F2) = (2, 0);Coordinate(Z) = (5/2, -3/2)",
+      "probe": {
+        "query": "Area(TriangleOf(Z,F1,F2))",
+        "query_class": "FocalAreaQuery",
+        "area": "3",
+        "determinant": "-6",
+        "eligible": true,
+        "runtime_answer": null
+      }
+    }
+  ],
+  "diagnostics": {
+    "non_origin": {
+      "query": "Area(TriangleOf(A,B,C))",
+      "query_class": "FocalAreaQuery",
+      "area": "6",
+      "determinant": "12",
+      "eligible": true,
+      "runtime_answer": null
+    },
+    "collinear": {
+      "query": "Area(TriangleOf(A,B,C))",
+      "query_class": "FocalAreaQuery",
+      "area": "0",
+      "determinant": "0",
+      "eligible": false,
+      "runtime_answer": null
+    },
+    "coincident": {
+      "query": "Area(TriangleOf(A,B,C))",
+      "query_class": "FocalAreaQuery",
+      "area": "0",
+      "determinant": "0",
+      "eligible": false,
+      "runtime_answer": null
+    }
+  }
+}
